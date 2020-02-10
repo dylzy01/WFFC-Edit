@@ -49,10 +49,15 @@ Game::Game()
 	m_camRight.y = 0.0f;
 	m_camRight.z = 0.0f;
 
+	m_camUp.x = 0.f;
+	m_camUp.y = 0.f;
+	m_camUp.z = 0.f;
+
 	m_camOrientation.x = 0.0f;
 	m_camOrientation.y = 0.0f;
 	m_camOrientation.z = 0.0f;
 
+	m_camera = std::make_unique<Camera>();
 }
 
 Game::~Game()
@@ -69,14 +74,16 @@ Game::~Game()
 // Initialize the Direct3D resources required to run.
 void Game::Initialize(HWND window, int width, int height)
 {
-    m_gamePad = std::make_unique<GamePad>();
+	m_window = window;
+	
+	m_gamePad = std::make_unique<GamePad>();
 
     m_keyboard = std::make_unique<Keyboard>();
 
     m_mouse = std::make_unique<Mouse>();
-    m_mouse->SetWindow(window);
+    m_mouse->SetWindow(m_window);
 
-    m_deviceResources->SetWindow(window, width, height);
+    m_deviceResources->SetWindow(m_window, width, height);
 
     m_deviceResources->CreateDeviceResources();
     CreateDeviceDependentResources();
@@ -145,46 +152,23 @@ void Game::Update(DX::StepTimer const& timer)
 	Vector3 planarMotionVector = m_camLookDirection;
 	planarMotionVector.y = 0.0;
 
-	if (m_InputCommands.rotRight)
+	/*if (m_InputCommands.rotRight)
 	{
 		m_camOrientation.y -= m_camRotRate;
 	}
 	if (m_InputCommands.rotLeft)
 	{
 		m_camOrientation.y += m_camRotRate;
-	}
+	}*/
 
-	//create look direction from Euler angles in m_camOrientation
-	m_camLookDirection.x = sin((m_camOrientation.y)*3.1415 / 180);
-	m_camLookDirection.z = cos((m_camOrientation.y)*3.1415 / 180);
-	m_camLookDirection.Normalize();
+	HandleInput();
 
-	//create right vector from look Direction
-	m_camLookDirection.Cross(Vector3::UnitY, m_camRight);
-
-	//process input and update stuff
-	if (m_InputCommands.forward)
-	{	
-		m_camPosition += m_camLookDirection*m_movespeed;
-	}
-	if (m_InputCommands.back)
-	{
-		m_camPosition -= m_camLookDirection*m_movespeed;
-	}
-	if (m_InputCommands.right)
-	{
-		m_camPosition += m_camRight*m_movespeed;
-	}
-	if (m_InputCommands.left)
-	{
-		m_camPosition -= m_camRight*m_movespeed;
-	}
-
-	//update lookat point
-	m_camLookAt = m_camPosition + m_camLookDirection;
+	// Update camera
+	///m_camera->Update((float)timer.GetElapsedSeconds());
 
 	//apply camera vectors
     m_view = Matrix::CreateLookAt(m_camPosition, m_camLookAt, Vector3::UnitY);
+    ///m_view = Matrix::CreateLookAt(m_camera->GetPosition(), m_camera->GetLookAt(), Vector3::UnitY);
 
     m_batchEffect->SetView(m_view);
     m_batchEffect->SetWorld(Matrix::Identity);
@@ -217,6 +201,78 @@ void Game::Update(DX::StepTimer const& timer)
 #endif
 
    
+}
+void Game::HandleInput()
+{
+	///float distX, distY;
+	///distX = (m_mouse->GetState().x / 2);
+	///distY = (m_mouse->GetState().y / 2);
+
+	///m_camera->SetPitch(distY);
+	///m_camera->SetYaw(distX);
+
+	// Hold right mouse to use AD for rotation
+	if (m_InputCommands.mouseRight)
+	{
+		if (m_InputCommands.right)
+		{
+			m_camOrientation.y -= m_camRotRate;
+			///m_camera->RotateY(-m_camRotRate);
+		}
+		if (m_InputCommands.left)
+		{
+			m_camOrientation.y += m_camRotRate;
+			///m_camera->RotateY(m_camRotRate);
+		}
+	}
+
+	//create look direction from Euler angles in m_camOrientation
+	m_camLookDirection.x = sin((m_camOrientation.y)*3.1415 / 180);
+	m_camLookDirection.z = cos((m_camOrientation.y)*3.1415 / 180);
+	m_camLookDirection.Normalize();
+
+	//create right vector from look Direction
+	m_camLookDirection.Cross(Vector3::UnitY, m_camRight);
+
+	//process input and update stuff
+	if (m_InputCommands.forward)
+	{
+		m_camPosition += m_camLookDirection * m_movespeed;
+		///m_camera->ApplyPosition(m_camera->GetLookAt() * m_movespeed);
+	}
+	if (m_InputCommands.back)
+	{
+		m_camPosition -= m_camLookDirection * m_movespeed;
+		///m_camera->ApplyPosition(-(m_camera->GetLookAt() * m_movespeed));
+	}
+	if (!m_InputCommands.mouseRight)
+	{
+		if (m_InputCommands.right)
+		{
+			m_camPosition += m_camRight * m_movespeed;
+			///m_camera->ApplyPosition(m_camera->GetRight() * m_movespeed);
+		}
+		if (m_InputCommands.left)
+		{
+			m_camPosition -= m_camRight * m_movespeed;
+			///m_camera->ApplyPosition(-(m_camera->GetRight() * m_movespeed));
+		}
+	}
+	if (m_InputCommands.up)
+	{
+		///m_camPosition += m_camUp*m_movespeed;
+		m_camPosition.y += .1f;
+		m_camera->ApplyPosition(m_camera->GetUp() * m_movespeed);
+	}
+	if (m_InputCommands.down)
+	{
+		///m_camPosition -= m_camUp*m_movespeed;
+		m_camPosition.y -= .1f;
+		m_camera->ApplyPosition(-(m_camera->GetUp() * m_movespeed));
+	}
+
+	//update lookat point
+	m_camLookAt = m_camPosition + m_camLookDirection;
 }
 #pragma endregion
 

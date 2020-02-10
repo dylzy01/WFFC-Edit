@@ -11,7 +11,8 @@
 #include "DisplayChunk.h"
 #include "ChunkObject.h"
 #include "InputCommands.h"
-#include <vector>
+///#include <vector>
+#include "Camera.h"
 
 
 // A basic game implementation that creates a D3D11 device and
@@ -58,6 +59,7 @@ public:
 private:
 
 	void Update(DX::StepTimer const& timer);
+	void HandleInput();
 
 	void CreateDeviceDependentResources();
 	void CreateWindowSizeDependentResources();
@@ -73,12 +75,14 @@ private:
 	float								m_movespeed;
 
 	//camera
+	std::shared_ptr<Camera>				m_camera;
 	DirectX::SimpleMath::Vector3		m_camPosition;
 	DirectX::SimpleMath::Vector3		m_camOrientation;
 	DirectX::SimpleMath::Vector3		m_camLookAt;
 	DirectX::SimpleMath::Vector3		m_camLookDirection;
 	DirectX::SimpleMath::Vector3		m_camRight;
-	float m_camRotRate;
+	DirectX::SimpleMath::Vector3		m_camUp;
+	float								m_camRotRate;
 
 	//control variables
 	bool m_grid;							//grid rendering on / off
@@ -102,6 +106,9 @@ private:
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>>  m_batch;
     std::unique_ptr<DirectX::SpriteBatch>                                   m_sprites;
     std::unique_ptr<DirectX::SpriteFont>                                    m_font;
+
+	// Window
+	HWND m_window;
 
 #ifdef DXTK_AUDIO
     std::unique_ptr<DirectX::AudioEngine>                                   m_audEngine;

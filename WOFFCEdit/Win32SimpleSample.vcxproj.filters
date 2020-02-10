@@ -17,6 +17,9 @@
     <Filter Include="SQLITE">
       <UniqueIdentifier>{a006b0b6-46b2-4c4f-808a-ec8fe3e790eb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Custom">
+      <UniqueIdentifier>{892e3e3d-b254-4d08-8845-7ebd2e93f32d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -58,6 +61,9 @@
     </ClCompile>
     <ClCompile Include="SelectDialogue.cpp">
       <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Custom</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -107,6 +113,9 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SelectDialogue.h">
       <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Custom</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
