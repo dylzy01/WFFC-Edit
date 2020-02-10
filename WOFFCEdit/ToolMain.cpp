@@ -14,11 +14,15 @@ ToolMain::ToolMain()
 	m_databaseConnection = NULL;
 
 	//zero input commands
-	m_toolInputCommands.forward		= false;
-	m_toolInputCommands.back		= false;
-	m_toolInputCommands.left		= false;
-	m_toolInputCommands.right		= false;
-	
+	m_toolInputCommands.W		= false;
+	m_toolInputCommands.S		= false;
+	m_toolInputCommands.A		= false;
+	m_toolInputCommands.D		= false;
+	m_toolInputCommands.up		= false;
+	m_toolInputCommands.down	= false;
+	m_toolInputCommands.left	= false;
+	m_toolInputCommands.right	= false;
+	m_toolInputCommands.escape	= false;
 }
 
 
@@ -327,39 +331,32 @@ void ToolMain::UpdateInput(MSG * msg)
 	}
 	//here we update all the actual app functionality that we want.  This information will either be used int toolmain, or sent down to the renderer (Camera movement etc
 	//WASD movement
-	if (m_keyArray['W'])
-	{
-		m_toolInputCommands.forward = true;
-	}
-	else m_toolInputCommands.forward = false;
+	if (m_keyArray['W']) { m_toolInputCommands.W = true; }
+	else { m_toolInputCommands.W = false; }
 	
-	if (m_keyArray['S'])
-	{
-		m_toolInputCommands.back = true;
-	}
-	else m_toolInputCommands.back = false;
-	if (m_keyArray['A'])
-	{
-		m_toolInputCommands.left = true;
-	}
-	else m_toolInputCommands.left = false;
+	if (m_keyArray['S']) { m_toolInputCommands.S = true; }
+	else { m_toolInputCommands.S = false; }
+	if (m_keyArray['A']) { m_toolInputCommands.A = true; }
+	else { m_toolInputCommands.A = false; }
 
-	if (m_keyArray['D'])
-	{
-		m_toolInputCommands.right = true;
-	}
-	else m_toolInputCommands.right = false;
+	if (m_keyArray['D']) { m_toolInputCommands.D = true; }
+	else { m_toolInputCommands.D = false; }
+
 	//QE up/down
-	if (m_keyArray['E'])
-	{
-		m_toolInputCommands.up = true;
-	}
-	else m_toolInputCommands.up = false;
-	if (m_keyArray['Q'])
-	{
-		m_toolInputCommands.down = true;
-	}
-	else m_toolInputCommands.down = false;
+	if (m_keyArray['E']) { m_toolInputCommands.E = true; }
+	else { m_toolInputCommands.E = false; }
+	if (m_keyArray['Q']) { m_toolInputCommands.Q = true; }
+	else { m_toolInputCommands.Q = false; }
+
+	// IJKL rotation
+	if (m_keyArray['I']) { m_toolInputCommands.up = true; }
+	else { m_toolInputCommands.up = false; }
+	if (m_keyArray['K']) { m_toolInputCommands.down = true; }
+	else { m_toolInputCommands.down = false; }
+	if (m_keyArray['J']) { m_toolInputCommands.left = true; }
+	else { m_toolInputCommands.left = false; }
+	if (m_keyArray['L']) { m_toolInputCommands.right = true; }
+	else { m_toolInputCommands.right = false; }
 
 	//Mouse rotation
 	if (m_mouseL) { m_toolInputCommands.mouseLeft = true; }

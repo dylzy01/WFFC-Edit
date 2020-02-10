@@ -14,6 +14,9 @@
 ///#include <vector>
 #include "Camera.h"
 
+#define PI 3.1415
+#define THETA (PI * PI)
+
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -109,6 +112,9 @@ private:
 
 	// Window
 	HWND m_window;
+
+	// Controllers
+	bool m_createLookDirection;
 
 #ifdef DXTK_AUDIO
     std::unique_ptr<DirectX::AudioEngine>                                   m_audEngine;

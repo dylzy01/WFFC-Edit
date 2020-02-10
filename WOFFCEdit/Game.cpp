@@ -14,7 +14,6 @@ using namespace DirectX::SimpleMath;
 using Microsoft::WRL::ComPtr;
 
 Game::Game()
-
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
@@ -56,8 +55,6 @@ Game::Game()
 	m_camOrientation.x = 0.0f;
 	m_camOrientation.y = 0.0f;
 	m_camOrientation.z = 0.0f;
-
-	m_camera = std::make_unique<Camera>();
 }
 
 Game::~Game()
@@ -75,6 +72,10 @@ Game::~Game()
 void Game::Initialize(HWND window, int width, int height)
 {
 	m_window = window;
+
+	///m_camera = std::make_unique<Camera>();
+	///m_camera->Initialize();
+	m_createLookDirection = true;
 	
 	m_gamePad = std::make_unique<GamePad>();
 
@@ -152,22 +153,17 @@ void Game::Update(DX::StepTimer const& timer)
 	Vector3 planarMotionVector = m_camLookDirection;
 	planarMotionVector.y = 0.0;
 
-	/*if (m_InputCommands.rotRight)
-	{
-		m_camOrientation.y -= m_camRotRate;
-	}
-	if (m_InputCommands.rotLeft)
-	{
-		m_camOrientation.y += m_camRotRate;
-	}*/
-
+	// Handle all input
 	HandleInput();
 
-	// Update camera
-	///m_camera->Update((float)timer.GetElapsedSeconds());
+	// Custom camera
+	///m_camera->HandleInput(&m_InputCommands);
+	///m_camera->Update();
 
 	//apply camera vectors
+    ///m_view = Matrix::CreateLookAt(m_camPosition, m_camLookAt, m_camUp);
     m_view = Matrix::CreateLookAt(m_camPosition, m_camLookAt, Vector3::UnitY);
+	///m_view = m_camera->GetViewMatrix();
     ///m_view = Matrix::CreateLookAt(m_camera->GetPosition(), m_camera->GetLookAt(), Vector3::UnitY);
 
     m_batchEffect->SetView(m_view);
@@ -200,75 +196,87 @@ void Game::Update(DX::StepTimer const& timer)
     }
 #endif
 
-   
 }
 void Game::HandleInput()
 {
 	///float distX, distY;
-	///distX = (m_mouse->GetState().x / 2);
+	///distX = (m_mouse->GetState().x / 2);\
 	///distY = (m_mouse->GetState().y / 2);
 
 	///m_camera->SetPitch(distY);
 	///m_camera->SetYaw(distX);
 
-	// Hold right mouse to use AD for rotation
+	// Hold right mouse to use WASD for rotation
 	if (m_InputCommands.mouseRight)
 	{
-		if (m_InputCommands.right)
-		{
-			m_camOrientation.y -= m_camRotRate;
-			///m_camera->RotateY(-m_camRotRate);
-		}
-		if (m_InputCommands.left)
-		{
-			m_camOrientation.y += m_camRotRate;
-			///m_camera->RotateY(m_camRotRate);
-		}
+		/*if (m_InputCommands.W) { m_camOrientation.x += m_camRotRate; }
+		if (m_InputCommands.S) { m_camOrientation.x -= m_camRotRate; }
+		if (m_InputCommands.D) { m_camOrientation.y -= m_camRotRate; }
+		if (m_InputCommands.A) { m_camOrientation.y += m_camRotRate; }*/
+
+		if (m_InputCommands.W) { m_camOrientation.x += .005f; }
+		if (m_InputCommands.S) { m_camOrientation.x -= .005f; }
+		if (m_InputCommands.D) { m_camOrientation.y -= .005f; }
+		if (m_InputCommands.A) { m_camOrientation.y += .005f; }
 	}
 
 	//create look direction from Euler angles in m_camOrientation
-	m_camLookDirection.x = sin((m_camOrientation.y)*3.1415 / 180);
-	m_camLookDirection.z = cos((m_camOrientation.y)*3.1415 / 180);
+	/*m_camLookDirection.x = sin((m_camOrientation.y)*PI / 180);
+	m_camLookDirection.z = cos((m_camOrientation.y)*PI / 180);*/
+
+	/*float theta = (PI*PI);
+	m_camLookDirection.x = cos((m_camOrientation.y)*PI / 180) * sin((m_camOrientation.y)*theta);	//x = rCos(-)sin(|)		// x = y
+	m_camLookDirection.y = sin((m_camOrientation.y)*PI / 180) * sin((m_camOrientation.y)*theta);	//y = rSin(-)sin(|)		// z = x
+	m_camLookDirection.z = cos((m_camOrientation.y)*theta);*/										//z = rCos(|)
+
+	float theta = (PI*PI);
+	m_camLookDirection.x = cos((m_camOrientation.y)*PI / 180) * sin((m_camOrientation.y)*theta);	
+	m_camLookDirection.y = sin((m_camOrientation.y)*PI / 180) * sin((m_camOrientation.y)*theta);	
+	m_camLookDirection.z = cos((m_camOrientation.y)*theta);
+
+	/*m_camLookDirection.x = cos((m_camOrientation.y)*PI / 180) * sin((m_camOrientation.y)*THETA);
+	m_camLookDirection.y = sin((m_camOrientation.y)*PI / 180) * sin((m_camOrientation.y)*THETA);*/
+
+	/*m_camLookDirection.x = sin((m_camOrientation.y)*PI / 180);
+	m_camLookDirection.z = cos((m_camOrientation.y)*PI / 180);*/
+
 	m_camLookDirection.Normalize();
 
-	//create right vector from look Direction
+	//create right vector from look direction
 	m_camLookDirection.Cross(Vector3::UnitY, m_camRight);
 
+	// Create up vector from look direction
+	///m_camLookDirection.Cross(Vector3::UnitX, m_camUp);
+
 	//process input and update stuff
-	if (m_InputCommands.forward)
+	if (m_InputCommands.mouseRight)
 	{
-		m_camPosition += m_camLookDirection * m_movespeed;
-		///m_camera->ApplyPosition(m_camera->GetLookAt() * m_movespeed);
+		///if (m_InputCommands.W) { m_camLookDirection.y += .05; }
+		///if (m_InputCommands.S) { m_camLookDirection.y -= .05f; }
+		///if (m_InputCommands.D) { m_camLookDirection.x -= .05f; }
+		///if (m_InputCommands.A) { m_camLookDirection.x += .05f; }
 	}
-	if (m_InputCommands.back)
+	else
 	{
-		m_camPosition -= m_camLookDirection * m_movespeed;
-		///m_camera->ApplyPosition(-(m_camera->GetLookAt() * m_movespeed));
+		// WASD
+		if (m_InputCommands.W) { m_camPosition += m_camLookDirection * m_movespeed; }
+		if (m_InputCommands.S) { m_camPosition -= m_camLookDirection * m_movespeed; }
+		if (m_InputCommands.D) { m_camPosition += m_camRight * m_movespeed; }
+		if (m_InputCommands.A) { m_camPosition -= m_camRight * m_movespeed; }
+
+		// Numpad
+		/*if (m_InputCommands.up) { m_camLookDirection.y += .05; }
+		if (m_InputCommands.down) { m_camLookDirection.y -= .05f; }
+		if (m_InputCommands.right) { m_camLookDirection.x -= .05f; }
+		if (m_InputCommands.left) { m_camLookDirection.x += .05f; }*/
 	}
-	if (!m_InputCommands.mouseRight)
+	if (m_InputCommands.E) { m_camPosition.y += m_movespeed; }
+	if (m_InputCommands.Q) { m_camPosition.y -= m_movespeed; }
+	if (m_InputCommands.mouseLeft)
 	{
-		if (m_InputCommands.right)
-		{
-			m_camPosition += m_camRight * m_movespeed;
-			///m_camera->ApplyPosition(m_camera->GetRight() * m_movespeed);
-		}
-		if (m_InputCommands.left)
-		{
-			m_camPosition -= m_camRight * m_movespeed;
-			///m_camera->ApplyPosition(-(m_camera->GetRight() * m_movespeed));
-		}
-	}
-	if (m_InputCommands.up)
-	{
-		///m_camPosition += m_camUp*m_movespeed;
-		m_camPosition.y += .1f;
-		m_camera->ApplyPosition(m_camera->GetUp() * m_movespeed);
-	}
-	if (m_InputCommands.down)
-	{
-		///m_camPosition -= m_camUp*m_movespeed;
-		m_camPosition.y -= .1f;
-		m_camera->ApplyPosition(-(m_camera->GetUp() * m_movespeed));
+		auto state = m_mouse->GetState();
+		if (state.positionMode == Mouse::MODE_ABSOLUTE) { m_mouse->SetMode(Mouse::MODE_RELATIVE); }
+		else { m_mouse->SetMode(Mouse::MODE_ABSOLUTE); }
 	}
 
 	//update lookat point
@@ -300,9 +308,26 @@ void Game::Render()
 	}
 	//CAMERA POSITION ON HUD
 	m_sprites->Begin();
+
 	WCHAR   Buffer[256];
-	std::wstring var = L"Cam X: " + std::to_wstring(m_camPosition.x) + L"Cam Z: " + std::to_wstring(m_camPosition.z);
-	m_font->DrawString(m_sprites.get(), var.c_str() , XMFLOAT2(100, 10), Colors::Yellow);
+	/*std::wstring var = L"Cam X: " + std::to_wstring(m_camera->GetPosition().x) 
+		+ L" Cam Y: " + std::to_wstring(m_camera->GetPosition().y) + L" Cam Z: " 
+		+ std::to_wstring(m_camera->GetPosition().z);*/
+	// Camera
+	std::wstring pos = L"Pos X: " + std::to_wstring(m_camPosition.x)
+		+ L" Pos Y: " + std::to_wstring(m_camPosition.y) 
+		+ L" Pos Z: " + std::to_wstring(m_camPosition.z);
+	std::wstring rot = L"Rot X: " + std::to_wstring(m_camOrientation.x)
+		+ L" Rot Y: " + std::to_wstring(m_camOrientation.y)
+		+ L" Rot Z: " + std::to_wstring(m_camOrientation.z);
+	m_font->DrawString(m_sprites.get(), pos.c_str() , XMFLOAT2(100, 10), Colors::Yellow);
+	m_font->DrawString(m_sprites.get(), rot.c_str() , XMFLOAT2(100, 40), Colors::Yellow);
+
+	// Mouse
+	std::wstring mouse = L"Mouse X: " + std::to_wstring(m_mouse->GetState().x)
+		+ L" Mouse Y: " + std::to_wstring(m_mouse->GetState().y);
+	m_font->DrawString(m_sprites.get(), mouse.c_str() , XMFLOAT2(100, 70), Colors::Yellow);
+	
 	m_sprites->End();
 
 	//RENDER OBJECTS FROM SCENEGRAPH
