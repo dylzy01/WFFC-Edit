@@ -1,123 +1,189 @@
 #include "Camera.h"
 
-void Camera::Initialize()
+//void Camera::Initialize()
+//{
+//	/*m_rotateFactor = 3.f;
+//	m_speed = 0.3f;
+//
+//	m_position.x = 0.f;
+//	m_position.y = 3.7f;
+//	m_position.z = -3.5f;
+//
+//	m_orientation.x = 0.f;
+//	m_orientation.y = 0.f;
+//	m_orientation.z = 0.f;
+//
+//	m_lookAt.x = 0.f;
+//	m_lookAt.y = 0.f;
+//	m_lookAt.z = 0.f;
+//
+//	m_direction.x = 0.f;
+//	m_direction.y = 0.f;
+//	m_direction.z = 0.f;
+//
+//	m_right.x = 0.f;
+//	m_right.y = 0.f;
+//	m_right.z = 0.f;
+//
+//	m_up.x = 0.f;
+//	m_up.y = 0.f;
+//	m_up.z = 0.f;*/
+//}
+
+Camera::Camera()
 {
-	m_rotateFactor = 3.f;
+	// Initialise vectors
+	m_position = DirectX::SimpleMath::Vector3(0.f, 3.7f, -3.5f);
+	m_forward = DirectX::SimpleMath::Vector3(0.f, 0.f, 1.f);
+	m_right = DirectX::SimpleMath::Vector3(1.f, 0.f, 0.f);
+	m_up = DirectX::SimpleMath::Vector3(0.f, 1.f, 0.f);
+	m_lookAt = DirectX::SimpleMath::Vector3(0.f, 0.f, -5.f);
+
+	// Initialise rotation
+	m_yaw = m_pitch = m_roll = 0.f;
 	m_speed = 0.3f;
-
-	m_position.x = 0.f;
-	m_position.y = 3.7f;
-	m_position.z = -3.5f;
-
-	m_orientation.x = 0.f;
-	m_orientation.y = 0.f;
-	m_orientation.z = 0.f;
-
-	m_lookAt.x = 0.f;
-	m_lookAt.y = 0.f;
-	m_lookAt.z = 0.f;
-
-	m_direction.x = 0.f;
-	m_direction.y = 0.f;
-	m_direction.z = 0.f;
-
-	m_right.x = 0.f;
-	m_right.y = 0.f;
-	m_right.z = 0.f;
-
-	m_up.x = 0.f;
-	m_up.y = 0.f;
-	m_up.z = 0.f;
 }
 
 void Camera::Update()
 {
-	m_viewMatrix = DirectX::SimpleMath::Matrix::CreateLookAt(m_position, m_lookAt,
-		DirectX::SimpleMath::Vector3::UnitY);
-	
-	// Temp values for sin/cos
-	///float cosPitch, cosYaw, cosRoll;
-	///float sinPitch, sinYaw, sinRoll;
+	// Cos/Sin temps
+	float cosY, cosP, cosR;
+	float sinY, sinP, sinR;
+	cosY = cosf(m_yaw * PI / 180.f);
+	cosP = cosf(m_pitch * PI / 180.f);
+	cosR = cosf(m_roll * PI / 180.f);
+	sinY = sinf(m_yaw * PI / 180.f);
+	sinP = sinf(m_pitch * PI / 180.f);
+	sinR = sinf(m_roll * PI / 180.f);
 
-	// Calculate values when rotation changes (function called when rotation changes)
-	///cosPitch	= cosf(m_pitch*PI / 180);
-	///cosYaw		= cosf(m_yaw*PI / 180);
-	///cosRoll		= cosf(m_roll*PI / 180);
-	///sinPitch	= sinf(m_pitch*PI / 180);
-	///sinYaw		= sinf(m_yaw*PI / 180);
-	///sinRoll		= sinf(m_roll*PI / 180);
+	// Forward
+	m_forward.x = sinY * cosP;
+	m_forward.y = sinP;
+	m_forward.z = cosP * -cosY;
 
-	// Calculate forward vector
-	///m_forward.x = sinYaw * cosPitch;
-	///m_forward.y = sinPitch;
-	///m_forward.z = cosPitch * -cosYaw;
+	// Look At
+	m_lookAt.x = m_position.x + m_forward.x;
+	m_lookAt.y = m_position.y + m_forward.y;
+	m_lookAt.z = m_position.z + m_forward.z;
 
-	// Calculate look at vector
-	///m_lookAt = m_position + m_forward;
+	// Up
+	m_up.x = -cosY * sinR - sinY * sinP * cosR;
+	m_up.y = cosP * cosR;
+	m_up.z = -sinY * sinR - sinP * cosR * -cosY;
 
-	// Calculate up vector
-	///m_up.x = (-cosYaw * sinRoll) - (sinYaw * sinPitch * cosRoll);
-	///m_up.y = cosPitch * cosRoll;
-	///m_up.z = (-sinYaw * sinRoll) - (sinPitch * cosRoll * -cosYaw);
-
-	// Calculate right vector
-	///m_right = m_forward.Cross(m_up);
+	// Right
+	m_right = m_forward.Cross(m_up);
 }
 
-void Camera::HandleInput(InputCommands * input)
+void Camera::HandleInput(InputCommands * input, float deltaTime, float centre_x, float centre_y, POINT cursorPos)
 {
 	m_input = input;
 
-	// Hold right mouse to use AD for rotation
-	if (m_input->mouseRight)
-	{
-		if (m_input->D) { m_orientation.y -= m_rotateFactor; }
-		if (m_input->A) { m_orientation.y += m_rotateFactor; }
+	// Move up
+	if (m_input->E) {
+		MoveUp(deltaTime);
+		Update();
 	}
 
-	// Create m_direction from Eular angles in m_orientation
-	m_direction.x = sin((m_orientation.y) * PI / 180);
-	m_direction.y = cos((m_orientation.z) * PI / 180);
-	m_direction.Normalize();
-
-	// Create right vector from m_direction
-	m_direction.Cross(DirectX::SimpleMath::Vector3::UnitY, m_right);
-
-	// Movement
-	if (m_input->W) { m_position += m_lookAt * m_speed; }
-	if (m_input->S) { m_position -= m_lookAt * m_speed; }
-	if (!m_input->mouseRight)
-	{
-		if (m_input->D) { m_position += m_right * m_speed; }
-		if (m_input->A) { m_position -= m_right * m_speed; }
+	// Move down
+	if (m_input->Q) {
+		MoveDown(deltaTime);
+		Update();
 	}
-	if (m_input->E) { m_position += m_up * m_speed; }
-	if (m_input->Q) { m_position -= m_up * m_speed; }
 
-	// Update m_lookAt
-	m_lookAt = m_position + m_direction;
+	// Left
+	if (m_input->A) {
+		MoveLeft(deltaTime);
+		Update();
+	}
+
+	// Right
+	if (m_input->D) {
+		MoveRight(deltaTime);
+		Update();
+	}
+
+	// Forward
+	if (m_input->W) {
+		MoveForward(deltaTime);
+		Update();
+	}
+
+	// Backward
+	if (m_input->S) {
+		MoveBackward(deltaTime);
+		Update();
+	}
+
+	// Rotation
+	if (m_input->mouseRight) {
+		TrackMouse(centre_x, centre_y, cursorPos, deltaTime);
+		Update();
+	}
 }
 
-void Camera::RotateX(float rate)
+void Camera::MoveUp(float deltaTime)
 {
-	/*if (positive) { m_pitch += (m_rotateFactor * rate); }
-	else { m_pitch -= (m_rotateFactor * rate); }*/
+	DirectX::SimpleMath::Vector3 temp;
 
-	m_pitch += m_rotateFactor * rate;
+	// Move camera up
+	temp = m_speed * m_up;
+	m_position.operator+=(temp);
 }
 
-void Camera::RotateY(float rate)
+void Camera::MoveDown(float deltaTime)
 {
-	/*if (positive) { m_yaw += (m_rotateFactor * rate); }
-	else { m_yaw -= (m_rotateFactor * rate); }*/
+	DirectX::SimpleMath::Vector3 temp;
 
-	m_yaw += m_rotateFactor * rate;
+	// Move camera down
+	temp = -m_speed * m_up;
+	m_position.operator+=(temp);
 }
 
-void Camera::RotateZ(float rate)
+void Camera::MoveLeft(float deltaTime)
 {
-	/*if (positive) { m_roll += (m_rotateFactor * rate); }
-	else { m_roll -= (m_rotateFactor * rate); }*/
+	DirectX::SimpleMath::Vector3 temp;
 
-	m_roll += m_rotateFactor * rate;
+	// Move camera left
+	temp = -m_speed * m_right;
+	m_position.operator+=(temp);
+}
+
+void Camera::MoveRight(float deltaTime)
+{
+	DirectX::SimpleMath::Vector3 temp;
+
+	// Move camera right
+	temp = m_speed * m_right;
+	m_position.operator+=(temp);
+}
+
+void Camera::MoveForward(float deltaTime)
+{
+	DirectX::SimpleMath::Vector3 temp;
+
+	// Move camera forward
+	temp = m_speed * m_forward;
+	m_position.operator+=(temp);
+}
+
+void Camera::MoveBackward(float deltaTime)
+{
+	DirectX::SimpleMath::Vector3 temp;
+
+	// Move camera backward
+	temp = -m_speed * m_forward;
+	m_position.operator+=(temp);
+}
+
+void Camera::TrackMouse(float centre_x, float centre_y, POINT cursorPos, float deltaTime)
+{
+	// Alter camera rotation
+	/*POINT pos;
+	GetCursorPos(&pos);
+	m_yaw += (pos.x - centre_x) * (m_speed / 50.f);
+	m_pitch += (centre_y - pos.y) * (m_speed / 50.f);*/
+
+	m_yaw += (cursorPos.x - centre_x) * (m_speed / 50.f);
+	m_pitch += (centre_y - cursorPos.y) * (m_speed / 50.f);
 }

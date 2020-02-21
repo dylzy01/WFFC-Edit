@@ -50,5 +50,4 @@ private:	//variables
 	
 	// Mouse movement
 	bool m_mouseR, m_mouseL;
-	
 };

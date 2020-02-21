@@ -55,6 +55,8 @@ public:
 	void SaveDisplayChunk(ChunkObject *SceneChunk);	//saves geometry et al
 	void ClearDisplayList();
 
+	int MousePicking();
+
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
 #endif
@@ -62,7 +64,7 @@ public:
 private:
 
 	void Update(DX::StepTimer const& timer);
-	void HandleInput();
+	void UpdateCamera(float deltaTime);
 
 	void CreateDeviceDependentResources();
 	void CreateWindowSizeDependentResources();
@@ -72,23 +74,23 @@ private:
 	//tool specific
 	std::vector<DisplayObject>			m_displayList;
 	DisplayChunk						m_displayChunk;
-	InputCommands						m_InputCommands;
+	InputCommands						m_inputCommands;
 
 	//functionality
 	float								m_movespeed;
 
 	//camera
 	std::shared_ptr<Camera>				m_camera;
-	DirectX::SimpleMath::Vector3		m_camPosition;
-	DirectX::SimpleMath::Vector3		m_camOrientation;
-	DirectX::SimpleMath::Vector3		m_camLookAt;
-	DirectX::SimpleMath::Vector3		m_camLookDirection;
-	DirectX::SimpleMath::Vector3		m_camRight;
-	DirectX::SimpleMath::Vector3		m_camUp;
-	float								m_camRotRate;
+
+	//viewport
+	RECT								m_screenDimensions;
 
 	//control variables
 	bool m_grid;							//grid rendering on / off
+
+	//mouse picking
+	int m_selectedID = -1.f;
+
 	// Device resources.
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;
 
@@ -113,9 +115,6 @@ private:
 	// Window
 	HWND m_window;
 
-	// Controllers
-	bool m_createLookDirection;
-
 #ifdef DXTK_AUDIO
     std::unique_ptr<DirectX::AudioEngine>                                   m_audEngine;
     std::unique_ptr<DirectX::WaveBank>                                      m_waveBank;
@@ -138,8 +137,6 @@ private:
     DirectX::SimpleMath::Matrix                                             m_world;
     DirectX::SimpleMath::Matrix                                             m_view;
     DirectX::SimpleMath::Matrix                                             m_projection;
-
-
 };
 
 std::wstring StringToWCHART(std::string s);

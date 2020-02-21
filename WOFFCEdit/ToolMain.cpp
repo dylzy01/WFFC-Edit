@@ -14,15 +14,14 @@ ToolMain::ToolMain()
 	m_databaseConnection = NULL;
 
 	//zero input commands
-	m_toolInputCommands.W		= false;
-	m_toolInputCommands.S		= false;
-	m_toolInputCommands.A		= false;
-	m_toolInputCommands.D		= false;
-	m_toolInputCommands.up		= false;
-	m_toolInputCommands.down	= false;
-	m_toolInputCommands.left	= false;
-	m_toolInputCommands.right	= false;
-	m_toolInputCommands.escape	= false;
+	m_toolInputCommands.W			= false;
+	m_toolInputCommands.S			= false;
+	m_toolInputCommands.A			= false;
+	m_toolInputCommands.D			= false;
+	m_toolInputCommands.mouseLeft	= false;
+	m_toolInputCommands.mouseRight	= false;
+	m_toolInputCommands.escape		= false;
+	m_toolInputCommands.mousePos	= DirectX::SimpleMath::Vector2(0.f, 0.f);
 }
 
 
@@ -34,7 +33,6 @@ ToolMain::~ToolMain()
 
 int ToolMain::getCurrentSelectionID()
 {
-
 	return m_selectedObject;
 }
 
@@ -291,6 +289,12 @@ void ToolMain::Tick(MSG *msg)
 		//add to scenegraph
 		//resend scenegraph to Direct X renderer
 
+	if (m_toolInputCommands.mouseLeft)
+	{
+		m_selectedObject = m_d3dRenderer.MousePicking();
+		m_toolInputCommands.mouseLeft = true;
+	}
+
 	//Renderer Update Call
 	m_d3dRenderer.Tick(&m_toolInputCommands);
 }
@@ -310,23 +314,25 @@ void ToolMain::UpdateInput(MSG * msg)
 		break;
 
 	case WM_MOUSEMOVE:
+		// Update mouse x,y to send to the Renderer
+		m_toolInputCommands.mousePos.x = GET_X_LPARAM(msg->lParam);
+		m_toolInputCommands.mousePos.y = GET_Y_LPARAM(msg->lParam);
 		break;
 
-	case WM_LBUTTONDOWN:	//mouse button down,  you will probably need to check when its up too
-		//set some flag for the mouse button in inputcommands
-		m_mouseL = true;
+	case WM_LBUTTONDOWN:	
+		m_toolInputCommands.mouseLeft = true;
 		break;
 
 	case WM_LBUTTONUP:
-		m_mouseL = false;
+		m_toolInputCommands.mouseLeft = false;
 		break;
 
 	case WM_RBUTTONDOWN:
-		m_mouseR = true;
+		m_toolInputCommands.mouseRight = true;
 		break;
 
 	case WM_RBUTTONUP:
-		m_mouseR = false;
+		m_toolInputCommands.mouseRight = false;
 		break;
 	}
 	//here we update all the actual app functionality that we want.  This information will either be used int toolmain, or sent down to the renderer (Camera movement etc
@@ -347,20 +353,4 @@ void ToolMain::UpdateInput(MSG * msg)
 	else { m_toolInputCommands.E = false; }
 	if (m_keyArray['Q']) { m_toolInputCommands.Q = true; }
 	else { m_toolInputCommands.Q = false; }
-
-	// IJKL rotation
-	if (m_keyArray['I']) { m_toolInputCommands.up = true; }
-	else { m_toolInputCommands.up = false; }
-	if (m_keyArray['K']) { m_toolInputCommands.down = true; }
-	else { m_toolInputCommands.down = false; }
-	if (m_keyArray['J']) { m_toolInputCommands.left = true; }
-	else { m_toolInputCommands.left = false; }
-	if (m_keyArray['L']) { m_toolInputCommands.right = true; }
-	else { m_toolInputCommands.right = false; }
-
-	//Mouse rotation
-	if (m_mouseL) { m_toolInputCommands.mouseLeft = true; }
-	else { m_toolInputCommands.mouseLeft = false; }
-	if (m_mouseR) { m_toolInputCommands.mouseRight = true; }
-	else { m_toolInputCommands.mouseRight = false; }
 }
