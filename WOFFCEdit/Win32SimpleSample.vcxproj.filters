@@ -117,6 +117,9 @@
     <ClInclude Include="Camera.h">
       <Filter>Custom</Filter>
     </ClInclude>
+    <ClInclude Include="Tools.h">
+      <Filter>Custom</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

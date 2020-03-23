@@ -15,8 +15,8 @@ public:
 	void RenderBatch(std::shared_ptr<DX::DeviceResources>  DevResources);
 	void InitialiseBatch();	//initial setup, base coordinates etc based on scale
 	void LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResources);
-	void SaveHeightMap();			//saves the heigtmap back to file.
-	void UpdateTerrain();			//updates the geometry based on the heigtmap
+	void SaveHeightMap();			//saves the heightmap back to file.
+	void UpdateTerrain();			//updates the geometry based on the heightmap
 	void GenerateHeightmap();		//creates or alters the heightmap
 	std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionNormalTexture>>  m_batch;
 	std::unique_ptr<DirectX::BasicEffect>       m_terrainEffect;
@@ -24,8 +24,9 @@ public:
 	ID3D11ShaderResourceView *					m_texture_diffuse;				//diffuse texture
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>   m_terrainInputLayout;
 
+	DirectX::VertexPositionNormalTexture GetTerrainGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
+
 private:
-	
 	DirectX::VertexPositionNormalTexture m_terrainGeometry[TERRAINRESOLUTION][TERRAINRESOLUTION];
 	BYTE m_heightMap[TERRAINRESOLUTION*TERRAINRESOLUTION];
 	void CalculateTerrainNormals();
@@ -53,6 +54,5 @@ private:
 	int m_tex_splat_2_tiling;
 	int m_tex_splat_3_tiling;
 	int m_tex_splat_4_tiling;
-
 };
 

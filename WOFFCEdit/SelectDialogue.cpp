@@ -36,7 +36,22 @@ SelectDialogue::~SelectDialogue()
 void SelectDialogue::SetObjectData(std::vector<SceneObject>* SceneGraph, std::vector<int> * selection)
 {
 	m_sceneGraph = SceneGraph;
-	m_currentSelection = selection;
+	m_currentObjectSelection = selection;
+
+	//roll through all the objects in the scene graph and put an entry for each in the listbox
+	int numSceneObjects = m_sceneGraph->size();
+	for (int i = 0; i < numSceneObjects; i++)
+	{
+		//easily possible to make the data string presented more complex. showing other columns.
+		std::wstring listBoxEntry = std::to_wstring(m_sceneGraph->at(i).ID);
+		m_listBox.AddString(listBoxEntry.c_str());
+	}
+}
+
+void SelectDialogue::SetChunkData(std::vector<SceneObject>* SceneGraph, std::vector<CHUNK>* selection)
+{
+	m_sceneGraph = SceneGraph;
+	m_currentChunkSelection = selection;
 
 	//roll through all the objects in the scene graph and put an entry for each in the listbox
 	int numSceneObjects = m_sceneGraph->size();
@@ -68,11 +83,11 @@ void SelectDialogue::Select()
 	m_listBox.GetText(index, currentSelectionValue);
 
 	///*m_currentSelection = _ttoi(currentSelectionValue);
-	for (int i = 0; i < m_currentSelection->size(); ++i)
+	for (int i = 0; i < m_currentObjectSelection->size(); ++i)
 	{
-		for (int j = 0; j < m_currentSelection[i].size(); ++i)
+		for (int j = 0; j < m_currentObjectSelection[i].size(); ++i)
 		{
-			m_currentSelection[i][j] = _ttoi(currentSelectionValue);
+			m_currentObjectSelection[i][j] = _ttoi(currentSelectionValue);
 		}		
 	}
 }

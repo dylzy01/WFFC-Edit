@@ -7,11 +7,11 @@
 //ToolMain Class
 ToolMain::ToolMain()
 {
-
 	m_currentChunk = 0;		//default value
 	///m_selectedObject = 0;	//initial selection ID
 	m_sceneGraph.clear();	//clear the vector for the scenegraph
 	m_databaseConnection = NULL;
+	m_mode = MODE::OBJECT; //default mode
 
 	//zero input commands
 	m_toolInputCommands.W			= false;
@@ -24,18 +24,21 @@ ToolMain::ToolMain()
 	m_toolInputCommands.mousePos	= DirectX::SimpleMath::Vector2(0.f, 0.f);
 }
 
-
 ToolMain::~ToolMain()
 {
 	sqlite3_close(m_databaseConnection);		//close the database connection
 }
 
-
 ///int ToolMain::getCurrentSelectionID()
-std::vector<int> ToolMain::getCurrentSelectionID()
+std::vector<int> ToolMain::getCurrentObjectSelectionID()
 {
 	///return m_selectedObject;
 	return m_selectedObjects;
+}
+
+std::vector<CHUNK> ToolMain::getCurrentChunkSelection()
+{
+	return m_selectedChunks;
 }
 
 void ToolMain::onActionInitialise(HWND handle, int width, int height)
@@ -291,10 +294,27 @@ void ToolMain::Tick(MSG *msg)
 		//add to scenegraph
 		//resend scenegraph to Direct X renderer
 
+	// Update mode
+	m_mode = m_d3dRenderer.GetMode();
+
+	// If left mouse button is pressed & can pick
 	if (m_toolInputCommands.mouseLeft && m_toolInputCommands.pickOnce)
 	{
-		///m_selectedObject = m_d3dRenderer.MousePicking();
-		m_selectedObjects = m_d3dRenderer.MousePicking();
+		// Switch between modes
+		switch(m_mode)
+		{
+		case MODE::OBJECT:
+		{
+			m_selectedObjects = m_d3dRenderer.PickingObjects();
+		}
+		break;
+		case MODE::LANDSCAPE:
+		{
+			m_selectedChunks = m_d3dRenderer.PickingChunks();
+		}
+		break;
+		}
+		
 		m_toolInputCommands.mouseLeft = true;
 		m_toolInputCommands.pickOnce = false;
 	}
@@ -330,7 +350,6 @@ void ToolMain::UpdateInput(MSG * msg)
 
 	case WM_LBUTTONUP:
 		m_toolInputCommands.mouseLeft = false;
-		m_toolInputCommands.pickOnce = false;
 		break;
 
 	case WM_RBUTTONDOWN:
@@ -359,4 +378,12 @@ void ToolMain::UpdateInput(MSG * msg)
 	else { m_toolInputCommands.E = false; }
 	if (m_keyArray['Q']) { m_toolInputCommands.Q = true; }
 	else { m_toolInputCommands.Q = false; }
+
+	// 1 - change mode to OBJECT
+	if (m_keyArray['1']) { m_toolInputCommands.ONE = true; }
+	else { m_toolInputCommands.ONE = false; }
+
+	// 2 - change mode to LANDSCAPE
+	if (m_keyArray['2']) { m_toolInputCommands.TWO = true; }
+	else { m_toolInputCommands.TWO = false; }
 }

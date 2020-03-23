@@ -33,8 +33,8 @@
 
 #include <wrl/client.h>
 
-#include <d3d11_1.h>
-#include <DirectXMath.h>
+
+
 #include <DirectXColors.h>
 
 #include <algorithm>
@@ -57,10 +57,12 @@
 #include "Model.h"
 #include "Mouse.h"
 #include "PrimitiveBatch.h"
-#include "SimpleMath.h"
+
 #include "SpriteBatch.h"
 #include "SpriteFont.h"
 #include "VertexTypes.h"
+
+#include "Tools.h"
 
 namespace DX
 {
@@ -90,3 +92,8 @@ namespace DX
         }
     }
 }
+
+enum MODE {
+	OBJECT,
+	LANDSCAPE
+};

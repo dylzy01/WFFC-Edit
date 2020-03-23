@@ -8,7 +8,6 @@
 #include "InputCommands.h"
 #include <vector>
 
-
 class ToolMain
 {
 public: //methods
@@ -16,8 +15,8 @@ public: //methods
 	~ToolMain();
 
 	//onAction - These are the interface to MFC
-	///int		getCurrentSelectionID();											//returns the selection number of currently selected object so that It can be displayed.
-	std::vector<int>	getCurrentSelectionID();									//returns the selection numbers of currently selected objects so that It can be displayed.
+	std::vector<int>	getCurrentObjectSelectionID();								//returns the selection numbers of currently selected objects so that It can be displayed.
+	std::vector<CHUNK>	getCurrentChunkSelection();									//returns the currently selected chunk so it can be displayed
 	void				onActionInitialise(HWND handle, int width, int height);		//Passes through handle and hieght and width and initialises DirectX renderer and SQL LITE
 	void				onActionFocusCamera();
 	void				onActionLoad();												//load the current chunk
@@ -27,16 +26,17 @@ public: //methods
 	void	Tick(MSG *msg);
 	void	UpdateInput(MSG *msg);
 
+	MODE GetMode() { return m_mode; } //return current mode
+
 public:	//variables
 	std::vector<SceneObject>    m_sceneGraph;	//our scenegraph storing all the objects in the current chunk
 	ChunkObject					m_chunk;		//our landscape chunk
 	///int m_selectedObject;						//ID of current selection
-	std::vector<int> m_selectedObjects;			//IDs of current selelections
+	std::vector<int> m_selectedObjects;			//IDs of current OBJECT selections
+	std::vector<CHUNK> m_selectedChunks;		//IDs of current CHUNK selections
 
 private:	//methods
 	void	onContentAdded();
-
-
 		
 private:	//variables
 	HWND	m_toolHandle;		//Handle to the  window
@@ -45,6 +45,7 @@ private:	//variables
 	CRect	WindowRECT;		//Window area rectangle. 
 	char	m_keyArray[256];
 	sqlite3 *m_databaseConnection;	//sqldatabase handle
+	MODE	m_mode;	//mode controller
 
 	int m_width;		//dimensions passed to directX
 	int m_height;

@@ -4,6 +4,7 @@
 #include "afxwin.h"
 #include "SceneObject.h"
 #include <vector>
+#include "Tools.h"
 
 // SelectDialogue dialog
 
@@ -17,7 +18,8 @@ public:
 	virtual ~SelectDialogue();
 	///void SetObjectData(std::vector<SceneObject>* SceneGraph, int * Selection);	//passing in pointers to the data the class will operate on.
 	void SetObjectData(std::vector<SceneObject>* SceneGraph, std::vector<int> * Selection);	//passing in pointers to the data the class will operate on.
-	
+	void SetChunkData(std::vector<SceneObject>* SceneGraph, std::vector<CHUNK> * selection);
+
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_DIALOG1 };
@@ -30,8 +32,8 @@ protected:
 
 	std::vector<SceneObject> * m_sceneGraph;
 	///int * m_currentSelection;
-	std::vector<int> * m_currentSelection;
-	
+	std::vector<int> * m_currentObjectSelection;
+	std::vector<CHUNK> * m_currentChunkSelection;
 
 	DECLARE_MESSAGE_MAP()
 public:

@@ -10,7 +10,7 @@ public:
 
 	std::shared_ptr<DirectX::Model>						m_model;							//main Mesh
 	ID3D11ShaderResourceView *							m_texture_diffuse;					//diffuse texture
-	ID3D11ShaderResourceView *							m_texture_highlight;					//highlight texture
+	ID3D11ShaderResourceView *							m_texture_highlight;				//highlight texture
 
 
 	int m_ID;
@@ -27,5 +27,7 @@ public:
 	float	m_light_constant;
 	float	m_light_linear;
 	float	m_light_quadratic;
+
+	bool m_blend_textures;
 };
 

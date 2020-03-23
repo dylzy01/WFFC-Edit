@@ -69,14 +69,43 @@ int MFCMain::Run()
 		}
 		else
 		{	
-			std::vector<int> IDs = m_ToolSystem.getCurrentSelectionID();
+			// Update current mode
+			m_mode = m_ToolSystem.GetMode();
+
+			// Empty status string
 			std::wstring statusString = L"";
-			for (int i = 0; i < IDs.size(); ++i) 
-			{ 
-				if (i != 0) { statusString += L"," + std::to_wstring(IDs[i]); }
-				else { statusString += std::to_wstring(IDs[i]); }				
+
+			// Switch between current mode
+			switch (m_mode)
+			{
+			case MODE::OBJECT:
+			{
+				// Fill status string with selected object IDs
+				std::vector<int> IDs = m_ToolSystem.getCurrentObjectSelectionID();
+				for (int i = 0; i < IDs.size(); ++i)
+				{
+					if (i != 0) { statusString += L", " + std::to_wstring(IDs[i]); }
+					else { statusString += std::to_wstring(IDs[i]); }
+				}
 			}
-			m_ToolSystem.Tick(&msg);
+			break;
+			case MODE::LANDSCAPE:
+			{
+				// Fill status string with selected chunk row,column(s)
+				std::vector<CHUNK> chunks = m_ToolSystem.getCurrentChunkSelection();
+				for (int i = 0; i < chunks.size(); ++i)
+				{
+					if (i != 0) { statusString += L", (" + std::to_wstring(chunks[i].row) + L","
+							+ std::to_wstring(chunks[i].column) + L")";	}
+					else { statusString += L"(" + std::to_wstring(chunks[i].row) + L","
+							+ std::to_wstring(chunks[i].column) + L")"; }
+				}
+			}
+			break;
+			}
+
+			// Update tool system
+			m_ToolSystem.Tick(&msg);			
 
 			//send current object ID to status bar in The main frame
 			m_frame->m_wndStatusBar.SetPaneText(1, statusString.c_str(), 1);	
@@ -106,7 +135,21 @@ void MFCMain::MenuEditSelect()
 	m_ToolSelectDialogue.Create(IDD_DIALOG1);	//Start up modeless
 	m_ToolSelectDialogue.ShowWindow(SW_SHOW);	//show modeless
 	///m_ToolSelectDialogue.SetObjectData(&m_ToolSystem.m_sceneGraph, &m_ToolSystem.m_selectedObject);
-	m_ToolSelectDialogue.SetObjectData(&m_ToolSystem.m_sceneGraph, &m_ToolSystem.m_selectedObjects);
+		
+	// Switch between current mode
+	switch (m_mode)
+	{
+	case MODE::OBJECT:
+	{
+		m_ToolSelectDialogue.SetObjectData(&m_ToolSystem.m_sceneGraph, &m_ToolSystem.m_selectedObjects);
+	}
+	break;
+	case MODE::LANDSCAPE:
+	{
+		//set chunk data...
+	}
+	break;
+	}
 }
 
 void MFCMain::ToolBarButton1()

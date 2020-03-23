@@ -57,14 +57,24 @@ public:
 	void SaveDisplayChunk(ChunkObject *SceneChunk);	//saves geometry et al
 	void ClearDisplayList();
 
+	// Mode controllers
+	MODE GetMode() { return m_mode; }
+	void SetMode(MODE mode) { m_mode = mode; }
+
+	// Mouse picking
 	///int MousePicking();
-	std::vector<int> MousePicking();
+	std::vector<int> PickingObjects();
+	std::vector<CHUNK> PickingChunks();
+	CHUNK ChunkIntersection(DirectX::SimpleMath::Ray ray);
+	int TriangleIntersection(float *p, float *d, float *v0, float *v1, float *v2);
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
 #endif
 
 private:
+
+	void HandleInput();
 
 	void Update(DX::StepTimer const& timer);
 	void UpdateCamera(float deltaTime);
@@ -92,8 +102,12 @@ private:
 	bool m_grid;							//grid rendering on / off
 
 	//mouse picking
-	int m_selectedID = -1.f;
-	std::vector<int> m_selectedIDs;
+	std::vector<int> m_selectedObjectIDs;
+	std::vector<int> m_selectedLandscapeIDs;
+	std::vector<CHUNK> m_selectedChunks;
+
+	// Mode controller
+	MODE m_mode;
 
 	// Device resources.
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;

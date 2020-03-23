@@ -1,0 +1,5 @@
+IMPROVED CAMERA
+- Similar to Unreal Engine
+
+MOUSE PICKING
+- Can select more than one object

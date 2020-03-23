@@ -115,6 +115,9 @@ void Game::Tick(InputCommands *Input)
 // Updates the world.
 void Game::Update(DX::StepTimer const& timer)
 {
+	// Handle all input
+	HandleInput();
+	
 	// Custom camera
 	UpdateCamera(timer.GetElapsedSeconds());
 
@@ -144,6 +147,16 @@ void Game::Update(DX::StepTimer const& timer)
 #endif
 
 }
+
+void Game::HandleInput()
+{
+	// Change mode to OBJECT
+	if (m_inputCommands.ONE) { m_mode = MODE::OBJECT; }
+
+	// Change mode to LANDSCAPE
+	else if (m_inputCommands.TWO) { m_mode = MODE::LANDSCAPE; }
+}
+
 void Game::UpdateCamera(float deltaTime)
 {
 	DirectX::SimpleMath::Vector2 centre;
@@ -190,31 +203,7 @@ void Game::Render()
 		const XMVECTORF32 yaxis = { 0.f, 0.f, 512.f };
 		DrawGrid(xaxis, yaxis, g_XMZero, 512, 512, Colors::Gray);
 	}
-	//CAMERA POSITION ON HUD
-	m_sprites->Begin();
-
-	WCHAR   Buffer[256];
-
-	// Camera
-	std::wstring pos = L"Pos X: " + std::to_wstring(m_camera->GetPosition().x)
-		+ L" Pos Y: " + std::to_wstring(m_camera->GetPosition().y)
-		+ L" Pos Z: " + std::to_wstring(m_camera->GetPosition().z);
-	std::wstring rot = L"Rot X: " + std::to_wstring(m_camera->GetLookAt().x)
-		+ L" Rot Y: " + std::to_wstring(m_camera->GetLookAt().y)
-		+ L" Rot Z: " + std::to_wstring(m_camera->GetLookAt().z);
-	m_font->DrawString(m_sprites.get(), pos.c_str() , XMFLOAT2(100, 10), Colors::Yellow);
-	m_font->DrawString(m_sprites.get(), rot.c_str() , XMFLOAT2(100, 40), Colors::Yellow);
-
-	// Mouse
-	POINT mousePos;
-	GetCursorPos(&mousePos);
-	ScreenToClient(m_window, &mousePos);
-	std::wstring mouse = L"Mouse X: " + std::to_wstring(mousePos.x)
-		+ L" Mouse Y: " + std::to_wstring(mousePos.y);
-	m_font->DrawString(m_sprites.get(), mouse.c_str() , XMFLOAT2(100, 70), Colors::Yellow);
 	
-	m_sprites->End();
-
 	//RENDER OBJECTS FROM SCENEGRAPH
 	int numRenderObjects = m_displayList.size();
 	for (int i = 0; i < numRenderObjects; i++)
@@ -234,16 +223,52 @@ void Game::Render()
 
 		m_deviceResources->PIXEndEvent();
 	}
-    m_deviceResources->PIXEndEvent();
+	m_deviceResources->PIXEndEvent();
 
 	//RENDER TERRAIN
 	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
 	context->OMSetDepthStencilState(m_states->DepthDefault(),0);
 	context->RSSetState(m_states->CullNone());
-//	context->RSSetState(m_states->Wireframe());		//uncomment for wireframe
+	///context->RSSetState(m_states->Wireframe());		//uncomment for wireframe
 
 	//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
 	m_displayChunk.RenderBatch(m_deviceResources);
+
+	//CAMERA POSITION ON HUD
+	m_sprites->Begin();
+
+	WCHAR   Buffer[256];
+
+	// Camera
+	std::wstring pos = L"Pos X: " + std::to_wstring(m_camera->GetPosition().x)
+		+ L" Pos Y: " + std::to_wstring(m_camera->GetPosition().y)
+		+ L" Pos Z: " + std::to_wstring(m_camera->GetPosition().z);
+	std::wstring rot = L"Rot X: " + std::to_wstring(m_camera->GetLookAt().x)
+		+ L" Rot Y: " + std::to_wstring(m_camera->GetLookAt().y)
+		+ L" Rot Z: " + std::to_wstring(m_camera->GetLookAt().z);
+	m_font->DrawString(m_sprites.get(), pos.c_str(), XMFLOAT2(100, 10), Colors::Yellow);
+	m_font->DrawString(m_sprites.get(), rot.c_str(), XMFLOAT2(100, 40), Colors::Yellow);
+
+	// Mouse
+	POINT mousePos;
+	GetCursorPos(&mousePos);
+	ScreenToClient(m_window, &mousePos);
+	std::wstring mouse = L"Mouse X: " + std::to_wstring(mousePos.x)
+		+ L" Mouse Y: " + std::to_wstring(mousePos.y);
+	m_font->DrawString(m_sprites.get(), mouse.c_str(), XMFLOAT2(100, 70), Colors::Yellow);
+
+	// Current mode
+	std::wstring mode;
+	// Switch between modes
+	switch (m_mode)
+	{
+	case MODE::OBJECT: mode = L"MODE: OBJECT"; break;
+	case MODE::LANDSCAPE: mode = L"MODE: LANDSCAPE"; break;
+	}
+	m_font->DrawString(m_sprites.get(), mode.c_str(), XMFLOAT2(100, 120), Colors::Yellow);
+
+	m_sprites->End();
+
 
     m_deviceResources->Present();
 }
@@ -344,10 +369,7 @@ void Game::OnResuming()
 }
 
 void Game::OnWindowSizeChanged(int width, int height)
-{
-	/*m_screenCentre.x = width / 2;
-	m_screenCentre.y = height / 2;*/
-	
+{	
 	if (!m_deviceResources->WindowSizeChanged(width, height))
         return;
 
@@ -452,8 +474,9 @@ void Game::SaveDisplayChunk(ChunkObject * SceneChunk)
 }
 
 ///int Game::MousePicking()
-std::vector<int> Game::MousePicking()
+std::vector<int> Game::PickingObjects()
 {
+	// Controllers
 	int selectedID = -1;
 	float pickedDistance = 0.f, storedDistance = 1.f;
 	bool firstPick = true;
@@ -467,12 +490,12 @@ std::vector<int> Game::MousePicking()
 	for (int i = 0; i < m_displayList.size(); i++)
 	{
 		// Get object scale factor & translation
-
 		const XMVECTORF32 scale = { m_displayList[i].m_scale.x, m_displayList[i].m_scale.y, m_displayList[i].m_scale.z };
 		const XMVECTORF32 translate = { m_displayList[i].m_position.x, m_displayList[i].m_position.y, m_displayList[i].m_position.z };
 
 		// Convert euler angles into a quaternion for object rotation
-		XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_displayList[i].m_orientation.y * PI / 180, m_displayList[i].m_orientation.x * PI / 180, m_displayList[i].m_orientation.z * PI / 180);
+		XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_displayList[i].m_orientation.y * PI / 180, 
+			m_displayList[i].m_orientation.x * PI / 180, m_displayList[i].m_orientation.z * PI / 180);
 
 		// Set selected object matrix in the world based on scale, rotation & translation
 		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
@@ -493,7 +516,7 @@ std::vector<int> Game::MousePicking()
 		{
 			// Check for ray intersection
 			if (m_displayList[i].m_model.get()->meshes[j]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance))
-			{
+			{				
 				// Update ID with the first intersected object
 				if (firstPick)
 				{
@@ -532,21 +555,222 @@ std::vector<int> Game::MousePicking()
 	//}
 
 	// If current selected ID is already in the vector
-	if (std::count(m_selectedIDs.begin(), m_selectedIDs.end(), selectedID))
+	if (std::count(m_selectedObjectIDs.begin(), m_selectedObjectIDs.end(), selectedID))
 	{
 		// Remove from vector storage
-		m_selectedIDs.erase(std::remove(m_selectedIDs.begin(), m_selectedIDs.end(), selectedID), m_selectedIDs.end());
+		m_selectedObjectIDs.erase(std::remove(m_selectedObjectIDs.begin(), m_selectedObjectIDs.end(), selectedID), m_selectedObjectIDs.end());
 	}
 	// Else, if current selected ID is new
 	else
 	{
 		// Add to vector storage
-		m_selectedIDs.push_back(selectedID);
+		m_selectedObjectIDs.push_back(selectedID);
 	}
 	
-	// Return hit if successful
+	// Return objects
 	///return selectedID;
-	return m_selectedIDs;
+	return m_selectedObjectIDs;
+}
+
+std::vector<CHUNK> Game::PickingChunks()
+{
+	// Controllers
+	bool alreadyChosen = false;
+	/*int selectedID = -1;
+	float pickedDistance = 0.f, storedDistance = 1.f;
+	bool firstPick = true;*/
+
+	// Setup mouse position & direction
+	/*Vector3 position = m_inputCommands.mousePos;
+	Vector3 distance = Vector3(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 1.f);
+	Vector3 direction = distance - position;*/
+
+	// Setup ray trace origin
+	Vector3 origin = XMVector3Unproject(Vector3(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 0.f),
+		0,
+		0,
+		m_deviceResources->GetScreenViewport().Width,
+		m_deviceResources->GetScreenViewport().Height,
+		0,
+		1,
+		m_projection,
+		m_view,
+		m_world);
+
+	// Setup ray trace destination
+	Vector3 destination = XMVector3Unproject(Vector3(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 1.f),
+		0,
+		0,
+		m_deviceResources->GetScreenViewport().Width,
+		m_deviceResources->GetScreenViewport().Height,
+		0,
+		1,
+		m_projection,
+		m_view,
+		m_world);
+
+	// Setup ray trace direction
+	Vector3 direction = destination - origin;
+	direction.Normalize();
+
+	// Calculate chunk intersection
+	CHUNK chunk = ChunkIntersection(Ray(origin, direction));
+
+	// If ray has intersected the chunk
+	if (chunk.intersect)
+	{
+		// Loop through currently selected chunks
+		for (int i = 0; i < m_selectedChunks.size(); ++i)
+		{
+			// If selected chunk ID matches current chunk ID
+			if (chunk.ID == m_selectedChunks[i].ID)
+			{
+				// Set as already chosen
+				alreadyChosen = true;
+
+				// Remove from storage
+				m_selectedChunks.erase(m_selectedChunks.begin() + i);
+			}
+		}
+
+		// If selected chunk isn't already chosen
+		if (!alreadyChosen)
+		{
+			// Add to vector storage
+			m_selectedChunks.push_back(chunk);
+		}
+	}
+
+	// Return chunks
+	return m_selectedChunks;	
+}
+
+CHUNK Game::ChunkIntersection(DirectX::SimpleMath::Ray ray)
+{
+	// Local chunk
+	CHUNK chunk;
+	chunk.intersect = false;
+	
+	// Define controllers
+	float dist = 10000;
+	Vector3 one = ray.position;
+	Vector3 two = ray.position + (ray.direction * dist);
+
+	// Loop through terrain row size
+	for (size_t i = 0; i < TERRAINRESOLUTION - 1; ++i)
+	{
+		// Loop through terrain column size
+		for (size_t j = 0; j < TERRAINRESOLUTION - 1; ++j)
+		{
+			// Setup local vectors of current geometry corner positions
+			Vector3 bottomLeft	= m_displayChunk.GetTerrainGeometry(i, j).position;
+			Vector3 bottomRight = m_displayChunk.GetTerrainGeometry(i, j + 1).position;
+			Vector3 topRight	= m_displayChunk.GetTerrainGeometry(i + 1, j + 1).position;
+			Vector3 topLeft		= m_displayChunk.GetTerrainGeometry(i + 1, j).position;
+
+			// If ray intersects with either triangle in current geometry
+			if (ray.Intersects(bottomLeft, bottomRight, topRight, dist) || ray.Intersects(bottomLeft, topLeft, topRight, dist))
+			{
+				// If current geometry is within ray trace bounds
+				if (m_displayChunk.GetTerrainGeometry(i, j).position.y < one.y && m_displayChunk.GetTerrainGeometry(i, j).position.y > two.y)
+				{
+					// Setup values to return
+					chunk.row = i;
+					chunk.column = j;
+					chunk.intersect = true;
+					chunk.position = m_displayChunk.GetTerrainGeometry(i, j).position;
+					chunk.ID = m_displayChunk.GetTerrainGeometry(i, j).ID;
+
+					// Return values from intersection
+					return chunk;
+				}
+			}
+		}
+	}
+
+	// Return empty values if no intersection
+	return chunk;
+}
+
+int Game::TriangleIntersection(float * p, float * d, float * v0, float * v1, float * v2)
+{
+	// https://www.lighthouse3d.com/tutorials/maths/ray-triangle-intersection/
+
+	// Define macros
+
+	// a = b - c
+#define vector(a,b,c) \
+(a)[0] = (b)[0] - (c)[0]; \
+(a)[1] = (b)[1] - (c)[1]; \
+(a)[2] = (b)[2] - (c)[2];
+
+//#define dotProduct(v, q) \
+//((v)[0] * (q)[0]) + \
+//(v)[1] * (q)[1] + \
+//(v)[2] * (q)[2]);
+//
+//#define crossProduct(a, b, c) \
+//(a)[0] = (b)[1] * (c)[2] - (c)[1] * (b)[2]; \
+//(a)[1] = (b)[2] * (c)[0] - (c)[2] * (b)[0]; \
+//(a)[2] = (b)[0] * (c)[1] - (c)[0] * (b)[1];
+
+	// Declare variables
+	float e1[2], e2[2], h[2], s[2], q[2];
+	float a, f, u, v, t;
+
+	// Setup first vector
+	e1[0] = v1[0] - v0[0];
+	e1[1] = v1[1] - v0[1];
+	e1[2] = v1[2] - v0[2];
+	XMVECTOR ONE = { e1[0], e1[2], e1[3] };
+
+	// Setup second vector
+	e2[0] = v2[0] - v0[0];
+	e2[1] = v2[1] - v0[1];
+	e2[2] = v2[2] - v0[2];
+	XMVECTOR TWO = { e1[0], e1[2], e1[3] };
+
+	// Cross product h = (d, e2)
+	h[0] = (d[1] * e2[2]) - (d[2] * e2[1]);
+	h[1] = (d[2] * e2[0]) - (d[0] * e2[2]);
+	h[2] = (d[0] * e2[1]) - (d[1] * e2[0]);
+	
+	// Dot product a = (e1, h)
+	a = (e1[0] * h[0]) + (e1[1] * h[1]) + (e1[2] * h[2]);
+
+	// If equals 0, return false
+	if (a > -0.00001 && a < 0.00001) { return false; }
+
+	// Multiplication of dot product l = (s, h)
+	f = 1 / a;
+	vector(s, p, v0);
+	float l = (s[0] * h[0]) + (s[1] * h[1]) + (s[2] * h[2]);
+	u = f * l;
+
+	// If u does not equal a value between 0 & 1, return false
+	if (u < 0.0 || u > 1.0) { return false; }
+
+	// Cross product q = (s, e1)
+	q[0] = (s[1] * e1[2]) - (s[2] * e1[1]);
+	q[1] = (s[2] * e1[0]) - (s[0] * e1[2]);
+	q[2] = (s[0] * e1[1]) - (s[1] * e1[0]);
+	
+	// Multiplication of dot product m = (d, q)
+	float m = (d[0] * q[0]) + (d[1] * q[1]) + (d[2] * q[2]);
+	v = f * m;
+
+	// If v & u together does not equal a value between 0 & 1, return false
+	if (v < 0.0 || u + v > 1.0) { return false; }
+
+	// Multiplication of dot product n = (e2, q) to discover intersection point of line
+	float n = (e2[0] * q[0]) + (e2[1] * q[1]) + (e2[2] * q[2]);
+	t = f * n;
+	
+	// Ray intersection
+	if (t > 0.00001) { return true; }
+
+	// Line intersection, not ray
+	else { return false; }
 }
 
 #ifdef DXTK_AUDIO

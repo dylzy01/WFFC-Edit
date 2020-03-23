@@ -23,6 +23,8 @@ DisplayObject::DisplayObject()
 	m_light_constant = 0.0f;
 	m_light_linear = 0.0f;
 	m_light_quadratic = 0.0f;
+
+	m_blend_textures = false;
 }
 
 
