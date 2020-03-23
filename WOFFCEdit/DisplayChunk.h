@@ -24,7 +24,11 @@ public:
 	ID3D11ShaderResourceView *					m_texture_diffuse;				//diffuse texture
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>   m_terrainInputLayout;
 
-	DirectX::VertexPositionNormalTexture GetTerrainGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
+	DirectX::VertexPositionNormalTexture GetGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
+	DirectX::VertexPositionNormalTexture GetGeometry(int ID);
+	void UpdateGeometryHeight(int row, int column, bool upwards);
+
+	void SetSelected(bool selected, int ID);
 
 private:
 	DirectX::VertexPositionNormalTexture m_terrainGeometry[TERRAINRESOLUTION][TERRAINRESOLUTION];

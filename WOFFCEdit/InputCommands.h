@@ -15,5 +15,8 @@ struct InputCommands
 	bool escape;
 	bool ONE;
 	bool TWO;
+	bool CTRL, SHIFT;
+	bool ZERO;
 	DirectX::SimpleMath::Vector2 mousePos;
+	DirectX::SimpleMath::Vector2 mousePosPrevious;
 };

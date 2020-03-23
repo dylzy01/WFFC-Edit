@@ -183,7 +183,7 @@ void ToolMain::onActionLoad()
 	m_chunk.tex_splat_4_tiling = sqlite3_column_int(pResultsChunk, 18);
 
 
-	//Process REsults into renderable
+	//Process results into renderable
 	m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
 	//build the renderable chunk 
 	m_d3dRenderer.BuildDisplayChunk(&m_chunk);
@@ -286,8 +286,8 @@ void ToolMain::onActionSaveTerrain()
 
 void ToolMain::Tick(MSG *msg)
 {
-	//do we have a selection
-	//do we have a mode
+	//do we have a selection						//done
+	//do we have a mode								//done
 	//are we clicking / dragging /releasing
 	//has something changed
 		//update Scenegraph
@@ -298,7 +298,9 @@ void ToolMain::Tick(MSG *msg)
 	m_mode = m_d3dRenderer.GetMode();
 
 	// If left mouse button is pressed & can pick
-	if (m_toolInputCommands.mouseLeft && m_toolInputCommands.pickOnce)
+	// and CTRL & SHIFT aren't being pressed
+	if (m_toolInputCommands.mouseLeft && m_toolInputCommands.pickOnce
+		&& !m_toolInputCommands.CTRL && !m_toolInputCommands.SHIFT)
 	{
 		// Switch between modes
 		switch(m_mode)
@@ -359,8 +361,14 @@ void ToolMain::UpdateInput(MSG * msg)
 	case WM_RBUTTONUP:
 		m_toolInputCommands.mouseRight = false;
 		break;
+
+	/*case MK_SHIFT:
+		m_toolInputCommands.SHIFT = true;
+		break;*/
 	}
+
 	//here we update all the actual app functionality that we want.  This information will either be used int toolmain, or sent down to the renderer (Camera movement etc
+	
 	//WASD movement
 	if (m_keyArray['W']) { m_toolInputCommands.W = true; }
 	else { m_toolInputCommands.W = false; }
@@ -379,6 +387,10 @@ void ToolMain::UpdateInput(MSG * msg)
 	if (m_keyArray['Q']) { m_toolInputCommands.Q = true; }
 	else { m_toolInputCommands.Q = false; }
 
+	// 0 - switch to wireframe
+	if (m_keyArray['0']) { m_toolInputCommands.ZERO = true; }
+	else { m_toolInputCommands.ZERO = false; }
+
 	// 1 - change mode to OBJECT
 	if (m_keyArray['1']) { m_toolInputCommands.ONE = true; }
 	else { m_toolInputCommands.ONE = false; }
@@ -386,4 +398,12 @@ void ToolMain::UpdateInput(MSG * msg)
 	// 2 - change mode to LANDSCAPE
 	if (m_keyArray['2']) { m_toolInputCommands.TWO = true; }
 	else { m_toolInputCommands.TWO = false; }
+
+	// CTRL - Extrude/intrude terrain
+	if (m_keyArray['3']) { m_toolInputCommands.CTRL = true; }
+	else { m_toolInputCommands.CTRL = false; }
+
+	// SHIFT - Flatten terrain
+	if (m_keyArray['4']) { m_toolInputCommands.SHIFT = true; }
+	else { m_toolInputCommands.SHIFT = false; }
 }

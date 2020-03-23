@@ -3,3 +3,4 @@ IMPROVED CAMERA
 
 MOUSE PICKING
 - Can select more than one object
+- Can select terrain

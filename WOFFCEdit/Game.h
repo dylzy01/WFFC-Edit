@@ -62,7 +62,6 @@ public:
 	void SetMode(MODE mode) { m_mode = mode; }
 
 	// Mouse picking
-	///int MousePicking();
 	std::vector<int> PickingObjects();
 	std::vector<CHUNK> PickingChunks();
 	CHUNK ChunkIntersection(DirectX::SimpleMath::Ray ray);
@@ -100,6 +99,7 @@ private:
 
 	//control variables
 	bool m_grid;							//grid rendering on / off
+	bool m_wireframe = false;				//wireframe on/off
 
 	//mouse picking
 	std::vector<int> m_selectedObjectIDs;

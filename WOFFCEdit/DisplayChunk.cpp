@@ -132,9 +132,7 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 			m_terrainInputLayout.GetAddressOf())
 		);
 
-	m_batch = std::make_unique<PrimitiveBatch<VertexPositionNormalTexture>>(devicecontext);
-
-	
+	m_batch = std::make_unique<PrimitiveBatch<VertexPositionNormalTexture>>(devicecontext);	
 }
 
 void DisplayChunk::SaveHeightMap()
@@ -179,6 +177,85 @@ void DisplayChunk::UpdateTerrain()
 void DisplayChunk::GenerateHeightmap()
 {
 	//insert how YOU want to update the heigtmap here! :D
+
+
+}
+
+DirectX::VertexPositionNormalTexture DisplayChunk::GetGeometry(int ID)
+{
+	// Loop through terrain geometry
+	for (int i = 0; i < (TERRAINRESOLUTION - 1); i++)
+	{
+		for (int j = 0; j < (TERRAINRESOLUTION - 1); j++)
+		{
+			// If current terrain geometry ID matches parameter ID
+			if (m_terrainGeometry[i][j].ID == ID)
+			{
+				// Return current terrain geometry
+				return m_terrainGeometry[i][j];
+			}
+		}
+	}
+}
+
+void DisplayChunk::UpdateGeometryHeight(int row, int column, bool upwards)
+{
+	// Loop through terrain geometry
+	/*for (int i = 0; i < (TERRAINRESOLUTION - 1); i++)
+	{
+		for (int j = 0; j < (TERRAINRESOLUTION - 1); j++)
+		{*/
+			// If current terrain geometry ID matches parameter ID
+			///if (m_terrainGeometry[i][j].ID == ID)
+			{
+				// If geometry should be moved upwards
+				if (upwards)
+				{
+					// Apply new position
+					m_terrainGeometry[row][column].position.x += m_terrainGeometry[row][column].normal.x / 2;
+					m_terrainGeometry[row][column].position.y += m_terrainGeometry[row][column].normal.y / 2;
+					m_terrainGeometry[row][column].position.z += m_terrainGeometry[row][column].normal.z / 2;
+				}
+
+				// Else, if geometry should be moved downwards
+				else
+				{
+					// Apply new position
+					m_terrainGeometry[row][column].position.x -= m_terrainGeometry[row][column].normal.x / 2;
+					m_terrainGeometry[row][column].position.y -= m_terrainGeometry[row][column].normal.y / 2;
+					m_terrainGeometry[row][column].position.z -= m_terrainGeometry[row][column].normal.z / 2;
+				}								
+			}
+		//}
+	//}
+}
+
+void DisplayChunk::SetSelected(bool selected, int ID)
+{
+	// Loop through terrain geometry
+	for (int i = 0; i < (TERRAINRESOLUTION - 1); i++)
+	{
+		for (int j = 0; j < (TERRAINRESOLUTION - 1); j++)
+		{
+			// If parameter ID matches current terrain ID
+			if (ID == m_terrainGeometry[i][j].ID) 
+			{
+				// If terrain is selected
+				if (selected)
+				{
+					//... highlight texture
+					///m_terrainGeometry[i][j].
+				}
+				// Else, if terrain isn't selected
+				else
+				{
+					//... un-highlight texture
+				}
+			}
+		}
+	}
+
+	///GenerateHeightmap();
 }
 
 void DisplayChunk::CalculateTerrainNormals()

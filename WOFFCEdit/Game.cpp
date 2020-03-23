@@ -155,6 +155,50 @@ void Game::HandleInput()
 
 	// Change mode to LANDSCAPE
 	else if (m_inputCommands.TWO) { m_mode = MODE::LANDSCAPE; }
+
+	// Switch wireframe on/off
+	if (m_inputCommands.ZERO)
+	{
+		if (m_wireframe) { m_wireframe = false; }
+		else { m_wireframe = true; }
+	}
+
+	// Switch between modes
+	switch (m_mode)
+	{
+	case MODE::OBJECT:
+	{
+
+	}
+	break;
+	case MODE::LANDSCAPE:
+	{
+		// If mouse is being pressed
+		if (m_inputCommands.mouseLeft)
+		{
+			// If CTRL is being pressed
+			if (m_inputCommands.CTRL)
+			{
+				// Loop through selected geometry
+				for (int i = 0; i < m_selectedChunks.size(); ++i)
+				{
+					m_displayChunk.UpdateGeometryHeight(m_selectedChunks[i].row, m_selectedChunks[i].column, true);
+				}
+			}
+
+			// If SHIFT is being pressed
+			else if (m_inputCommands.SHIFT)
+			{
+				// Loop through selected geometry
+				for (int i = 0; i < m_selectedChunks.size(); ++i)
+				{
+					m_displayChunk.UpdateGeometryHeight(m_selectedChunks[i].row, m_selectedChunks[i].column, false);
+				}
+			}
+		}			
+	}
+	break;
+	}
 }
 
 void Game::UpdateCamera(float deltaTime)
@@ -229,7 +273,7 @@ void Game::Render()
 	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
 	context->OMSetDepthStencilState(m_states->DepthDefault(),0);
 	context->RSSetState(m_states->CullNone());
-	///context->RSSetState(m_states->Wireframe());		//uncomment for wireframe
+	if (m_wireframe) { context->RSSetState(m_states->Wireframe()); }
 
 	//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
 	m_displayChunk.RenderBatch(m_deviceResources);
@@ -473,7 +517,6 @@ void Game::SaveDisplayChunk(ChunkObject * SceneChunk)
 	m_displayChunk.SaveHeightMap();			//save heightmap to file.
 }
 
-///int Game::MousePicking()
 std::vector<int> Game::PickingObjects()
 {
 	// Controllers
@@ -541,19 +584,6 @@ std::vector<int> Game::PickingObjects()
 		if (selectedID != -1) { break; }
 	}
 
-	// If current selected ID matches stored selected ID
-	//if (selectedID == m_selectedID) 
-	//{ 
-	//	// Reset current selected ID, deselect
-	//	selectedID = -1; 
-	//}
-	//// Else, if current selected ID is new
-	//else 
-	//{ 
-	//	// Store new selected ID
-	//	m_selectedID = selectedID; 
-	//}
-
 	// If current selected ID is already in the vector
 	if (std::count(m_selectedObjectIDs.begin(), m_selectedObjectIDs.end(), selectedID))
 	{
@@ -568,7 +598,6 @@ std::vector<int> Game::PickingObjects()
 	}
 	
 	// Return objects
-	///return selectedID;
 	return m_selectedObjectIDs;
 }
 
@@ -579,11 +608,6 @@ std::vector<CHUNK> Game::PickingChunks()
 	/*int selectedID = -1;
 	float pickedDistance = 0.f, storedDistance = 1.f;
 	bool firstPick = true;*/
-
-	// Setup mouse position & direction
-	/*Vector3 position = m_inputCommands.mousePos;
-	Vector3 distance = Vector3(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 1.f);
-	Vector3 direction = distance - position;*/
 
 	// Setup ray trace origin
 	Vector3 origin = XMVector3Unproject(Vector3(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 0.f),
@@ -630,6 +654,20 @@ std::vector<CHUNK> Game::PickingChunks()
 
 				// Remove from storage
 				m_selectedChunks.erase(m_selectedChunks.begin() + i);
+
+				// Loop through terrain geometry
+				for (int i = 0; i < (TERRAINRESOLUTION - 1); i++)
+				{
+					for (int j = 0; j < (TERRAINRESOLUTION - 1); j++)
+					{
+						// If selected chunk ID matches geometry ID
+						if (chunk.ID == m_displayChunk.GetGeometry(i, j).ID)
+						{
+							// Deselect geometry
+							m_displayChunk.SetSelected(false, m_displayChunk.GetGeometry(i, j).ID);
+						}
+					}
+				}
 			}
 		}
 
@@ -663,23 +701,26 @@ CHUNK Game::ChunkIntersection(DirectX::SimpleMath::Ray ray)
 		for (size_t j = 0; j < TERRAINRESOLUTION - 1; ++j)
 		{
 			// Setup local vectors of current geometry corner positions
-			Vector3 bottomLeft	= m_displayChunk.GetTerrainGeometry(i, j).position;
-			Vector3 bottomRight = m_displayChunk.GetTerrainGeometry(i, j + 1).position;
-			Vector3 topRight	= m_displayChunk.GetTerrainGeometry(i + 1, j + 1).position;
-			Vector3 topLeft		= m_displayChunk.GetTerrainGeometry(i + 1, j).position;
+			Vector3 bottomLeft	= m_displayChunk.GetGeometry(i, j).position;
+			Vector3 bottomRight = m_displayChunk.GetGeometry(i, j + 1).position;
+			Vector3 topRight	= m_displayChunk.GetGeometry(i + 1, j + 1).position;
+			Vector3 topLeft		= m_displayChunk.GetGeometry(i + 1, j).position;
 
 			// If ray intersects with either triangle in current geometry
 			if (ray.Intersects(bottomLeft, bottomRight, topRight, dist) || ray.Intersects(bottomLeft, topLeft, topRight, dist))
 			{
 				// If current geometry is within ray trace bounds
-				if (m_displayChunk.GetTerrainGeometry(i, j).position.y < one.y && m_displayChunk.GetTerrainGeometry(i, j).position.y > two.y)
+				if (m_displayChunk.GetGeometry(i, j).position.y < one.y && m_displayChunk.GetGeometry(i, j).position.y > two.y)
 				{
 					// Setup values to return
 					chunk.row = i;
 					chunk.column = j;
 					chunk.intersect = true;
-					chunk.position = m_displayChunk.GetTerrainGeometry(i, j).position;
-					chunk.ID = m_displayChunk.GetTerrainGeometry(i, j).ID;
+					chunk.position = m_displayChunk.GetGeometry(i, j).position;
+					chunk.ID = m_displayChunk.GetGeometry(i, j).ID;
+
+					// Set geometry as selected
+					m_displayChunk.SetSelected(true, m_displayChunk.GetGeometry(i, j).ID);
 
 					// Return values from intersection
 					return chunk;
