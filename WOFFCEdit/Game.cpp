@@ -501,20 +501,25 @@ int Game::MousePicking()
 					firstPick = false;
 					storedDistance = pickedDistance;
 					selectedID = i;
+					break;
 				}
 				// Update ID if a closer object has been intersected
 				else if (pickedDistance < storedDistance)
 				{
 					storedDistance = pickedDistance;
 					selectedID = i;
+					break;
 				}
 			}
 		}
+
+		// Break loop if an object has been selected
+		if (selectedID != -1) { break; }
 	}
 
 	// Store selected ID & allow deselection
-	/*if (selectedID == m_selectedID) { selectedID = -1; }
-	else { m_selectedID = selectedID; }*/
+	if (selectedID == m_selectedID) { selectedID = -1; }
+	else { m_selectedID = selectedID; }
 	
 	// Return hit if successful
 	return selectedID;

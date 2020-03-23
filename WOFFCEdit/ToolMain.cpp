@@ -289,10 +289,11 @@ void ToolMain::Tick(MSG *msg)
 		//add to scenegraph
 		//resend scenegraph to Direct X renderer
 
-	if (m_toolInputCommands.mouseLeft)
+	if (m_toolInputCommands.mouseLeft && m_toolInputCommands.pickOnce)
 	{
 		m_selectedObject = m_d3dRenderer.MousePicking();
 		m_toolInputCommands.mouseLeft = true;
+		m_toolInputCommands.pickOnce = false;
 	}
 
 	//Renderer Update Call
@@ -321,10 +322,12 @@ void ToolMain::UpdateInput(MSG * msg)
 
 	case WM_LBUTTONDOWN:	
 		m_toolInputCommands.mouseLeft = true;
+		m_toolInputCommands.pickOnce = true;
 		break;
 
 	case WM_LBUTTONUP:
 		m_toolInputCommands.mouseLeft = false;
+		m_toolInputCommands.pickOnce = false;
 		break;
 
 	case WM_RBUTTONDOWN:

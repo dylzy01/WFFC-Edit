@@ -11,7 +11,7 @@ struct InputCommands
 	bool rotRight;
 	bool rotLeft;
 	bool mouseLeft;
-	bool mouseRight;
+	bool mouseRight; bool pickOnce;
 	bool escape;
 	DirectX::SimpleMath::Vector2 mousePos;
 };
