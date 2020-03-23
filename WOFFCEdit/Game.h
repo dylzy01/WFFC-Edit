@@ -14,9 +14,11 @@
 ///#include <vector>
 #include "Camera.h"
 
+#include <vector>
+#include <algorithm>
+
 #define PI 3.1415
 #define THETA (PI * PI)
-
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -49,13 +51,14 @@ public:
 	void OnResuming();
 	void OnWindowSizeChanged(int width, int height);
 
-	//tool specific
+	// Tool specific
 	void BuildDisplayList(std::vector<SceneObject> * SceneGraph); //note vector passed by reference 
 	void BuildDisplayChunk(ChunkObject *SceneChunk);
 	void SaveDisplayChunk(ChunkObject *SceneChunk);	//saves geometry et al
 	void ClearDisplayList();
 
-	int MousePicking();
+	///int MousePicking();
+	std::vector<int> MousePicking();
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
@@ -90,6 +93,7 @@ private:
 
 	//mouse picking
 	int m_selectedID = -1.f;
+	std::vector<int> m_selectedIDs;
 
 	// Device resources.
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;

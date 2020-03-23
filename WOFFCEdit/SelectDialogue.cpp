@@ -32,7 +32,8 @@ SelectDialogue::~SelectDialogue()
 }
 
 ///pass through pointers to the data in the tool we want to manipulate
-void SelectDialogue::SetObjectData(std::vector<SceneObject>* SceneGraph, int * selection)
+///void SelectDialogue::SetObjectData(std::vector<SceneObject>* SceneGraph, int * selection)
+void SelectDialogue::SetObjectData(std::vector<SceneObject>* SceneGraph, std::vector<int> * selection)
 {
 	m_sceneGraph = SceneGraph;
 	m_currentSelection = selection;
@@ -56,18 +57,24 @@ void SelectDialogue::DoDataExchange(CDataExchange* pDX)
 
 void SelectDialogue::End()
 {
-	DestroyWindow();	//destory the window properly.  INcluding the links and pointers created.  THis is so the dialogue can start again. 
+	DestroyWindow();	//destroy the window properly.  Including the links and pointers created.  This is so the dialogue can start again. 
 }
 
 void SelectDialogue::Select()
 {
 	int index = m_listBox.GetCurSel();
 	CString currentSelectionValue;
-	
+
 	m_listBox.GetText(index, currentSelectionValue);
 
-	*m_currentSelection = _ttoi(currentSelectionValue);
-
+	///*m_currentSelection = _ttoi(currentSelectionValue);
+	for (int i = 0; i < m_currentSelection->size(); ++i)
+	{
+		for (int j = 0; j < m_currentSelection[i].size(); ++i)
+		{
+			m_currentSelection[i][j] = _ttoi(currentSelectionValue);
+		}		
+	}
 }
 
 BOOL SelectDialogue::OnInitDialog()

@@ -9,7 +9,7 @@ ToolMain::ToolMain()
 {
 
 	m_currentChunk = 0;		//default value
-	m_selectedObject = 0;	//initial selection ID
+	///m_selectedObject = 0;	//initial selection ID
 	m_sceneGraph.clear();	//clear the vector for the scenegraph
 	m_databaseConnection = NULL;
 
@@ -31,9 +31,11 @@ ToolMain::~ToolMain()
 }
 
 
-int ToolMain::getCurrentSelectionID()
+///int ToolMain::getCurrentSelectionID()
+std::vector<int> ToolMain::getCurrentSelectionID()
 {
-	return m_selectedObject;
+	///return m_selectedObject;
+	return m_selectedObjects;
 }
 
 void ToolMain::onActionInitialise(HWND handle, int width, int height)
@@ -291,7 +293,8 @@ void ToolMain::Tick(MSG *msg)
 
 	if (m_toolInputCommands.mouseLeft && m_toolInputCommands.pickOnce)
 	{
-		m_selectedObject = m_d3dRenderer.MousePicking();
+		///m_selectedObject = m_d3dRenderer.MousePicking();
+		m_selectedObjects = m_d3dRenderer.MousePicking();
 		m_toolInputCommands.mouseLeft = true;
 		m_toolInputCommands.pickOnce = false;
 	}

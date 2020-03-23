@@ -194,9 +194,7 @@ void Game::Render()
 	m_sprites->Begin();
 
 	WCHAR   Buffer[256];
-	/*std::wstring var = L"Cam X: " + std::to_wstring(m_camera->GetPosition().x) 
-		+ L" Cam Y: " + std::to_wstring(m_camera->GetPosition().y) + L" Cam Z: " 
-		+ std::to_wstring(m_camera->GetPosition().z);*/
+
 	// Camera
 	std::wstring pos = L"Pos X: " + std::to_wstring(m_camera->GetPosition().x)
 		+ L" Pos Y: " + std::to_wstring(m_camera->GetPosition().y)
@@ -453,7 +451,8 @@ void Game::SaveDisplayChunk(ChunkObject * SceneChunk)
 	m_displayChunk.SaveHeightMap();			//save heightmap to file.
 }
 
-int Game::MousePicking()
+///int Game::MousePicking()
+std::vector<int> Game::MousePicking()
 {
 	int selectedID = -1;
 	float pickedDistance = 0.f, storedDistance = 1.f;
@@ -501,6 +500,7 @@ int Game::MousePicking()
 					firstPick = false;
 					storedDistance = pickedDistance;
 					selectedID = i;
+
 					break;
 				}
 				// Update ID if a closer object has been intersected
@@ -508,6 +508,7 @@ int Game::MousePicking()
 				{
 					storedDistance = pickedDistance;
 					selectedID = i;
+
 					break;
 				}
 			}
@@ -517,12 +518,35 @@ int Game::MousePicking()
 		if (selectedID != -1) { break; }
 	}
 
-	// Store selected ID & allow deselection
-	if (selectedID == m_selectedID) { selectedID = -1; }
-	else { m_selectedID = selectedID; }
+	// If current selected ID matches stored selected ID
+	//if (selectedID == m_selectedID) 
+	//{ 
+	//	// Reset current selected ID, deselect
+	//	selectedID = -1; 
+	//}
+	//// Else, if current selected ID is new
+	//else 
+	//{ 
+	//	// Store new selected ID
+	//	m_selectedID = selectedID; 
+	//}
+
+	// If current selected ID is already in the vector
+	if (std::count(m_selectedIDs.begin(), m_selectedIDs.end(), selectedID))
+	{
+		// Remove from vector storage
+		m_selectedIDs.erase(std::remove(m_selectedIDs.begin(), m_selectedIDs.end(), selectedID), m_selectedIDs.end());
+	}
+	// Else, if current selected ID is new
+	else
+	{
+		// Add to vector storage
+		m_selectedIDs.push_back(selectedID);
+	}
 	
 	// Return hit if successful
-	return selectedID;
+	///return selectedID;
+	return m_selectedIDs;
 }
 
 #ifdef DXTK_AUDIO
