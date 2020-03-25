@@ -310,18 +310,24 @@ void ToolMain::Tick(MSG *msg)
 		{
 		case MODE::OBJECT:
 		{
-			m_selectedObjects = m_d3dRenderer.PickingObjects();
+			// If allowed to pick
+			if (m_toolInputCommands.pickOnce)
+			{
+				// Select/deselect an object
+				m_selectedObjects = m_d3dRenderer.PickingObjects();
+
+				// Reset picking controller
+				m_toolInputCommands.pickOnce = false;
+			}			
 		}
 		break;
 		case MODE::LANDSCAPE:
 		{
+			// Select terrain
 			m_selectedTerrain = m_d3dRenderer.PickingTerrain();
 		}
 		break;
-		}
-		
-		m_toolInputCommands.mouseLeft = true;
-		m_toolInputCommands.pickOnce = false;
+		}		
 	}
 
 	//Renderer Update Call

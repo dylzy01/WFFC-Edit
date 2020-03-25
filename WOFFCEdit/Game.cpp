@@ -596,9 +596,6 @@ std::vector<int> Game::PickingObjects()
 				}
 			}
 		}
-
-		// Break loop if an object has been selected
-		if (selectedID != -1) { break; }
 	}
 
 	// If current selected ID is already in the vector

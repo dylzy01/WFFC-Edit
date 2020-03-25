@@ -28,6 +28,6 @@ c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\toolmain.cp
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\toolmain.cpp(151): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\toolmain.cpp(152): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\toolmain.cpp(153): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\toolmain.cpp(347): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\toolmain.cpp(348): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\toolmain.cpp(353): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\toolmain.cpp(354): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
   Win32SimpleSample.vcxproj -> C:\Users\dylan\Documents\GitHub\ToolsProgramming\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe
