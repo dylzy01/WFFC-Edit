@@ -221,7 +221,7 @@ namespace DirectX
         XMFLOAT3 position;
         XMFLOAT3 normal;
         XMFLOAT2 textureCoordinate;
-		int ID;
+		// Colour here??
 
         static const int InputElementCount = 3;
         static const D3D11_INPUT_ELEMENT_DESC InputElements[InputElementCount];

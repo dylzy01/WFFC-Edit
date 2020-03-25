@@ -159,7 +159,7 @@ void ToolMain::onActionLoad()
 
 	//THE WORLD CHUNK
 	//prepare SQL Text
-	sqlCommand = "SELECT * from Chunks";				//sql command which will return all records from  chunks table. There is only one tho.
+	sqlCommand = "SELECT * from Chunks";				//sql command which will return all records from chunks table. There is only one tho.
 														//Send Command and fill result object
 	rc = sqlite3_prepare_v2(m_databaseConnection, sqlCommand, -1, &pResultsChunk, 0);
 

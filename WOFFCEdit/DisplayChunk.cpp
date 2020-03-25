@@ -74,7 +74,6 @@ void DisplayChunk::InitialiseBatch()
 			m_terrainGeometry[i][j].position =			Vector3(j*m_terrainPositionScalingFactor-(0.5*m_terrainSize), (float)(m_heightMap[index])*m_terrainHeightScale, i*m_terrainPositionScalingFactor-(0.5*m_terrainSize));	//This will create a terrain going from -64->64.  rather than 0->128.  So the center of the terrain is on the origin
 			m_terrainGeometry[i][j].normal =			Vector3(0.0f, 1.0f, 0.0f);						//standard y =up
 			m_terrainGeometry[i][j].textureCoordinate =	Vector2(((float)m_textureCoordStep*j)*m_tex_diffuse_tiling, ((float)m_textureCoordStep*i)*m_tex_diffuse_tiling);				//Spread tex coords so that its distributed evenly across the terrain from 0-1
-			m_terrainGeometry[i][j].ID = i;
 		}
 	}
 	CalculateTerrainNormals();
@@ -181,23 +180,6 @@ void DisplayChunk::GenerateHeightmap()
 
 }
 
-DirectX::VertexPositionNormalTexture DisplayChunk::GetGeometry(int ID)
-{
-	// Loop through terrain geometry
-	for (int i = 0; i < (TERRAINRESOLUTION - 1); i++)
-	{
-		for (int j = 0; j < (TERRAINRESOLUTION - 1); j++)
-		{
-			// If current terrain geometry ID matches parameter ID
-			if (m_terrainGeometry[i][j].ID == ID)
-			{
-				// Return current terrain geometry
-				return m_terrainGeometry[i][j];
-			}
-		}
-	}
-}
-
 void DisplayChunk::UpdateTerrainHeight(int row, int column, HEIGHT height, DirectX::SimpleMath::Vector3 position)
 {
 	// Switch between height parameter
@@ -243,20 +225,20 @@ void DisplayChunk::SetSelected(bool selected, int ID)
 		for (int j = 0; j < (TERRAINRESOLUTION - 1); j++)
 		{
 			// If parameter ID matches current terrain ID
-			if (ID == m_terrainGeometry[i][j].ID) 
-			{
-				// If terrain is selected
-				if (selected)
-				{
-					//... highlight texture
-					///m_terrainGeometry[i][j].
-				}
-				// Else, if terrain isn't selected
-				else
-				{
-					//... un-highlight texture
-				}
-			}
+			//if (ID == m_terrainGeometry[i][j].ID) 
+			//{
+			//	// If terrain is selected
+			//	if (selected)
+			//	{
+			//		//... highlight texture
+			//		///m_terrainGeometry[i][j].
+			//	}
+			//	// Else, if terrain isn't selected
+			//	else
+			//	{
+			//		//... un-highlight texture
+			//	}
+			//}
 		}
 	}
 

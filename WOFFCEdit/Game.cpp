@@ -692,16 +692,18 @@ std::vector<TERRAIN> Game::PickingTerrains()
 	direction.Normalize();
 
 	// Calculate chunk intersection
-	TERRAIN chunk = TerrainIntersection(Ray(origin, direction));
+	TERRAIN terrain = TerrainIntersection(Ray(origin, direction));
 
-	// If ray has intersected the chunk
-	if (chunk.intersect)
+	// If ray has intersected the terrain
+	if (terrain.intersect)
 	{
-		// Loop through currently selected chunks
+		// Loop through currently selected terrains
 		for (int i = 0; i < m_selectedTerrains.size(); ++i)
 		{
-			// If selected chunk ID matches current chunk ID
-			if (chunk.ID == m_selectedTerrains[i].ID)
+			// If selected terrain row/column matches current terrain row/column
+			///if (terrain.ID == m_selectedTerrains[i].ID)
+			if (terrain.row == m_selectedTerrains[i].row &&
+				terrain.column == m_selectedTerrains[i].column)
 			{
 				// Set as already chosen
 				alreadyChosen = true;
@@ -710,18 +712,18 @@ std::vector<TERRAIN> Game::PickingTerrains()
 				m_selectedTerrains.erase(m_selectedTerrains.begin() + i);
 
 				// Loop through terrain geometry
-				for (int i = 0; i < (TERRAINRESOLUTION - 1); i++)
-				{
-					for (int j = 0; j < (TERRAINRESOLUTION - 1); j++)
-					{
-						// If selected chunk ID matches geometry ID
-						if (chunk.ID == m_displayChunk.GetGeometry(i, j).ID)
-						{
-							// Deselect geometry
-							m_displayChunk.SetSelected(false, m_displayChunk.GetGeometry(i, j).ID);
-						}
-					}
-				}
+				//for (int i = 0; i < (TERRAINRESOLUTION - 1); i++)
+				//{
+				//	for (int j = 0; j < (TERRAINRESOLUTION - 1); j++)
+				//	{
+				//		// If selected chunk ID matches geometry ID
+				//		if (terrain.ID == m_displayChunk.GetGeometry(i, j).ID)
+				//		{
+				//			// Deselect geometry
+				//			m_displayChunk.SetSelected(false, m_displayChunk.GetGeometry(i, j).ID);
+				//		}
+				//	}
+				//}
 			}
 		}
 
@@ -729,7 +731,7 @@ std::vector<TERRAIN> Game::PickingTerrains()
 		if (!alreadyChosen)
 		{
 			// Add to vector storage
-			m_selectedTerrains.push_back(chunk);
+			m_selectedTerrains.push_back(terrain);
 		}
 	}
 
@@ -740,8 +742,8 @@ std::vector<TERRAIN> Game::PickingTerrains()
 TERRAIN Game::TerrainIntersection(DirectX::SimpleMath::Ray ray)
 {
 	// Local chunk
-	TERRAIN chunk;
-	chunk.intersect = false;
+	TERRAIN terrain;
+	terrain.intersect = false;
 	
 	// Define controllers
 	float dist = 10000, pickedDistance = 0.f, storedDistance = 1.f;
@@ -768,24 +770,23 @@ TERRAIN Game::TerrainIntersection(DirectX::SimpleMath::Ray ray)
 				if (m_displayChunk.GetGeometry(i, j).position.y < one.y && m_displayChunk.GetGeometry(i, j).position.y > two.y)
 				{
 					// Setup values to return
-					chunk.row = i;
-					chunk.column = j;
-					chunk.intersect = true;
-					chunk.position = m_displayChunk.GetGeometry(i, j).position;
-					chunk.ID = m_displayChunk.GetGeometry(i, j).ID;
+					terrain.row = i;
+					terrain.column = j;
+					terrain.intersect = true;
+					terrain.position = m_displayChunk.GetGeometry(i, j).position;
 
 					// Set geometry as selected
-					m_displayChunk.SetSelected(true, m_displayChunk.GetGeometry(i, j).ID);
+					///m_displayChunk.SetSelected(true, m_displayChunk.GetGeometry(i, j).ID);
 
 					// Return values from intersection
-					return chunk;
+					return terrain;
 				}
 			}
 		}
 	}
 
 	// Return empty values if no intersection
-	return chunk;
+	return terrain;
 }
 
 #ifdef DXTK_AUDIO
