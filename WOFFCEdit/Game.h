@@ -63,9 +63,12 @@ public:
 
 	// Mouse picking
 	std::vector<int> PickingObjects();
-	std::vector<CHUNK> PickingChunks();
-	CHUNK ChunkIntersection(DirectX::SimpleMath::Ray ray);
-	int TriangleIntersection(float *p, float *d, float *v0, float *v1, float *v2);
+	TERRAIN PickingTerrain();
+	std::vector<TERRAIN> PickingTerrains();
+	TERRAIN TerrainIntersection(DirectX::SimpleMath::Ray ray);
+
+	// Setters
+	void ShouldStorePosition(bool store) { m_shouldStore = store; }
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
@@ -104,7 +107,12 @@ private:
 	//mouse picking
 	std::vector<int> m_selectedObjectIDs;
 	std::vector<int> m_selectedLandscapeIDs;
-	std::vector<CHUNK> m_selectedChunks;
+	TERRAIN m_selectedTerrain;
+	std::vector<TERRAIN> m_selectedTerrains;
+
+	// Stored terrain position for flattening
+	bool m_shouldStore;
+	DirectX::SimpleMath::Vector3 m_storedPosition;
 
 	// Mode controller
 	MODE m_mode;

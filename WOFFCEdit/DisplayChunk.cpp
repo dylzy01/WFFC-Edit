@@ -198,36 +198,41 @@ DirectX::VertexPositionNormalTexture DisplayChunk::GetGeometry(int ID)
 	}
 }
 
-void DisplayChunk::UpdateGeometryHeight(int row, int column, bool upwards)
+void DisplayChunk::UpdateTerrainHeight(int row, int column, HEIGHT height, DirectX::SimpleMath::Vector3 position)
 {
-	// Loop through terrain geometry
-	/*for (int i = 0; i < (TERRAINRESOLUTION - 1); i++)
+	// Switch between height parameter
+	switch (height)
 	{
-		for (int j = 0; j < (TERRAINRESOLUTION - 1); j++)
-		{*/
-			// If current terrain geometry ID matches parameter ID
-			///if (m_terrainGeometry[i][j].ID == ID)
-			{
-				// If geometry should be moved upwards
-				if (upwards)
-				{
-					// Apply new position
-					m_terrainGeometry[row][column].position.x += m_terrainGeometry[row][column].normal.x / 2;
-					m_terrainGeometry[row][column].position.y += m_terrainGeometry[row][column].normal.y / 2;
-					m_terrainGeometry[row][column].position.z += m_terrainGeometry[row][column].normal.z / 2;
-				}
+	case HEIGHT::INCREASE:
+	{
+		// Increase position
+		m_terrainGeometry[row][column].position.y += 1.f;
+	}
+	break;
+	case HEIGHT::DECREASE:
+	{
+		// Decrease position
+		m_terrainGeometry[row][column].position.y -= 1.f;
+	}
+	break;
+	case HEIGHT::FLATTEN:
+	{
+		// If selected geometry is above ground level
+		if (m_terrainGeometry[row][column].position.y > position.y + 1.f)
+		{
+			// Decrease position
+			m_terrainGeometry[row][column].position.y -= 1.f;
+		}
 
-				// Else, if geometry should be moved downwards
-				else
-				{
-					// Apply new position
-					m_terrainGeometry[row][column].position.x -= m_terrainGeometry[row][column].normal.x / 2;
-					m_terrainGeometry[row][column].position.y -= m_terrainGeometry[row][column].normal.y / 2;
-					m_terrainGeometry[row][column].position.z -= m_terrainGeometry[row][column].normal.z / 2;
-				}								
-			}
-		//}
-	//}
+		// Else, if selected geometry is below ground level
+		else if (m_terrainGeometry[row][column].position.y < position.y - 1.f)
+		{
+			// Increase position
+			m_terrainGeometry[row][column].position.y += 1.f;
+		}
+	}
+	break;
+	}								
 }
 
 void DisplayChunk::SetSelected(bool selected, int ID)

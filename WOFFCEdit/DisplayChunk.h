@@ -26,7 +26,7 @@ public:
 
 	DirectX::VertexPositionNormalTexture GetGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
 	DirectX::VertexPositionNormalTexture GetGeometry(int ID);
-	void UpdateGeometryHeight(int row, int column, bool upwards);
+	void UpdateTerrainHeight(int row, int column, HEIGHT height, DirectX::SimpleMath::Vector3 position = { 0,0,0 });
 
 	void SetSelected(bool selected, int ID);
 

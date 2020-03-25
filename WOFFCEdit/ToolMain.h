@@ -16,7 +16,7 @@ public: //methods
 
 	//onAction - These are the interface to MFC
 	std::vector<int>	getCurrentObjectSelectionID();								//returns the selection numbers of currently selected objects so that It can be displayed.
-	std::vector<CHUNK>	getCurrentChunkSelection();									//returns the currently selected chunk so it can be displayed
+	std::vector<TERRAIN>	getCurrentChunkSelection();									//returns the currently selected chunk so it can be displayed
 	void				onActionInitialise(HWND handle, int width, int height);		//Passes through handle and hieght and width and initialises DirectX renderer and SQL LITE
 	void				onActionFocusCamera();
 	void				onActionLoad();												//load the current chunk
@@ -32,8 +32,9 @@ public:	//variables
 	std::vector<SceneObject>    m_sceneGraph;	//our scenegraph storing all the objects in the current chunk
 	ChunkObject					m_chunk;		//our landscape chunk
 	///int m_selectedObject;						//ID of current selection
-	std::vector<int> m_selectedObjects;			//IDs of current OBJECT selections
-	std::vector<CHUNK> m_selectedChunks;		//IDs of current CHUNK selections
+	std::vector<int> m_selectedObjects;			//IDs of multiple current OBJECT selections
+	TERRAIN m_selectedTerrain;				
+	std::vector<TERRAIN> m_selectedTerrains;		//IDs of multiple current TERRAIN selections
 
 private:	//methods
 	void	onContentAdded();

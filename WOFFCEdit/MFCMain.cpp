@@ -92,7 +92,7 @@ int MFCMain::Run()
 			case MODE::LANDSCAPE:
 			{
 				// Fill status string with selected chunk row,column(s)
-				std::vector<CHUNK> chunks = m_ToolSystem.getCurrentChunkSelection();
+				std::vector<TERRAIN> chunks = m_ToolSystem.getCurrentChunkSelection();
 				for (int i = 0; i < chunks.size(); ++i)
 				{
 					if (i != 0) { statusString += L", (" + std::to_wstring(chunks[i].row) + L","

@@ -18,7 +18,7 @@ public:
 	virtual ~SelectDialogue();
 	///void SetObjectData(std::vector<SceneObject>* SceneGraph, int * Selection);	//passing in pointers to the data the class will operate on.
 	void SetObjectData(std::vector<SceneObject>* SceneGraph, std::vector<int> * Selection);	//passing in pointers to the data the class will operate on.
-	void SetChunkData(std::vector<SceneObject>* SceneGraph, std::vector<CHUNK> * selection);
+	void SetChunkData(std::vector<SceneObject>* SceneGraph, std::vector<TERRAIN> * selection);
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -33,7 +33,7 @@ protected:
 	std::vector<SceneObject> * m_sceneGraph;
 	///int * m_currentSelection;
 	std::vector<int> * m_currentObjectSelection;
-	std::vector<CHUNK> * m_currentChunkSelection;
+	std::vector<TERRAIN> * m_currentChunkSelection;
 
 	DECLARE_MESSAGE_MAP()
 public:

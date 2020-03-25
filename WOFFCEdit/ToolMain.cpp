@@ -21,6 +21,9 @@ ToolMain::ToolMain()
 	m_toolInputCommands.mouseLeft	= false;
 	m_toolInputCommands.mouseRight	= false;
 	m_toolInputCommands.escape		= false;
+	m_toolInputCommands.INCREASE	= false;
+	m_toolInputCommands.DECREASE	= false;
+	m_toolInputCommands.FLATTEN		= false;
 	m_toolInputCommands.mousePos	= DirectX::SimpleMath::Vector2(0.f, 0.f);
 }
 
@@ -36,9 +39,9 @@ std::vector<int> ToolMain::getCurrentObjectSelectionID()
 	return m_selectedObjects;
 }
 
-std::vector<CHUNK> ToolMain::getCurrentChunkSelection()
+std::vector<TERRAIN> ToolMain::getCurrentChunkSelection()
 {
-	return m_selectedChunks;
+	return m_selectedTerrains;
 }
 
 void ToolMain::onActionInitialise(HWND handle, int width, int height)
@@ -299,8 +302,8 @@ void ToolMain::Tick(MSG *msg)
 
 	// If left mouse button is pressed & can pick
 	// and CTRL & SHIFT aren't being pressed
-	if (m_toolInputCommands.mouseLeft && m_toolInputCommands.pickOnce
-		&& !m_toolInputCommands.CTRL && !m_toolInputCommands.SHIFT)
+	if (m_toolInputCommands.mouseLeft)/* && m_toolInputCommands.pickOnce
+		&& !m_toolInputCommands.INCREASE && !m_toolInputCommands.DECREASE)*/
 	{
 		// Switch between modes
 		switch(m_mode)
@@ -312,7 +315,7 @@ void ToolMain::Tick(MSG *msg)
 		break;
 		case MODE::LANDSCAPE:
 		{
-			m_selectedChunks = m_d3dRenderer.PickingChunks();
+			m_selectedTerrain = m_d3dRenderer.PickingTerrain();
 		}
 		break;
 		}
@@ -399,11 +402,35 @@ void ToolMain::UpdateInput(MSG * msg)
 	if (m_keyArray['2']) { m_toolInputCommands.TWO = true; }
 	else { m_toolInputCommands.TWO = false; }
 
-	// CTRL - Extrude/intrude terrain
-	if (m_keyArray['3']) { m_toolInputCommands.CTRL = true; }
-	else { m_toolInputCommands.CTRL = false; }
+	// Switch between modes
+	switch (m_mode)
+	{
+	case MODE::OBJECT:
+	{
 
-	// SHIFT - Flatten terrain
-	if (m_keyArray['4']) { m_toolInputCommands.SHIFT = true; }
-	else { m_toolInputCommands.SHIFT = false; }
+	}
+	break;
+	case MODE::LANDSCAPE:
+	{
+		// Z - Extrude terrain
+		if (m_keyArray['Z']) { m_toolInputCommands.INCREASE = true; }
+		else { m_toolInputCommands.INCREASE = false; }
+
+		// X - Intrude terrain
+		if (m_keyArray['X']) { m_toolInputCommands.DECREASE = true; }
+		else { m_toolInputCommands.DECREASE = false; }
+
+		// C - Flatten terrain
+		if (m_keyArray['C']) 
+		{ m_toolInputCommands.FLATTEN = true; }
+		else 
+		{ 
+			m_toolInputCommands.FLATTEN = false;
+			m_d3dRenderer.ShouldStorePosition(true);
+		}
+	}
+	break;
+	}
+
+	
 }

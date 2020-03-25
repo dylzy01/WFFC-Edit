@@ -48,7 +48,7 @@ void SelectDialogue::SetObjectData(std::vector<SceneObject>* SceneGraph, std::ve
 	}
 }
 
-void SelectDialogue::SetChunkData(std::vector<SceneObject>* SceneGraph, std::vector<CHUNK>* selection)
+void SelectDialogue::SetChunkData(std::vector<SceneObject>* SceneGraph, std::vector<TERRAIN>* selection)
 {
 	m_sceneGraph = SceneGraph;
 	m_currentChunkSelection = selection;

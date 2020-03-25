@@ -22,6 +22,7 @@ Game::Game()
 	//initial Settings
 	//modes
 	m_grid = false;
+	m_shouldStore = true;
 }
 
 Game::~Game()
@@ -176,23 +177,39 @@ void Game::HandleInput()
 		// If mouse is being pressed
 		if (m_inputCommands.mouseLeft)
 		{
-			// If CTRL is being pressed
-			if (m_inputCommands.CTRL)
+			// If selected terrain is intersected by ray trace
+			if (m_selectedTerrain.intersect)
 			{
-				// Loop through selected geometry
-				for (int i = 0; i < m_selectedChunks.size(); ++i)
+				// If Z is being pressed
+				if (m_inputCommands.INCREASE)
 				{
-					m_displayChunk.UpdateGeometryHeight(m_selectedChunks[i].row, m_selectedChunks[i].column, true);
+					// Increase height of selected terrain
+					m_displayChunk.UpdateTerrainHeight(m_selectedTerrain.row, m_selectedTerrain.column, HEIGHT::INCREASE);
 				}
-			}
 
-			// If SHIFT is being pressed
-			else if (m_inputCommands.SHIFT)
-			{
-				// Loop through selected geometry
-				for (int i = 0; i < m_selectedChunks.size(); ++i)
+				// Else, if X is being pressed
+				else if (m_inputCommands.DECREASE)
 				{
-					m_displayChunk.UpdateGeometryHeight(m_selectedChunks[i].row, m_selectedChunks[i].column, false);
+					// Decrease height of selecteed terrain
+					m_displayChunk.UpdateTerrainHeight(m_selectedTerrain.row, m_selectedTerrain.column, HEIGHT::DECREASE);
+				}
+
+				// Else, if C is being pressed
+				else if (m_inputCommands.FLATTEN)
+				{
+					// If first position should be stored
+					if (m_shouldStore)
+					{
+						m_shouldStore = false;
+						m_storedPosition = m_selectedTerrain.position;
+					}
+
+					// Check if selected terrain height doesn't match stored position height
+					if (m_selectedTerrain.position.y != m_storedPosition.y)
+					{
+						// Flatten height of selected terrain
+						m_displayChunk.UpdateTerrainHeight(m_selectedTerrain.row, m_selectedTerrain.column, HEIGHT::FLATTEN, m_storedPosition);
+					}				
 				}
 			}
 		}			
@@ -601,7 +618,44 @@ std::vector<int> Game::PickingObjects()
 	return m_selectedObjectIDs;
 }
 
-std::vector<CHUNK> Game::PickingChunks()
+TERRAIN Game::PickingTerrain()
+{
+	// Setup ray trace origin
+	Vector3 origin = XMVector3Unproject(Vector3(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 0.f),
+		0,
+		0,
+		m_deviceResources->GetScreenViewport().Width,
+		m_deviceResources->GetScreenViewport().Height,
+		0,
+		1,
+		m_projection,
+		m_view,
+		m_world);
+
+	// Setup ray trace destination
+	Vector3 destination = XMVector3Unproject(Vector3(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 1.f),
+		0,
+		0,
+		m_deviceResources->GetScreenViewport().Width,
+		m_deviceResources->GetScreenViewport().Height,
+		0,
+		1,
+		m_projection,
+		m_view,
+		m_world);
+
+	// Setup ray trace direction
+	Vector3 direction = destination - origin;
+	direction.Normalize();
+
+	// Calculate chunk intersection
+	m_selectedTerrain = TerrainIntersection(Ray(origin, direction));
+
+	// Return selection
+	return m_selectedTerrain;
+}
+
+std::vector<TERRAIN> Game::PickingTerrains()
 {
 	// Controllers
 	bool alreadyChosen = false;
@@ -638,22 +692,22 @@ std::vector<CHUNK> Game::PickingChunks()
 	direction.Normalize();
 
 	// Calculate chunk intersection
-	CHUNK chunk = ChunkIntersection(Ray(origin, direction));
+	TERRAIN chunk = TerrainIntersection(Ray(origin, direction));
 
 	// If ray has intersected the chunk
 	if (chunk.intersect)
 	{
 		// Loop through currently selected chunks
-		for (int i = 0; i < m_selectedChunks.size(); ++i)
+		for (int i = 0; i < m_selectedTerrains.size(); ++i)
 		{
 			// If selected chunk ID matches current chunk ID
-			if (chunk.ID == m_selectedChunks[i].ID)
+			if (chunk.ID == m_selectedTerrains[i].ID)
 			{
 				// Set as already chosen
 				alreadyChosen = true;
 
 				// Remove from storage
-				m_selectedChunks.erase(m_selectedChunks.begin() + i);
+				m_selectedTerrains.erase(m_selectedTerrains.begin() + i);
 
 				// Loop through terrain geometry
 				for (int i = 0; i < (TERRAINRESOLUTION - 1); i++)
@@ -675,22 +729,23 @@ std::vector<CHUNK> Game::PickingChunks()
 		if (!alreadyChosen)
 		{
 			// Add to vector storage
-			m_selectedChunks.push_back(chunk);
+			m_selectedTerrains.push_back(chunk);
 		}
 	}
 
 	// Return chunks
-	return m_selectedChunks;	
+	return m_selectedTerrains;	
 }
 
-CHUNK Game::ChunkIntersection(DirectX::SimpleMath::Ray ray)
+TERRAIN Game::TerrainIntersection(DirectX::SimpleMath::Ray ray)
 {
 	// Local chunk
-	CHUNK chunk;
+	TERRAIN chunk;
 	chunk.intersect = false;
 	
 	// Define controllers
-	float dist = 10000;
+	float dist = 10000, pickedDistance = 0.f, storedDistance = 1.f;
+	bool firstPick = true;
 	Vector3 one = ray.position;
 	Vector3 two = ray.position + (ray.direction * dist);
 
@@ -731,87 +786,6 @@ CHUNK Game::ChunkIntersection(DirectX::SimpleMath::Ray ray)
 
 	// Return empty values if no intersection
 	return chunk;
-}
-
-int Game::TriangleIntersection(float * p, float * d, float * v0, float * v1, float * v2)
-{
-	// https://www.lighthouse3d.com/tutorials/maths/ray-triangle-intersection/
-
-	// Define macros
-
-	// a = b - c
-#define vector(a,b,c) \
-(a)[0] = (b)[0] - (c)[0]; \
-(a)[1] = (b)[1] - (c)[1]; \
-(a)[2] = (b)[2] - (c)[2];
-
-//#define dotProduct(v, q) \
-//((v)[0] * (q)[0]) + \
-//(v)[1] * (q)[1] + \
-//(v)[2] * (q)[2]);
-//
-//#define crossProduct(a, b, c) \
-//(a)[0] = (b)[1] * (c)[2] - (c)[1] * (b)[2]; \
-//(a)[1] = (b)[2] * (c)[0] - (c)[2] * (b)[0]; \
-//(a)[2] = (b)[0] * (c)[1] - (c)[0] * (b)[1];
-
-	// Declare variables
-	float e1[2], e2[2], h[2], s[2], q[2];
-	float a, f, u, v, t;
-
-	// Setup first vector
-	e1[0] = v1[0] - v0[0];
-	e1[1] = v1[1] - v0[1];
-	e1[2] = v1[2] - v0[2];
-	XMVECTOR ONE = { e1[0], e1[2], e1[3] };
-
-	// Setup second vector
-	e2[0] = v2[0] - v0[0];
-	e2[1] = v2[1] - v0[1];
-	e2[2] = v2[2] - v0[2];
-	XMVECTOR TWO = { e1[0], e1[2], e1[3] };
-
-	// Cross product h = (d, e2)
-	h[0] = (d[1] * e2[2]) - (d[2] * e2[1]);
-	h[1] = (d[2] * e2[0]) - (d[0] * e2[2]);
-	h[2] = (d[0] * e2[1]) - (d[1] * e2[0]);
-	
-	// Dot product a = (e1, h)
-	a = (e1[0] * h[0]) + (e1[1] * h[1]) + (e1[2] * h[2]);
-
-	// If equals 0, return false
-	if (a > -0.00001 && a < 0.00001) { return false; }
-
-	// Multiplication of dot product l = (s, h)
-	f = 1 / a;
-	vector(s, p, v0);
-	float l = (s[0] * h[0]) + (s[1] * h[1]) + (s[2] * h[2]);
-	u = f * l;
-
-	// If u does not equal a value between 0 & 1, return false
-	if (u < 0.0 || u > 1.0) { return false; }
-
-	// Cross product q = (s, e1)
-	q[0] = (s[1] * e1[2]) - (s[2] * e1[1]);
-	q[1] = (s[2] * e1[0]) - (s[0] * e1[2]);
-	q[2] = (s[0] * e1[1]) - (s[1] * e1[0]);
-	
-	// Multiplication of dot product m = (d, q)
-	float m = (d[0] * q[0]) + (d[1] * q[1]) + (d[2] * q[2]);
-	v = f * m;
-
-	// If v & u together does not equal a value between 0 & 1, return false
-	if (v < 0.0 || u + v > 1.0) { return false; }
-
-	// Multiplication of dot product n = (e2, q) to discover intersection point of line
-	float n = (e2[0] * q[0]) + (e2[1] * q[1]) + (e2[2] * q[2]);
-	t = f * n;
-	
-	// Ray intersection
-	if (t > 0.00001) { return true; }
-
-	// Line intersection, not ray
-	else { return false; }
 }
 
 #ifdef DXTK_AUDIO
