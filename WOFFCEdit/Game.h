@@ -62,13 +62,18 @@ public:
 	void SetMode(MODE mode) { m_mode = mode; }
 
 	// Mouse picking
-	std::vector<int> PickingObjects();
+	void MousePicking();
+	bool PickingObjects();
 	TERRAIN PickingTerrain();
 	std::vector<TERRAIN> PickingTerrains();
 	TERRAIN TerrainIntersection(DirectX::SimpleMath::Ray ray);
 
+	// Getters
+	std::vector<int> GetSelectedObjectIDs() { return m_selectedObjectIDs; }
+
 	// Setters
-	void ShouldStorePosition(bool store) { m_shouldStore = store; }
+	void StoreObjectDetails(bool store) { m_storeObjectDetails = store; }
+	void StoreTerrainPosition(bool store) { m_storeTerrainPosition = store; }
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
@@ -109,13 +114,17 @@ private:
 	std::vector<int> m_selectedLandscapeIDs;
 	TERRAIN m_selectedTerrain;
 	std::vector<TERRAIN> m_selectedTerrains;
+	DirectX::SimpleMath::Vector3 m_pickingPoint;
 
 	// Stored terrain position for flattening
-	bool m_shouldStore;
-	DirectX::SimpleMath::Vector3 m_storedPosition;
+	bool m_storeObjectDetails, m_storeTerrainPosition;
+	std::vector<DirectX::SimpleMath::Vector3> m_storedObjectScales, m_storedObjectTranslations, m_storedObjectRotations;
+	DirectX::SimpleMath::Vector2 m_storedMousePosition;
+	DirectX::SimpleMath::Vector3 m_storedTerrainPosition;
 
 	// Mode controller
 	MODE m_mode;
+	MODIFY m_modify;
 
 	// Device resources.
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;

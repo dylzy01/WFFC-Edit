@@ -22,7 +22,8 @@ Game::Game()
 	//initial Settings
 	//modes
 	m_grid = false;
-	m_shouldStore = true;
+	m_storeTerrainPosition = true;
+	m_storeObjectDetails = true;
 }
 
 Game::~Game()
@@ -169,7 +170,171 @@ void Game::HandleInput()
 	{
 	case MODE::OBJECT:
 	{
+		// Change modification to SCALE
+		if (m_inputCommands.SCALE) { m_modify = MODIFY::SCALE; }
+		
+		// Change modification to TRANSLATE
+		else if (m_inputCommands.TRANSLATE) { m_modify = MODIFY::TRANSLATE; }
 
+		// Change modification to ROTATE
+		else if (m_inputCommands.ROTATE) { m_modify = MODIFY::ROTATE; }
+		
+		// If mouse is being pressed
+		if (m_inputCommands.mouseLeft)
+		{						
+			// If any objects are selected
+			if (m_selectedObjectIDs.size() != 0)
+			{
+				// If mouse position should be stored
+				if (m_inputCommands.storeOnce)
+				{
+					// Store current mouse position
+					m_storedMousePosition = m_inputCommands.mousePos;
+
+					// Reset controller
+					m_inputCommands.storeOnce = false;
+				}
+
+				// If object positions should be stored
+				if (m_storeObjectDetails)
+				{
+					// Reset vectors
+					m_storedObjectScales.clear();
+					m_storedObjectTranslations.clear();
+					m_storedObjectRotations.clear();
+
+					// Loop through selected objects
+					for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+					{
+						// If selected ID isn't -1
+						if (m_selectedObjectIDs[i] != -1)
+						{
+							// Fill vectors with selected object data
+							m_storedObjectScales.push_back(m_displayList[i].m_scale);
+							m_storedObjectTranslations.push_back(m_displayList[i].m_position);
+							m_storedObjectRotations.push_back(m_displayList[i].m_orientation);
+						}						
+					}
+
+					// Reset controller
+					m_storeObjectDetails = false;
+				}
+
+				// Loop through selected objects
+				for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+				{
+					// Switch between S, R, T
+					switch (m_modify)
+					{
+					case MODIFY::SCALE:
+					{
+						// If mouse has moved
+						if (m_inputCommands.mousePos != m_storedMousePosition)
+						{
+							// If should be scaled on the X axis
+							if (m_inputCommands.X)
+							{
+								// Scale selected object based on how much the mouse has moved from its stored position
+								m_displayList[m_selectedObjectIDs[i]].m_scale.x *= (m_inputCommands.mousePos.x - m_storedMousePosition.x);
+							}
+
+							// Else, if should be scaled on the Y axis
+							else if (m_inputCommands.Y)
+							{
+								// Scale selected object based on how much the mouse has moved from its stored position
+								m_displayList[m_selectedObjectIDs[i]].m_scale.y *= (m_inputCommands.mousePos.y - m_storedMousePosition.y);
+							}
+
+							// Else, if should be scaled on the Z axis
+							else if (m_inputCommands.Z)
+							{
+								// Scale selected object based on how much the mouse has moved from its stored position
+								m_displayList[m_selectedObjectIDs[i]].m_scale.z *= (m_inputCommands.mousePos.x - m_storedMousePosition.x) + (m_inputCommands.mousePos.y - m_storedMousePosition.y);
+							}
+
+							// Else, if should be scaled freely
+							else
+							{
+							}
+						}
+					}
+					break;
+					case MODIFY::TRANSLATE:
+					{
+						MousePicking();
+						///PickingObjects();
+						///PickingTerrain();
+						
+						// If mouse has moved
+						///if (m_inputCommands.mousePos != m_storedMousePosition)
+						{
+							// If should be translated on the X axis
+							if (m_inputCommands.X)
+							{
+								// Translate selected object based on how much the mouse has moved from its stored position
+								///m_displayList[m_selectedObjectIDs[i]].m_position.x *= (m_inputCommands.mousePos.x - m_storedMousePosition.x);
+								m_displayList[m_selectedObjectIDs[i]].m_position.x += m_pickingPoint.x;
+							}
+
+							// Else, if should be translated on the Y axis
+							else if (m_inputCommands.Y)
+							{
+								// Translate selected object based on how much the mouse has moved from its stored position
+								m_displayList[m_selectedObjectIDs[i]].m_position.y *= (m_inputCommands.mousePos.y - m_storedMousePosition.y);
+							}
+
+							// Else, if should be translated on the Z axis
+							else if (m_inputCommands.Z)
+							{
+								// Translate selected object based on how much the mouse has moved from its stored position
+								m_displayList[m_selectedObjectIDs[i]].m_position.x *= (m_inputCommands.mousePos.x - m_storedMousePosition.x) + (m_inputCommands.mousePos.y - m_storedMousePosition.y);
+							}
+
+							// Else, if should be translated freely
+							else
+							{
+								m_displayList[m_selectedObjectIDs[i]].m_position = m_pickingPoint;
+							}
+						}
+					}
+					break;
+					case MODIFY::ROTATE:
+					{
+						// If mouse has moved
+						if (m_inputCommands.mousePos != m_storedMousePosition)
+						{
+							// If should be rotated on the X axis
+							if (m_inputCommands.X)
+							{
+								// Rotate selected object based on how much the mouse has moved from its stored position
+								m_displayList[m_selectedObjectIDs[i]].m_orientation.x *= (m_inputCommands.mousePos.x - m_storedMousePosition.x);
+							}
+
+							// Else, if should be rotated on the Y axis
+							else if (m_inputCommands.Y)
+							{
+								// Rotate selected object based on how much the mouse has moved from its stored position
+								m_displayList[m_selectedObjectIDs[i]].m_orientation.y *= (m_inputCommands.mousePos.y - m_storedMousePosition.y);
+							}
+
+							// Else, if should be rotated on the Z axis
+							else if (m_inputCommands.Z)
+							{
+								// Rotate selected object based on how much the mouse has moved from its stored position
+								m_displayList[m_selectedObjectIDs[i]].m_orientation.x *= (m_inputCommands.mousePos.x - m_storedMousePosition.x) + (m_inputCommands.mousePos.y - m_storedMousePosition.y);
+							}
+
+							// Else, if should be rotated freely
+							else
+							{
+							}
+						}
+					}
+					break;
+					}
+				}
+			}
+		}
 	}
 	break;
 	case MODE::LANDSCAPE:
@@ -198,17 +363,17 @@ void Game::HandleInput()
 				else if (m_inputCommands.FLATTEN)
 				{
 					// If first position should be stored
-					if (m_shouldStore)
+					if (m_storeTerrainPosition)
 					{
-						m_shouldStore = false;
-						m_storedPosition = m_selectedTerrain.position;
+						m_storeTerrainPosition = false;
+						m_storedTerrainPosition = m_selectedTerrain.position;
 					}
 
 					// Check if selected terrain height doesn't match stored position height
-					if (m_selectedTerrain.position.y != m_storedPosition.y)
+					if (m_selectedTerrain.position.y != m_storedTerrainPosition.y)
 					{
 						// Flatten height of selected terrain
-						m_displayChunk.UpdateTerrainHeight(m_selectedTerrain.row, m_selectedTerrain.column, HEIGHT::FLATTEN, m_storedPosition);
+						m_displayChunk.UpdateTerrainHeight(m_selectedTerrain.row, m_selectedTerrain.column, HEIGHT::FLATTEN, m_storedTerrainPosition);
 					}				
 				}
 			}
@@ -450,8 +615,7 @@ void Game::BuildDisplayList(std::vector<SceneObject> * SceneGraph)
 	//for every item in the scenegraph
 	int numObjects = SceneGraph->size();
 	for (int i = 0; i < numObjects; i++)
-	{
-		
+	{		
 		//create a temp display object that we will populate then append to the display list.
 		DisplayObject newDisplayObject;
 		
@@ -511,12 +675,8 @@ void Game::BuildDisplayList(std::vector<SceneObject> * SceneGraph)
 		newDisplayObject.m_light_linear		= SceneGraph->at(i).light_linear;
 		newDisplayObject.m_light_quadratic	= SceneGraph->at(i).light_quadratic;
 		
-		m_displayList.push_back(newDisplayObject);
-		
-	}
-		
-		
-		
+		m_displayList.push_back(newDisplayObject);		
+	}	
 }
 
 void Game::BuildDisplayChunk(ChunkObject * SceneChunk)
@@ -534,7 +694,54 @@ void Game::SaveDisplayChunk(ChunkObject * SceneChunk)
 	m_displayChunk.SaveHeightMap();			//save heightmap to file.
 }
 
-std::vector<int> Game::PickingObjects()
+void Game::MousePicking()
+{
+	// Setup ray trace origin
+	Vector3 origin = XMVector3Unproject(Vector3(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 0.f),
+		0,
+		0,
+		m_deviceResources->GetScreenViewport().Width,
+		m_deviceResources->GetScreenViewport().Height,
+		0,
+		1,
+		m_projection,
+		m_view,
+		m_world);
+
+	// Setup ray trace destination
+	Vector3 destination = XMVector3Unproject(Vector3(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 1.f),
+		0,
+		0,
+		m_deviceResources->GetScreenViewport().Width,
+		m_deviceResources->GetScreenViewport().Height,
+		0,
+		1,
+		m_projection,
+		m_view,
+		m_world);
+
+	// Setup ray trace direction
+	Vector3 direction = destination - origin;
+	direction.Normalize();
+	
+	// Setup ray trace
+	Ray ray(origin, direction);
+	
+	// Local vector storage
+	Vector3 mouse = ray.position;
+	Vector3 object = m_displayList[m_selectedObjectIDs[0]].m_position;
+
+	// Distance between the two
+	float distance = sqrt(
+		(mouse.x - object.x) * (mouse.x - object.x) +
+		(mouse.y - object.y) * (mouse.y - object.y) +
+		(mouse.z - object.z) * (mouse.z - object.z));
+
+	// Setup picking point
+	m_pickingPoint = ray.position + (ray.direction * distance);
+}
+
+bool Game::PickingObjects()
 {
 	// Controllers
 	int selectedID = -1;
@@ -542,7 +749,6 @@ std::vector<int> Game::PickingObjects()
 	bool firstPick = true;
 
 	// Setup near & far planes of frustrum with mouse x,y passed from ToolMain
-	// May look similar but check the difference in z
 	const XMVECTOR nearSource = XMVectorSet(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 0.f, 1.f);
 	const XMVECTOR farSource = XMVectorSet(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 1.f, 1.f);
 
@@ -574,7 +780,7 @@ std::vector<int> Game::PickingObjects()
 		// Loop through mesh list for object
 		for (int j = 0; j < m_displayList[i].m_model.get()->meshes.size(); j++)
 		{
-			// Check for ray intersection
+			// Check for intersection
 			if (m_displayList[i].m_model.get()->meshes[j]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance))
 			{				
 				// Update ID with the first intersected object
@@ -583,36 +789,44 @@ std::vector<int> Game::PickingObjects()
 					firstPick = false;
 					storedDistance = pickedDistance;
 					selectedID = i;
-
-					break;
 				}
 				// Update ID if a closer object has been intersected
 				else if (pickedDistance < storedDistance)
 				{
 					storedDistance = pickedDistance;
 					selectedID = i;
-
-					break;
 				}
+
+				// Update mouse picking point in 3D world
+				m_pickingPoint = m_displayList[i].m_position;
 			}
 		}
 	}
 
-	// If current selected ID is already in the vector
-	if (std::count(m_selectedObjectIDs.begin(), m_selectedObjectIDs.end(), selectedID))
+	// If an object has been selected
+	if (selectedID != -1)
 	{
-		// Remove from vector storage
-		m_selectedObjectIDs.erase(std::remove(m_selectedObjectIDs.begin(), m_selectedObjectIDs.end(), selectedID), m_selectedObjectIDs.end());
+		// If current selected ID is already in the vector
+		if (std::count(m_selectedObjectIDs.begin(), m_selectedObjectIDs.end(), selectedID))
+		{
+			// Remove from vector storage
+			m_selectedObjectIDs.erase(std::remove(m_selectedObjectIDs.begin(), m_selectedObjectIDs.end(), selectedID), m_selectedObjectIDs.end());
+		}
+		// Else, if current selected ID is new
+		else
+		{
+			// Add to vector storage
+			m_selectedObjectIDs.push_back(selectedID);
+		}
+
+		// Object has been intersected
+		return true;
 	}
-	// Else, if current selected ID is new
 	else
 	{
-		// Add to vector storage
-		m_selectedObjectIDs.push_back(selectedID);
+		// Object hasn't been intersected
+		return false;
 	}
-	
-	// Return objects
-	return m_selectedObjectIDs;
 }
 
 TERRAIN Game::PickingTerrain()
@@ -647,6 +861,9 @@ TERRAIN Game::PickingTerrain()
 
 	// Calculate chunk intersection
 	m_selectedTerrain = TerrainIntersection(Ray(origin, direction));
+
+	// Update mouse picking point in 3D world
+	m_pickingPoint = m_selectedTerrain.position;
 
 	// Return selection
 	return m_selectedTerrain;
@@ -743,10 +960,10 @@ TERRAIN Game::TerrainIntersection(DirectX::SimpleMath::Ray ray)
 	terrain.intersect = false;
 	
 	// Define controllers
-	float dist = 10000, pickedDistance = 0.f, storedDistance = 1.f;
+	float distance = 10000, pickedDistance = 0.f, storedDistance = 1.f;
 	bool firstPick = true;
 	Vector3 one = ray.position;
-	Vector3 two = ray.position + (ray.direction * dist);
+	Vector3 two = ray.position + (ray.direction * distance);
 
 	// Loop through terrain row size
 	for (size_t i = 0; i < TERRAINRESOLUTION - 1; ++i)
@@ -761,7 +978,7 @@ TERRAIN Game::TerrainIntersection(DirectX::SimpleMath::Ray ray)
 			Vector3 topLeft		= m_displayChunk.GetGeometry(i + 1, j).position;
 
 			// If ray intersects with either triangle in current geometry
-			if (ray.Intersects(bottomLeft, bottomRight, topRight, dist) || ray.Intersects(bottomLeft, topLeft, topRight, dist))
+			if (ray.Intersects(bottomLeft, bottomRight, topRight, distance) || ray.Intersects(bottomLeft, topLeft, topRight, distance))
 			{
 				// If current geometry is within ray trace bounds
 				if (m_displayChunk.GetGeometry(i, j).position.y < one.y && m_displayChunk.GetGeometry(i, j).position.y > two.y)
@@ -797,7 +1014,6 @@ void Game::NewAudioDevice()
     }
 }
 #endif
-
 
 #pragma endregion
 

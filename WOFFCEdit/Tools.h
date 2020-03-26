@@ -10,8 +10,19 @@ struct TERRAIN {
 	DirectX::SimpleMath::Vector3 position;
 };
 
+enum class MODE {
+	OBJECT,
+	LANDSCAPE
+};
+
 enum class HEIGHT {
 	INCREASE,
 	DECREASE,
 	FLATTEN
+};
+
+enum class MODIFY {
+	SCALE,
+	TRANSLATE,
+	ROTATE
 };

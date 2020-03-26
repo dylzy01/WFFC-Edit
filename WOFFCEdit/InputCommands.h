@@ -11,10 +11,12 @@ struct InputCommands
 	bool rotRight;
 	bool rotLeft;
 	bool mouseLeft;
-	bool mouseRight; bool pickOnce;
+	bool mouseRight, pickOnce, storeOnce;
 	bool escape;
 	bool ONE;
 	bool TWO;
+	bool SCALE, TRANSLATE, ROTATE;
+	bool X, Y, Z;
 	bool INCREASE, DECREASE, FLATTEN;
 	bool ZERO;
 	DirectX::SimpleMath::Vector2 mousePos;

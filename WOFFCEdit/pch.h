@@ -93,7 +93,3 @@ namespace DX
     }
 }
 
-enum MODE {
-	OBJECT,
-	LANDSCAPE
-};
