@@ -62,11 +62,11 @@ public:
 	void SetMode(MODE mode) { m_mode = mode; }
 
 	// Mouse picking
-	void MousePicking();
-	bool PickingObjects();
+	void MousePicking(int i);
+	bool PickingObjects(bool select);
 	TERRAIN PickingTerrain();
 	std::vector<TERRAIN> PickingTerrains();
-	TERRAIN TerrainIntersection(DirectX::SimpleMath::Ray ray);
+	TERRAIN TerrainIntersection(DirectX::SimpleMath::Ray ray);	
 
 	// Getters
 	std::vector<int> GetSelectedObjectIDs() { return m_selectedObjectIDs; }
@@ -84,12 +84,15 @@ private:
 	void HandleInput();
 
 	void Update(DX::StepTimer const& timer);
-	void UpdateCamera(float deltaTime);
+	void UpdateCamera();
 
 	void CreateDeviceDependentResources();
 	void CreateWindowSizeDependentResources();
 
 	void XM_CALLCONV DrawGrid(DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
+
+	// frame time
+	float								m_deltaTime;
 
 	//tool specific
 	std::vector<DisplayObject>			m_displayList;

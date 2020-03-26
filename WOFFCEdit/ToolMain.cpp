@@ -300,10 +300,8 @@ void ToolMain::Tick(MSG *msg)
 	// Update mode
 	m_mode = m_d3dRenderer.GetMode();
 
-	// If left mouse button is pressed & can pick
-	// and CTRL & SHIFT aren't being pressed
-	if (m_toolInputCommands.mouseLeft)/* && m_toolInputCommands.pickOnce
-		&& !m_toolInputCommands.INCREASE && !m_toolInputCommands.DECREASE)*/
+	// If left mouse left button is pressed
+	if (m_toolInputCommands.mouseLeft)
 	{
 		// Switch between modes
 		switch(m_mode)
@@ -314,9 +312,10 @@ void ToolMain::Tick(MSG *msg)
 			if (m_toolInputCommands.pickOnce)
 			{
 				// If an object has been intersected
-				if (m_d3dRenderer.PickingObjects())
+				///if (m_d3dRenderer.PickingObjects(true))
 				{
-					// Select/deselect an object
+					// Select an object
+					m_d3dRenderer.PickingObjects(true);
 					m_selectedObjects = m_d3dRenderer.GetSelectedObjectIDs();
 				}
 
@@ -334,13 +333,38 @@ void ToolMain::Tick(MSG *msg)
 		}		
 	}
 
+	// Else, if mouse right button is pressed
+	else if (m_toolInputCommands.mouseRight)
+	{
+		// Switch between modes
+		switch (m_mode)
+		{
+		case MODE::OBJECT:
+		{
+			// If allowed to pick
+			if (m_toolInputCommands.pickOnce)
+			{
+				// If an object has been intersected
+				if (m_d3dRenderer.PickingObjects(false))
+				{
+					// Deselect an object
+					m_selectedObjects = m_d3dRenderer.GetSelectedObjectIDs();
+				}
+
+				// Reset picking controller
+				m_toolInputCommands.pickOnce = false;
+			}
+		}
+		break;
+		}
+	}
+
 	//Renderer Update Call
 	m_d3dRenderer.Tick(&m_toolInputCommands);
 }
 
 void ToolMain::UpdateInput(MSG * msg)
 {
-
 	switch (msg->message)
 	{
 		//Global inputs,  mouse position and keys etc
@@ -361,7 +385,6 @@ void ToolMain::UpdateInput(MSG * msg)
 	case WM_LBUTTONDOWN:	
 		m_toolInputCommands.mouseLeft = true;
 		m_toolInputCommands.pickOnce = true;
-		m_toolInputCommands.storeOnce = true;
 		break;
 
 	case WM_LBUTTONUP:

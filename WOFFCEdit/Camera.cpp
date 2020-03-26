@@ -62,9 +62,12 @@ void Camera::Update()
 	m_forward.z = cosP * -cosY;
 
 	// Look At
-	m_lookAt.x = m_position.x + m_forward.x;
-	m_lookAt.y = m_position.y + m_forward.y;
-	m_lookAt.z = m_position.z + m_forward.z;
+	if (!m_lookingAtObject)
+	{
+		m_lookAt.x = m_position.x + m_forward.x;
+		m_lookAt.y = m_position.y + m_forward.y;
+		m_lookAt.z = m_position.z + m_forward.z;
+	}
 
 	// Up
 	m_up.x = -cosY * sinR - sinY * sinP * cosR;
@@ -176,14 +179,16 @@ void Camera::MoveBackward(float deltaTime)
 	m_position.operator+=(temp);
 }
 
-void Camera::TrackMouse(float centre_x, float centre_y, POINT cursorPos, float deltaTime)
+void Camera::TrackMouse(float centreX, float centreY, POINT cursorPos, float deltaTime)
 {
 	// Alter camera rotation
-	/*POINT pos;
-	GetCursorPos(&pos);
-	m_yaw += (pos.x - centre_x) * (m_speed / 50.f);
-	m_pitch += (centre_y - pos.y) * (m_speed / 50.f);*/
+	m_yaw += (cursorPos.x - centreX) * (m_speed / 50.f);
+	m_pitch += (centreY - cursorPos.y) * (m_speed / 50.f);
+}
 
-	m_yaw += (cursorPos.x - centre_x) * (m_speed / 50.f);
-	m_pitch += (centre_y - cursorPos.y) * (m_speed / 50.f);
+void Camera::TrackObject(float centreX, float centreY, DirectX::SimpleMath::Vector3 objectPosition, float deltaTime)
+{
+	// Alter camera rotation
+	m_yaw += (objectPosition.x - centreX) * (m_speed / 50.f);
+	m_pitch += (centreY - objectPosition.y) * (m_speed / 50.f);
 }

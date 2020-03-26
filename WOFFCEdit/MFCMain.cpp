@@ -69,14 +69,11 @@ int MFCMain::Run()
 		}
 		else
 		{	
-			// Update current mode
-			m_mode = m_ToolSystem.GetMode();
-
 			// Empty status string
 			std::wstring statusString = L"";
 
 			// Switch between current mode
-			switch (m_mode)
+			switch (m_ToolSystem.GetMode())
 			{
 			case MODE::OBJECT:
 			{

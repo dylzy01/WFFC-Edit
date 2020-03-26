@@ -117,11 +117,14 @@ void Game::Tick(InputCommands *Input)
 // Updates the world.
 void Game::Update(DX::StepTimer const& timer)
 {
+	// Frame time
+	m_deltaTime = timer.GetElapsedSeconds();
+	
 	// Handle all input
 	HandleInput();
 	
 	// Custom camera
-	UpdateCamera(timer.GetElapsedSeconds());
+	UpdateCamera();
 
 #ifdef DXTK_AUDIO
     m_audioTimerAcc -= (float)timer.GetElapsedSeconds();
@@ -185,16 +188,6 @@ void Game::HandleInput()
 			// If any objects are selected
 			if (m_selectedObjectIDs.size() != 0)
 			{
-				// If mouse position should be stored
-				if (m_inputCommands.storeOnce)
-				{
-					// Store current mouse position
-					m_storedMousePosition = m_inputCommands.mousePos;
-
-					// Reset controller
-					m_inputCommands.storeOnce = false;
-				}
-
 				// If object positions should be stored
 				if (m_storeObjectDetails)
 				{
@@ -223,117 +216,192 @@ void Game::HandleInput()
 				// Loop through selected objects
 				for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
 				{
+					// Setup ray trace to current object
+					MousePicking(i);
+					
 					// Switch between S, R, T
 					switch (m_modify)
 					{
 					case MODIFY::SCALE:
 					{
-						// If mouse has moved
-						if (m_inputCommands.mousePos != m_storedMousePosition)
+						Vector3 distance = m_storedObjectScales[i] - m_pickingPoint;
+						///distance.Normalize();
+						
+						// If should be scaled on the X and Y axis
+						if (m_inputCommands.X && m_inputCommands.Y)
 						{
-							// If should be scaled on the X axis
-							if (m_inputCommands.X)
-							{
-								// Scale selected object based on how much the mouse has moved from its stored position
-								m_displayList[m_selectedObjectIDs[i]].m_scale.x *= (m_inputCommands.mousePos.x - m_storedMousePosition.x);
-							}
-
-							// Else, if should be scaled on the Y axis
-							else if (m_inputCommands.Y)
-							{
-								// Scale selected object based on how much the mouse has moved from its stored position
-								m_displayList[m_selectedObjectIDs[i]].m_scale.y *= (m_inputCommands.mousePos.y - m_storedMousePosition.y);
-							}
-
-							// Else, if should be scaled on the Z axis
-							else if (m_inputCommands.Z)
-							{
-								// Scale selected object based on how much the mouse has moved from its stored position
-								m_displayList[m_selectedObjectIDs[i]].m_scale.z *= (m_inputCommands.mousePos.x - m_storedMousePosition.x) + (m_inputCommands.mousePos.y - m_storedMousePosition.y);
-							}
-
-							// Else, if should be scaled freely
-							else
-							{
-							}
+							// Scale selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
+							m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
 						}
+
+						// Else, if should be scaled on the X and Z axis
+						else if (m_inputCommands.X && m_inputCommands.Z)
+						{
+							// Scale selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
+							m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
+						}
+
+						// Else, if should be scaled on the Y and Z axis
+						else if (m_inputCommands.Y && m_inputCommands.Z)
+						{
+							// Scale selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
+							m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
+						}
+						
+						// Else, if should be scaled on the X axis
+						else if (m_inputCommands.X)
+						{
+							// Scale selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
+						}
+
+						// Else, if should be scaled on the Y axis
+						else if (m_inputCommands.Y)
+						{
+							// Scale selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
+						}
+
+						// Else, if should be scaled on the Z axis
+						else if (m_inputCommands.Z)
+						{
+							// Scale selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
+						}
+
+						// Else, if should be scaled freely
+						else
+						{
+							// Scale selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_scale = distance;
+						}		
+
+						// Store manipulated scale
+						///m_storedObjectScales[i] = m_displayList[m_selectedObjectIDs[i]].m_scale;
 					}
 					break;
 					case MODIFY::TRANSLATE:
 					{
-						MousePicking();
-						///PickingObjects();
-						///PickingTerrain();
-						
-						// If mouse has moved
-						///if (m_inputCommands.mousePos != m_storedMousePosition)
+						// If should be translated on the X and Y axis
+						if (m_inputCommands.X && m_inputCommands.Y)
 						{
-							// If should be translated on the X axis
-							if (m_inputCommands.X)
-							{
-								// Translate selected object based on how much the mouse has moved from its stored position
-								///m_displayList[m_selectedObjectIDs[i]].m_position.x *= (m_inputCommands.mousePos.x - m_storedMousePosition.x);
-								m_displayList[m_selectedObjectIDs[i]].m_position.x += m_pickingPoint.x;
-							}
-
-							// Else, if should be translated on the Y axis
-							else if (m_inputCommands.Y)
-							{
-								// Translate selected object based on how much the mouse has moved from its stored position
-								m_displayList[m_selectedObjectIDs[i]].m_position.y *= (m_inputCommands.mousePos.y - m_storedMousePosition.y);
-							}
-
-							// Else, if should be translated on the Z axis
-							else if (m_inputCommands.Z)
-							{
-								// Translate selected object based on how much the mouse has moved from its stored position
-								m_displayList[m_selectedObjectIDs[i]].m_position.x *= (m_inputCommands.mousePos.x - m_storedMousePosition.x) + (m_inputCommands.mousePos.y - m_storedMousePosition.y);
-							}
-
-							// Else, if should be translated freely
-							else
-							{
-								m_displayList[m_selectedObjectIDs[i]].m_position = m_pickingPoint;
-							}
+							// Translate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
+							m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
 						}
+
+						// Else, if should be translated on the X and Z axis
+						else if (m_inputCommands.X && m_inputCommands.Z)
+						{
+							// Translate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
+							m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
+						}
+
+						// Else, if should be translated on the Y and Z axis
+						else if (m_inputCommands.Y && m_inputCommands.Z)
+						{
+							// Translate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
+							m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
+						}
+						
+						// Else, if should be translated on the X axis
+						else if (m_inputCommands.X)
+						{
+							// Translate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
+						}
+
+						// Else, if should be translated on the Y axis
+						else if (m_inputCommands.Y)
+						{
+							// Translate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
+						}
+
+						// Else, if should be translated on the Z axis
+						else if (m_inputCommands.Z)
+						{
+							// Translate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
+						}						
+
+						// Else, if should be translated freely
+						else
+						{
+							// Translate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_position = m_pickingPoint;
+						}
+						
 					}
 					break;
 					case MODIFY::ROTATE:
-					{
-						// If mouse has moved
-						if (m_inputCommands.mousePos != m_storedMousePosition)
+					{						
+						// If should be rotated on the X and Y axis
+						if (m_inputCommands.X && m_inputCommands.Y)
 						{
-							// If should be rotated on the X axis
-							if (m_inputCommands.X)
-							{
-								// Rotate selected object based on how much the mouse has moved from its stored position
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.x *= (m_inputCommands.mousePos.x - m_storedMousePosition.x);
-							}
-
-							// Else, if should be rotated on the Y axis
-							else if (m_inputCommands.Y)
-							{
-								// Rotate selected object based on how much the mouse has moved from its stored position
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.y *= (m_inputCommands.mousePos.y - m_storedMousePosition.y);
-							}
-
-							// Else, if should be rotated on the Z axis
-							else if (m_inputCommands.Z)
-							{
-								// Rotate selected object based on how much the mouse has moved from its stored position
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.x *= (m_inputCommands.mousePos.x - m_storedMousePosition.x) + (m_inputCommands.mousePos.y - m_storedMousePosition.y);
-							}
-
-							// Else, if should be rotated freely
-							else
-							{
-							}
+							// Rotate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_orientation.x += m_pickingPoint.x;
+							m_displayList[m_selectedObjectIDs[i]].m_orientation.y += m_pickingPoint.y;
 						}
+
+						// Else, if should be rotated on the X and Z axis
+						else if (m_inputCommands.X && m_inputCommands.Z)
+						{
+							// Rotate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_orientation.x += m_pickingPoint.x;
+							m_displayList[m_selectedObjectIDs[i]].m_orientation.z += m_pickingPoint.z;
+						}
+
+						// Else, if should be rotated on the Y and Z axis
+						else if (m_inputCommands.Y && m_inputCommands.Z)
+						{
+							// Rotate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_orientation.y += m_pickingPoint.y;
+							m_displayList[m_selectedObjectIDs[i]].m_orientation.z += m_pickingPoint.z;
+						}
+
+						// Else, if should be rotated on the X axis
+						else if (m_inputCommands.X)
+						{
+							// Rotate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_orientation.x += m_pickingPoint.x;
+						}
+
+						// Else, if should be rotated on the Y axis
+						else if (m_inputCommands.Y)
+						{
+							// Rotate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_orientation.y += m_pickingPoint.y;
+						}
+
+						// Else, if should be rotated on the Z axis
+						else if (m_inputCommands.Z)
+						{
+							// Rotate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_orientation.z += m_pickingPoint.z;
+						}					
+
+						// Else, if should be rotated freely
+						else
+						{
+							// Rotate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_orientation += m_pickingPoint;
+						}					
 					}
 					break;
 					}
 				}
 			}
+		}
+		// Else, if mouse isn't being pressed
+		{
+			// Reset camera look at
+			m_camera->SetLookingAtObject(false);
 		}
 	}
 	break;
@@ -383,7 +451,7 @@ void Game::HandleInput()
 	}
 }
 
-void Game::UpdateCamera(float deltaTime)
+void Game::UpdateCamera()
 {
 	DirectX::SimpleMath::Vector2 centre;
 	centre.x = m_deviceResources->GetScreenViewport().Width / 2;
@@ -394,7 +462,7 @@ void Game::UpdateCamera(float deltaTime)
 	GetCursorPos(&cursorPos);
 	ScreenToClient(m_window, &cursorPos);
 
-	m_camera->HandleInput(&m_inputCommands, deltaTime, centre.x, centre.y, cursorPos);
+	m_camera->HandleInput(&m_inputCommands, m_deltaTime, centre.x, centre.y, cursorPos);
 	m_camera->Update();
 
 	//apply camera vectors
@@ -476,12 +544,18 @@ void Game::Render()
 	m_font->DrawString(m_sprites.get(), rot.c_str(), XMFLOAT2(100, 40), Colors::Yellow);
 
 	// Mouse
-	POINT mousePos;
+	/*POINT mousePos;
 	GetCursorPos(&mousePos);
 	ScreenToClient(m_window, &mousePos);
 	std::wstring mouse = L"Mouse X: " + std::to_wstring(mousePos.x)
 		+ L" Mouse Y: " + std::to_wstring(mousePos.y);
-	m_font->DrawString(m_sprites.get(), mouse.c_str(), XMFLOAT2(100, 70), Colors::Yellow);
+	m_font->DrawString(m_sprites.get(), mouse.c_str(), XMFLOAT2(100, 70), Colors::Yellow);*/
+
+	// Picking point
+	std::wstring point = L"Point X: " + std::to_wstring(m_pickingPoint.x) +
+		L"Point Y: " + std::to_wstring(m_pickingPoint.y) +
+		L"Point Z: " + std::to_wstring(m_pickingPoint.z);
+	m_font->DrawString(m_sprites.get(), point.c_str(), XMFLOAT2(100, 70), Colors::Yellow);
 
 	// Current mode
 	std::wstring mode;
@@ -694,7 +768,7 @@ void Game::SaveDisplayChunk(ChunkObject * SceneChunk)
 	m_displayChunk.SaveHeightMap();			//save heightmap to file.
 }
 
-void Game::MousePicking()
+void Game::MousePicking(int i)
 {
 	// Setup ray trace origin
 	Vector3 origin = XMVector3Unproject(Vector3(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 0.f),
@@ -729,7 +803,7 @@ void Game::MousePicking()
 	
 	// Local vector storage
 	Vector3 mouse = ray.position;
-	Vector3 object = m_displayList[m_selectedObjectIDs[0]].m_position;
+	Vector3 object = m_displayList[m_selectedObjectIDs[i]].m_position;
 
 	// Distance between the two
 	float distance = sqrt(
@@ -739,9 +813,16 @@ void Game::MousePicking()
 
 	// Setup picking point
 	m_pickingPoint = ray.position + (ray.direction * distance);
+	
+	// Setup camera arcball 
+	///m_camera->SetLookAt(m_pickingPoint);
+	/*DirectX::SimpleMath::Vector2 centre;
+	centre.x = m_deviceResources->GetScreenViewport().Width / 2;
+	centre.y = m_deviceResources->GetScreenViewport().Height / 2;	
+	m_camera->TrackObject(centre.x, centre.y, m_displayList[m_selectedObjectIDs[i]].m_position, m_deltaTime);*/
 }
 
-bool Game::PickingObjects()
+bool Game::PickingObjects(bool select)
 {
 	// Controllers
 	int selectedID = -1;
@@ -796,9 +877,6 @@ bool Game::PickingObjects()
 					storedDistance = pickedDistance;
 					selectedID = i;
 				}
-
-				// Update mouse picking point in 3D world
-				m_pickingPoint = m_displayList[i].m_position;
 			}
 		}
 	}
@@ -809,8 +887,12 @@ bool Game::PickingObjects()
 		// If current selected ID is already in the vector
 		if (std::count(m_selectedObjectIDs.begin(), m_selectedObjectIDs.end(), selectedID))
 		{
-			// Remove from vector storage
-			m_selectedObjectIDs.erase(std::remove(m_selectedObjectIDs.begin(), m_selectedObjectIDs.end(), selectedID), m_selectedObjectIDs.end());
+			// If isn't selecting
+			if (!select)
+			{
+				// Remove from vector storage
+				m_selectedObjectIDs.erase(std::remove(m_selectedObjectIDs.begin(), m_selectedObjectIDs.end(), selectedID), m_selectedObjectIDs.end());
+			}
 		}
 		// Else, if current selected ID is new
 		else
@@ -824,6 +906,9 @@ bool Game::PickingObjects()
 	}
 	else
 	{
+		// Clear entire selection vector
+		m_selectedObjectIDs.clear();
+		
 		// Object hasn't been intersected
 		return false;
 	}
