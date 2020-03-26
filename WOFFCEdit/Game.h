@@ -57,10 +57,6 @@ public:
 	void SaveDisplayChunk(ChunkObject *SceneChunk);	//saves geometry et al
 	void ClearDisplayList();
 
-	// Mode controllers
-	MODE GetMode() { return m_mode; }
-	void SetMode(MODE mode) { m_mode = mode; }
-
 	// Mouse picking
 	void MousePicking(int i);
 	bool PickingObjects(bool select);
@@ -69,9 +65,33 @@ public:
 	TERRAIN TerrainIntersection(DirectX::SimpleMath::Ray ray);	
 
 	// Getters
+	EDITOR GetEditor() { return m_editor; }
 	std::vector<int> GetSelectedObjectIDs() { return m_selectedObjectIDs; }
 
 	// Setters
+	void SetWireframe(bool wireframe) { m_wireframe = wireframe; }
+	void SetEditor(EDITOR editor) { 
+		m_editor = editor; 
+		switch (editor)
+		{
+		case EDITOR::OBJECT:
+		{
+			m_sculptFunction = SCULPT_FUNCTION::NA;
+			m_sculptConstraint = SCULPT_CONSTRAINT::NA;
+		}
+		break;
+		case EDITOR::SCULPT:
+		{
+			m_objectFunction = OBJECT_FUNCTION::NA;
+			m_objectConstraint = OBJECT_CONSTRAINT::NA;
+		}
+		break;
+		}
+	}
+	void SetObjectFunction(OBJECT_FUNCTION function) { m_objectFunction = function; }
+	void SetObjectConstraint(OBJECT_CONSTRAINT constraint) { m_objectConstraint = constraint; }
+	void SetSculptFunction(SCULPT_FUNCTION function) { m_sculptFunction = function; }
+	void SetSculptConstraint(SCULPT_CONSTRAINT constraint) { m_sculptConstraint = constraint; }
 	void StorePickingPoint(bool store) { m_storePickingPoint = store; }
 	void StoreObjectDetails(bool store) { m_storeObjectDetails = store; }
 	void StoreTerrainPosition(bool store) { m_storeTerrainPosition = store; }
@@ -126,9 +146,12 @@ private:
 	DirectX::SimpleMath::Vector2 m_storedMousePosition;
 	DirectX::SimpleMath::Vector3 m_storedPickingPoint, m_storedTerrainPosition;
 
-	// Mode controller
-	MODE m_mode;
-	MODIFY m_modify;
+	// Mode controllers
+	EDITOR m_editor;
+	OBJECT_FUNCTION m_objectFunction = OBJECT_FUNCTION::NA;
+	OBJECT_CONSTRAINT m_objectConstraint = OBJECT_CONSTRAINT::NA;
+	SCULPT_FUNCTION m_sculptFunction = SCULPT_FUNCTION::NA;
+	SCULPT_CONSTRAINT m_sculptConstraint = SCULPT_CONSTRAINT::NA;
 
 	// Device resources.
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;

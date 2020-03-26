@@ -9,7 +9,8 @@
 #include "resource.h"
 #include "MFCFrame.h"
 #include "SelectDialogue.h"
-
+#include "ObjectDialogue.h"
+#include "SculptDialogue.h"
 
 class MFCMain : public CWinApp 
 {
@@ -23,10 +24,13 @@ private:
 
 	CMyFrame * m_frame;	//handle to the frame where all our UI is
 	HWND m_toolHandle;	//Handle to the MFC window
-	ToolMain m_ToolSystem;	//Instance of Tool System that we interface to. 
-	CRect WindowRECT;	//Window area rectangle. 
-	SelectDialogue m_ToolSelectDialogue;			//for modeless dialogue, declare it here
-	MODE m_mode;	//Local mode controller
+	ToolMain m_toolSystem;	//Instance of Tool System that we interface to. 
+	CRect m_windowRect;	//Window area rectangle. 
+	SelectDialogue m_toolSelectDialogue;			//for modeless dialogue, declare it here
+	ObjectDialogue m_toolObjectDialogue;
+	SculptDialogue m_toolSculptDialogue;
+
+	EDITOR m_mode;	//Local mode controller
 
 	int m_width;		
 	int m_height;
@@ -35,8 +39,14 @@ private:
 	afx_msg void MenuFileQuit();
 	afx_msg void MenuFileSaveTerrain();
 	afx_msg void MenuEditSelect();
+	afx_msg void MenuEditEditorObject();
+	afx_msg void MenuEditEditorLandscapeNature();
+	afx_msg void MenuEditEditorLandscapeWater();
+	afx_msg void MenuEditEditorLandscapeSculpt();
+	afx_msg void MenuEditEditorLandscapePaint();
+	afx_msg void MenuEditWireframeOn();
+	afx_msg void MenuEditWireframeOff();
 	afx_msg	void ToolBarButton1();
-
 
 	DECLARE_MESSAGE_MAP()	// required macro for message map functionality  One per class
 };

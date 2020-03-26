@@ -10,19 +10,46 @@ struct TERRAIN {
 	DirectX::SimpleMath::Vector3 position;
 };
 
-enum class MODE {
+enum class EDITOR {
+	NA,
 	OBJECT,
-	LANDSCAPE
+	SCULPT
+};
+
+enum class OBJECT_FUNCTION {
+	NA,
+	SELECT,
+	SCALE,
+	TRANSLATE,
+	ROTATE
+};
+
+enum class OBJECT_CONSTRAINT {
+	NA,
+	X,
+	Y,
+	Z,
+	ALL
+};
+
+enum class SCULPT_FUNCTION {
+	NA,
+	SELECT,
+	INCREASE,
+	FLATTEN,
+	DECREASE
+};
+
+enum class SCULPT_CONSTRAINT {
+	NA,
+	X, 
+	Y,
+	Z,
+	ALL
 };
 
 enum class HEIGHT {
 	INCREASE,
 	DECREASE,
 	FLATTEN
-};
-
-enum class MODIFY {
-	SCALE,
-	TRANSLATE,
-	ROTATE
 };

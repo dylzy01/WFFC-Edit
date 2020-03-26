@@ -48,22 +48,6 @@ void SelectDialogue::SetObjectData(std::vector<SceneObject>* SceneGraph, std::ve
 	}
 }
 
-void SelectDialogue::SetChunkData(std::vector<SceneObject>* SceneGraph, std::vector<TERRAIN>* selection)
-{
-	m_sceneGraph = SceneGraph;
-	m_currentChunkSelection = selection;
-
-	//roll through all the objects in the scene graph and put an entry for each in the listbox
-	int numSceneObjects = m_sceneGraph->size();
-	for (int i = 0; i < numSceneObjects; i++)
-	{
-		//easily possible to make the data string presented more complex. showing other columns.
-		std::wstring listBoxEntry = std::to_wstring(m_sceneGraph->at(i).ID);
-		m_listBox.AddString(listBoxEntry.c_str());
-	}
-}
-
-
 void SelectDialogue::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);

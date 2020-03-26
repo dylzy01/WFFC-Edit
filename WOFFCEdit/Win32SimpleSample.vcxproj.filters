@@ -65,6 +65,8 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Custom</Filter>
     </ClCompile>
+    <ClCompile Include="ObjectDialogue.cpp" />
+    <ClCompile Include="SculptDialogue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -120,6 +122,8 @@
     <ClInclude Include="Tools.h">
       <Filter>Custom</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectDialogue.h" />
+    <ClInclude Include="SculptDialogue.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

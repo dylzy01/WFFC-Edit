@@ -25,7 +25,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>   m_terrainInputLayout;
 
 	DirectX::VertexPositionNormalTexture GetGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
-	void UpdateTerrainHeight(int row, int column, HEIGHT height, DirectX::SimpleMath::Vector3 position = { 0,0,0 });
+	void SculptTerrain(int row, int column, SCULPT_FUNCTION function, SCULPT_CONSTRAINT constraint, DirectX::SimpleMath::Vector3 position = { 0,0,0 });
 
 	void SetSelected(bool selected, int ID);
 

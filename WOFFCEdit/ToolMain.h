@@ -26,12 +26,38 @@ public: //methods
 	void	Tick(MSG *msg);
 	void	UpdateInput(MSG *msg);
 
-	MODE GetMode() { return m_mode; } //return current mode
+	// Getters
+	EDITOR GetEditor() { return m_editor; } //return current editor
+
+	// Setters
+	void SetWireframe(bool wireframe) { m_d3dRenderer.SetWireframe(wireframe); }
+	void SetEditor(EDITOR editor) {
+		m_editor = editor;
+		switch (editor)
+		{
+		case EDITOR::OBJECT:
+		{
+			m_sculptFunction = SCULPT_FUNCTION::NA;
+			m_sculptConstraint = SCULPT_CONSTRAINT::NA;
+		}
+		break;
+		case EDITOR::SCULPT:
+		{
+			m_objectFunction = OBJECT_FUNCTION::NA;
+			m_objectConstraint = OBJECT_CONSTRAINT::NA;
+		}
+		break;
+		}
+		m_d3dRenderer.SetEditor(editor);
+	}
+	void SetObjectFunction(OBJECT_FUNCTION function) { m_objectFunction = function; m_d3dRenderer.SetObjectFunction(function); }
+	void SetObjectConstraint(OBJECT_CONSTRAINT constraint) { m_objectConstraint = constraint; m_d3dRenderer.SetObjectConstraint(constraint); }
+	void SetSculptFunction(SCULPT_FUNCTION function) { m_sculptFunction = function; m_d3dRenderer.SetSculptFunction(function); }
+	void SetSculptConstraint(SCULPT_CONSTRAINT constraint) { m_sculptConstraint = constraint; m_d3dRenderer.SetSculptConstraint(constraint); }
 
 public:	//variables
 	std::vector<SceneObject>    m_sceneGraph;	//our scenegraph storing all the objects in the current chunk
 	ChunkObject					m_chunk;		//our landscape chunk
-	///int m_selectedObject;						//ID of current selection
 	std::vector<int> m_selectedObjects;			//IDs of multiple current OBJECT selections
 	TERRAIN m_selectedTerrain;				
 	std::vector<TERRAIN> m_selectedTerrains;		//IDs of multiple current TERRAIN selections
@@ -46,7 +72,13 @@ private:	//variables
 	CRect	WindowRECT;		//Window area rectangle. 
 	char	m_keyArray[256];
 	sqlite3 *m_databaseConnection;	//sqldatabase handle
-	MODE	m_mode;	//mode controller
+	
+	// Mode controllers
+	EDITOR m_editor;
+	OBJECT_FUNCTION m_objectFunction = OBJECT_FUNCTION::NA;
+	OBJECT_CONSTRAINT m_objectConstraint = OBJECT_CONSTRAINT::NA;
+	SCULPT_FUNCTION m_sculptFunction = SCULPT_FUNCTION::NA;
+	SCULPT_CONSTRAINT m_sculptConstraint = SCULPT_CONSTRAINT::NA;
 
 	int m_width;		//dimensions passed to directX
 	int m_height;

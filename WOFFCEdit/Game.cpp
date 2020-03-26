@@ -155,33 +155,11 @@ void Game::Update(DX::StepTimer const& timer)
 
 void Game::HandleInput()
 {
-	// Change mode to OBJECT
-	if (m_inputCommands.ONE) { m_mode = MODE::OBJECT; }
-
-	// Change mode to LANDSCAPE
-	else if (m_inputCommands.TWO) { m_mode = MODE::LANDSCAPE; }
-
-	// Switch wireframe on/off
-	if (m_inputCommands.ZERO)
-	{
-		if (m_wireframe) { m_wireframe = false; }
-		else { m_wireframe = true; }
-	}
-
 	// Switch between modes
-	switch (m_mode)
+	switch (m_editor)
 	{
-	case MODE::OBJECT:
-	{
-		// Change modification to SCALE
-		if (m_inputCommands.SCALE) { m_modify = MODIFY::SCALE; }
-		
-		// Change modification to TRANSLATE
-		else if (m_inputCommands.TRANSLATE) { m_modify = MODIFY::TRANSLATE; }
-
-		// Change modification to ROTATE
-		else if (m_inputCommands.ROTATE) { m_modify = MODIFY::ROTATE; }
-		
+	case EDITOR::OBJECT:
+	{		
 		// If mouse is being pressed
 		if (m_inputCommands.mouseLeft)
 		{						
@@ -233,60 +211,64 @@ void Game::HandleInput()
 					MousePicking(i);
 					
 					// Switch between S, R, T
-					switch (m_modify)
+					switch (m_objectFunction)
 					{
-					case MODIFY::SCALE:
+					case OBJECT_FUNCTION::SCALE:
 					{						
 						// If picking point is different from stored point
 						///if (m_pickingPoint != m_storedPickingPoint)
 						{
 							// If should be scaled on the X and Y axis
-							if (m_inputCommands.X && m_inputCommands.Y)
-							{
-								// Scale selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
-								m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
-							}
+							//if (m_inputCommands.X && m_inputCommands.Y)
+							//{
+							//	// Scale selected object based on picking point
+							//	m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
+							//	m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
+							//}
 
-							// Else, if should be scaled on the X and Z axis
-							else if (m_inputCommands.X && m_inputCommands.Z)
-							{
-								// Scale selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
-								m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
-							}
+							//// Else, if should be scaled on the X and Z axis
+							//else if (m_inputCommands.X && m_inputCommands.Z)
+							//{
+							//	// Scale selected object based on picking point
+							//	m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
+							//	m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
+							//}
 
-							// Else, if should be scaled on the Y and Z axis
-							else if (m_inputCommands.Y && m_inputCommands.Z)
-							{
-								// Scale selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
-								m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
-							}
+							//// Else, if should be scaled on the Y and Z axis
+							//else if (m_inputCommands.Y && m_inputCommands.Z)
+							//{
+							//	// Scale selected object based on picking point
+							//	m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
+							//	m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
+							//}
 
 							// Else, if should be scaled on the X axis
-							else if (m_inputCommands.X)
+							///else if (m_inputCommands.X)
+							if (m_objectConstraint == OBJECT_CONSTRAINT::X)
 							{
 								// Scale selected object based on picking point
 								m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
 							}
 
 							// Else, if should be scaled on the Y axis
-							else if (m_inputCommands.Y)
+							///else if (m_inputCommands.Y)
+							else if (m_objectConstraint == OBJECT_CONSTRAINT::Y)
 							{
 								// Scale selected object based on picking point
 								m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
 							}
 
 							// Else, if should be scaled on the Z axis
-							else if (m_inputCommands.Z)
+							///else if (m_inputCommands.Z)
+							else if (m_objectConstraint == OBJECT_CONSTRAINT::Z)
 							{
 								// Scale selected object based on picking point
 								m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
 							}
 
 							// Else, if should be scaled freely
-							else
+							///else
+							else if (m_objectConstraint == OBJECT_CONSTRAINT::ALL)
 							{
 								// Scale selected object based on picking point
 								m_displayList[m_selectedObjectIDs[i]].m_scale = m_storedObjectScales[i] - m_pickingPoint;
@@ -297,55 +279,59 @@ void Game::HandleInput()
 						}
 					}
 					break;
-					case MODIFY::TRANSLATE:
+					case OBJECT_FUNCTION::TRANSLATE:
 					{
 						// If should be translated on the X and Y axis
-						if (m_inputCommands.X && m_inputCommands.Y)
-						{
-							// Translate selected object based on picking point
-							m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
-							m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
-						}
+						//if (m_inputCommands.X && m_inputCommands.Y)
+						//{
+						//	// Translate selected object based on picking point
+						//	m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
+						//	m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
+						//}
 
-						// Else, if should be translated on the X and Z axis
-						else if (m_inputCommands.X && m_inputCommands.Z)
-						{
-							// Translate selected object based on picking point
-							m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
-							m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
-						}
+						//// Else, if should be translated on the X and Z axis
+						//else if (m_inputCommands.X && m_inputCommands.Z)
+						//{
+						//	// Translate selected object based on picking point
+						//	m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
+						//	m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
+						//}
 
-						// Else, if should be translated on the Y and Z axis
-						else if (m_inputCommands.Y && m_inputCommands.Z)
-						{
-							// Translate selected object based on picking point
-							m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
-							m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
-						}
+						//// Else, if should be translated on the Y and Z axis
+						//else if (m_inputCommands.Y && m_inputCommands.Z)
+						//{
+						//	// Translate selected object based on picking point
+						//	m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
+						//	m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
+						//}
 						
 						// Else, if should be translated on the X axis
-						else if (m_inputCommands.X)
+						///else if (m_inputCommands.X)
+						if (m_objectConstraint == OBJECT_CONSTRAINT::X)
 						{
 							// Translate selected object based on picking point
 							m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
 						}
 
 						// Else, if should be translated on the Y axis
-						else if (m_inputCommands.Y)
+						///else if (m_inputCommands.Y)
+						else if (m_objectConstraint == OBJECT_CONSTRAINT::Y)
 						{
 							// Translate selected object based on picking point
 							m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
 						}
 
 						// Else, if should be translated on the Z axis
-						else if (m_inputCommands.Z)
+						///else if (m_inputCommands.Z)
+						else if (m_objectConstraint == OBJECT_CONSTRAINT::Z)
 						{
 							// Translate selected object based on picking point
 							m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
 						}						
 
 						// Else, if should be translated freely
-						else
+						///else
+						else if (m_objectConstraint == OBJECT_CONSTRAINT::ALL)
 						{
 							// Translate selected object based on picking point
 							m_displayList[m_selectedObjectIDs[i]].m_position = m_pickingPoint;
@@ -353,55 +339,59 @@ void Game::HandleInput()
 						
 					}
 					break;
-					case MODIFY::ROTATE:
+					case OBJECT_FUNCTION::ROTATE:
 					{						
 						// If should be rotated on the X and Y axis
-						if (m_inputCommands.X && m_inputCommands.Y)
-						{
-							// Rotate selected object based on picking point
-							m_displayList[m_selectedObjectIDs[i]].m_orientation.x += m_pickingPoint.x;
-							m_displayList[m_selectedObjectIDs[i]].m_orientation.y += m_pickingPoint.y;
-						}
+						//if (m_inputCommands.X && m_inputCommands.Y)
+						//{
+						//	// Rotate selected object based on picking point
+						//	m_displayList[m_selectedObjectIDs[i]].m_orientation.x += m_pickingPoint.x;
+						//	m_displayList[m_selectedObjectIDs[i]].m_orientation.y += m_pickingPoint.y;
+						//}
 
-						// Else, if should be rotated on the X and Z axis
-						else if (m_inputCommands.X && m_inputCommands.Z)
-						{
-							// Rotate selected object based on picking point
-							m_displayList[m_selectedObjectIDs[i]].m_orientation.x += m_pickingPoint.x;
-							m_displayList[m_selectedObjectIDs[i]].m_orientation.z += m_pickingPoint.z;
-						}
+						//// Else, if should be rotated on the X and Z axis
+						//else if (m_inputCommands.X && m_inputCommands.Z)
+						//{
+						//	// Rotate selected object based on picking point
+						//	m_displayList[m_selectedObjectIDs[i]].m_orientation.x += m_pickingPoint.x;
+						//	m_displayList[m_selectedObjectIDs[i]].m_orientation.z += m_pickingPoint.z;
+						//}
 
-						// Else, if should be rotated on the Y and Z axis
-						else if (m_inputCommands.Y && m_inputCommands.Z)
-						{
-							// Rotate selected object based on picking point
-							m_displayList[m_selectedObjectIDs[i]].m_orientation.y += m_pickingPoint.y;
-							m_displayList[m_selectedObjectIDs[i]].m_orientation.z += m_pickingPoint.z;
-						}
+						//// Else, if should be rotated on the Y and Z axis
+						//else if (m_inputCommands.Y && m_inputCommands.Z)
+						//{
+						//	// Rotate selected object based on picking point
+						//	m_displayList[m_selectedObjectIDs[i]].m_orientation.y += m_pickingPoint.y;
+						//	m_displayList[m_selectedObjectIDs[i]].m_orientation.z += m_pickingPoint.z;
+						//}
 
 						// Else, if should be rotated on the X axis
-						else if (m_inputCommands.X)
+						///else if (m_inputCommands.X)
+						if (m_objectConstraint == OBJECT_CONSTRAINT::X)
 						{
 							// Rotate selected object based on picking point
 							m_displayList[m_selectedObjectIDs[i]].m_orientation.x += m_pickingPoint.x;
 						}
 
 						// Else, if should be rotated on the Y axis
-						else if (m_inputCommands.Y)
+						///else if (m_inputCommands.Y)
+						else if (m_objectConstraint == OBJECT_CONSTRAINT::Y)
 						{
 							// Rotate selected object based on picking point
 							m_displayList[m_selectedObjectIDs[i]].m_orientation.y += m_pickingPoint.y;
 						}
 
 						// Else, if should be rotated on the Z axis
-						else if (m_inputCommands.Z)
+						///else if (m_inputCommands.Z)
+						else if (m_objectConstraint == OBJECT_CONSTRAINT::Z)
 						{
 							// Rotate selected object based on picking point
 							m_displayList[m_selectedObjectIDs[i]].m_orientation.z += m_pickingPoint.z;
 						}					
 
 						// Else, if should be rotated freely
-						else
+						///else
+						else if (m_objectConstraint == OBJECT_CONSTRAINT::ALL)
 						{
 							// Rotate selected object based on picking point
 							m_displayList[m_selectedObjectIDs[i]].m_orientation += m_pickingPoint;
@@ -419,7 +409,7 @@ void Game::HandleInput()
 		}
 	}
 	break;
-	case MODE::LANDSCAPE:
+	case EDITOR::SCULPT:
 	{
 		// If mouse is being pressed
 		if (m_inputCommands.mouseLeft)
@@ -427,22 +417,16 @@ void Game::HandleInput()
 			// If selected terrain is intersected by ray trace
 			if (m_selectedTerrain.intersect)
 			{
-				// If Z is being pressed
-				if (m_inputCommands.INCREASE)
+				// If increase or decrease
+				if (m_sculptFunction == SCULPT_FUNCTION::INCREASE ||
+					m_sculptFunction == SCULPT_FUNCTION::DECREASE)
 				{
-					// Increase height of selected terrain
-					m_displayChunk.UpdateTerrainHeight(m_selectedTerrain.row, m_selectedTerrain.column, HEIGHT::INCREASE);
+					// Increase/decrease terrain
+					m_displayChunk.SculptTerrain(m_selectedTerrain.row, m_selectedTerrain.column, m_sculptFunction, m_sculptConstraint);
 				}
 
-				// Else, if X is being pressed
-				else if (m_inputCommands.DECREASE)
-				{
-					// Decrease height of selecteed terrain
-					m_displayChunk.UpdateTerrainHeight(m_selectedTerrain.row, m_selectedTerrain.column, HEIGHT::DECREASE);
-				}
-
-				// Else, if C is being pressed
-				else if (m_inputCommands.FLATTEN)
+				// Else, if flatten
+				else if (m_sculptFunction == SCULPT_FUNCTION::FLATTEN)
 				{
 					// If first position should be stored
 					if (m_storeTerrainPosition)
@@ -455,8 +439,8 @@ void Game::HandleInput()
 					if (m_selectedTerrain.position.y != m_storedTerrainPosition.y)
 					{
 						// Flatten height of selected terrain
-						m_displayChunk.UpdateTerrainHeight(m_selectedTerrain.row, m_selectedTerrain.column, HEIGHT::FLATTEN, m_storedTerrainPosition);
-					}				
+						m_displayChunk.SculptTerrain(m_selectedTerrain.row, m_selectedTerrain.column, m_sculptFunction, m_sculptConstraint, m_storedTerrainPosition);
+					}
 				}
 			}
 		}			
@@ -574,10 +558,10 @@ void Game::Render()
 	// Current mode
 	std::wstring mode;
 	// Switch between modes
-	switch (m_mode)
+	switch (m_editor)
 	{
-	case MODE::OBJECT: mode = L"MODE: OBJECT"; break;
-	case MODE::LANDSCAPE: mode = L"MODE: LANDSCAPE"; break;
+	case EDITOR::OBJECT: mode = L"MODE: OBJECT"; break;
+	case EDITOR::SCULPT: mode = L"MODE: SCULPT"; break;
 	}
 	m_font->DrawString(m_sprites.get(), mode.c_str(), XMFLOAT2(100, 120), Colors::Yellow);
 

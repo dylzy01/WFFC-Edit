@@ -3,9 +3,16 @@
 
 
 BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
-	ON_COMMAND(ID_FILE_QUIT,	&MFCMain::MenuFileQuit)
+	ON_COMMAND(ID_FILE_QUIT, &MFCMain::MenuFileQuit)
 	ON_COMMAND(ID_FILE_SAVETERRAIN, &MFCMain::MenuFileSaveTerrain)
 	ON_COMMAND(ID_EDIT_SELECT, &MFCMain::MenuEditSelect)
+	ON_COMMAND(ID_EDITOR_OBJECTEDITOR, &MFCMain::MenuEditEditorObject)
+	ON_COMMAND(ID_LANDSCAPEEDITOR_NATURE, &MFCMain::MenuEditEditorLandscapeNature)
+	ON_COMMAND(ID_LANDSCAPEEDITOR_WATER, &MFCMain::MenuEditEditorLandscapeWater)
+	ON_COMMAND(ID_LANDSCAPEEDITOR_SCULPT, &MFCMain::MenuEditEditorLandscapeSculpt)
+	ON_COMMAND(ID_LANDSCAPEEDITOR_PAINT, &MFCMain::MenuEditEditorLandscapePaint)
+	ON_COMMAND(ID_WIREFRAME_ON, &MFCMain::MenuEditWireframeOn)
+	ON_COMMAND(ID_WIREFRAME_OFF, &MFCMain::MenuEditWireframeOff)
 	ON_COMMAND(ID_BUTTON40001,	&MFCMain::ToolBarButton1)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_TOOL, &CMyFrame::OnUpdatePage)
 END_MESSAGE_MAP()
@@ -33,11 +40,11 @@ BOOL MFCMain::InitInstance()
 
 	//get the rect from the MFC window so we can get its dimensions
 	m_toolHandle = m_frame->m_DirXView.GetSafeHwnd();				//handle of directX child window
-	m_frame->m_DirXView.GetClientRect(&WindowRECT);
-	m_width		= WindowRECT.Width();
-	m_height	= WindowRECT.Height();
+	m_frame->m_DirXView.GetClientRect(&m_windowRect);
+	m_width		= m_windowRect.Width();
+	m_height	= m_windowRect.Height();
 
-	m_ToolSystem.onActionInitialise(m_toolHandle, m_width, m_height);
+	m_toolSystem.onActionInitialise(m_toolHandle, m_width, m_height);
 
 	return TRUE;
 }
@@ -65,7 +72,7 @@ int MFCMain::Run()
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 
-			m_ToolSystem.UpdateInput(&msg);
+			m_toolSystem.UpdateInput(&msg);
 		}
 		else
 		{	
@@ -73,12 +80,12 @@ int MFCMain::Run()
 			std::wstring statusString = L"";
 
 			// Switch between current mode
-			switch (m_ToolSystem.GetMode())
+			switch (m_toolSystem.GetEditor())
 			{
-			case MODE::OBJECT:
+			case EDITOR::OBJECT:
 			{
 				// Fill status string with selected object IDs
-				std::vector<int> IDs = m_ToolSystem.getCurrentObjectSelectionID();
+				std::vector<int> IDs = m_toolSystem.getCurrentObjectSelectionID();
 				for (int i = 0; i < IDs.size(); ++i)
 				{
 					if (i != 0) { statusString += L", " + std::to_wstring(IDs[i]); }
@@ -86,10 +93,10 @@ int MFCMain::Run()
 				}
 			}
 			break;
-			case MODE::LANDSCAPE:
+			case EDITOR::SCULPT:
 			{
 				// Fill status string with selected chunk row,column(s)
-				std::vector<TERRAIN> chunks = m_ToolSystem.getCurrentChunkSelection();
+				std::vector<TERRAIN> chunks = m_toolSystem.getCurrentChunkSelection();
 				for (int i = 0; i < chunks.size(); ++i)
 				{
 					if (i != 0) { statusString += L", (" + std::to_wstring(chunks[i].row) + L","
@@ -101,8 +108,30 @@ int MFCMain::Run()
 			break;
 			}
 
+			// If object editor window is open
+			if (m_toolObjectDialogue.m_active)
+			{
+				m_toolSystem.SetEditor(EDITOR::OBJECT);
+				m_toolSystem.SetObjectFunction(m_toolObjectDialogue.GetFunction());
+				m_toolSystem.SetObjectConstraint(m_toolObjectDialogue.GetConstraint());
+			}
+
+			// Else, if landscape editor window is open
+			else if (m_toolSculptDialogue.m_active)
+			{
+				m_toolSystem.SetEditor(EDITOR::SCULPT);
+				m_toolSystem.SetSculptFunction(m_toolSculptDialogue.GetFunction());
+				m_toolSystem.SetSculptConstraint(m_toolSculptDialogue.GetConstraint());
+			}
+
+			// Else, if no editors are open
+			else
+			{
+				m_toolSystem.SetEditor(EDITOR::NA);
+			}
+			
 			// Update tool system
-			m_ToolSystem.Tick(&msg);			
+			m_toolSystem.Tick(&msg);			
 
 			//send current object ID to status bar in The main frame
 			m_frame->m_wndStatusBar.SetPaneText(1, statusString.c_str(), 1);	
@@ -120,7 +149,7 @@ void MFCMain::MenuFileQuit()
 
 void MFCMain::MenuFileSaveTerrain()
 {
-	m_ToolSystem.onActionSaveTerrain();
+	m_toolSystem.onActionSaveTerrain();
 }
 
 void MFCMain::MenuEditSelect()
@@ -129,30 +158,54 @@ void MFCMain::MenuEditSelect()
 	//m_ToolSelectDialogue.DoModal();	// start it up modal
 
 	//modeless dialogue must be declared in the class.   If we do local it will go out of scope instantly and destroy itself
-	m_ToolSelectDialogue.Create(IDD_DIALOG1);	//Start up modeless
-	m_ToolSelectDialogue.ShowWindow(SW_SHOW);	//show modeless
+	m_toolSelectDialogue.Create(IDD_DIALOG1);	//Start up modeless
+	m_toolSelectDialogue.ShowWindow(SW_SHOW);	//show modeless
 	///m_ToolSelectDialogue.SetObjectData(&m_ToolSystem.m_sceneGraph, &m_ToolSystem.m_selectedObject);
-		
-	// Switch between current mode
-	switch (m_mode)
-	{
-	case MODE::OBJECT:
-	{
-		m_ToolSelectDialogue.SetObjectData(&m_ToolSystem.m_sceneGraph, &m_ToolSystem.m_selectedObjects);
-	}
-	break;
-	case MODE::LANDSCAPE:
-	{
-		//set chunk data...
-	}
-	break;
-	}
+	m_toolSelectDialogue.SetObjectData(&m_toolSystem.m_sceneGraph, &m_toolSystem.m_selectedObjects);
+}
+
+void MFCMain::MenuEditEditorObject()
+{
+	// Create & display dialogue window
+	m_toolObjectDialogue.Create(IDD_DIALOG2);
+	m_toolObjectDialogue.ShowWindow(SW_SHOW);
+	m_toolObjectDialogue.SetObjectData(&m_toolSystem.m_sceneGraph, &m_toolSystem.m_selectedObjects);
+}
+
+void MFCMain::MenuEditEditorLandscapeNature()
+{
+}
+
+void MFCMain::MenuEditEditorLandscapeWater()
+{
+}
+
+void MFCMain::MenuEditEditorLandscapeSculpt()
+{
+	// Create & display dialogue window
+	m_toolSculptDialogue.Create(IDD_DIALOG3);
+	m_toolSculptDialogue.ShowWindow(SW_SHOW);
+	m_toolSculptDialogue.SetTerrainData(&m_toolSystem.m_sceneGraph, &m_toolSystem.m_selectedTerrains);
+}
+
+void MFCMain::MenuEditEditorLandscapePaint()
+{
+}
+
+void MFCMain::MenuEditWireframeOn()
+{
+	m_toolSystem.SetWireframe(true);
+}
+
+void MFCMain::MenuEditWireframeOff()
+{
+	m_toolSystem.SetWireframe(false);
 }
 
 void MFCMain::ToolBarButton1()
 {
 	
-	m_ToolSystem.onActionSave();
+	m_toolSystem.onActionSave();
 }
 
 

@@ -11,7 +11,7 @@ ToolMain::ToolMain()
 	///m_selectedObject = 0;	//initial selection ID
 	m_sceneGraph.clear();	//clear the vector for the scenegraph
 	m_databaseConnection = NULL;
-	m_mode = MODE::OBJECT; //default mode
+	m_editor = EDITOR::OBJECT; //default mode
 
 	//zero input commands
 	m_toolInputCommands.W			= false;
@@ -21,9 +21,6 @@ ToolMain::ToolMain()
 	m_toolInputCommands.mouseLeft	= false;
 	m_toolInputCommands.mouseRight	= false;
 	m_toolInputCommands.escape		= false;
-	m_toolInputCommands.INCREASE	= false;
-	m_toolInputCommands.DECREASE	= false;
-	m_toolInputCommands.FLATTEN		= false;
 	m_toolInputCommands.mousePos	= DirectX::SimpleMath::Vector2(0.f, 0.f);
 }
 
@@ -298,15 +295,15 @@ void ToolMain::Tick(MSG *msg)
 		//resend scenegraph to Direct X renderer
 
 	// Update mode
-	m_mode = m_d3dRenderer.GetMode();
+	m_editor = m_d3dRenderer.GetEditor();
 
 	// If left mouse left button is pressed
 	if (m_toolInputCommands.mouseLeft)
 	{
 		// Switch between modes
-		switch(m_mode)
+		switch(m_editor)
 		{
-		case MODE::OBJECT:
+		case EDITOR::OBJECT:
 		{
 			// If allowed to pick
 			if (m_toolInputCommands.pickOnce)
@@ -324,7 +321,7 @@ void ToolMain::Tick(MSG *msg)
 			}			
 		}
 		break;
-		case MODE::LANDSCAPE:
+		case EDITOR::SCULPT:
 		{
 			// Select terrain
 			m_selectedTerrain = m_d3dRenderer.PickingTerrain();
@@ -337,9 +334,9 @@ void ToolMain::Tick(MSG *msg)
 	else if (m_toolInputCommands.mouseRight)
 	{
 		// Switch between modes
-		switch (m_mode)
+		switch (m_editor)
 		{
-		case MODE::OBJECT:
+		case EDITOR::OBJECT:
 		{
 			// If allowed to pick
 			if (m_toolInputCommands.pickOnce)
@@ -424,65 +421,4 @@ void ToolMain::UpdateInput(MSG * msg)
 	else { m_toolInputCommands.E = false; }
 	if (m_keyArray['Q']) { m_toolInputCommands.Q = true; }
 	else { m_toolInputCommands.Q = false; }
-
-	// 0 - switch to wireframe
-	if (m_keyArray['0']) { m_toolInputCommands.ZERO = true; }
-	else { m_toolInputCommands.ZERO = false; }
-
-	// 1 - change mode to OBJECT
-	if (m_keyArray['1']) { m_toolInputCommands.ONE = true; }
-	else { m_toolInputCommands.ONE = false; }
-
-	// 2 - change mode to LANDSCAPE
-	if (m_keyArray['2']) { m_toolInputCommands.TWO = true; }
-	else { m_toolInputCommands.TWO = false; }
-
-	// Switch between modes
-	switch (m_mode)
-	{
-	case MODE::OBJECT:
-	{
-		// Z - Scale object
-		if (m_keyArray['3']) { m_toolInputCommands.SCALE = true; m_d3dRenderer.StoreObjectDetails(true); }
-		else { m_toolInputCommands.SCALE = false; }
-
-		// X - Translate object
-		if (m_keyArray['4']) { m_toolInputCommands.TRANSLATE = true; m_d3dRenderer.StoreObjectDetails(true); }
-		else { m_toolInputCommands.TRANSLATE = false; }
-
-		// C - Rotate object
-		if (m_keyArray['5']) { m_toolInputCommands.ROTATE = true; m_d3dRenderer.StoreObjectDetails(true); }
-		else { m_toolInputCommands.ROTATE = false; }
-
-		// X axis
-		if (m_keyArray['Z']) { m_toolInputCommands.X = true; }
-		else { m_toolInputCommands.X = false; }
-
-		// Y axis
-		if (m_keyArray['X']) { m_toolInputCommands.Y = true; }
-		else { m_toolInputCommands.Y = false; }
-
-		// Z axis
-		if (m_keyArray['C']) { m_toolInputCommands.Z = true; }
-		else { m_toolInputCommands.Z = false; }
-	}
-	break;
-	case MODE::LANDSCAPE:
-	{
-		// Z - Extrude terrain
-		if (m_keyArray['Z']) { m_toolInputCommands.INCREASE = true; }
-		else { m_toolInputCommands.INCREASE = false; }
-
-		// X - Intrude terrain
-		if (m_keyArray['X']) { m_toolInputCommands.DECREASE = true; }
-		else { m_toolInputCommands.DECREASE = false; }
-
-		// C - Flatten terrain
-		if (m_keyArray['C']) { m_toolInputCommands.FLATTEN = true; m_d3dRenderer.StoreTerrainPosition(true); }
-		else { m_toolInputCommands.FLATTEN = false; }
-	}
-	break;
-	}
-
-	
 }
