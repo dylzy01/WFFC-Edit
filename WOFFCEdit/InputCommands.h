@@ -11,7 +11,7 @@ struct InputCommands
 	bool rotRight;
 	bool rotLeft;
 	bool mouseLeft;
-	bool mouseRight, pickOnce;
+	bool mouseRight, pickOnce, storeOnce;
 	bool escape;
 	bool ONE;
 	bool TWO;

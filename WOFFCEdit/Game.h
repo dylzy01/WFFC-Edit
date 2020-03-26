@@ -72,6 +72,7 @@ public:
 	std::vector<int> GetSelectedObjectIDs() { return m_selectedObjectIDs; }
 
 	// Setters
+	void StorePickingPoint(bool store) { m_storePickingPoint = store; }
 	void StoreObjectDetails(bool store) { m_storeObjectDetails = store; }
 	void StoreTerrainPosition(bool store) { m_storeTerrainPosition = store; }
 
@@ -120,10 +121,10 @@ private:
 	DirectX::SimpleMath::Vector3 m_pickingPoint;
 
 	// Stored terrain position for flattening
-	bool m_storeObjectDetails, m_storeTerrainPosition;
+	bool m_storePickingPoint, m_storeObjectDetails, m_storeTerrainPosition;
 	std::vector<DirectX::SimpleMath::Vector3> m_storedObjectScales, m_storedObjectTranslations, m_storedObjectRotations;
 	DirectX::SimpleMath::Vector2 m_storedMousePosition;
-	DirectX::SimpleMath::Vector3 m_storedTerrainPosition;
+	DirectX::SimpleMath::Vector3 m_storedPickingPoint, m_storedTerrainPosition;
 
 	// Mode controller
 	MODE m_mode;

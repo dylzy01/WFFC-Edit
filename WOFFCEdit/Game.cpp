@@ -188,6 +188,19 @@ void Game::HandleInput()
 			// If any objects are selected
 			if (m_selectedObjectIDs.size() != 0)
 			{
+				// Setup ray trace
+				MousePicking(0);
+
+				// If picking point should be stored
+				if (m_inputCommands.storeOnce)
+				{
+					// Store picking point position
+					m_storedPickingPoint = m_pickingPoint;
+
+					// Reset controller
+					m_inputCommands.storeOnce = false;
+				}
+				
 				// If object positions should be stored
 				if (m_storeObjectDetails)
 				{
@@ -223,64 +236,65 @@ void Game::HandleInput()
 					switch (m_modify)
 					{
 					case MODIFY::SCALE:
-					{
-						Vector3 distance = m_storedObjectScales[i] - m_pickingPoint;
-						///distance.Normalize();
-						
-						// If should be scaled on the X and Y axis
-						if (m_inputCommands.X && m_inputCommands.Y)
+					{						
+						// If picking point is different from stored point
+						///if (m_pickingPoint != m_storedPickingPoint)
 						{
-							// Scale selected object based on picking point
-							m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
-							m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
-						}
+							// If should be scaled on the X and Y axis
+							if (m_inputCommands.X && m_inputCommands.Y)
+							{
+								// Scale selected object based on picking point
+								m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
+								m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
+							}
 
-						// Else, if should be scaled on the X and Z axis
-						else if (m_inputCommands.X && m_inputCommands.Z)
-						{
-							// Scale selected object based on picking point
-							m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
-							m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
-						}
+							// Else, if should be scaled on the X and Z axis
+							else if (m_inputCommands.X && m_inputCommands.Z)
+							{
+								// Scale selected object based on picking point
+								m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
+								m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
+							}
 
-						// Else, if should be scaled on the Y and Z axis
-						else if (m_inputCommands.Y && m_inputCommands.Z)
-						{
-							// Scale selected object based on picking point
-							m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
-							m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
-						}
-						
-						// Else, if should be scaled on the X axis
-						else if (m_inputCommands.X)
-						{
-							// Scale selected object based on picking point
-							m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
-						}
+							// Else, if should be scaled on the Y and Z axis
+							else if (m_inputCommands.Y && m_inputCommands.Z)
+							{
+								// Scale selected object based on picking point
+								m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
+								m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
+							}
 
-						// Else, if should be scaled on the Y axis
-						else if (m_inputCommands.Y)
-						{
-							// Scale selected object based on picking point
-							m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
+							// Else, if should be scaled on the X axis
+							else if (m_inputCommands.X)
+							{
+								// Scale selected object based on picking point
+								m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
+							}
+
+							// Else, if should be scaled on the Y axis
+							else if (m_inputCommands.Y)
+							{
+								// Scale selected object based on picking point
+								m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
+							}
+
+							// Else, if should be scaled on the Z axis
+							else if (m_inputCommands.Z)
+							{
+								// Scale selected object based on picking point
+								m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
+							}
+
+							// Else, if should be scaled freely
+							else
+							{
+								// Scale selected object based on picking point
+								m_displayList[m_selectedObjectIDs[i]].m_scale = m_storedObjectScales[i] - m_pickingPoint;
+							}
+
+							// Store manipulated scale
+							///m_storedObjectScales[i] = m_displayList[m_selectedObjectIDs[i]].m_scale;
 						}
-
-						// Else, if should be scaled on the Z axis
-						else if (m_inputCommands.Z)
-						{
-							// Scale selected object based on picking point
-							m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
-						}
-
-						// Else, if should be scaled freely
-						else
-						{
-							// Scale selected object based on picking point
-							m_displayList[m_selectedObjectIDs[i]].m_scale = distance;
-						}		
-
-						// Store manipulated scale
-						///m_storedObjectScales[i] = m_displayList[m_selectedObjectIDs[i]].m_scale;
 					}
 					break;
 					case MODIFY::TRANSLATE:

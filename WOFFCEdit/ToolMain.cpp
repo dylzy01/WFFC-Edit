@@ -385,6 +385,7 @@ void ToolMain::UpdateInput(MSG * msg)
 	case WM_LBUTTONDOWN:	
 		m_toolInputCommands.mouseLeft = true;
 		m_toolInputCommands.pickOnce = true;
+		m_toolInputCommands.storeOnce = true;
 		break;
 
 	case WM_LBUTTONUP:
@@ -442,28 +443,16 @@ void ToolMain::UpdateInput(MSG * msg)
 	case MODE::OBJECT:
 	{
 		// Z - Scale object
-		if (m_keyArray['3']) { m_toolInputCommands.SCALE = true; }
-		else 
-		{ 
-			m_toolInputCommands.SCALE = false; 
-			m_d3dRenderer.StoreObjectDetails(true);
-		}
+		if (m_keyArray['3']) { m_toolInputCommands.SCALE = true; m_d3dRenderer.StoreObjectDetails(true); }
+		else { m_toolInputCommands.SCALE = false; }
 
 		// X - Translate object
-		if (m_keyArray['4']) { m_toolInputCommands.TRANSLATE = true; }
-		else 
-		{ 
-			m_toolInputCommands.TRANSLATE = false; 
-			m_d3dRenderer.StoreObjectDetails(true);
-		}
+		if (m_keyArray['4']) { m_toolInputCommands.TRANSLATE = true; m_d3dRenderer.StoreObjectDetails(true); }
+		else { m_toolInputCommands.TRANSLATE = false; }
 
 		// C - Rotate object
-		if (m_keyArray['5']) { m_toolInputCommands.ROTATE = true; }
-		else 
-		{ 
-			m_toolInputCommands.ROTATE = false; 
-			m_d3dRenderer.StoreObjectDetails(true);
-		}
+		if (m_keyArray['5']) { m_toolInputCommands.ROTATE = true; m_d3dRenderer.StoreObjectDetails(true); }
+		else { m_toolInputCommands.ROTATE = false; }
 
 		// X axis
 		if (m_keyArray['Z']) { m_toolInputCommands.X = true; }
@@ -489,12 +478,8 @@ void ToolMain::UpdateInput(MSG * msg)
 		else { m_toolInputCommands.DECREASE = false; }
 
 		// C - Flatten terrain
-		if (m_keyArray['C']) { m_toolInputCommands.FLATTEN = true; }
-		else 
-		{ 
-			m_toolInputCommands.FLATTEN = false;
-			m_d3dRenderer.StoreTerrainPosition(true);
-		}
+		if (m_keyArray['C']) { m_toolInputCommands.FLATTEN = true; m_d3dRenderer.StoreTerrainPosition(true); }
+		else { m_toolInputCommands.FLATTEN = false; }
 	}
 	break;
 	}
