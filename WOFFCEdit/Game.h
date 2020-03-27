@@ -60,6 +60,7 @@ public:
 	// Mouse picking
 	void MousePicking(int i);
 	bool PickingObjects(bool select);
+	bool ObjectIntersection(int i);
 	TERRAIN PickingTerrain();
 	std::vector<TERRAIN> PickingTerrains();
 	TERRAIN TerrainIntersection(DirectX::SimpleMath::Ray ray);	
@@ -101,7 +102,6 @@ public:
 #endif
 
 private:
-
 	void HandleInput();
 
 	void Update(DX::StepTimer const& timer);
@@ -111,6 +111,7 @@ private:
 	void CreateWindowSizeDependentResources();
 
 	void XM_CALLCONV DrawGrid(DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
+	void DrawAxis(DisplayObject object);
 
 	// frame time
 	float								m_deltaTime;
@@ -170,7 +171,7 @@ private:
     std::unique_ptr<DirectX::BasicEffect>                                   m_batchEffect;
     std::unique_ptr<DirectX::EffectFactory>                                 m_fxFactory;
     std::unique_ptr<DirectX::GeometricPrimitive>                            m_shape;
-    std::unique_ptr<DirectX::Model>                                         m_model;
+	std::unique_ptr<DirectX::Model>                                         m_model;
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>>  m_batch;
     std::unique_ptr<DirectX::SpriteBatch>                                   m_sprites;
     std::unique_ptr<DirectX::SpriteFont>                                    m_font;
