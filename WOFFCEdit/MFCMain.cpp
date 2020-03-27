@@ -148,9 +148,38 @@ int MFCMain::Run()
 			// Else, if landscape editor window is open
 			else if (m_toolSculptDialogue.m_active)
 			{
+				// Set editor mode to sculpt
 				m_toolSystem.SetEditor(EDITOR::SCULPT);
-				m_toolSystem.SetSculptFunction(m_toolSculptDialogue.GetFunction());
-				m_toolSystem.SetSculptConstraint(m_toolSculptDialogue.GetConstraint());
+
+				// If increase function is selected
+				if (m_toolSculptDialogue.GetFunctionIncrease()) { m_toolSystem.SetSculptFunction(SCULPT_FUNCTION::INCREASE); }
+
+				// Else, if decrease function is selected
+				else if (m_toolSculptDialogue.GetFunctionDecrease()) { m_toolSystem.SetSculptFunction(SCULPT_FUNCTION::DECREASE); }
+
+				// Else, if flatten function is selecteed
+				else if (m_toolSculptDialogue.GetFunctionFlatten()) { m_toolSystem.SetSculptFunction(SCULPT_FUNCTION::FLATTEN); }
+
+				// If x and y constraints are selected
+				if (m_toolSculptDialogue.GetConstraintX() && m_toolSculptDialogue.GetConstraintY()) { m_toolSystem.SetSculptConstraint(SCULPT_CONSTRAINT::XY); }
+
+				// Else, if x and z constraints are selected
+				else if (m_toolSculptDialogue.GetConstraintX() && m_toolSculptDialogue.GetConstraintZ()) { m_toolSystem.SetSculptConstraint(SCULPT_CONSTRAINT::XZ); }
+
+				// Else, if y and z constraints are selected
+				else if (m_toolSculptDialogue.GetConstraintY() && m_toolSculptDialogue.GetConstraintZ()) { m_toolSystem.SetSculptConstraint(SCULPT_CONSTRAINT::YZ); }
+
+				// Else, if only x constraint is selected
+				else if (m_toolSculptDialogue.GetConstraintX()) { m_toolSystem.SetSculptConstraint(SCULPT_CONSTRAINT::X); }
+
+				// Else, if only y constraint is selected
+				else if (m_toolSculptDialogue.GetConstraintY()) { m_toolSystem.SetSculptConstraint(SCULPT_CONSTRAINT::Y); }
+
+				// Else, if only z constraint is selected
+				else if (m_toolSculptDialogue.GetConstraintZ()) { m_toolSystem.SetSculptConstraint(SCULPT_CONSTRAINT::Z); }
+
+				// Else, if no constraints are selected
+				else { m_toolSystem.SetSculptConstraint(SCULPT_CONSTRAINT::ALL); }
 			}
 
 			// Else, if no editors are open

@@ -32,21 +32,7 @@ void ObjectDialogue::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 }
 
-// Destroy window & set unactive
-void ObjectDialogue::End()
-{	
-	m_active = m_translate = m_rotate = m_scale = false;
-	DestroyWindow();
-}
-
-void ObjectDialogue::OnBnClickedOk()
-{
-	// Parent
-	CDialogEx::OnOK();
-
-	// Save object manipulation...
-}
-
+// Enable/disable other functions
 void ObjectDialogue::UpdateFunctions(OBJECT_FUNCTION function, bool enable)
 {
 	// Switch between functions
@@ -61,7 +47,7 @@ void ObjectDialogue::UpdateFunctions(OBJECT_FUNCTION function, bool enable)
 
 		// Enable/disable scale function
 		m_scale = enable;
-		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }		
+		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
 		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 	}
 	break;
@@ -69,12 +55,12 @@ void ObjectDialogue::UpdateFunctions(OBJECT_FUNCTION function, bool enable)
 	{
 		// Enable/disable translate function
 		m_translate = enable;
-		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }		
+		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
 		GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
 
 		// Enable/disable scale function
 		m_scale = enable;
-		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }		
+		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
 		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 	}
 	break;
@@ -82,26 +68,56 @@ void ObjectDialogue::UpdateFunctions(OBJECT_FUNCTION function, bool enable)
 	{
 		// Enable/disable translate function
 		m_translate = enable;
-		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }		
+		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
 		GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
 
 		// Enable/disable rotate function
 		m_rotate = enable;
-		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }		
+		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
 		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
 	}
 	break;
 	}
 }
 
+
+BEGIN_MESSAGE_MAP(ObjectDialogue, CDialogEx)
+	ON_COMMAND(IDOK, &ObjectDialogue::End)
+	ON_BN_CLICKED(IDOK, &ObjectDialogue::OnBnClickedOk)
+	ON_BN_CLICKED(IDC_CHECK8, &ObjectDialogue::OnBnClickedScale)
+	ON_BN_CLICKED(IDC_CHECK6, &ObjectDialogue::OnBnClickedTranslate)
+	ON_BN_CLICKED(IDC_CHECK7, &ObjectDialogue::OnBnClickedRotate)
+	ON_BN_CLICKED(IDC_CHECK3, &ObjectDialogue::OnBnClickedX)
+	ON_BN_CLICKED(IDC_CHECK4, &ObjectDialogue::OnBnClickedY)
+	ON_BN_CLICKED(IDC_CHECK5, &ObjectDialogue::OnBnClickedZ)
+END_MESSAGE_MAP()
+
+
+// ObjectDialogue message handlers
+
+// Destroy window & set unactive
+void ObjectDialogue::End()
+{
+	m_active = m_translate = m_rotate = m_scale = false;
+	DestroyWindow();
+}
+
+void ObjectDialogue::OnBnClickedOk()
+{
+	// Parent
+	CDialogEx::OnOK();
+
+	// Save object manipulation...
+}
+
 // Set object manipulation to scaling
 void ObjectDialogue::OnBnClickedScale()
-{	
+{
 	// Switch between checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK8))
 	{
 	case true:
-	{	
+	{
 		// Check button
 		m_scale = true;
 
@@ -156,7 +172,7 @@ void ObjectDialogue::OnBnClickedTranslate()
 
 // Set object manipulation to rotating
 void ObjectDialogue::OnBnClickedRotate()
-{	
+{
 	// Switch between checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK7))
 	{
@@ -202,25 +218,5 @@ void ObjectDialogue::OnBnClickedY()
 void ObjectDialogue::OnBnClickedZ()
 {
 	// Check/uncheck constraint
-	m_z = IsDlgButtonChecked(IDC_CHECK5);	
+	m_z = IsDlgButtonChecked(IDC_CHECK5);
 }
-
-
-BEGIN_MESSAGE_MAP(ObjectDialogue, CDialogEx)
-	ON_COMMAND(IDOK, &ObjectDialogue::End)
-	ON_BN_CLICKED(IDOK, &ObjectDialogue::OnBnClickedOk)
-	ON_BN_CLICKED(IDC_CHECK8, &ObjectDialogue::OnBnClickedScale)
-	ON_BN_CLICKED(IDC_CHECK6, &ObjectDialogue::OnBnClickedTranslate)
-	ON_BN_CLICKED(IDC_CHECK7, &ObjectDialogue::OnBnClickedRotate)
-	ON_BN_CLICKED(IDC_CHECK3, &ObjectDialogue::OnBnClickedX)
-	ON_BN_CLICKED(IDC_CHECK4, &ObjectDialogue::OnBnClickedY)
-	ON_BN_CLICKED(IDC_CHECK5, &ObjectDialogue::OnBnClickedZ)
-END_MESSAGE_MAP()
-
-
-// ObjectDialogue message handlers
-
-//INT_PTR SelectProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
-//{
-//	return INT_PTR();
-//}

@@ -59,9 +59,6 @@ public:
 
 	// Controllers
 	bool m_active = false;
-	///OBJECT_FUNCTION m_function = OBJECT_FUNCTION::NA;
-	///OBJECT_CONSTRAINT m_constraint = OBJECT_CONSTRAINT::NA;
-
 	bool m_translate = false, m_rotate = false, m_scale = false;
 	bool m_x = false, m_y = false, m_z = false;
 

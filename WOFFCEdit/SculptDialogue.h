@@ -20,8 +20,12 @@ public:
 	void SetTerrainData(std::vector<SceneObject>* sceneGraph, std::vector<TERRAIN> * terrain);
 
 	// Getters
-	SCULPT_FUNCTION GetFunction() { return m_function; }
-	SCULPT_CONSTRAINT GetConstraint() { return m_constraint; }
+	bool GetFunctionIncrease() { return m_increase; }
+	bool GetFunctionDecrease() { return m_decrease; }
+	bool GetFunctionFlatten() { return m_flatten; }
+	bool GetConstraintX() { return m_x; }
+	bool GetConstraintY() { return m_y; }
+	bool GetConstraintZ() { return m_z; }
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -34,8 +38,11 @@ protected:
 	// Kill dialogue
 	afx_msg void End();
 
-	// Select object
-	afx_msg void Select();
+	// Reset constraints after each function change
+	void ResetConstraints() { m_x = m_y = m_z = false; }
+
+	// Enable/disable other functions
+	void UpdateFunctions(SCULPT_FUNCTION function, bool enable);
 
 protected:
 	std::vector<SceneObject>* m_sceneGraph;
@@ -43,19 +50,17 @@ protected:
 
 public:
 	afx_msg void OnBnClickedOk();
-	afx_msg void OnBnClickedSelect();
-	afx_msg void OnBnClickedIncrease();
-	afx_msg void OnBnClickedFlatten();
+	afx_msg void OnBnClickedIncrease();	
 	afx_msg void OnBnClickedDecrease();
+	afx_msg void OnBnClickedFlatten();
 	afx_msg void OnBnClickedX();
 	afx_msg void OnBnClickedY();
 	afx_msg void OnBnClickedZ();
-	afx_msg void OnBnClickedAll();
 
 	// Controllers
 	bool m_active = false;
-	SCULPT_FUNCTION m_function = SCULPT_FUNCTION::NA;
-	SCULPT_CONSTRAINT m_constraint = SCULPT_CONSTRAINT::NA;
+	bool m_increase = false, m_decrease = false, m_flatten = false;
+	bool m_x = false, m_y = false, m_z = false;
 
 	DECLARE_MESSAGE_MAP()
 };

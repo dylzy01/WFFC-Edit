@@ -45,6 +45,9 @@ enum class SCULPT_FUNCTION {
 
 enum class SCULPT_CONSTRAINT {
 	NA,
+	XY,
+	XZ,
+	YZ,
 	X, 
 	Y,
 	Z,
