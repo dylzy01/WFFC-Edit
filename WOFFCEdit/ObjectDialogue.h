@@ -20,8 +20,12 @@ public:
 	void SetObjectData(std::vector<SceneObject>* sceneGraph, std::vector<int> * objects);	
 
 	// Getters
-	OBJECT_FUNCTION GetFunction() { return m_function; }
-	OBJECT_CONSTRAINT GetConstraint() { return m_constraint; }
+	bool GetFunctionTranslate() { return m_translate; }
+	bool GetFunctionRotate() { return m_rotate; }
+	bool GetFunctionScale() { return m_scale; }
+	bool GetConstraintX() { return m_x; }
+	bool GetConstraintY() { return m_y; }
+	bool GetConstraintZ() { return m_z; }
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -33,15 +37,12 @@ protected:
 
 	// Kill dialogue
 	afx_msg void End();
-	
-	// Select object
-	afx_msg void OnBnClickedSelect();
 
-	// Update function display text
-	void UpdateFunctionText(OBJECT_FUNCTION function);
+	// Reset constraints after each function change
+	void ResetConstraints() { m_x = m_y = m_z = false; }
 
-	// Update constraint display text
-	void UpdateConstraintText(OBJECT_CONSTRAINT constraint);
+	// Enable/disable other functions
+	void UpdateFunctions(OBJECT_FUNCTION function, bool enable);
 
 protected:
 	std::vector<SceneObject>* m_sceneGraph;
@@ -55,12 +56,14 @@ public:
 	afx_msg void OnBnClickedX();
 	afx_msg void OnBnClickedY();
 	afx_msg void OnBnClickedZ();
-	afx_msg void OnBnClickedAll();
 
 	// Controllers
 	bool m_active = false;
-	OBJECT_FUNCTION m_function = OBJECT_FUNCTION::NA;
-	OBJECT_CONSTRAINT m_constraint = OBJECT_CONSTRAINT::NA;
+	///OBJECT_FUNCTION m_function = OBJECT_FUNCTION::NA;
+	///OBJECT_CONSTRAINT m_constraint = OBJECT_CONSTRAINT::NA;
+
+	bool m_translate = false, m_rotate = false, m_scale = false;
+	bool m_x = false, m_y = false, m_z = false;
 
 	DECLARE_MESSAGE_MAP()
 };

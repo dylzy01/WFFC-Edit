@@ -119,7 +119,7 @@ void Camera::HandleInput(InputCommands * input, float deltaTime, float centre_x,
 	}
 
 	// Rotation
-	if (m_input->mouseRight) {
+	if (m_input->mouseWheel) {
 		TrackMouse(centre_x, centre_y, cursorPos, deltaTime);
 		Update();
 	}

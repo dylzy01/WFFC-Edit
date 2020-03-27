@@ -132,6 +132,7 @@ private:
 	//control variables
 	bool m_grid;							//grid rendering on / off
 	bool m_wireframe = false;				//wireframe on/off
+	bool m_toggleRight = false;				//object snap to mouse location on/off
 
 	//mouse picking
 	std::vector<int> m_selectedObjectIDs;

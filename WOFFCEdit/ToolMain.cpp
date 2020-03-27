@@ -20,6 +20,7 @@ ToolMain::ToolMain()
 	m_toolInputCommands.D			= false;
 	m_toolInputCommands.mouseLeft	= false;
 	m_toolInputCommands.mouseRight	= false;
+	m_toolInputCommands.mouseWheel	= false;
 	m_toolInputCommands.escape		= false;
 	m_toolInputCommands.mousePos	= DirectX::SimpleMath::Vector2(0.f, 0.f);
 }
@@ -29,10 +30,8 @@ ToolMain::~ToolMain()
 	sqlite3_close(m_databaseConnection);		//close the database connection
 }
 
-///int ToolMain::getCurrentSelectionID()
 std::vector<int> ToolMain::getCurrentObjectSelectionID()
 {
-	///return m_selectedObject;
 	return m_selectedObjects;
 }
 
@@ -342,9 +341,10 @@ void ToolMain::Tick(MSG *msg)
 			if (m_toolInputCommands.pickOnce)
 			{
 				// If an object has been intersected
-				if (m_d3dRenderer.PickingObjects(false))
+				///if (m_d3dRenderer.PickingObjects(false))
 				{
 					// Deselect an object
+					m_d3dRenderer.PickingObjects(false);
 					m_selectedObjects = m_d3dRenderer.GetSelectedObjectIDs();
 				}
 
@@ -391,15 +391,20 @@ void ToolMain::UpdateInput(MSG * msg)
 
 	case WM_RBUTTONDOWN:
 		m_toolInputCommands.mouseRight = true;
+		m_toolInputCommands.pickOnce = true;
 		break;
 
 	case WM_RBUTTONUP:
 		m_toolInputCommands.mouseRight = false;
 		break;
 
-	/*case MK_SHIFT:
-		m_toolInputCommands.SHIFT = true;
-		break;*/
+	case WM_MBUTTONDOWN:
+		m_toolInputCommands.mouseWheel = true;
+		break;
+		
+	case WM_MBUTTONUP:
+		m_toolInputCommands.mouseWheel = false;
+		break;
 	}
 
 	//here we update all the actual app functionality that we want.  This information will either be used int toolmain, or sent down to the renderer (Camera movement etc

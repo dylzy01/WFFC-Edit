@@ -26,6 +26,9 @@ enum class OBJECT_FUNCTION {
 
 enum class OBJECT_CONSTRAINT {
 	NA,
+	XY,
+	XZ,
+	YZ,
 	X,
 	Y,
 	Z,

@@ -214,107 +214,97 @@ void Game::HandleInput()
 					switch (m_objectFunction)
 					{
 					case OBJECT_FUNCTION::SCALE:
-					{						
-						// If picking point is different from stored point
-						///if (m_pickingPoint != m_storedPickingPoint)
+					{									
+						// If should be scaled on the X and Y axis
+						if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
 						{
-							// If should be scaled on the X and Y axis
-							//if (m_inputCommands.X && m_inputCommands.Y)
-							//{
-							//	// Scale selected object based on picking point
-							//	m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
-							//	m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
-							//}
-
-							//// Else, if should be scaled on the X and Z axis
-							//else if (m_inputCommands.X && m_inputCommands.Z)
-							//{
-							//	// Scale selected object based on picking point
-							//	m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
-							//	m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
-							//}
-
-							//// Else, if should be scaled on the Y and Z axis
-							//else if (m_inputCommands.Y && m_inputCommands.Z)
-							//{
-							//	// Scale selected object based on picking point
-							//	m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
-							//	m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
-							//}
-
-							// Else, if should be scaled on the X axis
-							///else if (m_inputCommands.X)
-							if (m_objectConstraint == OBJECT_CONSTRAINT::X)
-							{
-								// Scale selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
-							}
-
-							// Else, if should be scaled on the Y axis
-							///else if (m_inputCommands.Y)
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::Y)
-							{
-								// Scale selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
-							}
-
-							// Else, if should be scaled on the Z axis
-							///else if (m_inputCommands.Z)
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::Z)
-							{
-								// Scale selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
-							}
-
-							// Else, if should be scaled freely
-							///else
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::ALL)
-							{
-								// Scale selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_scale = m_storedObjectScales[i] - m_pickingPoint;
-							}
-
-							// Store manipulated scale
-							///m_storedObjectScales[i] = m_displayList[m_selectedObjectIDs[i]].m_scale;
+							// Scale selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
+							m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
 						}
+
+						// Else, if should be scaled on the X and Z axis
+						else if (m_objectConstraint == OBJECT_CONSTRAINT::XZ)
+						{
+							// Scale selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
+							m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
+						}
+
+						// Else, if should be scaled on the Y and Z axis
+						else if (m_objectConstraint == OBJECT_CONSTRAINT::YZ)
+						{
+							// Scale selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
+							m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
+						}
+
+						// Else, if should be scaled on the X axis
+						else if (m_objectConstraint == OBJECT_CONSTRAINT::X)
+						{
+							// Scale selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
+						}
+
+						// Else, if should be scaled on the Y axis
+						else if (m_objectConstraint == OBJECT_CONSTRAINT::Y)
+						{
+							// Scale selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
+						}
+
+						// Else, if should be scaled on the Z axis
+						else if (m_objectConstraint == OBJECT_CONSTRAINT::Z)
+						{
+							// Scale selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
+						}
+
+						// Else, if should be scaled freely
+						else if (m_objectConstraint == OBJECT_CONSTRAINT::ALL)
+						{
+							// Scale selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_scale = m_storedObjectScales[i] - m_pickingPoint;
+						}
+
+						// Store manipulated scale
+						///m_storedObjectScales[i] = m_displayList[m_selectedObjectIDs[i]].m_scale;						
 					}
 					break;
 					case OBJECT_FUNCTION::TRANSLATE:
 					{
 						// If should be translated on the X and Y axis
-						//if (m_inputCommands.X && m_inputCommands.Y)
-						//{
-						//	// Translate selected object based on picking point
-						//	m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
-						//	m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
-						//}
+						if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
+						{
+							// Translate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
+							m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
+						}
 
-						//// Else, if should be translated on the X and Z axis
-						//else if (m_inputCommands.X && m_inputCommands.Z)
-						//{
-						//	// Translate selected object based on picking point
-						//	m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
-						//	m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
-						//}
+						// Else, if should be translated on the X and Z axis
+						else if (m_objectConstraint == OBJECT_CONSTRAINT::XZ)
+						{
+							// Translate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
+							m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
+						}
 
-						//// Else, if should be translated on the Y and Z axis
-						//else if (m_inputCommands.Y && m_inputCommands.Z)
-						//{
-						//	// Translate selected object based on picking point
-						//	m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
-						//	m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
-						//}
+						// Else, if should be translated on the Y and Z axis
+						else if (m_objectConstraint == OBJECT_CONSTRAINT::YZ)
+						{
+							// Translate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
+							m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
+						}
 						
 						// Else, if should be translated on the X axis
-						///else if (m_inputCommands.X)
-						if (m_objectConstraint == OBJECT_CONSTRAINT::X)
+						else if (m_objectConstraint == OBJECT_CONSTRAINT::X)
 						{
 							// Translate selected object based on picking point
 							m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
 						}
 
 						// Else, if should be translated on the Y axis
-						///else if (m_inputCommands.Y)
 						else if (m_objectConstraint == OBJECT_CONSTRAINT::Y)
 						{
 							// Translate selected object based on picking point
@@ -322,7 +312,6 @@ void Game::HandleInput()
 						}
 
 						// Else, if should be translated on the Z axis
-						///else if (m_inputCommands.Z)
 						else if (m_objectConstraint == OBJECT_CONSTRAINT::Z)
 						{
 							// Translate selected object based on picking point
@@ -330,7 +319,6 @@ void Game::HandleInput()
 						}						
 
 						// Else, if should be translated freely
-						///else
 						else if (m_objectConstraint == OBJECT_CONSTRAINT::ALL)
 						{
 							// Translate selected object based on picking point
@@ -342,39 +330,37 @@ void Game::HandleInput()
 					case OBJECT_FUNCTION::ROTATE:
 					{						
 						// If should be rotated on the X and Y axis
-						//if (m_inputCommands.X && m_inputCommands.Y)
-						//{
-						//	// Rotate selected object based on picking point
-						//	m_displayList[m_selectedObjectIDs[i]].m_orientation.x += m_pickingPoint.x;
-						//	m_displayList[m_selectedObjectIDs[i]].m_orientation.y += m_pickingPoint.y;
-						//}
+						if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
+						{
+							// Rotate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_orientation.x += m_pickingPoint.x;
+							m_displayList[m_selectedObjectIDs[i]].m_orientation.y += m_pickingPoint.y;
+						}
 
-						//// Else, if should be rotated on the X and Z axis
-						//else if (m_inputCommands.X && m_inputCommands.Z)
-						//{
-						//	// Rotate selected object based on picking point
-						//	m_displayList[m_selectedObjectIDs[i]].m_orientation.x += m_pickingPoint.x;
-						//	m_displayList[m_selectedObjectIDs[i]].m_orientation.z += m_pickingPoint.z;
-						//}
+						// Else, if should be rotated on the X and Z axis
+						else if (m_objectConstraint == OBJECT_CONSTRAINT::XZ)
+						{
+							// Rotate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_orientation.x += m_pickingPoint.x;
+							m_displayList[m_selectedObjectIDs[i]].m_orientation.z += m_pickingPoint.z;
+						}
 
-						//// Else, if should be rotated on the Y and Z axis
-						//else if (m_inputCommands.Y && m_inputCommands.Z)
-						//{
-						//	// Rotate selected object based on picking point
-						//	m_displayList[m_selectedObjectIDs[i]].m_orientation.y += m_pickingPoint.y;
-						//	m_displayList[m_selectedObjectIDs[i]].m_orientation.z += m_pickingPoint.z;
-						//}
+						// Else, if should be rotated on the Y and Z axis
+						else if (m_objectConstraint == OBJECT_CONSTRAINT::YZ)
+						{
+							// Rotate selected object based on picking point
+							m_displayList[m_selectedObjectIDs[i]].m_orientation.y += m_pickingPoint.y;
+							m_displayList[m_selectedObjectIDs[i]].m_orientation.z += m_pickingPoint.z;
+						}
 
 						// Else, if should be rotated on the X axis
-						///else if (m_inputCommands.X)
-						if (m_objectConstraint == OBJECT_CONSTRAINT::X)
+						else if (m_objectConstraint == OBJECT_CONSTRAINT::X)
 						{
 							// Rotate selected object based on picking point
 							m_displayList[m_selectedObjectIDs[i]].m_orientation.x += m_pickingPoint.x;
 						}
 
 						// Else, if should be rotated on the Y axis
-						///else if (m_inputCommands.Y)
 						else if (m_objectConstraint == OBJECT_CONSTRAINT::Y)
 						{
 							// Rotate selected object based on picking point
@@ -382,7 +368,6 @@ void Game::HandleInput()
 						}
 
 						// Else, if should be rotated on the Z axis
-						///else if (m_inputCommands.Z)
 						else if (m_objectConstraint == OBJECT_CONSTRAINT::Z)
 						{
 							// Rotate selected object based on picking point
@@ -390,7 +375,6 @@ void Game::HandleInput()
 						}					
 
 						// Else, if should be rotated freely
-						///else
 						else if (m_objectConstraint == OBJECT_CONSTRAINT::ALL)
 						{
 							// Rotate selected object based on picking point
@@ -895,8 +879,12 @@ bool Game::PickingObjects(bool select)
 		// Else, if current selected ID is new
 		else
 		{
-			// Add to vector storage
-			m_selectedObjectIDs.push_back(selectedID);
+			// If is selecting
+			if (select)
+			{
+				// Add to vector storage
+				m_selectedObjectIDs.push_back(selectedID);
+			}
 		}
 
 		// Object has been intersected
@@ -905,7 +893,7 @@ bool Game::PickingObjects(bool select)
 	else
 	{
 		// Clear entire selection vector
-		m_selectedObjectIDs.clear();
+		///m_selectedObjectIDs.clear();
 		
 		// Object hasn't been intersected
 		return false;

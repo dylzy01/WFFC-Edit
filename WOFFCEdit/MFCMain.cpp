@@ -111,9 +111,38 @@ int MFCMain::Run()
 			// If object editor window is open
 			if (m_toolObjectDialogue.m_active)
 			{
+				// Set editor mode to object
 				m_toolSystem.SetEditor(EDITOR::OBJECT);
-				m_toolSystem.SetObjectFunction(m_toolObjectDialogue.GetFunction());
-				m_toolSystem.SetObjectConstraint(m_toolObjectDialogue.GetConstraint());
+
+				// If translate function is selected
+				if (m_toolObjectDialogue.GetFunctionTranslate()) { m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::TRANSLATE); }
+
+				// Else, if rotate function is selected
+				else if (m_toolObjectDialogue.GetFunctionRotate()) { m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::ROTATE); }
+
+				// Else, if scale function is selected
+				else if (m_toolObjectDialogue.GetFunctionScale()) { m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::SCALE); }
+
+				// If x and y constraints are selected
+				if (m_toolObjectDialogue.GetConstraintX() && m_toolObjectDialogue.GetConstraintY()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::XY); }
+
+				// Else, if x and z constraints are selected
+				else if (m_toolObjectDialogue.GetConstraintX() && m_toolObjectDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::XZ); }
+
+				// Else, if y and z constraints are selected
+				else if (m_toolObjectDialogue.GetConstraintY() && m_toolObjectDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::YZ); }
+				
+				// Else, if only x constraint is selected
+				else if (m_toolObjectDialogue.GetConstraintX()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::X); }
+
+				// Else, if only y constraint is selected
+				else if (m_toolObjectDialogue.GetConstraintY()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::Y); }
+
+				// Else, if only z constraint is selected
+				else if (m_toolObjectDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::Z); }
+
+				// Else, if no constraints are selected
+				else { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::ALL); }
 			}
 
 			// Else, if landscape editor window is open
@@ -203,16 +232,13 @@ void MFCMain::MenuEditWireframeOff()
 }
 
 void MFCMain::ToolBarButton1()
-{
-	
+{	
 	m_toolSystem.onActionSave();
 }
-
 
 MFCMain::MFCMain()
 {
 }
-
 
 MFCMain::~MFCMain()
 {
