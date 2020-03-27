@@ -68,6 +68,7 @@ public:
 	// Getters
 	EDITOR GetEditor() { return m_editor; }
 	std::vector<int> GetSelectedObjectIDs() { return m_selectedObjectIDs; }
+	DirectX::SimpleMath::Vector3 GetDragPoint(DirectX::SimpleMath::Vector3* dragLine, DirectX::SimpleMath::Vector3* unProjLine);
 
 	// Setters
 	void SetWireframe(bool wireframe) { m_wireframe = wireframe; }
@@ -111,7 +112,7 @@ private:
 	void CreateWindowSizeDependentResources();
 
 	void XM_CALLCONV DrawGrid(DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
-	void DrawAxis(DisplayObject object);
+	void DrawAxis(DisplayObject object, int ID);
 
 	// frame time
 	float								m_deltaTime;
@@ -144,6 +145,7 @@ private:
 
 	// Stored terrain position for flattening
 	bool m_storePickingPoint, m_storeObjectDetails, m_storeTerrainPosition;
+	///std::vector<DirectX::SimpleMath::Matrix> m_storedObjectTransforms, m_storedTerrainTransforms;
 	std::vector<DirectX::SimpleMath::Vector3> m_storedObjectScales, m_storedObjectTranslations, m_storedObjectRotations;
 	DirectX::SimpleMath::Vector2 m_storedMousePosition;
 	DirectX::SimpleMath::Vector3 m_storedPickingPoint, m_storedTerrainPosition;
@@ -175,6 +177,10 @@ private:
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>>  m_batch;
     std::unique_ptr<DirectX::SpriteBatch>                                   m_sprites;
     std::unique_ptr<DirectX::SpriteFont>                                    m_font;
+
+	// Axes
+	///std::vector<Ray> m_xRays, m_yRays, m_zRays;
+	std::vector<DirectX::SimpleMath::Vector3> m_xAxes, m_yAxes, m_zAxes;
 
 	// Window
 	HWND m_window;

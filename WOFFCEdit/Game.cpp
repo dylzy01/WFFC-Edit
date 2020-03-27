@@ -165,24 +165,14 @@ void Game::HandleInput()
 		{						
 			// If any objects are selected
 			if (m_selectedObjectIDs.size() != 0)
-			{
-				// If picking point should be stored
-				if (m_inputCommands.storeOnce)
-				{
-					// Store picking point position
-					m_storedPickingPoint = m_pickingPoint;
-
-					// Reset controller
-					m_inputCommands.storeOnce = false;
-				}
-				
+			{				
 				// If object positions should be stored
 				if (m_storeObjectDetails)
 				{
 					// Reset vectors
 					m_storedObjectScales.clear();
 					m_storedObjectTranslations.clear();
-					m_storedObjectRotations.clear();
+					m_storedObjectRotations.clear();					
 
 					// Loop through selected objects
 					for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
@@ -191,9 +181,9 @@ void Game::HandleInput()
 						if (m_selectedObjectIDs[i] != -1)
 						{
 							// Fill vectors with selected object data
-							m_storedObjectScales.push_back(m_displayList[i].m_scale);
-							m_storedObjectTranslations.push_back(m_displayList[i].m_position);
-							m_storedObjectRotations.push_back(m_displayList[i].m_orientation);
+							m_storedObjectScales.push_back(m_displayList[m_selectedObjectIDs[i]].m_scale);
+							m_storedObjectTranslations.push_back(m_displayList[m_selectedObjectIDs[i]].m_position);
+							m_storedObjectRotations.push_back(m_displayList[m_selectedObjectIDs[i]].m_orientation);
 						}						
 					}
 
@@ -203,12 +193,25 @@ void Game::HandleInput()
 
 				// Loop through selected objects
 				for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
-				{
-					// Setup picking point
-					MousePicking(i);
+				{				
+					// Update picking point
+					MousePicking(i);	
+
+					// If picking point should be stored
+					if (m_inputCommands.storeOnce)
+					{
+						// Store picking point position
+						m_storedPickingPoint = m_pickingPoint;
+						///m_storedPickingPoint = m_displayList[m_selectedObjectIDs[i]].m_position;
+
+						// Reset controller
+						m_inputCommands.storeOnce = false;
+					}
 					
 					// If current object is intersecting with the ray trace
 					if (ObjectIntersection(i))
+					// If picking point has moved
+					///if (m_pickingPoint != m_storedPickingPoint)
 					{
 						// Switch between S, R, T
 						switch (m_objectFunction)
@@ -302,6 +305,9 @@ void Game::HandleInput()
 							{
 								// Translate selected object based on picking point
 								m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
+
+								///Vector3 dragPoint = GetDragPoint(&m_xAxes[m_selectedObjectIDs[i]], &m_pickingPoint);
+								///m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x - dragPoint.x;
 							}
 
 							// Else, if should be translated on the Y axis
@@ -321,8 +327,17 @@ void Game::HandleInput()
 							// Else, if should be translated freely
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::ALL)
 							{
+								// Get distance between picking point and stored object position
+								/*float x = sqrt((m_pickingPoint.x - m_storedObjectTranslations[i].x) * (m_pickingPoint.x - m_storedObjectTranslations[i].x));
+								float y = sqrt((m_pickingPoint.y - m_storedObjectTranslations[i].y) * (m_pickingPoint.y - m_storedObjectTranslations[i].y));
+								float z = sqrt((m_pickingPoint.z - m_storedObjectTranslations[i].z) * (m_pickingPoint.z - m_storedObjectTranslations[i].z));
+								float distance = sqrt((m_pickingPoint.x - m_storedObjectTranslations[i].x) * (m_pickingPoint.x - m_storedObjectTranslations[i].x) +
+									(m_pickingPoint.y - m_storedObjectTranslations[i].y) * (m_pickingPoint.y - m_storedObjectTranslations[i].y) +
+									(m_pickingPoint.z - m_storedObjectTranslations[i].z) * (m_pickingPoint.z - m_storedObjectTranslations[i].z));*/
+								
 								// Translate selected object based on picking point
 								m_displayList[m_selectedObjectIDs[i]].m_position = m_pickingPoint;
+								///m_displayList[m_selectedObjectIDs[i]].m_position = m_storedObjectTranslations[i] + m_pickingPoint;
 							}
 						}
 						break;
@@ -557,7 +572,7 @@ void Game::Render()
 	for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
 	{
 		// Draw local axes
-		DrawAxis(m_displayList[m_selectedObjectIDs[i]]);		
+		DrawAxis(m_displayList[m_selectedObjectIDs[i]], m_selectedObjectIDs[i]);		
 	}
 
     m_deviceResources->Present();
@@ -630,7 +645,7 @@ void XM_CALLCONV Game::DrawGrid(FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR orig
 
     m_deviceResources->PIXEndEvent();
 }
-void Game::DrawAxis(DisplayObject object)
+void Game::DrawAxis(DisplayObject object, int ID)
 {
 	// Setup vectors
 	DirectX::FXMVECTOR origin = object.m_position;
@@ -661,6 +676,9 @@ void Game::DrawAxis(DisplayObject object)
 		VertexPositionColor v1(XMVectorSubtract(scaleX, x), red);
 		VertexPositionColor v2(XMVectorAdd(scaleX, x), red);
 		m_batch->DrawLine(v1, v2);
+
+		///m_xRays[ID] = Ray(v1.position, { 1.f, 0.f, 0.f });
+		m_xAxes[ID] = v1.position - v2.position;
 	}
 
 	// Y axis
@@ -668,6 +686,9 @@ void Game::DrawAxis(DisplayObject object)
 		VertexPositionColor v1(XMVectorSubtract(scaleY, y), green);
 		VertexPositionColor v2(XMVectorAdd(scaleY, y), green);
 		m_batch->DrawLine(v1, v2);
+
+		///m_yRays[ID] = Ray(v1.position, { 0.f, 1.f, 0.f });
+		m_yAxes[ID] = v1.position - v2.position;
 	}
 
 	// Z axis
@@ -675,6 +696,9 @@ void Game::DrawAxis(DisplayObject object)
 		VertexPositionColor v1(XMVectorSubtract(scaleZ, z), blue);
 		VertexPositionColor v2(XMVectorAdd(scaleZ, z), blue);
 		m_batch->DrawLine(v1, v2);
+
+		///m_zRays[ID] = Ray(v1.position, { 0.f, 0.f, 1.f });
+		m_zAxes[ID] = v1.position - v2.position;
 	}
 
 	m_batch->End();
@@ -790,7 +814,15 @@ void Game::BuildDisplayList(std::vector<SceneObject> * SceneGraph)
 		newDisplayObject.m_light_linear		= SceneGraph->at(i).light_linear;
 		newDisplayObject.m_light_quadratic	= SceneGraph->at(i).light_quadratic;
 		
-		m_displayList.push_back(newDisplayObject);		
+		m_displayList.push_back(newDisplayObject);	
+
+		// Setup rays for axes
+		///m_xRays.push_back(Ray());
+		///m_yRays.push_back(Ray());
+		///m_zRays.push_back(Ray());
+		m_xAxes.push_back(DirectX::SimpleMath::Vector3());
+		m_yAxes.push_back(DirectX::SimpleMath::Vector3());
+		m_zAxes.push_back(DirectX::SimpleMath::Vector3());
 	}	
 }
 
@@ -854,7 +886,7 @@ void Game::MousePicking(int i)
 
 	// Setup picking point
 	m_pickingPoint = ray.position + (ray.direction * distance);
-	
+
 	// Setup camera arcball 
 	///m_camera->SetLookAt(m_pickingPoint);
 	/*DirectX::SimpleMath::Vector2 centre;
@@ -1170,6 +1202,31 @@ TERRAIN Game::TerrainIntersection(DirectX::SimpleMath::Ray ray)
 
 	// Return empty values if no intersection
 	return terrain;
+}
+
+DirectX::SimpleMath::Vector3 Game::GetDragPoint(DirectX::SimpleMath::Vector3 * dragLine, DirectX::SimpleMath::Vector3 * unProjLine)
+{
+	DirectX::SimpleMath::Vector3 P0(dragLine[0]);
+	DirectX::SimpleMath::Vector3 Vp(dragLine[1]);
+	DirectX::SimpleMath::Vector3 Q0(unProjLine[0]);
+	DirectX::SimpleMath::Vector3 Vq(unProjLine[1]);
+
+	float a, b[2], c[2], s;
+
+	Vp.Normalize();
+	Vq.Normalize();
+	a = 1.f / (1.f - (Vp.Dot(Vq) * Vp.Dot(Vq)));
+
+	b[0] = a;
+	b[1] = Vp.Dot(Vq) * a;
+
+	c[0] = DirectX::SimpleMath::Vector3(Q0 - P0).Dot(Vp);
+	c[1] = DirectX::SimpleMath::Vector3(P0 - Q0).Dot(Vq);
+
+	s = b[0] * c[0] * b[1] * c[1];
+	DirectX::SimpleMath::Vector3 dragPoint((P0 + Vp) * s);
+
+	return dragPoint;
 }
 
 #ifdef DXTK_AUDIO

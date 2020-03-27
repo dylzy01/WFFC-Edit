@@ -21,7 +21,11 @@ ToolMain::ToolMain()
 	m_toolInputCommands.mouseLeft	= false;
 	m_toolInputCommands.mouseRight	= false;
 	m_toolInputCommands.mouseWheel	= false;
+	m_toolInputCommands.mouseMoved	= false;
 	m_toolInputCommands.escape		= false;
+	m_toolInputCommands.pickOnce	= true;
+	m_toolInputCommands.storeOnce	= true;
+	m_toolInputCommands.toggle		= true;
 	m_toolInputCommands.mousePos	= DirectX::SimpleMath::Vector2(0.f, 0.f);
 }
 
@@ -377,16 +381,18 @@ void ToolMain::UpdateInput(MSG * msg)
 		// Update mouse x,y to send to the Renderer
 		m_toolInputCommands.mousePos.x = GET_X_LPARAM(msg->lParam);
 		m_toolInputCommands.mousePos.y = GET_Y_LPARAM(msg->lParam);
+		m_toolInputCommands.mouseMoved = true;
 		break;
 
 	case WM_LBUTTONDOWN:	
 		m_toolInputCommands.mouseLeft = true;
 		m_toolInputCommands.pickOnce = true;
-		m_toolInputCommands.storeOnce = true;
+		if (m_toolInputCommands.toggle) { m_toolInputCommands.storeOnce = true; m_toolInputCommands.toggle = false; }
 		break;
 
 	case WM_LBUTTONUP:
 		m_toolInputCommands.mouseLeft = false;
+		m_toolInputCommands.toggle = true;
 		break;
 
 	case WM_RBUTTONDOWN:
