@@ -175,6 +175,7 @@ void Game::HandleInput()
 				SQL::AddObject(CreateDefaultCube(m_pickingPoint));
 
 				// Update scene graph here...
+				BuildDisplayList(&m_sceneGraph);
 			}
 			break;
 			}
@@ -925,7 +926,7 @@ void Game::MousePicking(int i)
 	else
 	{
 		// Setup default distance
-		float distance = 1000.f;
+		float distance = 10.f;
 		
 		// Setup temp terrain object
 		TERRAIN temp = TerrainIntersection(ray);
@@ -941,7 +942,9 @@ void Game::MousePicking(int i)
 		}
 
 		// Setup picking point
-		m_pickingPoint = ray.position + (ray.direction * distance);		
+		m_pickingPoint = ray.position + (ray.direction * distance);
+
+		if (temp.intersect) { m_pickingPoint.y += 1.f; }
 	}
 
 	// Setup camera arcball 
@@ -1236,22 +1239,42 @@ TERRAIN Game::TerrainIntersection(DirectX::SimpleMath::Ray ray)
 			Vector3 topLeft		= m_displayChunk.GetGeometry(i + 1, j).position;
 
 			// If ray intersects with either triangle in current geometry
-			if (ray.Intersects(bottomLeft, bottomRight, topRight, distance) || ray.Intersects(bottomLeft, topLeft, topRight, distance))
+			if (ray.Intersects(bottomLeft, bottomRight, topRight, pickedDistance) || ray.Intersects(bottomLeft, topLeft, topRight, pickedDistance))
 			{
 				// If current geometry is within ray trace bounds
 				if (m_displayChunk.GetGeometry(i, j).position.y < one.y && m_displayChunk.GetGeometry(i, j).position.y > two.y)
 				{
-					// Setup values to return
-					terrain.row = i;
-					terrain.column = j;
-					terrain.intersect = true;
-					terrain.position = m_displayChunk.GetGeometry(i, j).position;
+					// If terrain is first picked
+					if (firstPick)
+					{
+						// Setup values to return
+						terrain.row = i;
+						terrain.column = j;
+						terrain.intersect = true;
+						terrain.position = m_displayChunk.GetGeometry(i, j).position;
 
-					// Set geometry as selected
+						// Store current distance
+						storedDistance = pickedDistance;
+						
+						// Reset controller
+						firstPick = false;
+					}
+
+					// Else, if closer terrain has been intersected
+					else if (pickedDistance < storedDistance)
+					{
+						// Setup values to return
+						terrain.row = i;
+						terrain.column = j;
+						terrain.intersect = true;
+						terrain.position = m_displayChunk.GetGeometry(i, j).position;
+
+						// Store current distance
+						storedDistance = distance;
+					}					
+
+					/// Set geometry as selected
 					///m_displayChunk.SetSelected(true, m_displayChunk.GetGeometry(i, j).ID);
-
-					// Return values from intersection
-					return terrain;
 				}
 			}
 		}
@@ -1294,7 +1317,7 @@ SceneObject Game::CreateDefaultCube(DirectX::SimpleMath::Vector3 position)
 	SceneObject cube;
 	
 	// Define cube values
-	cube.ID = m_sceneGraph.size();
+	cube.ID = m_sceneGraph.size() + 1;
 	cube.chunk_ID = 0;
 	cube.model_path = "database/data/placeholder.cmo";
 	cube.tex_diffuse_path = "database/data/placeholder.dds";
@@ -1351,6 +1374,9 @@ SceneObject Game::CreateDefaultCube(DirectX::SimpleMath::Vector3 position)
 	cube.light_linear = 0.f;
 	cube.light_quadratic = 1.f;
 
+	// Add default cube to scene graph
+	m_sceneGraph.push_back(cube);
+	
 	// Return default cube
 	return cube;
 }
