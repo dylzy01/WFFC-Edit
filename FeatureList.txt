@@ -2,5 +2,22 @@ IMPROVED CAMERA
 - Similar to Unreal Engine
 
 MOUSE PICKING
+- Similar to Blender
 - Can select more than one object
 - Can select terrain
+- Can deselect objects
+
+TERRAIN
+- Can increase x,y,z positions
+- Can decrease x,y,z positions
+- Can flatten x,y,z positions
+
+OBJECT
+- Can spawn default cubes
+- Can translate freely or along constrained x,y,z
+- Can rotate freely or along constrained x,y,z
+- Can scale freely or along constrained x,y,z
+
+SQL Controller
+- Static class for all SQL functionality
+- i.e. queries, adding rows etc
