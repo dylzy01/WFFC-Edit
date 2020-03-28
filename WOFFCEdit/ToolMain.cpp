@@ -11,7 +11,6 @@ ToolMain::ToolMain()
 	///m_selectedObject = 0;	//initial selection ID
 	m_sceneGraph.clear();	//clear the vector for the scenegraph
 	m_databaseConnection = NULL;
-	m_editor = EDITOR::OBJECT; //default mode
 
 	//zero input commands
 	m_toolInputCommands.W			= false;
@@ -31,7 +30,8 @@ ToolMain::ToolMain()
 
 ToolMain::~ToolMain()
 {
-	sqlite3_close(m_databaseConnection);		//close the database connection
+	///sqlite3_close(m_databaseConnection);		//close the database connection
+	SQL::Disconnect();
 }
 
 std::vector<int> ToolMain::getCurrentObjectSelectionID()
@@ -39,7 +39,7 @@ std::vector<int> ToolMain::getCurrentObjectSelectionID()
 	return m_selectedObjects;
 }
 
-std::vector<TERRAIN> ToolMain::getCurrentChunkSelection()
+std::vector<TERRAIN> ToolMain::getCurrentTerrainSelection()
 {
 	return m_selectedTerrains;
 }
@@ -52,20 +52,21 @@ void ToolMain::onActionInitialise(HWND handle, int width, int height)
 	
 	m_d3dRenderer.Initialize(handle, m_width, m_height);
 
-	//database connection establish
-	int rc;
-	rc = sqlite3_open_v2("database/test.db",&m_databaseConnection, SQLITE_OPEN_READWRITE, NULL);
-
-	if (rc) 
-	{
-		TRACE("Can't open database");
-		//if the database cant open. Perhaps a more catastrophic error would be better here
+	// Estable database connection
+	///if (sqlite3_open_v2("database/test.db", &m_databaseConnection, SQLITE_OPEN_READWRITE, NULL))
+	if (SQL::Connect())
+	{ 
+		TRACE("Database connection: fail"); 
 	}
 	else 
-	{
-		TRACE("Opened database successfully");
+	{ 
+		TRACE("Database connection: success"); 
+		///while (!SQL::Connect()) { SQL::Connect(); }
 	}
 
+	///TryConnect();
+
+	// Load data from database
 	onActionLoad();
 }
 
@@ -77,6 +78,41 @@ void ToolMain::onActionLoad()
 		m_sceneGraph.clear();		//if not, empty it
 	}
 
+	// Objects ///////////////////////////////////////////////////
+
+	// Database query to retrieve all records from objects table
+	SQL::SendQuery("SELECT * FROM Objects", true);
+
+	// Loop through each row in results
+	while (SQL::GetObjectStep() == SQLITE_ROW)
+	{
+		// Create & store an object from table data
+		m_sceneGraph.push_back(SQL::CreateObject());
+	}
+
+	// Chunk /////////////////////////////////////////////////////
+
+	// Database query to retrieve all records from chunks table
+	SQL::SendQuery("SELECT * FROM Chunks", false);
+
+	// Create & store chunk from table data
+	m_chunk = SQL::CreateChunk();
+
+	// Process results into renderable
+	m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+
+	// Build the renderable chunk
+	m_d3dRenderer.BuildDisplayChunk(&m_chunk);
+}
+
+void ToolMain::onActionLoad_()
+{
+	//load current chunk and objects into lists
+	if (!m_sceneGraph.empty())		//is the vector empty
+	{
+		m_sceneGraph.clear();		//if not, empty it
+	}
+	
 	//SQL
 	int rc;
 	char *sqlCommand;
@@ -195,12 +231,22 @@ void ToolMain::onActionLoad()
 
 void ToolMain::onActionSave()
 {
+	// Database query to delete all records from objects table
+	SQL::SendQuery("DELETE FROM Objects", true);
+	SQL::SetObjectStep();
+
+	// Save new scene graph
+	if (SQL::SaveWorld(m_sceneGraph)) { MessageBox(NULL, L"Objects Saved", L"Notification", MB_OK); }
+	else { MessageBox(NULL, L"Objects Failed to Save", L"Notification", MB_OK); }
+}
+
+void ToolMain::onActionSave_()
+{
 	//SQL
 	int rc;
 	char *sqlCommand;
 	char *ErrMSG = 0;
-	sqlite3_stmt *pResults;								//results of the query
-	
+	sqlite3_stmt *pResults;								//results of the query	
 
 	//OBJECTS IN THE WORLD Delete them all
 	//prepare SQL Text
@@ -279,7 +325,9 @@ void ToolMain::onActionSave()
 		rc = sqlite3_prepare_v2(m_databaseConnection, sqlCommand2.c_str(), -1, &pResults, 0);
 		sqlite3_step(pResults);	
 	}
-	MessageBox(NULL, L"Objects Saved", L"Notification", MB_OK);
+
+	if (rc) { MessageBox(NULL, L"Objects Saved", L"Notification", MB_OK); }
+	else { MessageBox(NULL, L"Objects Not Saved", L"Notification", MB_OK); }	
 }
 
 void ToolMain::onActionSaveTerrain()
@@ -297,16 +345,13 @@ void ToolMain::Tick(MSG *msg)
 		//add to scenegraph
 		//resend scenegraph to Direct X renderer
 
-	// Update mode
-	m_editor = m_d3dRenderer.GetEditor();
-
 	// If left mouse left button is pressed
 	if (m_toolInputCommands.mouseLeft)
 	{
 		// Switch between modes
-		switch(m_editor)
+		switch(m_d3dRenderer.GetEditor())
 		{
-		case EDITOR::OBJECT:
+		case EDITOR::OBJECT_TRANSFORM:
 		{
 			// If allowed to pick
 			if (m_toolInputCommands.pickOnce)
@@ -321,7 +366,10 @@ void ToolMain::Tick(MSG *msg)
 
 				// Reset picking controller
 				m_toolInputCommands.pickOnce = false;
-			}			
+			}
+
+			// If should be spawning a cube
+			
 		}
 		break;
 		case EDITOR::SCULPT:
@@ -337,9 +385,9 @@ void ToolMain::Tick(MSG *msg)
 	else if (m_toolInputCommands.mouseRight)
 	{
 		// Switch between modes
-		switch (m_editor)
+		switch (m_d3dRenderer.GetEditor())
 		{
-		case EDITOR::OBJECT:
+		case EDITOR::OBJECT_TRANSFORM:
 		{
 			// If allowed to pick
 			if (m_toolInputCommands.pickOnce)
@@ -432,4 +480,12 @@ void ToolMain::UpdateInput(MSG * msg)
 	else { m_toolInputCommands.E = false; }
 	if (m_keyArray['Q']) { m_toolInputCommands.Q = true; }
 	else { m_toolInputCommands.Q = false; }
+}
+
+void ToolMain::TryConnect()
+{
+	while (!SQL::Connect())
+	{
+		SQL::Connect();
+	}
 }

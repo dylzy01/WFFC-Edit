@@ -82,7 +82,7 @@ int MFCMain::Run()
 			// Switch between current mode
 			switch (m_toolSystem.GetEditor())
 			{
-			case EDITOR::OBJECT:
+			case EDITOR::OBJECT_TRANSFORM:
 			{
 				// Fill status string with selected object IDs
 				std::vector<int> IDs = m_toolSystem.getCurrentObjectSelectionID();
@@ -96,7 +96,7 @@ int MFCMain::Run()
 			case EDITOR::SCULPT:
 			{
 				// Fill status string with selected chunk row,column(s)
-				std::vector<TERRAIN> chunks = m_toolSystem.getCurrentChunkSelection();
+				std::vector<TERRAIN> chunks = m_toolSystem.getCurrentTerrainSelection();
 				for (int i = 0; i < chunks.size(); ++i)
 				{
 					if (i != 0) { statusString += L", (" + std::to_wstring(chunks[i].row) + L","
@@ -111,38 +111,55 @@ int MFCMain::Run()
 			// If object editor window is open
 			if (m_toolObjectDialogue.m_active)
 			{
-				// Set editor mode to object
-				m_toolSystem.SetEditor(EDITOR::OBJECT);
+				// Switch between spawning/not spawning
+				switch (m_toolObjectDialogue.m_spawn)
+				{
+				case true:
+				{
+					// Set editor mode to object spawning
+					m_toolSystem.SetEditor(EDITOR::OBJECT_SPAWN);
 
-				// If translate function is selected
-				if (m_toolObjectDialogue.GetFunctionTranslate()) { m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::TRANSLATE); }
+					// If cube spawn is selected
+					if (m_toolObjectDialogue.GetSpawnCube()) { m_toolSystem.SetObjectSpawn(OBJECT_SPAWN::CUBE); }
+				}
+				break;
+				case false:
+				{
+					// Set editor mode to object transforming
+					m_toolSystem.SetEditor(EDITOR::OBJECT_TRANSFORM);
 
-				// Else, if rotate function is selected
-				else if (m_toolObjectDialogue.GetFunctionRotate()) { m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::ROTATE); }
+					// If translate function is selected
+					if (m_toolObjectDialogue.GetFunctionTranslate()) { m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::TRANSLATE); }
 
-				// Else, if scale function is selected
-				else if (m_toolObjectDialogue.GetFunctionScale()) { m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::SCALE); }
+					// Else, if rotate function is selected
+					else if (m_toolObjectDialogue.GetFunctionRotate()) { m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::ROTATE); }
 
-				// If x and y constraints are selected
-				if (m_toolObjectDialogue.GetConstraintX() && m_toolObjectDialogue.GetConstraintY()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::XY); }
+					// Else, if scale function is selected
+					else if (m_toolObjectDialogue.GetFunctionScale()) { m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::SCALE); }
 
-				// Else, if x and z constraints are selected
-				else if (m_toolObjectDialogue.GetConstraintX() && m_toolObjectDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::XZ); }
+					// If x and y constraints are selected
+					if (m_toolObjectDialogue.GetConstraintX() && m_toolObjectDialogue.GetConstraintY()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::XY); }
 
-				// Else, if y and z constraints are selected
-				else if (m_toolObjectDialogue.GetConstraintY() && m_toolObjectDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::YZ); }
-				
-				// Else, if only x constraint is selected
-				else if (m_toolObjectDialogue.GetConstraintX()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::X); }
+					// Else, if x and z constraints are selected
+					else if (m_toolObjectDialogue.GetConstraintX() && m_toolObjectDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::XZ); }
 
-				// Else, if only y constraint is selected
-				else if (m_toolObjectDialogue.GetConstraintY()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::Y); }
+					// Else, if y and z constraints are selected
+					else if (m_toolObjectDialogue.GetConstraintY() && m_toolObjectDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::YZ); }
 
-				// Else, if only z constraint is selected
-				else if (m_toolObjectDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::Z); }
+					// Else, if only x constraint is selected
+					else if (m_toolObjectDialogue.GetConstraintX()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::X); }
 
-				// Else, if no constraints are selected
-				else { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::ALL); }
+					// Else, if only y constraint is selected
+					else if (m_toolObjectDialogue.GetConstraintY()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::Y); }
+
+					// Else, if only z constraint is selected
+					else if (m_toolObjectDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::Z); }
+
+					// Else, if no constraints are selected
+					else { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::ALL); }
+				}
+				break;
+				}			
 			}
 
 			// Else, if landscape editor window is open

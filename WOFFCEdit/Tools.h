@@ -12,8 +12,14 @@ struct TERRAIN {
 
 enum class EDITOR {
 	NA,
-	OBJECT,
+	OBJECT_SPAWN,
+	OBJECT_TRANSFORM,
 	SCULPT
+};
+
+enum class OBJECT_SPAWN {
+	NA,
+	CUBE
 };
 
 enum class OBJECT_FUNCTION {

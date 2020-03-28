@@ -65,8 +65,15 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Custom</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectDialogue.cpp" />
-    <ClCompile Include="SculptDialogue.cpp" />
+    <ClCompile Include="ObjectDialogue.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="SculptDialogue.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="SQL.cpp">
+      <Filter>SQLITE</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -122,8 +129,15 @@
     <ClInclude Include="Tools.h">
       <Filter>Custom</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectDialogue.h" />
-    <ClInclude Include="SculptDialogue.h" />
+    <ClInclude Include="ObjectDialogue.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="SculptDialogue.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="SQL.h">
+      <Filter>SQLITE</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

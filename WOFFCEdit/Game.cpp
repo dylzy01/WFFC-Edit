@@ -158,9 +158,39 @@ void Game::HandleInput()
 	// Switch between modes
 	switch (m_editor)
 	{
-	case EDITOR::OBJECT:
+	case EDITOR::OBJECT_SPAWN:
+	{
+		// If mouse left is being pressed
+		if (m_inputCommands.mouseLeft)
+		{
+			// Update picking point
+			MousePicking();
+
+			// Switch between objects to spawn
+			switch (m_objectSpawn)
+			{
+			case OBJECT_SPAWN::CUBE:
+			{
+				///SQL::Connect();
+				
+				// Retrieve cube data from database
+				SQL::SendQuery("SELECT * FROM Objects", true);
+				SQL::SetObjectStep();
+				
+				// Create temp scene object from table data
+				SceneObject cube = SQL::CreateObject(true, m_pickingPoint);
+
+				// Add new cube to database
+				SQL::AddObject(cube);
+			}
+			break;
+			}
+		}
+	}
+	break;
+	case EDITOR::OBJECT_TRANSFORM:
 	{		
-		// If mouse is being pressed
+		// If mouse left is being pressed
 		if (m_inputCommands.mouseLeft)
 		{						
 			// If any objects are selected
@@ -559,7 +589,7 @@ void Game::Render()
 	// Switch between modes
 	switch (m_editor)
 	{
-	case EDITOR::OBJECT: mode = L"MODE: OBJECT"; break;
+	case EDITOR::OBJECT_TRANSFORM: mode = L"MODE: OBJECT"; break;
 	case EDITOR::SCULPT: mode = L"MODE: SCULPT"; break;
 	}
 	m_font->DrawString(m_sprites.get(), mode.c_str(), XMFLOAT2(100, 120), Colors::Yellow);
@@ -873,19 +903,50 @@ void Game::MousePicking(int i)
 	
 	// Setup ray trace
 	Ray ray(origin, direction);
-	
-	// Local vector storage
+
+	// Setup temp mouse position
 	Vector3 mouse = ray.position;
-	Vector3 object = m_displayList[m_selectedObjectIDs[i]].m_position;
 
-	// Distance between the two
-	float distance = sqrt(
-		(mouse.x - object.x) * (mouse.x - object.x) +
-		(mouse.y - object.y) * (mouse.y - object.y) +
-		(mouse.z - object.z) * (mouse.z - object.z));
+	// If an object has been specified
+	if (i != -1)
+	{		
+		// Setup temp object position
+		Vector3 object = m_displayList[m_selectedObjectIDs[i]].m_position;
 
-	// Setup picking point
-	m_pickingPoint = ray.position + (ray.direction * distance);
+		// Distance between the two
+		float distance = sqrt(
+			(mouse.x - object.x) * (mouse.x - object.x) +
+			(mouse.y - object.y) * (mouse.y - object.y) +
+			(mouse.z - object.z) * (mouse.z - object.z));
+
+		// Setup picking point
+		m_pickingPoint = ray.position + (ray.direction * distance);
+
+		/// Setup camera arcball here... ??
+	}
+	
+	// Else, if no object has been specified
+	else
+	{
+		// Setup default distance
+		float distance = 1000.f;
+		
+		// Setup temp terrain object
+		TERRAIN temp = TerrainIntersection(ray);
+
+		// If terrain has been intersected
+		if (temp.intersect)
+		{
+			// Calculate distance between mouse and terrain
+			distance = sqrt(
+				(mouse.x - temp.position.x) * (mouse.x - temp.position.x) +
+				(mouse.y - temp.position.y) * (mouse.y - temp.position.y) +
+				(mouse.z - temp.position.z) * (mouse.z - temp.position.z));
+		}
+
+		// Setup picking point
+		m_pickingPoint = ray.position + (ray.direction * distance);		
+	}
 
 	// Setup camera arcball 
 	///m_camera->SetLookAt(m_pickingPoint);

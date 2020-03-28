@@ -3,8 +3,7 @@
 #include <afxext.h>
 #include "pch.h"
 #include "Game.h"
-#include "sqlite3.h"
-#include "SceneObject.h"
+#include "SQL.h"
 #include "InputCommands.h"
 #include <vector>
 
@@ -16,44 +15,30 @@ public: //methods
 
 	//onAction - These are the interface to MFC
 	std::vector<int>	getCurrentObjectSelectionID();								//returns the selection numbers of currently selected objects so that It can be displayed.
-	std::vector<TERRAIN>	getCurrentChunkSelection();									//returns the currently selected chunk so it can be displayed
+	std::vector<TERRAIN>	getCurrentTerrainSelection();									//returns the currently selected chunk so it can be displayed
 	void				onActionInitialise(HWND handle, int width, int height);		//Passes through handle and hieght and width and initialises DirectX renderer and SQL LITE
 	void				onActionFocusCamera();
-	void				onActionLoad();												//load the current chunk
-	afx_msg	void		onActionSave();												//save the current chunk
+	void				onActionLoad();
+	void				onActionLoad_();												//load the current chunk
+	afx_msg void		onActionSave();
+	afx_msg	void		onActionSave_();												//save the current chunk
 	afx_msg void		onActionSaveTerrain();										//save chunk geometry
 
 	void	Tick(MSG *msg);
 	void	UpdateInput(MSG *msg);
+	void	TryConnect();
 
 	// Getters
-	EDITOR GetEditor() { return m_editor; } //return current editor
+	EDITOR GetEditor() { return m_d3dRenderer.GetEditor(); } //return current editor
 
 	// Setters
 	void SetWireframe(bool wireframe) { m_d3dRenderer.SetWireframe(wireframe); }
-	void SetEditor(EDITOR editor) {
-		m_editor = editor;
-		switch (editor)
-		{
-		case EDITOR::OBJECT:
-		{
-			m_sculptFunction = SCULPT_FUNCTION::NA;
-			m_sculptConstraint = SCULPT_CONSTRAINT::NA;
-		}
-		break;
-		case EDITOR::SCULPT:
-		{
-			m_objectFunction = OBJECT_FUNCTION::NA;
-			m_objectConstraint = OBJECT_CONSTRAINT::NA;
-		}
-		break;
-		}
-		m_d3dRenderer.SetEditor(editor);
-	}
-	void SetObjectFunction(OBJECT_FUNCTION function) { m_objectFunction = function; m_d3dRenderer.SetObjectFunction(function); }
-	void SetObjectConstraint(OBJECT_CONSTRAINT constraint) { m_objectConstraint = constraint; m_d3dRenderer.SetObjectConstraint(constraint); }
-	void SetSculptFunction(SCULPT_FUNCTION function) { m_sculptFunction = function; m_d3dRenderer.SetSculptFunction(function); }
-	void SetSculptConstraint(SCULPT_CONSTRAINT constraint) { m_sculptConstraint = constraint; m_d3dRenderer.SetSculptConstraint(constraint); }
+	void SetEditor(EDITOR editor) { m_d3dRenderer.SetEditor(editor); }
+	void SetObjectSpawn(OBJECT_SPAWN spawn) { m_d3dRenderer.SetObjectSpawn(spawn); }
+	void SetObjectFunction(OBJECT_FUNCTION function) { m_d3dRenderer.SetObjectFunction(function); }
+	void SetObjectConstraint(OBJECT_CONSTRAINT constraint) { m_d3dRenderer.SetObjectConstraint(constraint); }
+	void SetSculptFunction(SCULPT_FUNCTION function) { m_d3dRenderer.SetSculptFunction(function); }
+	void SetSculptConstraint(SCULPT_CONSTRAINT constraint) { m_d3dRenderer.SetSculptConstraint(constraint); }
 
 public:	//variables
 	std::vector<SceneObject>    m_sceneGraph;	//our scenegraph storing all the objects in the current chunk
@@ -72,13 +57,6 @@ private:	//variables
 	CRect	WindowRECT;		//Window area rectangle. 
 	char	m_keyArray[256];
 	sqlite3 *m_databaseConnection;	//sqldatabase handle
-	
-	// Mode controllers
-	EDITOR m_editor;
-	OBJECT_FUNCTION m_objectFunction = OBJECT_FUNCTION::NA;
-	OBJECT_CONSTRAINT m_objectConstraint = OBJECT_CONSTRAINT::NA;
-	SCULPT_FUNCTION m_sculptFunction = SCULPT_FUNCTION::NA;
-	SCULPT_CONSTRAINT m_sculptConstraint = SCULPT_CONSTRAINT::NA;
 
 	int m_width;		//dimensions passed to directX
 	int m_height;

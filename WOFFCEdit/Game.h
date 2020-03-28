@@ -11,8 +11,8 @@
 #include "DisplayChunk.h"
 #include "ChunkObject.h"
 #include "InputCommands.h"
-///#include <vector>
 #include "Camera.h"
+#include "SQL.h"
 
 #include <vector>
 #include <algorithm>
@@ -58,7 +58,7 @@ public:
 	void ClearDisplayList();
 
 	// Mouse picking
-	void MousePicking(int i);
+	void MousePicking(int i = -1);
 	bool PickingObjects(bool select);
 	bool ObjectIntersection(int i);
 	TERRAIN PickingTerrain();
@@ -76,7 +76,7 @@ public:
 		m_editor = editor; 
 		switch (editor)
 		{
-		case EDITOR::OBJECT:
+		case EDITOR::OBJECT_TRANSFORM:
 		{
 			m_sculptFunction = SCULPT_FUNCTION::NA;
 			m_sculptConstraint = SCULPT_CONSTRAINT::NA;
@@ -90,6 +90,7 @@ public:
 		break;
 		}
 	}
+	void SetObjectSpawn(OBJECT_SPAWN spawn) { m_objectSpawn = spawn; }
 	void SetObjectFunction(OBJECT_FUNCTION function) { m_objectFunction = function; }
 	void SetObjectConstraint(OBJECT_CONSTRAINT constraint) { m_objectConstraint = constraint; }
 	void SetSculptFunction(SCULPT_FUNCTION function) { m_sculptFunction = function; }
@@ -118,6 +119,7 @@ private:
 	float								m_deltaTime;
 
 	//tool specific
+	std::vector<SceneObject>			m_sceneGraph;	
 	std::vector<DisplayObject>			m_displayList;
 	DisplayChunk						m_displayChunk;
 	InputCommands						m_inputCommands;
@@ -152,6 +154,7 @@ private:
 
 	// Mode controllers
 	EDITOR m_editor;
+	OBJECT_SPAWN m_objectSpawn = OBJECT_SPAWN::NA;
 	OBJECT_FUNCTION m_objectFunction = OBJECT_FUNCTION::NA;
 	OBJECT_CONSTRAINT m_objectConstraint = OBJECT_CONSTRAINT::NA;
 	SCULPT_FUNCTION m_sculptFunction = SCULPT_FUNCTION::NA;
