@@ -28,6 +28,9 @@ public:
 	// Create chunk from chunk table
 	static ChunkObject CreateChunk();
 
+	// Add new object to object table
+	static bool AddObject(SceneObject object);
+
 	// Save updated scene graph
 	static bool SaveWorld(std::vector<SceneObject> sceneGraph);
 

@@ -99,6 +99,9 @@ public:
 	void StoreObjectDetails(bool store) { m_storeObjectDetails = store; }
 	void StoreTerrainPosition(bool store) { m_storeTerrainPosition = store; }
 
+	// Creation functions
+	SceneObject CreateDefaultCube(DirectX::SimpleMath::Vector3 position);
+
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
 #endif

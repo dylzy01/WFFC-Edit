@@ -109,6 +109,86 @@ ChunkObject SQL::CreateChunk()
 	return chunk;
 }
 
+// Add new object to object table
+bool SQL::AddObject(SceneObject object)
+{
+	// Controller
+	int rc = -1;
+
+	// Setup command stream from object data
+	std::stringstream ss;
+	{
+		ss << "INSERT INTO Objects "
+			<< "VALUES(" << object.ID << ","
+			<< object.chunk_ID << ","
+			<< "'" << object.model_path << "'" << ","
+			<< "'" << object.tex_diffuse_path << "'" << ","
+			<< object.posX << ","
+			<< object.posY << ","
+			<< object.posZ << ","
+			<< object.rotX << ","
+			<< object.rotY << ","
+			<< object.rotZ << ","
+			<< object.scaX << ","
+			<< object.scaY << ","
+			<< object.scaZ << ","
+			<< object.render << ","
+			<< object.collision << ","
+			<< "'" << object.collision_mesh << "'" << ","
+			<< object.collectable << ","
+			<< object.destructable << ","
+			<< object.health_amount << ","
+			<< object.editor_render << ","
+			<< object.editor_texture_vis << ","
+			<< object.editor_normals_vis << ","
+			<< object.editor_collision_vis << ","
+			<< object.editor_pivot_vis << ","
+			<< object.pivotX << ","
+			<< object.pivotY << ","
+			<< object.pivotZ << ","
+			<< object.snapToGround << ","
+			<< object.AINode << ","
+			<< "'" << object.audio_path << "'" << ","
+			<< object.volume << ","
+			<< object.pitch << ","
+			<< object.pan << ","
+			<< object.one_shot << ","
+			<< object.play_on_init << ","
+			<< object.play_in_editor << ","
+			<< object.min_dist << ","
+			<< object.max_dist << ","
+			<< object.camera << ","
+			<< object.path_node << ","
+			<< object.path_node_start << ","
+			<< object.path_node_end << ","
+			<< object.parent_id << ","
+			<< object.editor_wireframe << ","
+			<< "'" << object.name << "'" << ","
+
+			<< object.light_type << ","
+			<< object.light_diffuse_r << ","
+			<< object.light_diffuse_g << ","
+			<< object.light_diffuse_b << ","
+			<< object.light_specular_r << ","
+			<< object.light_specular_g << ","
+			<< object.light_specular_b << ","
+			<< object.light_spot_cutoff << ","
+			<< object.light_constant << ","
+			<< object.light_linear << ","
+			<< object.light_quadratic
+
+			<< ")";
+	}
+
+	// Add stream to query string
+	std::string command = ss.str();
+	rc = sqlite3_prepare_v2(m_databaseConnection, command.c_str(), -1, &m_resultObject, 0);
+	sqlite3_step(m_resultObject);
+
+	if (rc) { return false; }
+	else { return true; }
+}
+
 // Save updated scene graph
 bool SQL::SaveWorld(std::vector<SceneObject> sceneGraph)
 {
@@ -122,9 +202,10 @@ bool SQL::SaveWorld(std::vector<SceneObject> sceneGraph)
 	// Loop through scene graph
 	for (int i = 0; i < sceneGraph.size(); ++i)
 	{
-		// Setup command stream
+		// Setup command stream from current object data
 		std::stringstream ss;
-		ss << "VALUES(" << sceneGraph.at(i).ID << ","
+		ss << "INSERT INTO Objects "
+			<< "VALUES(" << sceneGraph.at(i).ID << ","
 			<< sceneGraph.at(i).chunk_ID << ","
 			<< "'" << sceneGraph.at(i).model_path << "'" << ","
 			<< "'" << sceneGraph.at(i).tex_diffuse_path << "'" << ","

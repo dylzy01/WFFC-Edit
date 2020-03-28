@@ -170,18 +170,11 @@ void Game::HandleInput()
 			switch (m_objectSpawn)
 			{
 			case OBJECT_SPAWN::CUBE:
-			{
-				///SQL::Connect();
-				
-				// Retrieve cube data from database
-				//SQL::SendQuery("SELECT * FROM Objects", true);
-				//SQL::SetObjectStep();
-				//
-				//// Create temp scene object from table data
-				//SceneObject cube = SQL::CreateObject(true, m_pickingPoint);
+			{				
+				// Add new default cube to database at picking point
+				SQL::AddObject(CreateDefaultCube(m_pickingPoint));
 
-				//// Add new cube to database
-				//SQL::AddObject(cube);
+				// Update scene graph here...
 			}
 			break;
 			}
@@ -771,8 +764,11 @@ void Game::OnWindowSizeChanged(int width, int height)
     CreateWindowSizeDependentResources();
 }
 
-void Game::BuildDisplayList(std::vector<SceneObject> * SceneGraph)
+void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 {
+	// Update local scene graph
+	m_sceneGraph = *sceneGraph;
+	
 	auto device = m_deviceResources->GetD3DDevice();
 	auto devicecontext = m_deviceResources->GetD3DDeviceContext();
 
@@ -782,18 +778,18 @@ void Game::BuildDisplayList(std::vector<SceneObject> * SceneGraph)
 	}
 
 	//for every item in the scenegraph
-	int numObjects = SceneGraph->size();
+	int numObjects = sceneGraph->size();
 	for (int i = 0; i < numObjects; i++)
 	{		
 		//create a temp display object that we will populate then append to the display list.
 		DisplayObject newDisplayObject;
 		
 		//load model
-		std::wstring modelwstr = StringToWCHART(SceneGraph->at(i).model_path);							//convect string to Wchar
+		std::wstring modelwstr = StringToWCHART(sceneGraph->at(i).model_path);							//convect string to Wchar
 		newDisplayObject.m_model = Model::CreateFromCMO(device, modelwstr.c_str(), *m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
 
 		//Load Texture
-		std::wstring texturewstr = StringToWCHART(SceneGraph->at(i).tex_diffuse_path);								//convect string to Wchar
+		std::wstring texturewstr = StringToWCHART(sceneGraph->at(i).tex_diffuse_path);								//convect string to Wchar
 		HRESULT rs;
 		rs = CreateDDSTextureFromFile(device, texturewstr.c_str(), nullptr, &newDisplayObject.m_texture_diffuse);	//load tex into Shader resource
 
@@ -814,35 +810,35 @@ void Game::BuildDisplayList(std::vector<SceneObject> * SceneGraph)
 		});
 
 		//set position
-		newDisplayObject.m_position.x = SceneGraph->at(i).posX;
-		newDisplayObject.m_position.y = SceneGraph->at(i).posY;
-		newDisplayObject.m_position.z = SceneGraph->at(i).posZ;
+		newDisplayObject.m_position.x = sceneGraph->at(i).posX;
+		newDisplayObject.m_position.y = sceneGraph->at(i).posY;
+		newDisplayObject.m_position.z = sceneGraph->at(i).posZ;
 		
 		//setorientation
-		newDisplayObject.m_orientation.x = SceneGraph->at(i).rotX;
-		newDisplayObject.m_orientation.y = SceneGraph->at(i).rotY;
-		newDisplayObject.m_orientation.z = SceneGraph->at(i).rotZ;
+		newDisplayObject.m_orientation.x = sceneGraph->at(i).rotX;
+		newDisplayObject.m_orientation.y = sceneGraph->at(i).rotY;
+		newDisplayObject.m_orientation.z = sceneGraph->at(i).rotZ;
 
 		//set scale
-		newDisplayObject.m_scale.x = SceneGraph->at(i).scaX;
-		newDisplayObject.m_scale.y = SceneGraph->at(i).scaY;
-		newDisplayObject.m_scale.z = SceneGraph->at(i).scaZ;
+		newDisplayObject.m_scale.x = sceneGraph->at(i).scaX;
+		newDisplayObject.m_scale.y = sceneGraph->at(i).scaY;
+		newDisplayObject.m_scale.z = sceneGraph->at(i).scaZ;
 
 		//set wireframe / render flags
-		newDisplayObject.m_render		= SceneGraph->at(i).editor_render;
-		newDisplayObject.m_wireframe	= SceneGraph->at(i).editor_wireframe;
+		newDisplayObject.m_render		= sceneGraph->at(i).editor_render;
+		newDisplayObject.m_wireframe	= sceneGraph->at(i).editor_wireframe;
 
-		newDisplayObject.m_light_type		= SceneGraph->at(i).light_type;
-		newDisplayObject.m_light_diffuse_r	= SceneGraph->at(i).light_diffuse_r;
-		newDisplayObject.m_light_diffuse_g	= SceneGraph->at(i).light_diffuse_g;
-		newDisplayObject.m_light_diffuse_b	= SceneGraph->at(i).light_diffuse_b;
-		newDisplayObject.m_light_specular_r = SceneGraph->at(i).light_specular_r;
-		newDisplayObject.m_light_specular_g = SceneGraph->at(i).light_specular_g;
-		newDisplayObject.m_light_specular_b = SceneGraph->at(i).light_specular_b;
-		newDisplayObject.m_light_spot_cutoff = SceneGraph->at(i).light_spot_cutoff;
-		newDisplayObject.m_light_constant	= SceneGraph->at(i).light_constant;
-		newDisplayObject.m_light_linear		= SceneGraph->at(i).light_linear;
-		newDisplayObject.m_light_quadratic	= SceneGraph->at(i).light_quadratic;
+		newDisplayObject.m_light_type		= sceneGraph->at(i).light_type;
+		newDisplayObject.m_light_diffuse_r	= sceneGraph->at(i).light_diffuse_r;
+		newDisplayObject.m_light_diffuse_g	= sceneGraph->at(i).light_diffuse_g;
+		newDisplayObject.m_light_diffuse_b	= sceneGraph->at(i).light_diffuse_b;
+		newDisplayObject.m_light_specular_r = sceneGraph->at(i).light_specular_r;
+		newDisplayObject.m_light_specular_g = sceneGraph->at(i).light_specular_g;
+		newDisplayObject.m_light_specular_b = sceneGraph->at(i).light_specular_b;
+		newDisplayObject.m_light_spot_cutoff = sceneGraph->at(i).light_spot_cutoff;
+		newDisplayObject.m_light_constant	= sceneGraph->at(i).light_constant;
+		newDisplayObject.m_light_linear		= sceneGraph->at(i).light_linear;
+		newDisplayObject.m_light_quadratic	= sceneGraph->at(i).light_quadratic;
 		
 		m_displayList.push_back(newDisplayObject);	
 
@@ -1290,7 +1286,77 @@ DirectX::SimpleMath::Vector3 Game::GetDragPoint(DirectX::SimpleMath::Vector3 * d
 	return dragPoint;
 }
 
+// Creation functions...
+
+SceneObject Game::CreateDefaultCube(DirectX::SimpleMath::Vector3 position)
+{
+	// Setup temp cube
+	SceneObject cube;
+	
+	// Define cube values
+	cube.ID = m_sceneGraph.size();
+	cube.chunk_ID = 0;
+	cube.model_path = "database/data/placeholder.cmo";
+	cube.tex_diffuse_path = "database/data/placeholder.dds";
+	cube.posX = position.x;
+	cube.posY = position.y;
+	cube.posZ = position.z;
+	cube.rotX = 0.f;
+	cube.rotY = 0.f;
+	cube.rotZ = 0.f;
+	cube.scaX = 1.f;
+	cube.scaY = 1.f;
+	cube.scaZ = 1.f;
+	cube.render = false;
+	cube.collectable = false;
+	cube.collision_mesh = "";
+	cube.collectable = false;
+	cube.destructable = false;
+	cube.health_amount = 0;
+	cube.editor_render = true;
+	cube.editor_texture_vis = true;
+	cube.editor_normals_vis = false;
+	cube.editor_collision_vis = false;
+	cube.editor_pivot_vis = false;
+	cube.pivotX = 0.f;
+	cube.pivotY = 0.f;
+	cube.pivotZ = 0.f;
+	cube.snapToGround = false;
+	cube.AINode = false;
+	cube.audio_path = "";
+	cube.volume = 0.f;
+	cube.pitch = 0.f;
+	cube.pan = 0.f;
+	cube.one_shot = false;
+	cube.play_on_init = false;
+	cube.play_in_editor = false;
+	cube.min_dist = 0.f;
+	cube.max_dist = 0.f;
+	cube.camera = false;
+	cube.path_node = false;
+	cube.path_node_start = false;
+	cube.path_node_end = false;
+	cube.parent_id = 0;
+	cube.editor_wireframe = false;
+	cube.name = "Name";
+	cube.light_type = 1;
+	cube.light_diffuse_r = 2.f;
+	cube.light_diffuse_g = 3.f;
+	cube.light_diffuse_b = 4.f;
+	cube.light_specular_r = 5.f;
+	cube.light_specular_g = 6.f;
+	cube.light_specular_b = 7.f;
+	cube.light_spot_cutoff = 8.f;
+	cube.light_constant = 9.f;
+	cube.light_linear = 0.f;
+	cube.light_quadratic = 1.f;
+
+	// Return default cube
+	return cube;
+}
+
 #ifdef DXTK_AUDIO
+
 void Game::NewAudioDevice()
 {
     if (m_audEngine && !m_audEngine->IsAudioDevicePresent())
