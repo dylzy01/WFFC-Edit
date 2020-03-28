@@ -53,18 +53,8 @@ void ToolMain::onActionInitialise(HWND handle, int width, int height)
 	m_d3dRenderer.Initialize(handle, m_width, m_height);
 
 	// Estable database connection
-	///if (sqlite3_open_v2("database/test.db", &m_databaseConnection, SQLITE_OPEN_READWRITE, NULL))
-	if (SQL::Connect())
-	{ 
-		TRACE("Database connection: fail"); 
-	}
-	else 
-	{ 
-		TRACE("Database connection: success"); 
-		///while (!SQL::Connect()) { SQL::Connect(); }
-	}
-
-	///TryConnect();
+	if (SQL::Connect()) { TRACE("Database connection: fail"); }
+	else { TRACE("Database connection: success"); }
 
 	// Load data from database
 	onActionLoad();
@@ -326,8 +316,8 @@ void ToolMain::onActionSave_()
 		sqlite3_step(pResults);	
 	}
 
-	if (rc) { MessageBox(NULL, L"Objects Saved", L"Notification", MB_OK); }
-	else { MessageBox(NULL, L"Objects Not Saved", L"Notification", MB_OK); }	
+	if (rc) { MessageBox(NULL, L"Objects Not Saved", L"Notification", MB_OK); }
+	else { MessageBox(NULL, L"Objects Saved", L"Notification", MB_OK); }	
 }
 
 void ToolMain::onActionSaveTerrain()

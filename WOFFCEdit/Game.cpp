@@ -174,14 +174,14 @@ void Game::HandleInput()
 				///SQL::Connect();
 				
 				// Retrieve cube data from database
-				SQL::SendQuery("SELECT * FROM Objects", true);
-				SQL::SetObjectStep();
-				
-				// Create temp scene object from table data
-				SceneObject cube = SQL::CreateObject(true, m_pickingPoint);
+				//SQL::SendQuery("SELECT * FROM Objects", true);
+				//SQL::SetObjectStep();
+				//
+				//// Create temp scene object from table data
+				//SceneObject cube = SQL::CreateObject(true, m_pickingPoint);
 
-				// Add new cube to database
-				SQL::AddObject(cube);
+				//// Add new cube to database
+				//SQL::AddObject(cube);
 			}
 			break;
 			}
