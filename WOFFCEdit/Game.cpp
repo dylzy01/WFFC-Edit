@@ -889,6 +889,15 @@ void Game::BuildDisplayChunk(ChunkObject * SceneChunk, std::vector<DirectX::Simp
 	m_displayChunk.LoadHeightMap(m_deviceResources);
 	m_displayChunk.m_terrainEffect->SetProjection(m_projection);
 	m_displayChunk.InitialiseBatch();
+	
+	// Initialise default texture across all geometry
+	for (int i = 0; i < TERRAINRESOLUTION - 1; ++i)
+	{
+		for (int j = 0; j < TERRAINRESOLUTION - 1; ++j)
+		{
+			m_displayChunk.PaintTerrain(i, j, LANDSCAPE_PAINT::NA);
+		}
+	}
 }
 
 void Game::SaveDisplayChunk(ChunkObject * SceneChunk)

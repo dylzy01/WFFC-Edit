@@ -42,68 +42,96 @@ void DisplayChunk::PopulateChunkData(ChunkObject * SceneChunk)
 }
 
 void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResources)
-{
+{	
+	// Setup device context
 	auto context = deviceResources->GetD3DDeviceContext();
-	auto context2 = deviceResources->GetD3DDeviceContext();
-	auto context1 = deviceResources->GetD3DDeviceContext();
-
-	/*m_terrainSand->Apply(context);
-	context->IASetInputLayout(m_terrainInputLayout.Get());*/
-
-	m_terrainEffect->SetTexture(m_texture_default);
-	m_terrainEffect->Apply(context);
 	context->IASetInputLayout(m_terrainInputLayout.Get());
-
 	
-	for (size_t i = 0; i < TERRAINRESOLUTION-1; i++)	//looping through QUADS.  so we subtrack one from the terrain array or it will try to draw a quad starting with the last vertex in each row. Which wont work
-	{
-		for (size_t j = 0; j < TERRAINRESOLUTION-1; j++)//same as above
-		{
-			m_batch->Begin();
-			
-			///int index = (TERRAINRESOLUTION * i) + j;
-			
-			// If current paint is default
-			/*if (m_paint[i][j] == LANDSCAPE_PAINT::NA) 
-			{ m_terrainEffect->SetTexture(m_texture_default); }*/
-
-			// Else, if current paint is grass
-			if (m_paint[i][j] == LANDSCAPE_PAINT::GRASS) 
-			{ 
-				m_terrainEffect->SetTexture(m_texture_splat_1);
-				m_terrainEffect->Apply(context);
-			}
-			///if (m_paint[index] == LANDSCAPE_PAINT::GRASS) 
-			
-			// Else, if current paint is dirt
-			else if (m_paint[i][j] == LANDSCAPE_PAINT::DIRT) 
-			{ 
-				m_terrainEffect->SetTexture(m_texture_splat_2);
-				m_terrainEffect->Apply(context);
-			}
-			///else if (m_paint[index] == LANDSCAPE_PAINT::DIRT)
-			
-			// Else, if current paint is sand
-			else if (m_paint[i][j] == LANDSCAPE_PAINT::SAND) 
-			{ 
-				m_terrainEffect->SetTexture(m_texture_splat_3);
-				m_terrainEffect->Apply(context);
-			}
-			///else if (m_paint[index] == LANDSCAPE_PAINT::SAND)
-
-			// Else, if no paint is selected
-			else
-			{
-				m_terrainEffect->SetTexture(m_texture_default);
-				m_terrainEffect->Apply(context);
-				
-			}
-			
-			m_batch->DrawQuad(m_terrainGeometry[i][j], m_terrainGeometry[i][j+1], m_terrainGeometry[i+1][j+1], m_terrainGeometry[i+1][j]); //bottom left bottom right, top right top left.
-		
-			m_batch->End();
-		}
+	// Draw all grass geometry
+	if (m_grass.size() != 0) {
+		m_batch->Begin();
+		m_terrainEffect->SetTexture(m_texture_splat_1);
+		m_terrainEffect->Apply(context);
+		DrawTerrain(m_grass);
+		m_batch->End();
 	}
+
+	// Draw all dirt geometry
+	if (m_dirt.size() != 0) {
+		m_batch->Begin();
+		m_terrainEffect->SetTexture(m_texture_splat_2);
+		m_terrainEffect->Apply(context);
+		DrawTerrain(m_dirt);
+		m_batch->End();
+	}
+
+	// Draw all sand geometry
+	if (m_sand.size() != 0)	{
+		m_batch->Begin();
+		m_terrainEffect->SetTexture(m_texture_splat_3);
+		m_terrainEffect->Apply(context);
+		DrawTerrain(m_sand);
+		m_batch->End();
+	}
+
+	// Draw all default geometry
+	else if (m_default.size() != 0) {
+		m_batch->Begin();
+		m_terrainEffect->SetTexture(m_texture_default);
+		m_terrainEffect->Apply(context);
+		DrawTerrain(m_default);	
+		m_batch->End();
+	}
+	
+	//for (size_t i = 0; i < TERRAINRESOLUTION-1; i++)	//looping through QUADS.  so we subtrack one from the terrain array or it will try to draw a quad starting with the last vertex in each row. Which wont work
+	//{
+	//	for (size_t j = 0; j < TERRAINRESOLUTION-1; j++)//same as above
+	//	{
+	//		m_batch->Begin();
+	//		
+	//		///int index = (TERRAINRESOLUTION * i) + j;
+	//		
+	//		// If current paint is default
+	//		/*if (m_paint[i][j] == LANDSCAPE_PAINT::NA) 
+	//		{ m_terrainEffect->SetTexture(m_texture_default); }*/
+
+	//		// Else, if current paint is grass
+	//		if (m_paint[i][j] == LANDSCAPE_PAINT::GRASS) 
+	//		{ 
+	//			m_terrainEffect->SetTexture(m_texture_splat_1);
+	//			m_terrainEffect->Apply(context);
+	//		}
+	//		///if (m_paint[index] == LANDSCAPE_PAINT::GRASS) 
+	//		
+	//		// Else, if current paint is dirt
+	//		else if (m_paint[i][j] == LANDSCAPE_PAINT::DIRT) 
+	//		{ 
+	//			m_terrainEffect->SetTexture(m_texture_splat_2);
+	//			m_terrainEffect->Apply(context);
+	//		}
+	//		///else if (m_paint[index] == LANDSCAPE_PAINT::DIRT)
+	//		
+	//		// Else, if current paint is sand
+	//		else if (m_paint[i][j] == LANDSCAPE_PAINT::SAND) 
+	//		{ 
+	//			m_terrainEffect->SetTexture(m_texture_splat_3);
+	//			m_terrainEffect->Apply(context);
+	//		}
+	//		///else if (m_paint[index] == LANDSCAPE_PAINT::SAND)
+
+	//		// Else, if no paint is selected
+	//		else
+	//		{
+	//			m_terrainEffect->SetTexture(m_texture_default);
+	//			m_terrainEffect->Apply(context);
+	//			
+	//		}
+	//		
+	//		m_batch->DrawQuad(m_terrainGeometry[i][j], m_terrainGeometry[i][j+1], m_terrainGeometry[i+1][j+1], m_terrainGeometry[i+1][j]); //bottom left bottom right, top right top left.
+	//	
+	//		m_batch->End();
+	//	}
+	//}
 	
 	//m_batch->Begin();
 	//m_terrainEffect->SetTexture(m_texture_splat_1);
@@ -266,10 +294,53 @@ void DisplayChunk::PaintTerrain(int row, int column, LANDSCAPE_PAINT paint)
 	/*int index = (TERRAINRESOLUTION * row) + column;
 	m_paint[index] = paint;*/
 	
-	m_paint[row][column] = paint;
+	/*m_paint[row][column] = paint;
 	m_paint[row][column + 1] = paint;
 	m_paint[row + 1][column + 1] = paint;
-	m_paint[row + 1][column] = paint;
+	m_paint[row + 1][column] = paint;*/
+
+	// Switch between paints
+	switch (paint)
+	{
+	case LANDSCAPE_PAINT::GRASS:
+	{
+		m_grass.push_back(m_terrainGeometry[row][column]);
+		m_grass.push_back(m_terrainGeometry[row][column + 1]);
+		m_grass.push_back(m_terrainGeometry[row + 1][column + 1]);
+		m_grass.push_back(m_terrainGeometry[row + 1][column]);		
+	}
+	break;
+	case LANDSCAPE_PAINT::DIRT:
+	{
+		m_dirt.push_back(m_terrainGeometry[row][column]);
+		m_dirt.push_back(m_terrainGeometry[row][column + 1]);
+		m_dirt.push_back(m_terrainGeometry[row + 1][column + 1]);
+		m_dirt.push_back(m_terrainGeometry[row + 1][column]);
+	}
+	break;
+	case LANDSCAPE_PAINT::SAND:
+	{
+		m_sand.push_back(m_terrainGeometry[row][column]);
+		m_sand.push_back(m_terrainGeometry[row][column + 1]);
+		m_sand.push_back(m_terrainGeometry[row + 1][column + 1]);
+		m_sand.push_back(m_terrainGeometry[row + 1][column]);
+	}
+	break;
+	case LANDSCAPE_PAINT::NA:
+	{
+		m_default.push_back(m_terrainGeometry[row][column]);
+		m_default.push_back(m_terrainGeometry[row][column + 1]);
+		m_default.push_back(m_terrainGeometry[row + 1][column + 1]);
+		m_default.push_back(m_terrainGeometry[row + 1][column]);
+	}
+	break;
+	}
+
+	// Check if selected geometry is within other containers & remove
+	///CheckTerrain(m_terrainGeometry[row][column], paint);
+	///CheckTerrain(m_terrainGeometry[row][column + 1], paint);
+	///CheckTerrain(m_terrainGeometry[row + 1][column + 1], paint);
+	///CheckTerrain(m_terrainGeometry[row + 1][column], paint);
 }
 
 void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_SCULPT sculpt, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position)
@@ -804,6 +875,208 @@ void DisplayChunk::SetSelected(bool selected, int ID)
 	///GenerateHeightmap();
 }
 
+void DisplayChunk::DrawTerrain(std::vector<DirectX::VertexPositionNormalTexture> terrain)
+{
+	int count = 0;
+	for (int i = 0; i < terrain.size(); ++i)
+	{
+		if (count != 3) { count++; }
+		else
+		{
+			count = 0;
+			m_batch->DrawQuad(terrain[i - 3], terrain[i - 2], terrain[i - 1], terrain[i]);
+		}
+	}
+}
+
+void DisplayChunk::CheckTerrain(DirectX::VertexPositionNormalTexture terrain, LANDSCAPE_PAINT paint)
+{	
+	// Switch between paint
+	switch (paint)
+	{
+	case LANDSCAPE_PAINT::GRASS:
+	{
+		// Loop through dirt vector
+		auto dirt = m_dirt.begin();
+		while (dirt != m_dirt.end())
+		{
+			if (dirt->position.x == terrain.position.x &&
+				dirt->position.y == terrain.position.y &&
+				dirt->position.z == terrain.position.z)
+			{
+				dirt = m_dirt.erase(dirt);
+				///break;
+			}
+			else { ++dirt; }
+		}		
+
+		// Loop through sand vector
+		auto sand = m_sand.begin();
+		while (sand != m_sand.end())
+		{
+			if (sand->position.x == terrain.position.x &&
+				sand->position.y == terrain.position.y &&
+				sand->position.z == terrain.position.z)
+			{
+				sand = m_sand.erase(sand);
+				///break;
+			}
+			else { ++sand; }
+		}
+		
+		// Loop through default vector
+		auto _default = m_default.begin();
+		while (_default != m_default.end())
+		{
+			if (_default->position.x == terrain.position.x &&
+				_default->position.y == terrain.position.y &&
+				_default->position.z == terrain.position.z)
+			{
+				_default = m_default.erase(_default);
+				///break;
+			}
+			else { ++_default; }
+		}
+	}
+	break;
+	case LANDSCAPE_PAINT::DIRT:
+	{
+		// Loop through grass vector
+		auto grass = m_grass.begin();
+		while (grass != m_grass.end())
+		{
+			if (grass->position.x == terrain.position.x &&
+				grass->position.y == terrain.position.y &&
+				grass->position.z == terrain.position.z)
+			{
+				grass = m_grass.erase(grass);
+				///break;
+			}
+			else { ++grass; }
+		}
+
+		// Loop through sand vector
+		auto sand = m_sand.begin();
+		while (sand != m_sand.end())
+		{
+			if (sand->position.x == terrain.position.x &&
+				sand->position.y == terrain.position.y &&
+				sand->position.z == terrain.position.z)
+			{
+				sand = m_sand.erase(sand);
+				///break;
+			}
+			else { ++sand; }
+		}
+
+		// Loop through default vector
+		auto _default = m_default.begin();
+		while (_default != m_default.end())
+		{
+			if (_default->position.x == terrain.position.x &&
+				_default->position.y == terrain.position.y &&
+				_default->position.z == terrain.position.z)
+			{
+				_default = m_default.erase(_default);
+				///break;
+			}
+			else { ++_default; }
+		}
+	}
+	break;
+	case LANDSCAPE_PAINT::SAND:
+	{
+		// Loop through grass vector
+		auto grass = m_grass.begin();
+		while (grass != m_grass.end())
+		{
+			if (grass->position.x == terrain.position.x &&
+				grass->position.y == terrain.position.y &&
+				grass->position.z == terrain.position.z)
+			{
+				grass = m_grass.erase(grass);
+				///break;
+			}
+			else { ++grass; }
+		}
+
+		// Loop through dirt vector
+		auto dirt = m_dirt.begin();
+		while (dirt != m_dirt.end())
+		{
+			if (dirt->position.x == terrain.position.x &&
+				dirt->position.y == terrain.position.y &&
+				dirt->position.z == terrain.position.z)
+			{
+				dirt = m_dirt.erase(dirt);
+				///break;
+			}
+			else { ++dirt; }
+		}
+
+		// Loop through default vector
+		auto _default = m_default.begin();
+		while (_default != m_default.end())
+		{
+			if (_default->position.x == terrain.position.x &&
+				_default->position.y == terrain.position.y &&
+				_default->position.z == terrain.position.z)
+			{
+				_default = m_default.erase(_default);
+				///break;
+			}
+			else { ++_default; }
+		}
+	}
+	break;
+	case LANDSCAPE_PAINT::NA:
+	{
+		// Loop through grass vector
+		auto grass = m_grass.begin();
+		while (grass != m_grass.end())
+		{
+			if (grass->position.x == terrain.position.x &&
+				grass->position.y == terrain.position.y &&
+				grass->position.z == terrain.position.z)
+			{
+				grass = m_grass.erase(grass);
+				///break;
+			}
+			else { ++grass; }
+		}
+
+		// Loop through dirt vector
+		auto dirt = m_dirt.begin();
+		while (dirt != m_dirt.end())
+		{
+			if (dirt->position.x == terrain.position.x &&
+				dirt->position.y == terrain.position.y &&
+				dirt->position.z == terrain.position.z)
+			{
+				dirt = m_dirt.erase(dirt);
+				///break;
+			}
+			else { ++dirt; }
+		}
+
+		// Loop through sand vector
+		auto sand = m_sand.begin();
+		while (sand != m_sand.end())
+		{
+			if (sand->position.x == terrain.position.x &&
+				sand->position.y == terrain.position.y &&
+				sand->position.z == terrain.position.z)
+			{
+				sand = m_sand.erase(sand);
+				///break;
+			}
+			else { ++sand; }
+		}
+	}
+	break;
+	}
+}
+
 void DisplayChunk::CalculateTerrainNormals()
 {
 	int index1, index2, index3, index4;
@@ -820,8 +1093,7 @@ void DisplayChunk::CalculateTerrainNormals()
 			leftRightVector.x = (m_terrainGeometry[i][j - 1].position.x - m_terrainGeometry[i][j + 1].position.x);
 			leftRightVector.y = (m_terrainGeometry[i][j - 1].position.y - m_terrainGeometry[i][j + 1].position.y);
 			leftRightVector.z = (m_terrainGeometry[i][j - 1].position.z - m_terrainGeometry[i][j + 1].position.z);
-
-
+			
 			leftRightVector.Cross(upDownVector, normalVector);	//get cross product
 			normalVector.Normalize();			//normalise it.
 

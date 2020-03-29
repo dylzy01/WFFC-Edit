@@ -32,12 +32,13 @@ public:
 	void SculptTerrain(int row, int column, LANDSCAPE_SCULPT function, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position = { { 0,0,0 } });
 
 	void SetSelected(bool selected, int ID);
+	void DrawTerrain(std::vector<DirectX::VertexPositionNormalTexture> terrain);
 
 private:
-	///GEOMETRY m_geometry[TERRAINRESOLUTION][TERRAINRESOLUTION];
 	DirectX::VertexPositionNormalTexture m_terrainGeometry[TERRAINRESOLUTION][TERRAINRESOLUTION];
 	BYTE m_heightMap[TERRAINRESOLUTION*TERRAINRESOLUTION];
 	void CalculateTerrainNormals();
+	void CheckTerrain(DirectX::VertexPositionNormalTexture terrain, LANDSCAPE_PAINT paint);
 	
 	float	m_terrainHeightScale;
 	int		m_terrainSize;				//size of terrain in metres
@@ -65,4 +66,11 @@ private:
 
 	LANDSCAPE_PAINT m_paint[TERRAINRESOLUTION][TERRAINRESOLUTION];
 	///LANDSCAPE_PAINT m_paint[TERRAINRESOLUTION*TERRAINRESOLUTION];
+
+	// Geometry containers
+	bool m_addOnce = true;
+	std::vector<DirectX::VertexPositionNormalTexture> m_default;
+	std::vector<DirectX::VertexPositionNormalTexture> m_grass;
+	std::vector<DirectX::VertexPositionNormalTexture> m_dirt;
+	std::vector<DirectX::VertexPositionNormalTexture> m_sand;
 };
