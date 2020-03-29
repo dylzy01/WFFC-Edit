@@ -7,10 +7,7 @@ BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_FILE_SAVETERRAIN, &MFCMain::MenuFileSaveTerrain)
 	ON_COMMAND(ID_EDIT_SELECT, &MFCMain::MenuEditSelect)
 	ON_COMMAND(ID_EDITOR_OBJECTEDITOR, &MFCMain::MenuEditEditorObject)
-	ON_COMMAND(ID_LANDSCAPEEDITOR_NATURE, &MFCMain::MenuEditEditorLandscapeNature)
-	ON_COMMAND(ID_LANDSCAPEEDITOR_WATER, &MFCMain::MenuEditEditorLandscapeWater)
-	ON_COMMAND(ID_LANDSCAPEEDITOR_SCULPT, &MFCMain::MenuEditEditorLandscapeSculpt)
-	ON_COMMAND(ID_LANDSCAPEEDITOR_PAINT, &MFCMain::MenuEditEditorLandscapePaint)
+	ON_COMMAND(ID_EDITOR_LANDSCAPEEDITOR, &MFCMain::MenuEditEditorLandscape)
 	ON_COMMAND(ID_WIREFRAME_ON, &MFCMain::MenuEditWireframeOn)
 	ON_COMMAND(ID_WIREFRAME_OFF, &MFCMain::MenuEditWireframeOff)
 	ON_COMMAND(ID_BUTTON40001,	&MFCMain::ToolBarButton1)
@@ -82,6 +79,17 @@ int MFCMain::Run()
 			// Switch between current mode
 			switch (m_toolSystem.GetEditor())
 			{
+			case EDITOR::OBJECT_SPAWN:
+			{
+				// Fill status string with selected object IDs
+				std::vector<int> IDs = m_toolSystem.getCurrentObjectSelectionID();
+				for (int i = 0; i < IDs.size(); ++i)
+				{
+					if (i != 0) { statusString += L", " + std::to_wstring(IDs[i]); }
+					else { statusString += std::to_wstring(IDs[i]); }
+				}
+			}
+			break;
 			case EDITOR::OBJECT_TRANSFORM:
 			{
 				// Fill status string with selected object IDs
@@ -93,7 +101,7 @@ int MFCMain::Run()
 				}
 			}
 			break;
-			case EDITOR::SCULPT:
+			case EDITOR::LANDSCAPE_SCULPT:
 			{
 				// Fill status string with selected chunk row,column(s)
 				std::vector<TERRAIN> chunks = m_toolSystem.getCurrentTerrainSelection();
@@ -129,13 +137,13 @@ int MFCMain::Run()
 					m_toolSystem.SetEditor(EDITOR::OBJECT_TRANSFORM);
 
 					// If translate function is selected
-					if (m_toolObjectDialogue.GetFunctionTranslate()) { m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::TRANSLATE); }
+					if (m_toolObjectDialogue.GetFunctionTranslate()) { m_toolSystem.SetObjectTransform(OBJECT_FUNCTION::TRANSLATE); }
 
 					// Else, if rotate function is selected
-					else if (m_toolObjectDialogue.GetFunctionRotate()) { m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::ROTATE); }
+					else if (m_toolObjectDialogue.GetFunctionRotate()) { m_toolSystem.SetObjectTransform(OBJECT_FUNCTION::ROTATE); }
 
 					// Else, if scale function is selected
-					else if (m_toolObjectDialogue.GetFunctionScale()) { m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::SCALE); }
+					else if (m_toolObjectDialogue.GetFunctionScale()) { m_toolSystem.SetObjectTransform(OBJECT_FUNCTION::SCALE); }
 
 					// If x and y constraints are selected
 					if (m_toolObjectDialogue.GetConstraintX() && m_toolObjectDialogue.GetConstraintY()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::XY); }
@@ -163,40 +171,60 @@ int MFCMain::Run()
 			}
 
 			// Else, if landscape editor window is open
-			else if (m_toolSculptDialogue.m_active)
+			else if (m_toolLandscapeDialogue.m_active)
 			{
-				// Set editor mode to sculpt
-				m_toolSystem.SetEditor(EDITOR::SCULPT);
+				// Set editor mode
+				m_toolSystem.SetEditor(m_toolLandscapeDialogue.GetEditor());
 
-				// If increase function is selected
-				if (m_toolSculptDialogue.GetFunctionIncrease()) { m_toolSystem.SetSculptFunction(SCULPT_FUNCTION::INCREASE); }
+				// Switch between editor modes
+				switch (m_toolSystem.GetEditor())
+				{
+				case EDITOR::LANDSCAPE_PAINT:
+				{
+					// If grass paint is selected
+					if (m_toolLandscapeDialogue.GetPaintGrass()) { m_toolSystem.SetLandscapePaint(LANDSCAPE_PAINT::GRASS); }
 
-				// Else, if decrease function is selected
-				else if (m_toolSculptDialogue.GetFunctionDecrease()) { m_toolSystem.SetSculptFunction(SCULPT_FUNCTION::DECREASE); }
+					// Else, if dirt paint is selected
+					else if (m_toolLandscapeDialogue.GetPaintDirt()) { m_toolSystem.SetLandscapePaint(LANDSCAPE_PAINT::DIRT); }
 
-				// Else, if flatten function is selecteed
-				else if (m_toolSculptDialogue.GetFunctionFlatten()) { m_toolSystem.SetSculptFunction(SCULPT_FUNCTION::FLATTEN); }
+					// Else, if sand paint is selected
+					else if (m_toolLandscapeDialogue.GetPaintSand()) { m_toolSystem.SetLandscapePaint(LANDSCAPE_PAINT::SAND); }
+				}
+				break;
+				case EDITOR::LANDSCAPE_SCULPT:
+				{
+					// If increase sculpt is selected
+					if (m_toolLandscapeDialogue.GetSculptIncrease()) { m_toolSystem.SetLandscapeSculpt(LANDSCAPE_SCULPT::INCREASE); }
 
-				// If x and y constraints are selected
-				if (m_toolSculptDialogue.GetConstraintX() && m_toolSculptDialogue.GetConstraintY()) { m_toolSystem.SetSculptConstraint(SCULPT_CONSTRAINT::XY); }
+					// Else, if decrease sculpt is selected
+					else if (m_toolLandscapeDialogue.GetSculptDecrease()) { m_toolSystem.SetLandscapeSculpt(LANDSCAPE_SCULPT::DECREASE); }
 
-				// Else, if x and z constraints are selected
-				else if (m_toolSculptDialogue.GetConstraintX() && m_toolSculptDialogue.GetConstraintZ()) { m_toolSystem.SetSculptConstraint(SCULPT_CONSTRAINT::XZ); }
+					// Else, if flatten sculpt is selecteed
+					else if (m_toolLandscapeDialogue.GetSculptFlatten()) { m_toolSystem.SetLandscapeSculpt(LANDSCAPE_SCULPT::FLATTEN); }
 
-				// Else, if y and z constraints are selected
-				else if (m_toolSculptDialogue.GetConstraintY() && m_toolSculptDialogue.GetConstraintZ()) { m_toolSystem.SetSculptConstraint(SCULPT_CONSTRAINT::YZ); }
+					// If x and y constraints are selected
+					if (m_toolLandscapeDialogue.GetConstraintX() && m_toolLandscapeDialogue.GetConstraintY()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::XY); }
 
-				// Else, if only x constraint is selected
-				else if (m_toolSculptDialogue.GetConstraintX()) { m_toolSystem.SetSculptConstraint(SCULPT_CONSTRAINT::X); }
+					// Else, if x and z constraints are selected
+					else if (m_toolLandscapeDialogue.GetConstraintX() && m_toolLandscapeDialogue.GetConstraintZ()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::XZ); }
 
-				// Else, if only y constraint is selected
-				else if (m_toolSculptDialogue.GetConstraintY()) { m_toolSystem.SetSculptConstraint(SCULPT_CONSTRAINT::Y); }
+					// Else, if y and z constraints are selected
+					else if (m_toolLandscapeDialogue.GetConstraintY() && m_toolLandscapeDialogue.GetConstraintZ()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::YZ); }
 
-				// Else, if only z constraint is selected
-				else if (m_toolSculptDialogue.GetConstraintZ()) { m_toolSystem.SetSculptConstraint(SCULPT_CONSTRAINT::Z); }
+					// Else, if only x constraint is selected
+					else if (m_toolLandscapeDialogue.GetConstraintX()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::X); }
 
-				// Else, if no constraints are selected
-				else { m_toolSystem.SetSculptConstraint(SCULPT_CONSTRAINT::ALL); }
+					// Else, if only y constraint is selected
+					else if (m_toolLandscapeDialogue.GetConstraintY()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::Y); }
+
+					// Else, if only z constraint is selected
+					else if (m_toolLandscapeDialogue.GetConstraintZ()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::Z); }
+
+					// Else, if no constraints are selected
+					else { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::ALL); }
+				}
+				break;
+				}
 			}
 
 			// Else, if no editors are open
@@ -245,26 +273,15 @@ void MFCMain::MenuEditEditorObject()
 	m_toolObjectDialogue.Create(IDD_DIALOG2);
 	m_toolObjectDialogue.ShowWindow(SW_SHOW);
 	m_toolObjectDialogue.SetObjectData(&m_toolSystem.m_sceneGraph, &m_toolSystem.m_selectedObjects);
+	m_toolObjectDialogue.SetActive(true);
 }
 
-void MFCMain::MenuEditEditorLandscapeNature()
-{
-}
-
-void MFCMain::MenuEditEditorLandscapeWater()
-{
-}
-
-void MFCMain::MenuEditEditorLandscapeSculpt()
+void MFCMain::MenuEditEditorLandscape()
 {
 	// Create & display dialogue window
-	m_toolSculptDialogue.Create(IDD_DIALOG3);
-	m_toolSculptDialogue.ShowWindow(SW_SHOW);
-	m_toolSculptDialogue.SetTerrainData(&m_toolSystem.m_sceneGraph, &m_toolSystem.m_selectedTerrains);
-}
-
-void MFCMain::MenuEditEditorLandscapePaint()
-{
+	m_toolLandscapeDialogue.Create(IDD_DIALOG3);
+	m_toolLandscapeDialogue.ShowWindow(SW_SHOW);
+	m_toolLandscapeDialogue.SetActive(true);
 }
 
 void MFCMain::MenuEditWireframeOn()

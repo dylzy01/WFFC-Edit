@@ -362,7 +362,7 @@ void ToolMain::Tick(MSG *msg)
 			
 		}
 		break;
-		case EDITOR::SCULPT:
+		case EDITOR::LANDSCAPE_SCULPT:
 		{
 			// Select terrain
 			m_selectedTerrain = m_d3dRenderer.PickingTerrain();
@@ -431,6 +431,7 @@ void ToolMain::UpdateInput(MSG * msg)
 	case WM_LBUTTONUP:
 		m_toolInputCommands.mouseLeft = false;
 		m_toolInputCommands.toggle = true;
+		m_d3dRenderer.StoreTerrainPosition(true);
 		break;
 
 	case WM_RBUTTONDOWN:

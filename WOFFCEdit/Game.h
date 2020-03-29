@@ -78,23 +78,24 @@ public:
 		{
 		case EDITOR::OBJECT_TRANSFORM:
 		{
-			m_sculptFunction = SCULPT_FUNCTION::NA;
-			m_sculptConstraint = SCULPT_CONSTRAINT::NA;
+			m_landscapeSculpt = LANDSCAPE_SCULPT::NA;
+			m_landscapeConstraint = LANDSCAPE_CONSTRAINT::NA;
 		}
 		break;
-		case EDITOR::SCULPT:
+		case EDITOR::LANDSCAPE_SCULPT:
 		{
-			m_objectFunction = OBJECT_FUNCTION::NA;
+			m_objectTransform = OBJECT_FUNCTION::NA;
 			m_objectConstraint = OBJECT_CONSTRAINT::NA;
 		}
 		break;
 		}
 	}
 	void SetObjectSpawn(OBJECT_SPAWN spawn) { m_objectSpawn = spawn; }
-	void SetObjectFunction(OBJECT_FUNCTION function) { m_objectFunction = function; }
+	void SetObjectTransform(OBJECT_FUNCTION function) { m_objectTransform = function; }
 	void SetObjectConstraint(OBJECT_CONSTRAINT constraint) { m_objectConstraint = constraint; }
-	void SetSculptFunction(SCULPT_FUNCTION function) { m_sculptFunction = function; }
-	void SetSculptConstraint(SCULPT_CONSTRAINT constraint) { m_sculptConstraint = constraint; }
+	void SetLandscapePaint(LANDSCAPE_PAINT paint) { m_landscapePaint = paint; }
+	void SetLandscapeSculpt(LANDSCAPE_SCULPT function) { m_landscapeSculpt = function; }
+	void SetLandscapeConstraint(LANDSCAPE_CONSTRAINT constraint) { m_landscapeConstraint = constraint; }
 	void StorePickingPoint(bool store) { m_storePickingPoint = store; }
 	void StoreObjectDetails(bool store) { m_storeObjectDetails = store; }
 	void StoreTerrainPosition(bool store) { m_storeTerrainPosition = store; }
@@ -153,15 +154,17 @@ private:
 	///std::vector<DirectX::SimpleMath::Matrix> m_storedObjectTransforms, m_storedTerrainTransforms;
 	std::vector<DirectX::SimpleMath::Vector3> m_storedObjectScales, m_storedObjectTranslations, m_storedObjectRotations;
 	DirectX::SimpleMath::Vector2 m_storedMousePosition;
-	DirectX::SimpleMath::Vector3 m_storedPickingPoint, m_storedTerrainPosition;
+	DirectX::SimpleMath::Vector3 m_storedPickingPoint;
+	std::vector<DirectX::SimpleMath::Vector3> m_storedTerrainPositions;
 
 	// Mode controllers
 	EDITOR m_editor;
 	OBJECT_SPAWN m_objectSpawn = OBJECT_SPAWN::NA;
-	OBJECT_FUNCTION m_objectFunction = OBJECT_FUNCTION::NA;
+	OBJECT_FUNCTION m_objectTransform = OBJECT_FUNCTION::NA;
 	OBJECT_CONSTRAINT m_objectConstraint = OBJECT_CONSTRAINT::NA;
-	SCULPT_FUNCTION m_sculptFunction = SCULPT_FUNCTION::NA;
-	SCULPT_CONSTRAINT m_sculptConstraint = SCULPT_CONSTRAINT::NA;
+	LANDSCAPE_PAINT m_landscapePaint = LANDSCAPE_PAINT::NA;
+	LANDSCAPE_SCULPT m_landscapeSculpt = LANDSCAPE_SCULPT::NA;
+	LANDSCAPE_CONSTRAINT m_landscapeConstraint = LANDSCAPE_CONSTRAINT::NA;
 
 	// Device resources.
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;

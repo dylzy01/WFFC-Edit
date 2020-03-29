@@ -35,10 +35,11 @@ public: //methods
 	void SetWireframe(bool wireframe) { m_d3dRenderer.SetWireframe(wireframe); }
 	void SetEditor(EDITOR editor) { m_d3dRenderer.SetEditor(editor); }
 	void SetObjectSpawn(OBJECT_SPAWN spawn) { m_d3dRenderer.SetObjectSpawn(spawn); }
-	void SetObjectFunction(OBJECT_FUNCTION function) { m_d3dRenderer.SetObjectFunction(function); }
+	void SetObjectTransform(OBJECT_FUNCTION function) { m_d3dRenderer.SetObjectTransform(function); }
 	void SetObjectConstraint(OBJECT_CONSTRAINT constraint) { m_d3dRenderer.SetObjectConstraint(constraint); }
-	void SetSculptFunction(SCULPT_FUNCTION function) { m_d3dRenderer.SetSculptFunction(function); }
-	void SetSculptConstraint(SCULPT_CONSTRAINT constraint) { m_d3dRenderer.SetSculptConstraint(constraint); }
+	void SetLandscapePaint(LANDSCAPE_PAINT paint) { m_d3dRenderer.SetLandscapePaint(paint); }
+	void SetLandscapeSculpt(LANDSCAPE_SCULPT function) { m_d3dRenderer.SetLandscapeSculpt(function); }
+	void SetLandscapeConstraint(LANDSCAPE_CONSTRAINT constraint) { m_d3dRenderer.SetLandscapeConstraint(constraint); }
 
 public:	//variables
 	std::vector<SceneObject>    m_sceneGraph;	//our scenegraph storing all the objects in the current chunk

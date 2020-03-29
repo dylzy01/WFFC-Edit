@@ -28,6 +28,9 @@ public:
 	bool GetConstraintY() { return m_y; }
 	bool GetConstraintZ() { return m_z; }
 
+	// Setters
+	void SetActive(bool active) { m_active = active; }
+
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_DIALOG2 };

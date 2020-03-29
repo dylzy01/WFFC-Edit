@@ -171,7 +171,7 @@
     <ClCompile Include="DisplayChunk.cpp" />
     <ClCompile Include="DisplayObject.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="SculptDialogue.cpp" />
+    <ClCompile Include="LandscapeDialogue.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MFCFrame.cpp" />
     <ClCompile Include="MFCRenderFrame.cpp" />
@@ -192,7 +192,7 @@
     <ClInclude Include="DisplayObject.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="InputCommands.h" />
-    <ClInclude Include="SculptDialogue.h" />
+    <ClInclude Include="LandscapeDialogue.h" />
     <ClInclude Include="MFCFrame.h" />
     <ClInclude Include="MFCRenderFrame.h" />
     <ClInclude Include="ObjectDialogue.h" />

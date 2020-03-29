@@ -10,7 +10,7 @@
 #include "MFCFrame.h"
 #include "SelectDialogue.h"
 #include "ObjectDialogue.h"
-#include "SculptDialogue.h"
+#include "LandscapeDialogue.h"
 
 class MFCMain : public CWinApp 
 {
@@ -28,7 +28,7 @@ private:
 	CRect m_windowRect;	//Window area rectangle. 
 	SelectDialogue m_toolSelectDialogue;			//for modeless dialogue, declare it here
 	ObjectDialogue m_toolObjectDialogue;
-	SculptDialogue m_toolSculptDialogue;
+	LandscapeDialogue m_toolLandscapeDialogue;
 
 	EDITOR m_mode;	//Local mode controller
 
@@ -40,10 +40,7 @@ private:
 	afx_msg void MenuFileSaveTerrain();
 	afx_msg void MenuEditSelect();
 	afx_msg void MenuEditEditorObject();
-	afx_msg void MenuEditEditorLandscapeNature();
-	afx_msg void MenuEditEditorLandscapeWater();
-	afx_msg void MenuEditEditorLandscapeSculpt();
-	afx_msg void MenuEditEditorLandscapePaint();
+	afx_msg void MenuEditEditorLandscape();
 	afx_msg void MenuEditWireframeOn();
 	afx_msg void MenuEditWireframeOff();
 	afx_msg	void ToolBarButton1();

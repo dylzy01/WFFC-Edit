@@ -238,7 +238,7 @@ void Game::HandleInput()
 					///if (m_pickingPoint != m_storedPickingPoint)
 					{
 						// Switch between S, R, T
-						switch (m_objectFunction)
+						switch (m_objectTransform)
 						{
 						case OBJECT_FUNCTION::SCALE:
 						{
@@ -432,7 +432,26 @@ void Game::HandleInput()
 		}
 	}
 	break;
-	case EDITOR::SCULPT:
+	case EDITOR::LANDSCAPE_PAINT:
+	{
+		// If mouse is being pressed
+		if (m_inputCommands.mouseLeft)
+		{
+			// If selected terrain is intersected by ray trace
+			if (m_selectedTerrain.intersect)
+			{
+				// Store selected terrain row,column
+				DirectX::SimpleMath::Vector2 location;
+				location.x = m_selectedTerrain.row;
+				location.y = m_selectedTerrain.column;
+
+				// Paint terrain the selected texture
+				SQL::PaintTerrain(location, m_landscapePaint);
+			}
+		}
+	}
+	break;
+	case EDITOR::LANDSCAPE_SCULPT:
 	{
 		// If mouse is being pressed
 		if (m_inputCommands.mouseLeft)
@@ -441,28 +460,33 @@ void Game::HandleInput()
 			if (m_selectedTerrain.intersect)
 			{
 				// If increase or decrease
-				if (m_sculptFunction == SCULPT_FUNCTION::INCREASE ||
-					m_sculptFunction == SCULPT_FUNCTION::DECREASE)
+				if (m_landscapeSculpt == LANDSCAPE_SCULPT::INCREASE ||
+					m_landscapeSculpt == LANDSCAPE_SCULPT::DECREASE)
 				{
 					// Increase/decrease terrain
-					m_displayChunk.SculptTerrain(m_selectedTerrain.row, m_selectedTerrain.column, m_sculptFunction, m_sculptConstraint);
+					m_displayChunk.SculptTerrain(m_selectedTerrain.row, m_selectedTerrain.column, m_landscapeSculpt, m_landscapeConstraint);
 				}
 
 				// Else, if flatten
-				else if (m_sculptFunction == SCULPT_FUNCTION::FLATTEN)
-				{
+				else if (m_landscapeSculpt == LANDSCAPE_SCULPT::FLATTEN)
+				{					
 					// If first position should be stored
 					if (m_storeTerrainPosition)
 					{
 						m_storeTerrainPosition = false;
-						m_storedTerrainPosition = m_selectedTerrain.position;
+						///m_storedTerrainPosition = m_selectedTerrain.position;
+						m_storedTerrainPositions.clear();
+						m_storedTerrainPositions.push_back(m_displayChunk.GetGeometry(m_selectedTerrain.row, m_selectedTerrain.column).position);
+						m_storedTerrainPositions.push_back(m_displayChunk.GetGeometry(m_selectedTerrain.row, m_selectedTerrain.column + 1).position);
+						m_storedTerrainPositions.push_back(m_displayChunk.GetGeometry(m_selectedTerrain.row + 1, m_selectedTerrain.column + 1).position);
+						m_storedTerrainPositions.push_back(m_displayChunk.GetGeometry(m_selectedTerrain.row + 1, m_selectedTerrain.column).position);
 					}
 
 					// Check if selected terrain height doesn't match stored position height
-					if (m_selectedTerrain.position.y != m_storedTerrainPosition.y)
+					///if (m_selectedTerrain.position.y != m_storedTerrainPositions.y)
 					{
 						// Flatten height of selected terrain
-						m_displayChunk.SculptTerrain(m_selectedTerrain.row, m_selectedTerrain.column, m_sculptFunction, m_sculptConstraint, m_storedTerrainPosition);
+						m_displayChunk.SculptTerrain(m_selectedTerrain.row, m_selectedTerrain.column, m_landscapeSculpt, m_landscapeConstraint, m_storedTerrainPositions);
 					}
 				}
 			}
@@ -584,7 +608,7 @@ void Game::Render()
 	switch (m_editor)
 	{
 	case EDITOR::OBJECT_TRANSFORM: mode = L"MODE: OBJECT"; break;
-	case EDITOR::SCULPT: mode = L"MODE: SCULPT"; break;
+	case EDITOR::LANDSCAPE_SCULPT: mode = L"MODE: SCULPT"; break;
 	}
 	m_font->DrawString(m_sprites.get(), mode.c_str(), XMFLOAT2(100, 120), Colors::Yellow);
 

@@ -68,11 +68,11 @@
     <ClCompile Include="ObjectDialogue.cpp">
       <Filter>MFC</Filter>
     </ClCompile>
-    <ClCompile Include="SculptDialogue.cpp">
-      <Filter>MFC</Filter>
-    </ClCompile>
     <ClCompile Include="SQL.cpp">
       <Filter>SQLITE</Filter>
+    </ClCompile>
+    <ClCompile Include="LandscapeDialogue.cpp">
+      <Filter>MFC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -132,11 +132,11 @@
     <ClInclude Include="ObjectDialogue.h">
       <Filter>MFC</Filter>
     </ClInclude>
-    <ClInclude Include="SculptDialogue.h">
-      <Filter>MFC</Filter>
-    </ClInclude>
     <ClInclude Include="SQL.h">
       <Filter>SQLITE</Filter>
+    </ClInclude>
+    <ClInclude Include="LandscapeDialogue.h">
+      <Filter>MFC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

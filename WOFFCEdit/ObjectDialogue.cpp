@@ -24,7 +24,6 @@ void ObjectDialogue::SetObjectData(std::vector<SceneObject>* sceneGraph, std::ve
 {
 	m_sceneGraph = sceneGraph;
 	m_objectIDs = objectIDs;
-	m_active = true;
 }
 
 void ObjectDialogue::DoDataExchange(CDataExchange* pDX)

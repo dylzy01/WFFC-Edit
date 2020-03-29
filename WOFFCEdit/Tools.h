@@ -14,7 +14,8 @@ enum class EDITOR {
 	NA,
 	OBJECT_SPAWN,
 	OBJECT_TRANSFORM,
-	SCULPT
+	LANDSCAPE_PAINT,
+	LANDSCAPE_SCULPT
 };
 
 enum class OBJECT_SPAWN {
@@ -41,7 +42,14 @@ enum class OBJECT_CONSTRAINT {
 	ALL
 };
 
-enum class SCULPT_FUNCTION {
+enum class LANDSCAPE_PAINT {
+	NA,
+	GRASS,
+	DIRT,
+	SAND
+};
+
+enum class LANDSCAPE_SCULPT {
 	NA,
 	SELECT,
 	INCREASE,
@@ -49,7 +57,7 @@ enum class SCULPT_FUNCTION {
 	DECREASE
 };
 
-enum class SCULPT_CONSTRAINT {
+enum class LANDSCAPE_CONSTRAINT {
 	NA,
 	XY,
 	XZ,
@@ -58,10 +66,4 @@ enum class SCULPT_CONSTRAINT {
 	Y,
 	Z,
 	ALL
-};
-
-enum class HEIGHT {
-	INCREASE,
-	DECREASE,
-	FLATTEN
 };

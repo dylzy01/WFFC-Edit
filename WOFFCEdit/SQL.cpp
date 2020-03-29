@@ -274,3 +274,14 @@ bool SQL::SaveWorld(std::vector<SceneObject> sceneGraph)
 	if (rc) { return false; }
 	else { return true; }
 }
+
+bool SQL::PaintTerrain(DirectX::SimpleMath::Vector2 location, LANDSCAPE_PAINT paint)
+{
+	// Controller
+	int rc = -1;
+
+
+
+	if (rc) { return false; }
+	else { return true; }
+}

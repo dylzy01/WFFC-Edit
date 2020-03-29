@@ -34,6 +34,9 @@ public:
 	// Save updated scene graph
 	static bool SaveWorld(std::vector<SceneObject> sceneGraph);
 
+	// Paint terrain a different texture
+	static bool PaintTerrain(DirectX::SimpleMath::Vector2 location, LANDSCAPE_PAINT paint);
+
 	// Getters
 	static int GetObjectStep() { return sqlite3_step(m_resultObject); }
 

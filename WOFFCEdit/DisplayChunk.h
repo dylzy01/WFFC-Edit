@@ -25,7 +25,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>   m_terrainInputLayout;
 
 	DirectX::VertexPositionNormalTexture GetGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
-	void SculptTerrain(int row, int column, SCULPT_FUNCTION function, SCULPT_CONSTRAINT constraint, DirectX::SimpleMath::Vector3 position = { 0,0,0 });
+	void SculptTerrain(int row, int column, LANDSCAPE_SCULPT function, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position = { { 0,0,0 } });
 
 	void SetSelected(bool selected, int ID);
 
@@ -33,12 +33,12 @@ private:
 	DirectX::VertexPositionNormalTexture m_terrainGeometry[TERRAINRESOLUTION][TERRAINRESOLUTION];
 	BYTE m_heightMap[TERRAINRESOLUTION*TERRAINRESOLUTION];
 	void CalculateTerrainNormals();
-
+	
 	float	m_terrainHeightScale;
 	int		m_terrainSize;				//size of terrain in metres
 	float	m_textureCoordStep;			//step in texture coordinates between each vertex row / column
 	float   m_terrainPositionScalingFactor;	//factor we multiply the position by to convert it from its native resolution( 0- Terrain Resolution) to full scale size in metres dictated by m_Terrainsize
-	
+		
 	std::string m_name;
 	int m_chunk_x_size_metres;
 	int m_chunk_y_size_metres;
@@ -58,4 +58,3 @@ private:
 	int m_tex_splat_3_tiling;
 	int m_tex_splat_4_tiling;
 };
-
