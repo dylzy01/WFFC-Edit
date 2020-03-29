@@ -446,7 +446,11 @@ void Game::HandleInput()
 				location.y = m_selectedTerrain.column;
 
 				// Paint terrain the selected texture
-				SQL::PaintTerrain(location, m_landscapePaint);
+				///SQL::PaintTerrain(location, m_landscapePaint);
+				m_displayChunk.PaintTerrain(m_selectedTerrain.row, m_selectedTerrain.column, m_landscapePaint);
+
+				// Update batch
+				///m_displayChunk.InitialiseBatch();
 			}
 		}
 	}
@@ -515,8 +519,14 @@ void Game::UpdateCamera()
 
 	m_batchEffect->SetView(m_view);
 	m_batchEffect->SetWorld(Matrix::Identity);
-	m_displayChunk.m_terrainEffect->SetView(m_view);
-	m_displayChunk.m_terrainEffect->SetWorld(Matrix::Identity);
+	m_displayChunk.m_terrainDefault->SetView(m_view);
+	m_displayChunk.m_terrainDefault->SetWorld(Matrix::Identity);
+	m_displayChunk.m_terrainGrass->SetView(m_view);
+	m_displayChunk.m_terrainGrass->SetWorld(Matrix::Identity);
+	m_displayChunk.m_terrainDirt->SetView(m_view);
+	m_displayChunk.m_terrainDirt->SetWorld(Matrix::Identity);
+	m_displayChunk.m_terrainSand->SetView(m_view);
+	m_displayChunk.m_terrainSand->SetWorld(Matrix::Identity);
 }
 #pragma endregion
 
@@ -877,13 +887,16 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 	}	
 }
 
-void Game::BuildDisplayChunk(ChunkObject * SceneChunk)
+void Game::BuildDisplayChunk(ChunkObject * SceneChunk, std::vector<DirectX::SimpleMath::Vector2> location)
 {
 	//populate our local DISPLAYCHUNK with all the chunk info we need from the object stored in toolmain
 	//which, to be honest, is almost all of it. Its mostly rendering related info so...
 	m_displayChunk.PopulateChunkData(SceneChunk);		//migrate chunk data
 	m_displayChunk.LoadHeightMap(m_deviceResources);
-	m_displayChunk.m_terrainEffect->SetProjection(m_projection);
+	m_displayChunk.m_terrainDefault->SetProjection(m_projection);
+	m_displayChunk.m_terrainGrass->SetProjection(m_projection);
+	m_displayChunk.m_terrainDirt->SetProjection(m_projection);
+	m_displayChunk.m_terrainSand->SetProjection(m_projection);
 	m_displayChunk.InitialiseBatch();
 }
 

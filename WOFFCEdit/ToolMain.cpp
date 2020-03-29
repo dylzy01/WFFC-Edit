@@ -362,6 +362,12 @@ void ToolMain::Tick(MSG *msg)
 			
 		}
 		break;
+		case EDITOR::LANDSCAPE_PAINT:
+		{
+			// Select terrain
+			m_selectedTerrain = m_d3dRenderer.PickingTerrain();
+		}
+		break;
 		case EDITOR::LANDSCAPE_SCULPT:
 		{
 			// Select terrain

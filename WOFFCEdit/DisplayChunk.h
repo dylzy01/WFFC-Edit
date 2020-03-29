@@ -6,30 +6,47 @@
 //geometric resoltuion - note,  hard coded.
 #define TERRAINRESOLUTION 128
 
+struct PAINTER {
+	LANDSCAPE_PAINT paint = LANDSCAPE_PAINT::NA;
+};
+
+struct GEOMETRY {
+	DirectX::VertexPositionNormalTexture terrain;
+	LANDSCAPE_PAINT paint = LANDSCAPE_PAINT::NA;
+};
+
 class DisplayChunk
 {
 public:
 	DisplayChunk();
 	~DisplayChunk();
 	void PopulateChunkData(ChunkObject * SceneChunk);
-	void RenderBatch(std::shared_ptr<DX::DeviceResources>  DevResources);
+	void RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResources);
 	void InitialiseBatch();	//initial setup, base coordinates etc based on scale
 	void LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResources);
 	void SaveHeightMap();			//saves the heightmap back to file.
 	void UpdateTerrain();			//updates the geometry based on the heightmap
 	void GenerateHeightmap();		//creates or alters the heightmap
+	void PaintTerrain(int row, int column, LANDSCAPE_PAINT paint);
 	std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionNormalTexture>>  m_batch;
-	std::unique_ptr<DirectX::BasicEffect>       m_terrainEffect;
+	std::unique_ptr<DirectX::BasicEffect>       m_terrainDefault;
+	std::unique_ptr<DirectX::BasicEffect>       m_terrainGrass;
+	std::unique_ptr<DirectX::BasicEffect>       m_terrainDirt;
+	std::unique_ptr<DirectX::BasicEffect>       m_terrainSand;
 
-	ID3D11ShaderResourceView *					m_texture_diffuse;				//diffuse texture
+	ID3D11ShaderResourceView *					m_texture_default;				//diffuse texture
+	ID3D11ShaderResourceView *					m_texture_splat_1;				//diffuse texture
+	ID3D11ShaderResourceView *					m_texture_splat_2;				//diffuse texture
+	ID3D11ShaderResourceView *					m_texture_splat_3;				//diffuse texture
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>   m_terrainInputLayout;
 
-	DirectX::VertexPositionNormalTexture GetGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
+	///DirectX::VertexPositionNormalTexture GetGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
 	void SculptTerrain(int row, int column, LANDSCAPE_SCULPT function, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position = { { 0,0,0 } });
 
 	void SetSelected(bool selected, int ID);
 
 private:
+	///GEOMETRY m_geometry[TERRAINRESOLUTION][TERRAINRESOLUTION];
 	DirectX::VertexPositionNormalTexture m_terrainGeometry[TERRAINRESOLUTION][TERRAINRESOLUTION];
 	BYTE m_heightMap[TERRAINRESOLUTION*TERRAINRESOLUTION];
 	void CalculateTerrainNormals();
@@ -57,4 +74,6 @@ private:
 	int m_tex_splat_2_tiling;
 	int m_tex_splat_3_tiling;
 	int m_tex_splat_4_tiling;
+
+	PAINTER m_painter[TERRAINRESOLUTION][TERRAINRESOLUTION];
 };
