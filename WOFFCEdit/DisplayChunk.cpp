@@ -44,44 +44,78 @@ void DisplayChunk::PopulateChunkData(ChunkObject * SceneChunk)
 void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResources)
 {
 	auto context = deviceResources->GetD3DDeviceContext();
+	auto context2 = deviceResources->GetD3DDeviceContext();
+	auto context1 = deviceResources->GetD3DDeviceContext();
 
 	/*m_terrainSand->Apply(context);
 	context->IASetInputLayout(m_terrainInputLayout.Get());*/
 
-	///m_terrainEffect->Apply(context);
+	m_terrainEffect->SetTexture(m_texture_default);
+	m_terrainEffect->Apply(context);
 	context->IASetInputLayout(m_terrainInputLayout.Get());
 
-	m_batch->Begin();
+	
 	for (size_t i = 0; i < TERRAINRESOLUTION-1; i++)	//looping through QUADS.  so we subtrack one from the terrain array or it will try to draw a quad starting with the last vertex in each row. Which wont work
 	{
 		for (size_t j = 0; j < TERRAINRESOLUTION-1; j++)//same as above
 		{
-			int index = (TERRAINRESOLUTION * i) + j;
+			m_batch->Begin();
+			
+			///int index = (TERRAINRESOLUTION * i) + j;
 			
 			// If current paint is default
 			/*if (m_paint[i][j] == LANDSCAPE_PAINT::NA) 
 			{ m_terrainEffect->SetTexture(m_texture_default); }*/
 
 			// Else, if current paint is grass
-			///if (m_paint[i][j] == LANDSCAPE_PAINT::GRASS) 
-			if (m_paint[index] == LANDSCAPE_PAINT::GRASS) 
-			{ m_terrainEffect->SetTexture(m_texture_splat_1); }
-
+			if (m_paint[i][j] == LANDSCAPE_PAINT::GRASS) 
+			{ 
+				m_terrainEffect->SetTexture(m_texture_splat_1);
+				m_terrainEffect->Apply(context);
+			}
+			///if (m_paint[index] == LANDSCAPE_PAINT::GRASS) 
+			
 			// Else, if current paint is dirt
-			///else if (m_paint[i][j] == LANDSCAPE_PAINT::DIRT)
-			else if (m_paint[index] == LANDSCAPE_PAINT::DIRT)
-			{ m_terrainEffect->SetTexture(m_texture_splat_2); }
-
+			else if (m_paint[i][j] == LANDSCAPE_PAINT::DIRT) 
+			{ 
+				m_terrainEffect->SetTexture(m_texture_splat_2);
+				m_terrainEffect->Apply(context);
+			}
+			///else if (m_paint[index] == LANDSCAPE_PAINT::DIRT)
+			
 			// Else, if current paint is sand
-			///else if (m_paint[i][j] == LANDSCAPE_PAINT::SAND)
-			else if (m_paint[index] == LANDSCAPE_PAINT::SAND)
-			{ m_terrainEffect->SetTexture(m_texture_splat_3); }
-		
-			m_terrainEffect->Apply(context);
+			else if (m_paint[i][j] == LANDSCAPE_PAINT::SAND) 
+			{ 
+				m_terrainEffect->SetTexture(m_texture_splat_3);
+				m_terrainEffect->Apply(context);
+			}
+			///else if (m_paint[index] == LANDSCAPE_PAINT::SAND)
+
+			// Else, if no paint is selected
+			else
+			{
+				m_terrainEffect->SetTexture(m_texture_default);
+				m_terrainEffect->Apply(context);
+				
+			}
+			
 			m_batch->DrawQuad(m_terrainGeometry[i][j], m_terrainGeometry[i][j+1], m_terrainGeometry[i+1][j+1], m_terrainGeometry[i+1][j]); //bottom left bottom right, top right top left.
+		
+			m_batch->End();
 		}
 	}
-	m_batch->End();
+	
+	//m_batch->Begin();
+	//m_terrainEffect->SetTexture(m_texture_splat_1);
+	//m_terrainEffect->Apply(context1);
+	//m_batch->DrawQuad(m_terrainGeometry[0][0], m_terrainGeometry[0][1], m_terrainGeometry[1][1], m_terrainGeometry[1][0]); //bottom left bottom right, top right top left.
+	//m_batch->End();
+	//
+	//m_batch->Begin();
+	//m_terrainEffect->SetTexture(m_texture_splat_2);
+	//m_terrainEffect->Apply(context2);
+	//m_batch->DrawQuad(m_terrainGeometry[2][2], m_terrainGeometry[2][3], m_terrainGeometry[3][3], m_terrainGeometry[3][2]); //bottom left bottom right, top right top left.
+	//m_batch->End();
 }
 
 void DisplayChunk::InitialiseBatch()
@@ -163,7 +197,7 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 	m_terrainEffect->EnableDefaultLighting();
 	m_terrainEffect->SetLightingEnabled(true);
 	m_terrainEffect->SetTextureEnabled(true);
-	///m_terrainEffect->SetTexture(m_texture_default);
+	m_terrainEffect->SetTexture(m_texture_default);
 
 	void const* shaderByteCode;
 	size_t byteCodeLength;
@@ -229,13 +263,13 @@ void DisplayChunk::GenerateHeightmap()
 
 void DisplayChunk::PaintTerrain(int row, int column, LANDSCAPE_PAINT paint)
 {	
-	int index = (TERRAINRESOLUTION * row) + column;
-	m_paint[index] = paint;
+	/*int index = (TERRAINRESOLUTION * row) + column;
+	m_paint[index] = paint;*/
 	
-	/*m_paint[row][column] = paint;
+	m_paint[row][column] = paint;
 	m_paint[row][column + 1] = paint;
 	m_paint[row + 1][column + 1] = paint;
-	m_paint[row + 1][column] = paint;*/
+	m_paint[row + 1][column] = paint;
 }
 
 void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_SCULPT sculpt, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position)
