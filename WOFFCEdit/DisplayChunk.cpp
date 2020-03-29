@@ -47,41 +47,31 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 
 	/*m_terrainSand->Apply(context);
 	context->IASetInputLayout(m_terrainInputLayout.Get());*/
-	m_terrainEffect->Apply(context);
+
 	context->IASetInputLayout(m_terrainInputLayout.Get());
 
+	bool doOnce = true;
+
 	m_batch->Begin();
-	for (size_t i = 0; i < TERRAINRESOLUTION-1; ++i)	//looping through QUADS.  so we subtrack one from the terrain array or it will try to draw a quad starting with the last vertex in each row. Which wont work
+	for (size_t i = 0; i < TERRAINRESOLUTION-1; i++)	//looping through QUADS.  so we subtrack one from the terrain array or it will try to draw a quad starting with the last vertex in each row. Which wont work
 	{
-		for (size_t j = 0; j < TERRAINRESOLUTION-1; ++j)//same as above
+		for (size_t j = 0; j < TERRAINRESOLUTION-1; j++)//same as above
 		{
-			int index = (TERRAINRESOLUTION * i) + j;			
-			
 			// If current painter paint is default
-			///if (m_painter[i][j].paint == LANDSCAPE_PAINT::NA) ///{ m_terrainDefault->Apply(context); }
-			if (m_paint[index] == LANDSCAPE_PAINT::NA)
-			{ m_terrainEffect->SetTexture(m_texture_default); }
+			if (m_painter[i][j].paint == LANDSCAPE_PAINT::NA) { m_terrainDefault->Apply(context); }
 
 			// Else, if current painter paint is grass
-			///else if (m_painter[i][j].paint == LANDSCAPE_PAINT::GRASS) ///{ m_terrainGrass->Apply(context); }
-			else if (m_paint[index] == LANDSCAPE_PAINT::GRASS)
-			{ m_terrainEffect->SetTexture(m_texture_splat_1); }
+			else if (m_painter[i][j].paint == LANDSCAPE_PAINT::GRASS) { m_terrainGrass->Apply(context); }
 
 			// Else, if current painter paint is dirt
-			///else if (m_painter[i][j].paint == LANDSCAPE_PAINT::DIRT)///{ m_terrainDirt->Apply(context); }
-			else if (m_paint[index] == LANDSCAPE_PAINT::DIRT)
-			{ m_terrainEffect->SetTexture(m_texture_splat_2); }
+			else if (m_painter[i][j].paint == LANDSCAPE_PAINT::DIRT) { m_terrainDirt->Apply(context); }
 
 			// Else, if current painter paint is sand
-			///else if (m_painter[i][j].paint == LANDSCAPE_PAINT::SAND) ///{ m_terrainSand->Apply(context); }
-			else if (m_paint[index] == LANDSCAPE_PAINT::SAND)
-			{ m_terrainEffect->SetTexture(m_texture_splat_3); }
-				
-			///m_batch->DrawTriangle(m_terrainGeometry[i][j], m_terrainGeometry[i][j + 1], m_terrainGeometry[i + 1][j + 1]);
+			else if (m_painter[i][j].paint == LANDSCAPE_PAINT::SAND) { m_terrainSand->Apply(context); }
+		
 			m_batch->DrawQuad(m_terrainGeometry[i][j], m_terrainGeometry[i][j+1], m_terrainGeometry[i+1][j+1], m_terrainGeometry[i+1][j]); //bottom left bottom right, top right top left.
 		}
-		
-	}	
+	}
 	m_batch->End();
 }
 
@@ -99,6 +89,8 @@ void DisplayChunk::InitialiseBatch()
 			m_terrainGeometry[i][j].position =			Vector3(j*m_terrainPositionScalingFactor-(0.5*m_terrainSize), (float)(m_heightMap[index])*m_terrainHeightScale, i*m_terrainPositionScalingFactor-(0.5*m_terrainSize));	//This will create a terrain going from -64->64.  rather than 0->128.  So the center of the terrain is on the origin
 			m_terrainGeometry[i][j].normal =			Vector3(0.0f, 1.0f, 0.0f);						//standard y =up
 			m_terrainGeometry[i][j].textureCoordinate =	Vector2(((float)m_textureCoordStep*j)*m_tex_diffuse_tiling, ((float)m_textureCoordStep*i)*m_tex_diffuse_tiling);				//Spread tex coords so that its distributed evenly across the terrain from 0-1
+		
+			///m_painter[i][j].paint = LANDSCAPE_PAINT::GRASS;		
 		}
 	}
 	CalculateTerrainNormals();	
@@ -128,29 +120,42 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 	fread(m_heightMap, 1, TERRAINRESOLUTION*TERRAINRESOLUTION, pFile);
 
 	fclose(pFile);
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 	// Load first splat texture
 	std::wstring splat_1 = StringToWCHART(m_tex_splat_1_path);
 	HRESULT rs1;
 	rs1 = CreateDDSTextureFromFile(device, splat_1.c_str(), NULL, &m_texture_splat_1);
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Setup terrain dirt from first splat texture
+	m_terrainGrass = std::make_unique<BasicEffect>(device);
+	m_terrainGrass->EnableDefaultLighting();
+	m_terrainGrass->SetLightingEnabled(true);
+	m_terrainGrass->SetTextureEnabled(true);
+	m_terrainGrass->SetTexture(m_texture_splat_1);
 
 	// Load second splat texture
 	std::wstring splat_2 = StringToWCHART(m_tex_splat_2_path);
 	HRESULT rs2;
 	rs2 = CreateDDSTextureFromFile(device, splat_2.c_str(), NULL, &m_texture_splat_2);
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Setup terrain sand from second splat texture
+	m_terrainDirt = std::make_unique<BasicEffect>(device);
+	m_terrainDirt->EnableDefaultLighting();
+	m_terrainDirt->SetLightingEnabled(true);
+	m_terrainDirt->SetTextureEnabled(true);
+	m_terrainDirt->SetTexture(m_texture_splat_2);
 
 	// Load third splat texture
 	std::wstring splat_3 = StringToWCHART(m_tex_splat_3_path);
 	HRESULT rs3;
 	rs3 = CreateDDSTextureFromFile(device, splat_3.c_str(), NULL, &m_texture_splat_3);
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Setup terrain sand from second splat texture
+	m_terrainSand = std::make_unique<BasicEffect>(device);
+	m_terrainSand->EnableDefaultLighting();
+	m_terrainSand->SetLightingEnabled(true);
+	m_terrainSand->SetTextureEnabled(true);
+	m_terrainSand->SetTexture(m_texture_splat_3);
 
 	//load the default texture
 	std::wstring diffuse = StringToWCHART(m_tex_diffuse_path);
@@ -158,18 +163,16 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 	rs0 = CreateDDSTextureFromFile(device, diffuse.c_str(), NULL, &m_texture_default);	//load tex into Shader resource	view and resource
 																							
 	// Setup terrain grass from diffuse texture
-	m_terrainEffect = std::make_unique<BasicEffect>(device);
-	m_terrainEffect->EnableDefaultLighting();
-	m_terrainEffect->SetLightingEnabled(true);
-	m_terrainEffect->SetTextureEnabled(true);
-	///m_terrainEffect->SetTexture(m_texture_splat_3);
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
+	m_terrainDefault = std::make_unique<BasicEffect>(device);
+	m_terrainDefault->EnableDefaultLighting();
+	m_terrainDefault->SetLightingEnabled(true);
+	m_terrainDefault->SetTextureEnabled(true);
+	m_terrainDefault->SetTexture(m_texture_default);
 
 	void const* shaderByteCode;
 	size_t byteCodeLength;
 
-	m_terrainEffect->GetVertexShaderBytecode(&shaderByteCode, &byteCodeLength);
+	m_terrainDefault->GetVertexShaderBytecode(&shaderByteCode, &byteCodeLength);
 
 	//setup batch
 	DX::ThrowIfFailed(
@@ -230,15 +233,10 @@ void DisplayChunk::GenerateHeightmap()
 
 void DisplayChunk::PaintTerrain(int row, int column, LANDSCAPE_PAINT paint)
 {	
-	int index = (TERRAINRESOLUTION * row) + column;
-	m_paint[index] = paint;
-	
-	/*m_paint[row][column].paint = paint;
-	m_paint[row][column + 1].paint = paint;
-	m_paint[row + 1][column + 1].paint = paint;
-	m_paint[row + 1][column].paint = paint;*/
-
-	///m_terrainEffect->SetTexture(m_texture_splat_2);
+	m_painter[row][column].paint = paint;
+	/*m_painter[row][col + 1].paint = paint;
+	m_painter[row + 1][col + 1].paint = paint;
+	m_painter[row + 1][col].paint = paint;*/
 }
 
 void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_SCULPT sculpt, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position)
