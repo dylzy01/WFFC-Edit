@@ -126,6 +126,9 @@ void Game::Update(DX::StepTimer const& timer)
 	// Custom camera
 	UpdateCamera();
 
+	// Send selected terrain to display chunk
+	m_displayChunk.SetTerrain(m_selectedTerrains);
+
 #ifdef DXTK_AUDIO
     m_audioTimerAcc -= (float)timer.GetElapsedSeconds();
     if (m_audioTimerAcc < 0)
@@ -439,7 +442,7 @@ void Game::HandleInput()
 		{
 			// If selected terrain is intersected by ray trace
 			if (m_selectedTerrain.intersect)
-			{
+			{	
 				// Store selected terrain row,column
 				DirectX::SimpleMath::Vector2 location;
 				location.x = m_selectedTerrain.row;
@@ -478,7 +481,6 @@ void Game::HandleInput()
 					if (m_storeTerrainPosition)
 					{
 						m_storeTerrainPosition = false;
-						///m_storedTerrainPosition = m_selectedTerrain.position;
 						m_storedTerrainPositions.clear();
 						m_storedTerrainPositions.push_back(m_displayChunk.GetGeometry(m_selectedTerrain.row, m_selectedTerrain.column).position);
 						m_storedTerrainPositions.push_back(m_displayChunk.GetGeometry(m_selectedTerrain.row, m_selectedTerrain.column + 1).position);
@@ -519,14 +521,9 @@ void Game::UpdateCamera()
 
 	m_batchEffect->SetView(m_view);
 	m_batchEffect->SetWorld(Matrix::Identity);
-	m_displayChunk.m_terrainDefault->SetView(m_view);
-	m_displayChunk.m_terrainDefault->SetWorld(Matrix::Identity);
-	m_displayChunk.m_terrainGrass->SetView(m_view);
-	m_displayChunk.m_terrainGrass->SetWorld(Matrix::Identity);
-	m_displayChunk.m_terrainDirt->SetView(m_view);
-	m_displayChunk.m_terrainDirt->SetWorld(Matrix::Identity);
-	m_displayChunk.m_terrainSand->SetView(m_view);
-	m_displayChunk.m_terrainSand->SetWorld(Matrix::Identity);
+	m_displayChunk.m_terrainEffect->SetView(m_view);
+	m_displayChunk.m_terrainEffect->SetWorld(Matrix::Identity);
+	///m_batchEffect->
 }
 #pragma endregion
 
@@ -893,10 +890,7 @@ void Game::BuildDisplayChunk(ChunkObject * SceneChunk, std::vector<DirectX::Simp
 	//which, to be honest, is almost all of it. Its mostly rendering related info so...
 	m_displayChunk.PopulateChunkData(SceneChunk);		//migrate chunk data
 	m_displayChunk.LoadHeightMap(m_deviceResources);
-	m_displayChunk.m_terrainDefault->SetProjection(m_projection);
-	m_displayChunk.m_terrainGrass->SetProjection(m_projection);
-	m_displayChunk.m_terrainDirt->SetProjection(m_projection);
-	m_displayChunk.m_terrainSand->SetProjection(m_projection);
+	m_displayChunk.m_terrainEffect->SetProjection(m_projection);
 	m_displayChunk.InitialiseBatch();
 }
 
@@ -1469,12 +1463,11 @@ void Game::CreateDeviceDependentResources()
 
     m_font = std::make_unique<SpriteFont>(device, L"SegoeUI_18.spritefont");
 
-//    m_shape = GeometricPrimitive::CreateTeapot(context, 4.f, 8);
+    ///m_shape = GeometricPrimitive::CreateTeapot(context, 4.f, 8);
 
     // SDKMESH has to use clockwise winding with right-handed coordinates, so textures are flipped in U
     m_model = Model::CreateFromSDKMESH(device, L"tiny.sdkmesh", *m_fxFactory);
 	
-
     // Load textures
     DX::ThrowIfFailed(
         CreateDDSTextureFromFile(device, L"seafloor.dds", nullptr, m_texture1.ReleaseAndGetAddressOf())
@@ -1483,7 +1476,6 @@ void Game::CreateDeviceDependentResources()
     DX::ThrowIfFailed(
         CreateDDSTextureFromFile(device, L"windowslogo.dds", nullptr, m_texture2.ReleaseAndGetAddressOf())
     );
-
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
