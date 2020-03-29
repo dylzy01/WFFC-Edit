@@ -2,14 +2,13 @@
   DisplayChunk.cpp
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(14): warning C4305: '=': truncation from 'double' to 'float'
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(15): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(90): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(110): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(98): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(116): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(200): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(195): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(238): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(780): warning C4101: 'index4': unreferenced local variable
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(780): warning C4101: 'index2': unreferenced local variable
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(780): warning C4101: 'index3': unreferenced local variable
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(780): warning C4101: 'index1': unreferenced local variable
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(775): warning C4101: 'index4': unreferenced local variable
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(775): warning C4101: 'index2': unreferenced local variable
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(775): warning C4101: 'index3': unreferenced local variable
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(775): warning C4101: 'index1': unreferenced local variable
   Win32SimpleSample.vcxproj -> C:\Users\dylan\Documents\GitHub\ToolsProgramming\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe
