@@ -11,9 +11,12 @@ TERRAIN
 - Can increase x,y,z positions
 - Can decrease x,y,z positions
 - Can flatten x,y,z positions
+- Can paint texture
 
 OBJECT
 - Can spawn default cubes
+- Spawning snaps to nearest terrain if within distance bounds,
+	if not then just spawns at 100.f along ray trace
 - Can translate freely or along constrained x,y,z
 - Can rotate freely or along constrained x,y,z
 - Can scale freely or along constrained x,y,z
