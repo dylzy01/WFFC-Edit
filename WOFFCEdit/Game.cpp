@@ -446,11 +446,7 @@ void Game::HandleInput()
 				location.y = m_selectedTerrain.column;
 
 				// Paint terrain the selected texture
-				///SQL::PaintTerrain(location, m_landscapePaint);
 				m_displayChunk.PaintTerrain(m_selectedTerrain.row, m_selectedTerrain.column, m_landscapePaint);
-
-				// Update batch
-				///m_displayChunk.InitialiseBatch();
 			}
 		}
 	}
@@ -478,7 +474,6 @@ void Game::HandleInput()
 					if (m_storeTerrainPosition)
 					{
 						m_storeTerrainPosition = false;
-						///m_storedTerrainPosition = m_selectedTerrain.position;
 						m_storedTerrainPositions.clear();
 						m_storedTerrainPositions.push_back(m_displayChunk.GetGeometry(m_selectedTerrain.row, m_selectedTerrain.column).position);
 						m_storedTerrainPositions.push_back(m_displayChunk.GetGeometry(m_selectedTerrain.row, m_selectedTerrain.column + 1).position);
@@ -607,7 +602,7 @@ void Game::Render()
 	m_font->DrawString(m_sprites.get(), point.c_str(), XMFLOAT2(100, 70), Colors::Yellow);*/
 
 	// Frames Per Second
-	std::wstring fps = L"FPS: " + std::to_wstring(int(m_deltaTime * 1000));
+	std::wstring fps = L"FPS: " + std::to_wstring(int(1 / m_deltaTime));
 	m_font->DrawString(m_sprites.get(), fps.c_str(), XMFLOAT2(800, 10), Colors::Red);
 
 	// Current mode
@@ -899,7 +894,7 @@ void Game::BuildDisplayChunk(ChunkObject * SceneChunk, std::vector<DirectX::Simp
 	{
 		for (int j = 0; j < TERRAINRESOLUTION - 1; ++j)
 		{
-			m_displayChunk.PaintTerrain(i, j, LANDSCAPE_PAINT::NA);
+			m_displayChunk.PaintTerrain(i, j, LANDSCAPE_PAINT::GRASS);
 		}
 	}
 }

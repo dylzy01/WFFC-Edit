@@ -81,68 +81,6 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 		DrawTerrain(m_default);	
 		m_batch->End();
 	}
-	
-	//for (size_t i = 0; i < TERRAINRESOLUTION-1; i++)	//looping through QUADS.  so we subtrack one from the terrain array or it will try to draw a quad starting with the last vertex in each row. Which wont work
-	//{
-	//	for (size_t j = 0; j < TERRAINRESOLUTION-1; j++)//same as above
-	//	{
-	//		m_batch->Begin();
-	//		
-	//		///int index = (TERRAINRESOLUTION * i) + j;
-	//		
-	//		// If current paint is default
-	//		/*if (m_paint[i][j] == LANDSCAPE_PAINT::NA) 
-	//		{ m_terrainEffect->SetTexture(m_texture_default); }*/
-
-	//		// Else, if current paint is grass
-	//		if (m_paint[i][j] == LANDSCAPE_PAINT::GRASS) 
-	//		{ 
-	//			m_terrainEffect->SetTexture(m_texture_splat_1);
-	//			m_terrainEffect->Apply(context);
-	//		}
-	//		///if (m_paint[index] == LANDSCAPE_PAINT::GRASS) 
-	//		
-	//		// Else, if current paint is dirt
-	//		else if (m_paint[i][j] == LANDSCAPE_PAINT::DIRT) 
-	//		{ 
-	//			m_terrainEffect->SetTexture(m_texture_splat_2);
-	//			m_terrainEffect->Apply(context);
-	//		}
-	//		///else if (m_paint[index] == LANDSCAPE_PAINT::DIRT)
-	//		
-	//		// Else, if current paint is sand
-	//		else if (m_paint[i][j] == LANDSCAPE_PAINT::SAND) 
-	//		{ 
-	//			m_terrainEffect->SetTexture(m_texture_splat_3);
-	//			m_terrainEffect->Apply(context);
-	//		}
-	//		///else if (m_paint[index] == LANDSCAPE_PAINT::SAND)
-
-	//		// Else, if no paint is selected
-	//		else
-	//		{
-	//			m_terrainEffect->SetTexture(m_texture_default);
-	//			m_terrainEffect->Apply(context);
-	//			
-	//		}
-	//		
-	//		m_batch->DrawQuad(m_terrainGeometry[i][j], m_terrainGeometry[i][j+1], m_terrainGeometry[i+1][j+1], m_terrainGeometry[i+1][j]); //bottom left bottom right, top right top left.
-	//	
-	//		m_batch->End();
-	//	}
-	//}
-	
-	//m_batch->Begin();
-	//m_terrainEffect->SetTexture(m_texture_splat_1);
-	//m_terrainEffect->Apply(context1);
-	//m_batch->DrawQuad(m_terrainGeometry[0][0], m_terrainGeometry[0][1], m_terrainGeometry[1][1], m_terrainGeometry[1][0]); //bottom left bottom right, top right top left.
-	//m_batch->End();
-	//
-	//m_batch->Begin();
-	//m_terrainEffect->SetTexture(m_texture_splat_2);
-	//m_terrainEffect->Apply(context2);
-	//m_batch->DrawQuad(m_terrainGeometry[2][2], m_terrainGeometry[2][3], m_terrainGeometry[3][3], m_terrainGeometry[3][2]); //bottom left bottom right, top right top left.
-	//m_batch->End();
 }
 
 void DisplayChunk::InitialiseBatch()
@@ -161,7 +99,7 @@ void DisplayChunk::InitialiseBatch()
 			m_terrainGeometry[i][j].textureCoordinate =	Vector2(((float)m_textureCoordStep*j)*m_tex_diffuse_tiling, ((float)m_textureCoordStep*i)*m_tex_diffuse_tiling);				//Spread tex coords so that its distributed evenly across the terrain from 0-1	
 		}
 	}
-	CalculateTerrainNormals();	
+	CalculateTerrainNormals();
 }
 
 void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResources)
@@ -290,76 +228,22 @@ void DisplayChunk::GenerateHeightmap()
 
 void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint)
 {	
-	/*int index = (TERRAINRESOLUTION * row) + column;
-	m_paint[index] = paint;*/
-	
-	/*m_paint[row][column] = paint;
-	m_paint[row][column + 1] = paint;
-	m_paint[row + 1][column + 1] = paint;
-	m_paint[row + 1][column] = paint;*/
-
-	std::pair<DirectX::VertexPositionNormalTexture, int> t0;
-	t0.first = m_terrainGeometry[i][j];
-	t0.second = (TERRAINRESOLUTION * i) + j;
-
-	std::pair<DirectX::VertexPositionNormalTexture, int> t1;
-	t1.first = m_terrainGeometry[i][j + 1];
-	t1.second = (TERRAINRESOLUTION * i) + (j + 1);
-
-	std::pair<DirectX::VertexPositionNormalTexture, int> t2;
-	t2.first = m_terrainGeometry[i + 1][j + 1];
-	t2.second = (TERRAINRESOLUTION * (i + 1)) + (j + 1);
-
-	std::pair<DirectX::VertexPositionNormalTexture, int> t3;
-	t3.first = m_terrainGeometry[i + 1][j];
-	t3.second = (TERRAINRESOLUTION * (i + 1)) + j;
-
 	// Check if selected geometry is within other containers & remove
-	///CheckTerrain(m_terrainGeometry[row][column], paint);
-	///CheckTerrain(m_terrainGeometry[row][column + 1], paint);
-	///CheckTerrain(m_terrainGeometry[row + 1][column + 1], paint);
-	///CheckTerrain(m_terrainGeometry[row + 1][column], paint);
-	CheckForDuplicates(t0, paint);
-	CheckForDuplicates(t1, paint);
-	CheckForDuplicates(t2, paint);
-	CheckForDuplicates(t3, paint);
-	
+	CheckForDuplicates(i, j, paint);
+
+	// Temp 
+	std::pair<int, int> terrain;
+	terrain.first = i;
+	terrain.second = j;
+
 	// Switch between paints
 	switch (paint)
 	{
-	case LANDSCAPE_PAINT::GRASS:
-	{
-		m_grass.push_back(t0);
-		m_grass.push_back(t1);
-		m_grass.push_back(t2);
-		m_grass.push_back(t3);		
+	case LANDSCAPE_PAINT::GRASS: m_grass.push_back(terrain); break;
+	case LANDSCAPE_PAINT::DIRT: m_dirt.push_back(terrain); break;
+	case LANDSCAPE_PAINT::SAND: m_sand.push_back(terrain); break;
+	case LANDSCAPE_PAINT::NA: m_default.push_back(terrain); break;
 	}
-	break;
-	case LANDSCAPE_PAINT::DIRT:
-	{
-		m_dirt.push_back(t0);
-		m_dirt.push_back(t1);
-		m_dirt.push_back(t2);
-		m_dirt.push_back(t3);
-	}
-	break;
-	case LANDSCAPE_PAINT::SAND:
-	{
-		m_sand.push_back(t0);
-		m_sand.push_back(t1);
-		m_sand.push_back(t2);
-		m_sand.push_back(t3);
-	}
-	break;
-	case LANDSCAPE_PAINT::NA:
-	{
-		m_default.push_back(t0);
-		m_default.push_back(t1);
-		m_default.push_back(t2);
-		m_default.push_back(t3);
-	}
-	break;
-	}	
 }
 
 void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_SCULPT sculpt, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position)
@@ -894,213 +778,48 @@ void DisplayChunk::SetSelected(bool selected, int ID)
 	///GenerateHeightmap();
 }
 
-void DisplayChunk::DrawTerrain(std::vector<std::pair<DirectX::VertexPositionNormalTexture, int>> terrain)
+void DisplayChunk::DrawTerrain(std::vector<std::pair<int, int>> terrain)
 {
-	int count = 0;
 	for (int i = 0; i < terrain.size(); ++i)
 	{
-		if (count != 3) { count++; }
-		else
-		{
-			count = 0;
-			m_batch->DrawQuad(terrain[i - 3].first, terrain[i - 2].first, terrain[i - 1].first, terrain[i].first);
-		}
+		m_batch->DrawQuad(
+			m_terrainGeometry[terrain[i].first][terrain[i].second],
+			m_terrainGeometry[terrain[i].first][terrain[i].second + 1],
+			m_terrainGeometry[terrain[i].first + 1][terrain[i].second + 1],
+			m_terrainGeometry[terrain[i].first + 1][terrain[i].second]
+		);
 	}
 }
 
-void DisplayChunk::CheckTerrain(DirectX::VertexPositionNormalTexture terrain, LANDSCAPE_PAINT paint)
-{	
-	// Switch between paint
-	//switch (paint)
-	//{
-	//case LANDSCAPE_PAINT::GRASS:
-	//{
-	//	// Loop through dirt vector
-	//	auto dirt = m_dirt.begin();
-	//	while (dirt != m_dirt.end())
-	//	{
-	//		if (dirt->position.x == terrain.position.x &&
-	//			dirt->position.y == terrain.position.y &&
-	//			dirt->position.z == terrain.position.z)
-	//		{
-	//			dirt = m_dirt.erase(dirt);
-	//			///break;
-	//		}
-	//		else { ++dirt; }
-	//	}		
+bool DisplayChunk::FindInVector(int & index, std::vector<std::pair<int, int>> vector, std::pair<int, int> terrain)
+{
+	// Loop through vector
+	for (int i = 0; i < vector.size(); ++i)
+	{
+		// If current row,column matches selected row,column
+		if (vector[i].first == terrain.first &&
+			vector[i].second == terrain.second)
+		{
+			// Set index
+			index = i;
 
-	//	// Loop through sand vector
-	//	auto sand = m_sand.begin();
-	//	while (sand != m_sand.end())
-	//	{
-	//		if (sand->position.x == terrain.position.x &&
-	//			sand->position.y == terrain.position.y &&
-	//			sand->position.z == terrain.position.z)
-	//		{
-	//			sand = m_sand.erase(sand);
-	//			///break;
-	//		}
-	//		else { ++sand; }
-	//	}
-	//	
-	//	// Loop through default vector
-	//	auto _default = m_default.begin();
-	//	while (_default != m_default.end())
-	//	{
-	//		if (_default->position.x == terrain.position.x &&
-	//			_default->position.y == terrain.position.y &&
-	//			_default->position.z == terrain.position.z)
-	//		{
-	//			_default = m_default.erase(_default);
-	//			///break;
-	//		}
-	//		else { ++_default; }
-	//	}
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::DIRT:
-	//{
-	//	// Loop through grass vector
-	//	auto grass = m_grass.begin();
-	//	while (grass != m_grass.end())
-	//	{
-	//		if (grass->position.x == terrain.position.x &&
-	//			grass->position.y == terrain.position.y &&
-	//			grass->position.z == terrain.position.z)
-	//		{
-	//			grass = m_grass.erase(grass);
-	//			///break;
-	//		}
-	//		else { ++grass; }
-	//	}
+			// Return true if found
+			return true;
+		}
+	}
 
-	//	// Loop through sand vector
-	//	auto sand = m_sand.begin();
-	//	while (sand != m_sand.end())
-	//	{
-	//		if (sand->position.x == terrain.position.x &&
-	//			sand->position.y == terrain.position.y &&
-	//			sand->position.z == terrain.position.z)
-	//		{
-	//			sand = m_sand.erase(sand);
-	//			///break;
-	//		}
-	//		else { ++sand; }
-	//	}
-
-	//	// Loop through default vector
-	//	auto _default = m_default.begin();
-	//	while (_default != m_default.end())
-	//	{
-	//		if (_default->position.x == terrain.position.x &&
-	//			_default->position.y == terrain.position.y &&
-	//			_default->position.z == terrain.position.z)
-	//		{
-	//			_default = m_default.erase(_default);
-	//			///break;
-	//		}
-	//		else { ++_default; }
-	//	}
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::SAND:
-	//{
-	//	// Loop through grass vector
-	//	auto grass = m_grass.begin();
-	//	while (grass != m_grass.end())
-	//	{
-	//		if (grass->position.x == terrain.position.x &&
-	//			grass->position.y == terrain.position.y &&
-	//			grass->position.z == terrain.position.z)
-	//		{
-	//			grass = m_grass.erase(grass);
-	//			///break;
-	//		}
-	//		else { ++grass; }
-	//	}
-
-	//	// Loop through dirt vector
-	//	auto dirt = m_dirt.begin();
-//	while (dirt != m_dirt.end())
-//	{
-//		if (dirt->position.x == terrain.position.x &&
-//			dirt->position.y == terrain.position.y &&
-//			dirt->position.z == terrain.position.z)
-//		{
-//			dirt = m_dirt.erase(dirt);
-//			///break;
-//		}
-//		else { ++dirt; }
-//	}
-
-//	// Loop through default vector
-//	auto _default = m_default.begin();
-//	while (_default != m_default.end())
-//	{
-//		if (_default->position.x == terrain.position.x &&
-//			_default->position.y == terrain.position.y &&
-//			_default->position.z == terrain.position.z)
-//		{
-//			_default = m_default.erase(_default);
-//			///break;
-//		}
-//		else { ++_default; }
-//	}
-//}
-//break;
-//case LANDSCAPE_PAINT::NA:
-//{
-//	// Loop through grass vector
-//	auto grass = m_grass.begin();
-//	while (grass != m_grass.end())
-//	{
-//		if (grass->position.x == terrain.position.x &&
-//			grass->position.y == terrain.position.y &&
-//			grass->position.z == terrain.position.z)
-//		{
-//			grass = m_grass.erase(grass);
-//			///break;
-//		}
-//		else { ++grass; }
-//	}
-
-//	// Loop through dirt vector
-//	auto dirt = m_dirt.begin();
-//	while (dirt != m_dirt.end())
-//	{
-//		if (dirt->position.x == terrain.position.x &&
-//			dirt->position.y == terrain.position.y &&
-//			dirt->position.z == terrain.position.z)
-//		{
-//			dirt = m_dirt.erase(dirt);
-//			///break;
-//		}
-//		else { ++dirt; }
-//	}
-
-//	// Loop through sand vector
-//	auto sand = m_sand.begin();
-//	while (sand != m_sand.end())
-//	{
-//		if (sand->position.x == terrain.position.x &&
-//			sand->position.y == terrain.position.y &&
-//			sand->position.z == terrain.position.z)
-//		{
-//			sand = m_sand.erase(sand);
-//			///break;
-//		}
-//		else { ++sand; }
-//	}
-//}
-//break;
-//}
+	// Return false is not found
+	return false;
 }
 
-void DisplayChunk::CheckForDuplicates(std::pair<DirectX::VertexPositionNormalTexture, int> terrain, LANDSCAPE_PAINT paint)
+void DisplayChunk::CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint)
 {
-	// Temp
+	// Temp 
 	int index = -1;
-	
+	std::pair<int, int> terrain;
+	terrain.first = row;
+	terrain.second = column;
+
 	// Switch between paints
 	switch (paint)
 	{
@@ -1153,26 +872,6 @@ void DisplayChunk::CheckForDuplicates(std::pair<DirectX::VertexPositionNormalTex
 	}
 	break;
 	}
-}
-
-bool DisplayChunk::FindInVector(int &index, std::vector<std::pair<DirectX::VertexPositionNormalTexture, int>> vector, std::pair<DirectX::VertexPositionNormalTexture, int> terrain)
-{	
-	// Loop through vector
-	for (int i = 0; i < vector.size(); ++i)
-	{
-		// If current ID matches selected ID 
-		if (vector[i].second == terrain.second)
-		{
-			// Set index
-			index = i;
-
-			// Return true if found
-			return true;
-		}
-	}
-
-	// Return false if not found
-	return false;
 }
 
 void DisplayChunk::CalculateTerrainNormals()

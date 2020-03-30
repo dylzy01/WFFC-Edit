@@ -33,15 +33,19 @@ public:
 
 	void SetSelected(bool selected, int ID);
 	void DrawTerrain(std::vector<std::pair<DirectX::VertexPositionNormalTexture, int>> terrain);
+	void DrawTerrain(int i, int j, LANDSCAPE_PAINT paint, ID3D11DeviceContext* context);
+	void DrawTerrain(std::vector<std::pair<int, int>> terrain);
 
 private:
 	DirectX::VertexPositionNormalTexture m_terrainGeometry[TERRAINRESOLUTION][TERRAINRESOLUTION];
 	BYTE m_heightMap[TERRAINRESOLUTION*TERRAINRESOLUTION];
 	void CalculateTerrainNormals();
 	void CheckTerrain(DirectX::VertexPositionNormalTexture terrain, LANDSCAPE_PAINT paint);
-	void CheckForDuplicates(std::pair< DirectX::VertexPositionNormalTexture, int> terrain, LANDSCAPE_PAINT paint);
-	bool FindInVector(int &index, std::vector<std::pair<DirectX::VertexPositionNormalTexture, int>> vector, std::pair< DirectX::VertexPositionNormalTexture, int> terrain);
-	
+	///void CheckForDuplicates(std::pair< DirectX::VertexPositionNormalTexture, int> terrain, LANDSCAPE_PAINT paint);
+	///bool FindInVector(int &index, std::vector<std::pair<DirectX::VertexPositionNormalTexture, int>> vector, std::pair< DirectX::VertexPositionNormalTexture, int> terrain);
+	bool FindInVector(int &index, std::vector<std::pair<int, int>> vector, std::pair<int, int> terrain);
+	void CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint);
+
 	float	m_terrainHeightScale;
 	int		m_terrainSize;				//size of terrain in metres
 	float	m_textureCoordStep;			//step in texture coordinates between each vertex row / column
@@ -66,15 +70,11 @@ private:
 	int m_tex_splat_3_tiling;
 	int m_tex_splat_4_tiling;
 
-	LANDSCAPE_PAINT m_paint[TERRAINRESOLUTION][TERRAINRESOLUTION];
-	///LANDSCAPE_PAINT m_paint[TERRAINRESOLUTION*TERRAINRESOLUTION];
-
 	// Geometry containers
-	bool m_addOnce = true;
-	std::vector<std::pair<DirectX::VertexPositionNormalTexture, int>> m_default;
-	std::vector<std::pair<DirectX::VertexPositionNormalTexture, int>> m_grass;
-	std::vector<std::pair<DirectX::VertexPositionNormalTexture, int>> m_dirt;
-	std::vector<std::pair<DirectX::VertexPositionNormalTexture, int>> m_sand;
+	std::vector<std::pair<int, int>> m_default;
+	std::vector<std::pair<int, int>> m_grass;
+	std::vector<std::pair<int, int>> m_dirt;
+	std::vector<std::pair<int, int>> m_sand;
 	/*std::vector<DirectX::VertexPositionNormalTexture> m_defaultGeometry,
 		m_grassGeometry, m_dirtGeometry, m_sandGeometry;
 	std::vector<int> m_defaultIDs, m_grassIDs, m_dirtIDs, m_sandIDs;*/
