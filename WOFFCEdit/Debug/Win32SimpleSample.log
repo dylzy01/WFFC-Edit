@@ -3,26 +3,26 @@
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(121): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(202): warning C4018: '<': signed/unsigned mismatch
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(219): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(445): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(446): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(556): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(555): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(554): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(623): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(578): warning C4101: 'Buffer': unreferenced local variable
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1006): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1014): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1013): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1020): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1023): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1031): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1105): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1104): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1111): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1114): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1122): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1212): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1392): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1393): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1127): warning C4715: 'Game::ObjectIntersection': not all control paths return a value
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(447): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(448): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(563): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(562): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(561): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(630): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(585): warning C4101: 'Buffer': unreferenced local variable
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1015): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1023): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1022): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1029): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1032): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1040): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1114): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1113): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1120): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1123): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1131): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1221): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1401): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1402): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1136): warning C4715: 'Game::ObjectIntersection': not all control paths return a value
   Win32SimpleSample.vcxproj -> C:\Users\dylan\Documents\GitHub\ToolsProgramming\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe

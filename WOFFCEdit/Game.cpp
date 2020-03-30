@@ -291,7 +291,9 @@ void Game::HandleInput()
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::ALL)
 							{
 								// Scale selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_scale = m_storedObjectScales[i] - m_pickingPoint;
+								m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
+								m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
+								m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
 							}
 
 							// Store manipulated scale
@@ -446,7 +448,8 @@ void Game::HandleInput()
 				location.y = m_selectedTerrain.column;
 
 				// Paint terrain the selected texture
-				m_displayChunk.PaintTerrain(m_selectedTerrain.row, m_selectedTerrain.column, m_landscapePaint);
+				m_displayChunk.PaintTerrain(m_selectedTerrain.row, m_selectedTerrain.column, m_landscapePaint, true);
+				///m_displayChunk.PaintTerrain(m_selectedTerrain.row, m_selectedTerrain.column, LANDSCAPE_PAINT::GRASS_AND_DIRT);
 			}
 		}
 	}
@@ -516,6 +519,10 @@ void Game::UpdateCamera()
 	m_batchEffect->SetWorld(Matrix::Identity);
 	m_displayChunk.m_terrainEffect->SetView(m_view);
 	m_displayChunk.m_terrainEffect->SetWorld(Matrix::Identity);
+	/*m_displayChunk.m_terrainBlendOne->SetView(m_view);
+	m_displayChunk.m_terrainBlendOne->SetWorld(Matrix::Identity);
+	m_displayChunk.m_terrainBlendTwo->SetView(m_view);
+	m_displayChunk.m_terrainBlendTwo->SetWorld(Matrix::Identity);*/
 }
 #pragma endregion
 
@@ -887,6 +894,8 @@ void Game::BuildDisplayChunk(ChunkObject * SceneChunk, std::vector<DirectX::Simp
 	m_displayChunk.PopulateChunkData(SceneChunk);		//migrate chunk data
 	m_displayChunk.LoadHeightMap(m_deviceResources);
 	m_displayChunk.m_terrainEffect->SetProjection(m_projection);
+	/*m_displayChunk.m_terrainBlendOne->SetProjection(m_projection);
+	m_displayChunk.m_terrainBlendTwo->SetProjection(m_projection);*/
 	m_displayChunk.InitialiseBatch();
 	
 	// Initialise default texture across all geometry

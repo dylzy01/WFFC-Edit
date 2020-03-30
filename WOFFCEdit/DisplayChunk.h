@@ -18,33 +18,35 @@ public:
 	void SaveHeightMap();			//saves the heightmap back to file.
 	void UpdateTerrain();			//updates the geometry based on the heightmap
 	void GenerateHeightmap();		//creates or alters the heightmap
-	void PaintTerrain(int row, int column, LANDSCAPE_PAINT paint);
 	std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionNormalTexture>>  m_batch;
 	std::unique_ptr<DirectX::BasicEffect>       m_terrainEffect;
+	/*std::unique_ptr<DirectX::BasicEffect>       m_terrainBlendOne;
+	std::unique_ptr<DirectX::BasicEffect>       m_terrainBlendTwo;*/
 
 	ID3D11ShaderResourceView *					m_texture_default;				//diffuse texture
 	ID3D11ShaderResourceView *					m_texture_splat_1;				//diffuse texture
 	ID3D11ShaderResourceView *					m_texture_splat_2;				//diffuse texture
 	ID3D11ShaderResourceView *					m_texture_splat_3;				//diffuse texture
+	ID3D11ShaderResourceView *					m_texture_blend_1_2;				//diffuse texture
+	ID3D11ShaderResourceView *					m_texture_blend_1_3;				//diffuse texture
+	ID3D11ShaderResourceView *					m_texture_blend_2_3;				//diffuse texture
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>   m_terrainInputLayout;
 
 	DirectX::VertexPositionNormalTexture GetGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
+	void PaintTerrain(int row, int column, LANDSCAPE_PAINT paint, bool checkSurroundings = false);
 	void SculptTerrain(int row, int column, LANDSCAPE_SCULPT function, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position = { { 0,0,0 } });
-
+	
 	void SetSelected(bool selected, int ID);
-	void DrawTerrain(std::vector<std::pair<DirectX::VertexPositionNormalTexture, int>> terrain);
-	void DrawTerrain(int i, int j, LANDSCAPE_PAINT paint, ID3D11DeviceContext* context);
 	void DrawTerrain(std::vector<std::pair<int, int>> terrain);
 
 private:
 	DirectX::VertexPositionNormalTexture m_terrainGeometry[TERRAINRESOLUTION][TERRAINRESOLUTION];
 	BYTE m_heightMap[TERRAINRESOLUTION*TERRAINRESOLUTION];
 	void CalculateTerrainNormals();
-	void CheckTerrain(DirectX::VertexPositionNormalTexture terrain, LANDSCAPE_PAINT paint);
-	///void CheckForDuplicates(std::pair< DirectX::VertexPositionNormalTexture, int> terrain, LANDSCAPE_PAINT paint);
-	///bool FindInVector(int &index, std::vector<std::pair<DirectX::VertexPositionNormalTexture, int>> vector, std::pair< DirectX::VertexPositionNormalTexture, int> terrain);
 	bool FindInVector(int &index, std::vector<std::pair<int, int>> vector, std::pair<int, int> terrain);
 	void CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint);
+	void CheckSurroundings(int row, int column, LANDSCAPE_PAINT paint);
+	LANDSCAPE_PAINT CheckPaint(int row, int column);
 
 	float	m_terrainHeightScale;
 	int		m_terrainSize;				//size of terrain in metres
@@ -75,6 +77,9 @@ private:
 	std::vector<std::pair<int, int>> m_grass;
 	std::vector<std::pair<int, int>> m_dirt;
 	std::vector<std::pair<int, int>> m_sand;
+	std::vector<std::pair<int, int>> m_grassAndDirt;
+	std::vector<std::pair<int, int>> m_grassAndSand;
+	std::vector<std::pair<int, int>> m_dirtAndSand;
 	/*std::vector<DirectX::VertexPositionNormalTexture> m_defaultGeometry,
 		m_grassGeometry, m_dirtGeometry, m_sandGeometry;
 	std::vector<int> m_defaultIDs, m_grassIDs, m_dirtIDs, m_sandIDs;*/
