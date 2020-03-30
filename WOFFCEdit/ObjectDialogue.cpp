@@ -100,12 +100,33 @@ void ObjectDialogue::UpdateFunctions(OBJECT_FUNCTION function, bool enable)
 // Enable/disable other spawns
 void ObjectDialogue::UpdateSpawns(OBJECT_SPAWN spawn, bool enable)
 {
+	// Switch between spawns
+	switch (spawn)
+	{
+	case OBJECT_SPAWN::CUBE:
+	{
+		// Enable/disable water spawn
+		m_water = enable;
+		if (!enable) { CheckDlgButton(IDC_CHECK11, enable); }
+		GetDlgItem(IDC_CHECK11)->EnableWindow(enable);
+	}
+	break;
+	case OBJECT_SPAWN::WATER:
+	{
+		// Enable/disable cube spawn
+		m_cube = enable;
+		if (!enable) { CheckDlgButton(IDC_CHECK9, enable); }
+		GetDlgItem(IDC_CHECK9)->EnableWindow(enable);
+	}
+	break;
+	}
 }
 
 BEGIN_MESSAGE_MAP(ObjectDialogue, CDialogEx)
 	ON_COMMAND(IDOK, &ObjectDialogue::End)
 	ON_BN_CLICKED(IDOK, &ObjectDialogue::OnBnClickedOk)
 	ON_BN_CLICKED(IDC_CHECK9, &ObjectDialogue::OnBnClickedCube)
+	ON_BN_CLICKED(IDC_CHECK11, &ObjectDialogue::OnBnClickedWater)
 	ON_BN_CLICKED(IDC_CHECK8, &ObjectDialogue::OnBnClickedScale)
 	ON_BN_CLICKED(IDC_CHECK6, &ObjectDialogue::OnBnClickedTranslate)
 	ON_BN_CLICKED(IDC_CHECK7, &ObjectDialogue::OnBnClickedRotate)
@@ -137,15 +158,15 @@ void ObjectDialogue::OnBnClickedCube()
 {
 	// Set spawning
 	m_spawn = true;
+
+	// Check/uncheck button
+	m_cube = IsDlgButtonChecked(IDC_CHECK9);
 	
 	// Switch between checked/unchecked
-	switch (IsDlgButtonChecked(IDC_CHECK9))
+	switch (m_cube)
 	{
 	case true:
 	{
-		// Check button
-		m_cube = true;
-
 		// Uncheck & disable other spawns
 		UpdateSpawns(OBJECT_SPAWN::CUBE, false);
 
@@ -154,12 +175,42 @@ void ObjectDialogue::OnBnClickedCube()
 	}
 	break;
 	case false:
-	{
-		// Uncheck button
-		m_cube = false;
-		
+	{		
 		// Enable other spawns
 		UpdateSpawns(OBJECT_SPAWN::CUBE, true);
+
+		// Enable other functions
+		UpdateFunctions(OBJECT_FUNCTION::NA, true);
+	}
+	break;
+	}
+}
+
+// Set spawn to water
+void ObjectDialogue::OnBnClickedWater()
+{
+	// Set spawning
+	m_spawn = true;
+
+	// Check/uncheck button
+	m_water = IsDlgButtonChecked(IDC_CHECK11);
+
+	// Switch between check/unchecked
+	switch (m_water)
+	{
+	case true:
+	{
+		// Uncheck & disable other spawns
+		UpdateSpawns(OBJECT_SPAWN::WATER, false);
+
+		// Uncheck & disable other functions
+		UpdateFunctions(OBJECT_FUNCTION::NA, false);
+	}
+	break;
+	case false:
+	{
+		// Enable other spawns
+		UpdateSpawns(OBJECT_SPAWN::WATER, true);
 
 		// Enable other functions
 		UpdateFunctions(OBJECT_FUNCTION::NA, true);

@@ -74,6 +74,7 @@
     <ClCompile Include="LandscapeDialogue.cpp">
       <Filter>MFC</Filter>
     </ClCompile>
+    <ClCompile Include="Water.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -138,6 +139,7 @@
     <ClInclude Include="LandscapeDialogue.h">
       <Filter>MFC</Filter>
     </ClInclude>
+    <ClInclude Include="Water.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

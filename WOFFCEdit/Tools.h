@@ -20,7 +20,8 @@ enum class EDITOR {
 
 enum class OBJECT_SPAWN {
 	NA,
-	CUBE
+	CUBE,
+	WATER
 };
 
 enum class OBJECT_FUNCTION {

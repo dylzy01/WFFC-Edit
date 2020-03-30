@@ -13,6 +13,7 @@
 #include "InputCommands.h"
 #include "Camera.h"
 #include "SQL.h"
+#include "Water.h"
 
 #include <vector>
 #include <algorithm>
@@ -102,6 +103,7 @@ public:
 
 	// Creation functions
 	SceneObject CreateDefaultCube(DirectX::SimpleMath::Vector3 position);
+	Water CreateWater(DirectX::SimpleMath::Vector3 position);
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
@@ -157,7 +159,7 @@ private:
 	DirectX::SimpleMath::Vector3 m_storedPickingPoint;
 	std::vector<DirectX::SimpleMath::Vector3> m_storedTerrainPositions;
 
-	// Mode controllers
+	// Editor controllers
 	EDITOR m_editor;
 	OBJECT_SPAWN m_objectSpawn = OBJECT_SPAWN::NA;
 	OBJECT_FUNCTION m_objectTransform = OBJECT_FUNCTION::NA;
@@ -165,6 +167,10 @@ private:
 	LANDSCAPE_PAINT m_landscapePaint = LANDSCAPE_PAINT::NA;
 	LANDSCAPE_SCULPT m_landscapeSculpt = LANDSCAPE_SCULPT::NA;
 	LANDSCAPE_CONSTRAINT m_landscapeConstraint = LANDSCAPE_CONSTRAINT::NA;
+
+	// Function controllers
+	bool m_spawnWater = false;
+	std::vector<DirectX::SimpleMath::Vector3> m_waterPositions;
 
 	// Device resources.
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;
@@ -182,6 +188,7 @@ private:
     std::unique_ptr<DirectX::BasicEffect>                                   m_batchEffect;
     std::unique_ptr<DirectX::EffectFactory>                                 m_fxFactory;
     std::unique_ptr<DirectX::GeometricPrimitive>                            m_shape;
+    std::vector<std::unique_ptr<DirectX::GeometricPrimitive>>               m_shapes;
 	std::unique_ptr<DirectX::Model>                                         m_model;
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>>  m_batch;
     std::unique_ptr<DirectX::SpriteBatch>                                   m_sprites;

@@ -21,6 +21,7 @@ public:
 
 	// Getters
 	bool GetSpawnCube() { return m_cube; }
+	bool GetSpawnWater() { return m_water; }
 	bool GetFunctionTranslate() { return m_translate; }
 	bool GetFunctionRotate() { return m_rotate; }
 	bool GetFunctionScale() { return m_scale; }
@@ -58,6 +59,7 @@ protected:
 public:
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedCube();
+	afx_msg void OnBnClickedWater();
 	afx_msg void OnBnClickedScale();
 	afx_msg void OnBnClickedTranslate();
 	afx_msg void OnBnClickedRotate();
@@ -67,7 +69,7 @@ public:
 
 	// Controllers
 	bool m_active = false, m_spawn = false;
-	bool m_cube = false;
+	bool m_cube = false, m_water = false;
 	bool m_translate = false, m_rotate = false, m_scale = false;
 	bool m_x = false, m_y = false, m_z = false;
 

@@ -129,6 +129,9 @@ int MFCMain::Run()
 
 					// If cube spawn is selected
 					if (m_toolObjectDialogue.GetSpawnCube()) { m_toolSystem.SetObjectSpawn(OBJECT_SPAWN::CUBE); }
+				
+					// Else, if water spawn is selected
+					else if (m_toolObjectDialogue.GetSpawnWater()) { m_toolSystem.SetObjectSpawn(OBJECT_SPAWN::WATER); }
 				}
 				break;
 				case false:

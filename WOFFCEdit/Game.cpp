@@ -170,12 +170,18 @@ void Game::HandleInput()
 			switch (m_objectSpawn)
 			{
 			case OBJECT_SPAWN::CUBE:
-			{				
+			{
 				// Add new default cube to database at picking point
 				SQL::AddObject(CreateDefaultCube(m_pickingPoint));
 
 				// Update scene graph here...
 				BuildDisplayList(&m_sceneGraph);
+			}
+			break;
+			case OBJECT_SPAWN::WATER:
+			{
+				// Add water at picking point...
+				CreateWater(m_pickingPoint);
 			}
 			break;
 			}
@@ -623,14 +629,24 @@ void Game::Render()
 	//m_font->DrawString(m_sprites.get(), mode.c_str(), XMFLOAT2(100, 120), Colors::Yellow);
 
 	m_sprites->End();
-
-
+	
 	// Coordinate system
 	// Loop through selected objects
 	for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
 	{
 		// Draw local axes
 		DrawAxis(m_displayList[m_selectedObjectIDs[i]], m_selectedObjectIDs[i]);		
+	}
+
+	// WATER
+	if (m_spawnWater) 
+	{
+		// Loop through all shapes
+		for (int i = 0; i < m_shapes.size(); ++i) 
+		{
+			// Draw each shape
+			m_shapes[i]->Draw(m_world, m_view, m_projection, Colors::Yellow);
+		}
 	}
 
     m_deviceResources->Present();
@@ -1426,6 +1442,25 @@ SceneObject Game::CreateDefaultCube(DirectX::SimpleMath::Vector3 position)
 	return cube;
 }
 
+Water Game::CreateWater(DirectX::SimpleMath::Vector3 position)
+{
+	// Setup cube
+	///m_shapes.push_back(GeometricPrimitive::CreateBox(m_deviceResources->GetD3DDeviceContext(), { 5.f, 5.f, 5.f }));
+	///m_shapes.push_back(GeometricPrimitive::CreateBox(m_deviceResources->GetD3DDeviceContext(), { -5.f, -5.f, -5.f }));
+	m_shapes.push_back(GeometricPrimitive::CreateBox(m_deviceResources->GetD3DDeviceContext(), { 5.f, 5.f, 5.f }, false));
+
+	// Setup water
+	Water water;
+
+	///m_shape = GeometricPrimitive::CreateSphere(m_deviceResources->GetD3DDeviceContext());	
+	///m_shape = GeometricPrimitive::CreateBox(m_deviceResources->GetD3DDeviceContext(), { 5.f, 5.f, 5.f });
+	m_waterPositions.push_back(position);
+
+	if (!m_spawnWater) { m_spawnWater = true; }
+	
+	return water;
+}
+
 #ifdef DXTK_AUDIO
 
 void Game::NewAudioDevice()
@@ -1531,6 +1566,7 @@ void Game::OnDeviceLost()
     m_batchEffect.reset();
     m_font.reset();
     m_shape.reset();
+	for (int i = 0; i < m_shapes.size(); ++i) { m_shapes[i].reset(); }
     m_model.reset();
     m_texture1.Reset();
     m_texture2.Reset();

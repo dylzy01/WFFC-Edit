@@ -183,6 +183,7 @@
     <ClCompile Include="SQL.cpp" />
     <ClCompile Include="sqlite3.c" />
     <ClCompile Include="ToolMain.cpp" />
+    <ClCompile Include="Water.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -207,6 +208,7 @@
     <ClInclude Include="MFCMain.h" />
     <ClInclude Include="ToolMain.h" />
     <ClInclude Include="Tools.h" />
+    <ClInclude Include="Water.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="database\data\Scene1.fbx">
