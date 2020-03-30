@@ -75,6 +75,9 @@ private:
 	std::vector<std::pair<DirectX::VertexPositionNormalTexture, int>> m_grass;
 	std::vector<std::pair<DirectX::VertexPositionNormalTexture, int>> m_dirt;
 	std::vector<std::pair<DirectX::VertexPositionNormalTexture, int>> m_sand;
+	/*std::vector<DirectX::VertexPositionNormalTexture> m_defaultGeometry,
+		m_grassGeometry, m_dirtGeometry, m_sandGeometry;
+	std::vector<int> m_defaultIDs, m_grassIDs, m_dirtIDs, m_sandIDs;*/
 };
 
 //template <typename T>

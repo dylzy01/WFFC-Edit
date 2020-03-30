@@ -1,16 +1,28 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Win32SimpleSample.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  DisplayChunk.cpp
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(14): warning C4305: '=': truncation from 'double' to 'float'
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(15): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(160): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(178): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(257): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(902): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(1165): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(1184): warning C4101: 'index4': unreferenced local variable
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(1184): warning C4101: 'index2': unreferenced local variable
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(1184): warning C4101: 'index3': unreferenced local variable
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\displaychunk.cpp(1184): warning C4101: 'index1': unreferenced local variable
+  Game.cpp
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(121): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(202): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(219): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(445): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(446): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(561): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(560): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(559): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(628): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(583): warning C4101: 'Buffer': unreferenced local variable
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1011): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1019): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1018): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1025): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1028): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1036): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1110): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1109): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1116): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1119): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1127): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1217): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1397): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1398): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(1132): warning C4715: 'Game::ObjectIntersection': not all control paths return a value
   Win32SimpleSample.vcxproj -> C:\Users\dylan\Documents\GitHub\ToolsProgramming\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe

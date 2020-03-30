@@ -2,7 +2,6 @@
 #include "DisplayChunk.h"
 #include "Game.h"
 
-
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
@@ -75,7 +74,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	}
 
 	// Draw all default geometry
-	else if (m_default.size() != 0) {
+	if (m_default.size() != 0) {
 		m_batch->Begin();
 		m_terrainEffect->SetTexture(m_texture_default);
 		m_terrainEffect->Apply(context);
@@ -304,16 +303,26 @@ void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint)
 	t0.second = (TERRAINRESOLUTION * i) + j;
 
 	std::pair<DirectX::VertexPositionNormalTexture, int> t1;
-	t1.first = m_terrainGeometry[i][j];
+	t1.first = m_terrainGeometry[i][j + 1];
 	t1.second = (TERRAINRESOLUTION * i) + (j + 1);
 
 	std::pair<DirectX::VertexPositionNormalTexture, int> t2;
-	t2.first = m_terrainGeometry[i][j];
+	t2.first = m_terrainGeometry[i + 1][j + 1];
 	t2.second = (TERRAINRESOLUTION * (i + 1)) + (j + 1);
 
 	std::pair<DirectX::VertexPositionNormalTexture, int> t3;
-	t3.first = m_terrainGeometry[i][j];
+	t3.first = m_terrainGeometry[i + 1][j];
 	t3.second = (TERRAINRESOLUTION * (i + 1)) + j;
+
+	// Check if selected geometry is within other containers & remove
+	///CheckTerrain(m_terrainGeometry[row][column], paint);
+	///CheckTerrain(m_terrainGeometry[row][column + 1], paint);
+	///CheckTerrain(m_terrainGeometry[row + 1][column + 1], paint);
+	///CheckTerrain(m_terrainGeometry[row + 1][column], paint);
+	CheckForDuplicates(t0, paint);
+	CheckForDuplicates(t1, paint);
+	CheckForDuplicates(t2, paint);
+	CheckForDuplicates(t3, paint);
 	
 	// Switch between paints
 	switch (paint)
@@ -350,17 +359,7 @@ void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint)
 		m_default.push_back(t3);
 	}
 	break;
-	}
-
-	// Check if selected geometry is within other containers & remove
-	///CheckTerrain(m_terrainGeometry[row][column], paint);
-	///CheckTerrain(m_terrainGeometry[row][column + 1], paint);
-	///CheckTerrain(m_terrainGeometry[row + 1][column + 1], paint);
-	///CheckTerrain(m_terrainGeometry[row + 1][column], paint);
-	CheckForDuplicates(t0, paint);
-	CheckForDuplicates(t1, paint);
-	CheckForDuplicates(t2, paint);
-	CheckForDuplicates(t3, paint);
+	}	
 }
 
 void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_SCULPT sculpt, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position)
