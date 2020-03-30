@@ -119,6 +119,15 @@ void Game::Update(DX::StepTimer const& timer)
 {
 	// Frame time
 	m_deltaTime = timer.GetElapsedSeconds();
+
+	// Light
+	/*auto time = static_cast<float>(timer.GetTotalSeconds());
+	float yaw = time * 0.4f;
+	float pitch = time * 0.7f;
+	float roll = time * 1.1f;
+	auto quat = Quaternion::CreateFromYawPitchRoll(pitch, yaw, roll);
+	auto light = XMVector3Rotate(DirectX::g_XMOne, quat);
+	m_displayChunk.m_terrainEffect->SetLightDirection(0, light);*/
 	
 	// Handle all input
 	HandleInput();
@@ -525,6 +534,8 @@ void Game::UpdateCamera()
 	m_batchEffect->SetWorld(Matrix::Identity);
 	m_displayChunk.m_terrainEffect->SetView(m_view);
 	m_displayChunk.m_terrainEffect->SetWorld(Matrix::Identity);
+	m_displayChunk.m_dualEffect->SetView(m_view);
+	m_displayChunk.m_dualEffect->SetWorld(Matrix::Identity);
 	/*m_displayChunk.m_terrainBlendOne->SetView(m_view);
 	m_displayChunk.m_terrainBlendOne->SetWorld(Matrix::Identity);
 	m_displayChunk.m_terrainBlendTwo->SetView(m_view);
@@ -910,6 +921,7 @@ void Game::BuildDisplayChunk(ChunkObject * SceneChunk, std::vector<DirectX::Simp
 	m_displayChunk.PopulateChunkData(SceneChunk);		//migrate chunk data
 	m_displayChunk.LoadHeightMap(m_deviceResources);
 	m_displayChunk.m_terrainEffect->SetProjection(m_projection);
+	m_displayChunk.m_dualEffect->SetProjection(m_projection);
 	/*m_displayChunk.m_terrainBlendOne->SetProjection(m_projection);
 	m_displayChunk.m_terrainBlendTwo->SetProjection(m_projection);*/
 	m_displayChunk.InitialiseBatch();
@@ -1571,6 +1583,7 @@ void Game::OnDeviceLost()
     m_texture1.Reset();
     m_texture2.Reset();
     m_batchInputLayout.Reset();
+	///m_displayChunk.m_normalMap.Reset();
 }
 
 void Game::OnDeviceRestored()

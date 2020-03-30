@@ -19,18 +19,23 @@ public:
 	void UpdateTerrain();			//updates the geometry based on the heightmap
 	void GenerateHeightmap();		//creates or alters the heightmap
 	std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionNormalTexture>>  m_batch;
-	std::unique_ptr<DirectX::BasicEffect>       m_terrainEffect;
-	/*std::unique_ptr<DirectX::BasicEffect>       m_terrainBlendOne;
+	///std::unique_ptr<DirectX::CommonStates>		m_states;
+	std::unique_ptr<DirectX::BasicEffect>		m_terrainEffect;
+	std::unique_ptr<DirectX::DualTextureEffect>	m_dualEffect;
+	/*std::unique_ptr<DirectX::NormalMapEffect>	m_normalMapEffect;
+	std::unique_ptr<DirectX::BasicEffect>     m_terrainBlendOne;
 	std::unique_ptr<DirectX::BasicEffect>       m_terrainBlendTwo;*/
 
 	ID3D11ShaderResourceView *					m_texture_default;				//diffuse texture
-	ID3D11ShaderResourceView *					m_texture_splat_1;				//diffuse texture
-	ID3D11ShaderResourceView *					m_texture_splat_2;				//diffuse texture
-	ID3D11ShaderResourceView *					m_texture_splat_3;				//diffuse texture
-	ID3D11ShaderResourceView *					m_texture_blend_1_2;				//diffuse texture
-	ID3D11ShaderResourceView *					m_texture_blend_1_3;				//diffuse texture
-	ID3D11ShaderResourceView *					m_texture_blend_2_3;				//diffuse texture
+	ID3D11ShaderResourceView *					m_texture_splat_1;				//grass texture
+	ID3D11ShaderResourceView *					m_texture_splat_2;				//dirt texture
+	ID3D11ShaderResourceView *					m_texture_splat_3;				//sand texture
+	ID3D11ShaderResourceView *					m_texture_blend_1_2;			//grass/dirt texture
+	ID3D11ShaderResourceView *					m_texture_blend_1_3;			//grass/sand texture
+	ID3D11ShaderResourceView *					m_texture_blend_2_3;			//dirt/sand texture
+	ID3D11ShaderResourceView *					m_normalMap;					//normal map texture
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>   m_terrainInputLayout;
+	///Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_normalMap;
 
 	DirectX::VertexPositionNormalTexture GetGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
 	void PaintTerrain(int row, int column, LANDSCAPE_PAINT paint, bool checkSurroundings = false);
@@ -70,7 +75,7 @@ private:
 	int m_tex_splat_1_tiling;
 	int m_tex_splat_2_tiling;
 	int m_tex_splat_3_tiling;
-	int m_tex_splat_4_tiling;
+	int m_tex_splat_4_tiling;	
 
 	// Geometry containers
 	std::vector<std::pair<int, int>> m_default;

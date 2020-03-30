@@ -44,6 +44,8 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 {	
 	// Setup device context
 	auto context = deviceResources->GetD3DDeviceContext();
+	///auto sampler = m_states->LinearClamp();
+	///context->PSSetSamplers(0, 1, &sampler);		
 	context->IASetInputLayout(m_terrainInputLayout.Get());
 	/*ID3D11ShaderResourceView * textures[2];
 	textures[1] = m_texture_splat_1;
@@ -55,6 +57,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 		m_batch->Begin();
 		m_terrainEffect->SetTexture(m_texture_splat_1);
 		m_terrainEffect->Apply(context);
+		///m_dualEffect->Apply(context);
 		DrawTerrain(m_grass);
 		m_batch->End();
 	}
@@ -203,7 +206,7 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 	std::wstring blend_3 = StringToWCHART("database/data/dirtSand.dds");
 	HRESULT rsb3;
 	rsb3 = CreateDDSTextureFromFile(device, blend_1.c_str(), NULL, &m_texture_blend_2_3);
-
+	
 	//////////////////////////////////////////////////////////////////////////////////////////
 
 	//load the default texture
@@ -212,13 +215,43 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 	rs0 = CreateDDSTextureFromFile(device, diffuse.c_str(), NULL, &m_texture_default);	//load tex into Shader resource	view and resource
 																							
 	//////////////////////////////////////////////////////////////////////////////////////////
-																						
+
+	// Load normal map
+	std::wstring normal = StringToWCHART("database/data/normalMap.dds");
+	HRESULT rsn;
+	rsn = CreateDDSTextureFromFile(device, normal.c_str(), NULL, &m_normalMap);
+
+	//////////////////////////////////////////////////////////////////////////////////////////
+
+	// Setup normal map effect
+	///m_normalMapEffect = std::make_unique<NormalMapEffect>(device);
+	///m_normalMapEffect->SetTexture(m_normalMap.Get());
+
+	//////////////////////////////////////////////////////////////////////////////////////////
+
+	// Setup state
+	///m_states = std::make_unique<CommonStates>(device);
+
+	//////////////////////////////////////////////////////////////////////////////////////////
+
+	// Setup dual texture effect
+	m_dualEffect = std::make_unique<DualTextureEffect>(device);
+	m_dualEffect->SetTexture(m_texture_splat_1);
+	m_dualEffect->SetTexture2(m_texture_splat_2);
+
+	//////////////////////////////////////////////////////////////////////////////////////////
+
 	// Setup terrain effect
+	///m_terrainEffect = std::make_unique<NormalMapEffect>(device);
 	m_terrainEffect = std::make_unique<BasicEffect>(device);
 	m_terrainEffect->EnableDefaultLighting();
+	///m_terrainEffect->SetLightDiffuseColor(0, Colors::Gray);
 	m_terrainEffect->SetLightingEnabled(true);
 	m_terrainEffect->SetTextureEnabled(true);
 	m_terrainEffect->SetTexture(m_texture_default);
+	///m_terrainEffect->SetNormalTexture(m_normalMap);
+
+	//////////////////////////////////////////////////////////////////////////////////////////
 
 	void const* shaderByteCode;
 	size_t byteCodeLength;
