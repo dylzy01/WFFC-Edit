@@ -34,6 +34,7 @@ public:
 	ID3D11ShaderResourceView *					m_texture_blend_1_2;			//grass/dirt texture
 	ID3D11ShaderResourceView *					m_texture_blend_1_3;			//grass/sand texture
 	ID3D11ShaderResourceView *					m_texture_blend_2_3;			//dirt/sand texture
+	ID3D11ShaderResourceView *					m_texture_highlight;			//highlight texture
 	ID3D11ShaderResourceView *					m_normalMap;					//normal map texture
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>   m_terrainInputLayout;
 	///Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_normalMap;
@@ -42,7 +43,7 @@ public:
 	void PaintTerrain(int row, int column, LANDSCAPE_PAINT paint, bool checkSurroundings = false);
 	void SculptTerrain(int row, int column, LANDSCAPE_SCULPT function, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position = { { 0,0,0 } });
 	
-	void SetSelected(bool selected, int ID);
+	void SetSelected(bool selected, int row, int column);
 	void DrawTerrain(std::vector<std::pair<int, int>> terrain);
 
 private:
@@ -50,7 +51,7 @@ private:
 	BYTE m_heightMap[TERRAINRESOLUTION*TERRAINRESOLUTION];
 	void CalculateTerrainNormals();
 	bool FindInVector(int &index, std::vector<std::pair<int, int>> vector, std::pair<int, int> terrain);
-	void CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint);
+	void CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint = LANDSCAPE_PAINT::NA);
 	void CheckSurroundings(int row, int column, LANDSCAPE_PAINT paint);
 	LANDSCAPE_PAINT CheckPaint(int row, int column);
 	void SavePaints(std::string path, std::vector<std::pair<int, int>> vector);
@@ -82,12 +83,9 @@ private:
 
 	// Geometry containers
 	std::vector<std::pair<int, int>> m_default;
-	std::vector<std::pair<int, int>> m_grass;
-	std::vector<std::pair<int, int>> m_dirt;
-	std::vector<std::pair<int, int>> m_sand;
-	std::vector<std::pair<int, int>> m_grassAndDirt;
-	std::vector<std::pair<int, int>> m_grassAndSand;
-	std::vector<std::pair<int, int>> m_dirtAndSand;
+	std::vector<std::pair<int, int>> m_grass, m_dirt, m_sand;
+	std::vector<std::pair<int, int>> m_grassTemp, m_dirtTemp, m_sandTemp;
+	std::vector<std::pair<int, int>> m_highlight;
 	/*std::vector<DirectX::VertexPositionNormalTexture> m_defaultGeometry,
 		m_grassGeometry, m_dirtGeometry, m_sandGeometry;
 	std::vector<int> m_defaultIDs, m_grassIDs, m_dirtIDs, m_sandIDs;*/

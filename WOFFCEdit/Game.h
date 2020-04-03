@@ -85,14 +85,14 @@ public:
 		break;
 		case EDITOR::LANDSCAPE_SCULPT:
 		{
-			m_objectTransform = OBJECT_TRANSFORM::NA;
+			m_objectTransform = OBJECT_FUNCTION::NA;
 			m_objectConstraint = OBJECT_CONSTRAINT::NA;
 		}
 		break;
 		}
 	}
 	void SetObjectSpawn(OBJECT_SPAWN spawn) { m_objectSpawn = spawn; }
-	void SetObjectTransform(OBJECT_TRANSFORM function) { m_objectTransform = function; }
+	void SetObjectTransform(OBJECT_FUNCTION function) { m_objectTransform = function; }
 	void SetObjectConstraint(OBJECT_CONSTRAINT constraint) { m_objectConstraint = constraint; }
 	void SetLandscapePaint(LANDSCAPE_PAINT paint) { m_landscapePaint = paint; }
 	void SetLandscapeSculpt(LANDSCAPE_SCULPT function) { m_landscapeSculpt = function; }
@@ -162,7 +162,7 @@ private:
 	// Editor controllers
 	EDITOR m_editor;
 	OBJECT_SPAWN m_objectSpawn = OBJECT_SPAWN::NA;
-	OBJECT_TRANSFORM m_objectTransform = OBJECT_TRANSFORM::NA;
+	OBJECT_FUNCTION m_objectTransform = OBJECT_FUNCTION::NA;
 	OBJECT_CONSTRAINT m_objectConstraint = OBJECT_CONSTRAINT::NA;
 	LANDSCAPE_PAINT m_landscapePaint = LANDSCAPE_PAINT::NA;
 	LANDSCAPE_SCULPT m_landscapeSculpt = LANDSCAPE_SCULPT::NA;

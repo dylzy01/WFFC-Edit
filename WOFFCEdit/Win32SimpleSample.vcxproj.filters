@@ -20,6 +20,18 @@
     <Filter Include="Custom">
       <UniqueIdentifier>{892e3e3d-b254-4d08-8845-7ebd2e93f32d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MFC\Dialogues">
+      <UniqueIdentifier>{ecd43f9a-4f22-4ddb-bde6-d59221f84a3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MFC\Main">
+      <UniqueIdentifier>{d83391ee-70a4-444a-b0a8-7782fa93fd95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MFC\Dialogues\Terrain">
+      <UniqueIdentifier>{155e6265-9f79-4593-8c84-4774e5518082}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MFC\Dialogues\Object">
+      <UniqueIdentifier>{4deb829c-d332-489b-ab3d-31a0947b4941}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -30,9 +42,6 @@
     </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="MFCMain.cpp">
-      <Filter>MFC</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ToolMain.cpp">
@@ -50,33 +59,46 @@
     <ClCompile Include="DisplayObject.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="MFCFrame.cpp">
-      <Filter>MFC</Filter>
-    </ClCompile>
-    <ClCompile Include="MFCRenderFrame.cpp">
-      <Filter>MFC</Filter>
-    </ClCompile>
     <ClCompile Include="DisplayChunk.cpp">
       <Filter>Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="SelectDialogue.cpp">
-      <Filter>MFC</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Custom</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectDialogue.cpp">
-      <Filter>MFC</Filter>
-    </ClCompile>
     <ClCompile Include="SQL.cpp">
       <Filter>SQLITE</Filter>
-    </ClCompile>
-    <ClCompile Include="LandscapeDialogue.cpp">
-      <Filter>MFC</Filter>
     </ClCompile>
     <ClCompile Include="Water.cpp">
       <Filter>Custom</Filter>
     </ClCompile>
+    <ClCompile Include="SelectDialogue.cpp">
+      <Filter>MFC\Dialogues</Filter>
+    </ClCompile>
+    <ClCompile Include="MFCFrame.cpp">
+      <Filter>MFC\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="MFCMain.cpp">
+      <Filter>MFC\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="MFCRenderFrame.cpp">
+      <Filter>MFC\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="LandscapeDialogue.cpp">
+      <Filter>MFC\Dialogues\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainPaintDialogue.cpp">
+      <Filter>MFC\Dialogues\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainSculptDialogue.cpp">
+      <Filter>MFC\Dialogues\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectDialogue.cpp">
+      <Filter>MFC\Dialogues\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectSpawnDialogue.cpp">
+      <Filter>MFC\Dialogues\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectEditorDialogue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -90,9 +112,6 @@
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="MFCMain.h">
-      <Filter>MFC</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="ToolMain.h">
@@ -113,37 +132,50 @@
     <ClInclude Include="InputCommands.h">
       <Filter>Tool</Filter>
     </ClInclude>
-    <ClInclude Include="MFCFrame.h">
-      <Filter>MFC</Filter>
-    </ClInclude>
-    <ClInclude Include="MFCRenderFrame.h">
-      <Filter>MFC</Filter>
-    </ClInclude>
     <ClInclude Include="DisplayChunk.h">
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SelectDialogue.h">
-      <Filter>MFC</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Custom</Filter>
     </ClInclude>
     <ClInclude Include="Tools.h">
       <Filter>Custom</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectDialogue.h">
-      <Filter>MFC</Filter>
-    </ClInclude>
     <ClInclude Include="SQL.h">
       <Filter>SQLITE</Filter>
-    </ClInclude>
-    <ClInclude Include="LandscapeDialogue.h">
-      <Filter>MFC</Filter>
     </ClInclude>
     <ClInclude Include="Water.h">
       <Filter>Custom</Filter>
     </ClInclude>
+    <ClInclude Include="SelectDialogue.h">
+      <Filter>MFC\Dialogues</Filter>
+    </ClInclude>
+    <ClInclude Include="MFCFrame.h">
+      <Filter>MFC\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="MFCMain.h">
+      <Filter>MFC\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="MFCRenderFrame.h">
+      <Filter>MFC\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="LandscapeDialogue.h">
+      <Filter>MFC\Dialogues\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainPaintDialogue.h">
+      <Filter>MFC\Dialogues\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainSculptDialogue.h">
+      <Filter>MFC\Dialogues\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectDialogue.h">
+      <Filter>MFC\Dialogues\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectSpawnDialogue.h">
+      <Filter>MFC\Dialogues\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectEditorDialogue.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -155,6 +187,12 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="toolbar1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="toolbar_select.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="toolbar2.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

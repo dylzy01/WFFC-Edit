@@ -32,15 +32,15 @@ void ObjectDialogue::DoDataExchange(CDataExchange* pDX)
 }
 
 // Enable/disable other functions
-void ObjectDialogue::UpdateTransform(OBJECT_TRANSFORM transform, bool enable)
+void ObjectDialogue::UpdateTransform(OBJECT_FUNCTION transform, bool enable)
 {
-	if (enable) { m_transform = OBJECT_TRANSFORM::NA; }
+	if (enable) { m_transform = OBJECT_FUNCTION::NA; }
 	else { m_transform = transform; }
 	
 	// Switch between functions
 	switch (transform)
 	{
-	case OBJECT_TRANSFORM::NA:
+	case OBJECT_FUNCTION::NA:
 	{
 		// Enable/disable translate function
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
@@ -55,7 +55,7 @@ void ObjectDialogue::UpdateTransform(OBJECT_TRANSFORM transform, bool enable)
 		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 	}
 	break;
-	case OBJECT_TRANSFORM::TRANSLATE:
+	case OBJECT_FUNCTION::TRANSLATE:
 	{
 		// Enable/disable rotate function
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
@@ -66,7 +66,7 @@ void ObjectDialogue::UpdateTransform(OBJECT_TRANSFORM transform, bool enable)
 		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 	}
 	break;
-	case OBJECT_TRANSFORM::ROTATE:
+	case OBJECT_FUNCTION::ROTATE:
 	{
 		// Enable/disable translate function
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
@@ -77,7 +77,7 @@ void ObjectDialogue::UpdateTransform(OBJECT_TRANSFORM transform, bool enable)
 		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 	}
 	break;
-	case OBJECT_TRANSFORM::SCALE:
+	case OBJECT_FUNCTION::SCALE:
 	{
 		// Enable/disable translate function
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
@@ -188,7 +188,7 @@ void ObjectDialogue::OnBnClickedGrass()
 		UpdateSpawns(OBJECT_SPAWN::GRASS, false);
 
 		// Uncheck & disable other functions
-		UpdateTransform(OBJECT_TRANSFORM::NA, false);
+		UpdateTransform(OBJECT_FUNCTION::NA, false);
 	}
 	break;
 	case false:
@@ -197,7 +197,7 @@ void ObjectDialogue::OnBnClickedGrass()
 		UpdateSpawns(OBJECT_SPAWN::GRASS, true);
 
 		// Enable other functions
-		UpdateTransform(OBJECT_TRANSFORM::NA, true);
+		UpdateTransform(OBJECT_FUNCTION::NA, true);
 	}
 	break;
 	}
@@ -218,7 +218,7 @@ void ObjectDialogue::OnBnClickedTree()
 		UpdateSpawns(OBJECT_SPAWN::TREE, false);
 
 		// Uncheck & disable other functions
-		UpdateTransform(OBJECT_TRANSFORM::NA, false);
+		UpdateTransform(OBJECT_FUNCTION::NA, false);
 	}
 	break;
 	case false:
@@ -227,7 +227,7 @@ void ObjectDialogue::OnBnClickedTree()
 		UpdateSpawns(OBJECT_SPAWN::TREE, true);
 
 		// Enable other functions
-		UpdateTransform(OBJECT_TRANSFORM::NA, true);
+		UpdateTransform(OBJECT_FUNCTION::NA, true);
 	}
 	break;
 	}
@@ -248,7 +248,7 @@ void ObjectDialogue::OnBnClickedWater()
 		UpdateSpawns(OBJECT_SPAWN::WATER, false);
 
 		// Uncheck & disable other functions
-		UpdateTransform(OBJECT_TRANSFORM::NA, false);
+		UpdateTransform(OBJECT_FUNCTION::NA, false);
 	}
 	break;
 	case false:
@@ -257,7 +257,7 @@ void ObjectDialogue::OnBnClickedWater()
 		UpdateSpawns(OBJECT_SPAWN::WATER, true);
 
 		// Enable other functions
-		UpdateTransform(OBJECT_TRANSFORM::NA, true);
+		UpdateTransform(OBJECT_FUNCTION::NA, true);
 	}
 	break;
 	}
@@ -275,7 +275,7 @@ void ObjectDialogue::OnBnClickedScale()
 	case true:
 	{
 		// Uncheck & disable other functions
-		UpdateTransform(OBJECT_TRANSFORM::SCALE, false);
+		UpdateTransform(OBJECT_FUNCTION::SCALE, false);
 	}
 	break;
 	case false:
@@ -284,7 +284,7 @@ void ObjectDialogue::OnBnClickedScale()
 		ResetConstraints();
 
 		// Enable other functions
-		UpdateTransform(OBJECT_TRANSFORM::SCALE, true);
+		UpdateTransform(OBJECT_FUNCTION::SCALE, true);
 	}
 	break;
 	}
@@ -302,7 +302,7 @@ void ObjectDialogue::OnBnClickedTranslate()
 	case true:
 	{
 		// Uncheck & disable other functions
-		UpdateTransform(OBJECT_TRANSFORM::TRANSLATE, false);
+		UpdateTransform(OBJECT_FUNCTION::TRANSLATE, false);
 	}
 	break;
 	case false:
@@ -311,7 +311,7 @@ void ObjectDialogue::OnBnClickedTranslate()
 		ResetConstraints();
 
 		// Enable other functions
-		UpdateTransform(OBJECT_TRANSFORM::TRANSLATE, true);
+		UpdateTransform(OBJECT_FUNCTION::TRANSLATE, true);
 	}
 	break;
 	}
@@ -329,7 +329,7 @@ void ObjectDialogue::OnBnClickedRotate()
 	case true:
 	{
 		// Uncheck & disable other functions
-		UpdateTransform(OBJECT_TRANSFORM::ROTATE, false);
+		UpdateTransform(OBJECT_FUNCTION::ROTATE, false);
 	}
 	break;
 	case false:
@@ -338,7 +338,7 @@ void ObjectDialogue::OnBnClickedRotate()
 		ResetConstraints();
 
 		// Enable other functions
-		UpdateTransform(OBJECT_TRANSFORM::ROTATE, true);
+		UpdateTransform(OBJECT_FUNCTION::ROTATE, true);
 	}
 	break;
 	}

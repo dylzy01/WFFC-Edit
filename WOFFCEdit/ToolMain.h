@@ -35,7 +35,7 @@ public: //methods
 	void SetWireframe(bool wireframe) { m_d3dRenderer.SetWireframe(wireframe); }
 	void SetEditor(EDITOR editor) { m_d3dRenderer.SetEditor(editor); }
 	void SetObjectSpawn(OBJECT_SPAWN spawn) { m_d3dRenderer.SetObjectSpawn(spawn); }
-	void SetObjectTransform(OBJECT_TRANSFORM function) { m_d3dRenderer.SetObjectTransform(function); }
+	void SetObjectTransform(OBJECT_FUNCTION function) { m_d3dRenderer.SetObjectTransform(function); }
 	void SetObjectConstraint(OBJECT_CONSTRAINT constraint) { m_d3dRenderer.SetObjectConstraint(constraint); }
 	void SetLandscapePaint(LANDSCAPE_PAINT paint) { m_d3dRenderer.SetLandscapePaint(paint); }
 	void SetLandscapeSculpt(LANDSCAPE_SCULPT function) { m_d3dRenderer.SetLandscapeSculpt(function); }

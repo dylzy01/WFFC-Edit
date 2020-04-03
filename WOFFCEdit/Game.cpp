@@ -178,6 +178,7 @@ void Game::Update(DX::StepTimer const& timer)
 
 }
 
+// Handles all world input
 void Game::HandleInput()
 {	
 	// Switch between modes
@@ -265,7 +266,7 @@ void Game::HandleInput()
 						// Switch between S, R, T
 						switch (m_objectTransform)
 						{
-						case OBJECT_TRANSFORM::SCALE:
+						case OBJECT_FUNCTION::SCALE:
 						{
 							// If should be scaled on the X and Y axis
 							if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
@@ -325,7 +326,7 @@ void Game::HandleInput()
 							///m_storedObjectScales[i] = m_displayList[m_selectedObjectIDs[i]].m_scale;						
 						}
 						break;
-						case OBJECT_TRANSFORM::TRANSLATE:
+						case OBJECT_FUNCTION::TRANSLATE:
 						{
 							// If should be translated on the X and Y axis
 							if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
@@ -392,7 +393,7 @@ void Game::HandleInput()
 							}
 						}
 						break;
-						case OBJECT_TRANSFORM::ROTATE:
+						case OBJECT_FUNCTION::ROTATE:
 						{
 							// If should be rotated on the X and Y axis
 							if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
@@ -654,7 +655,7 @@ void Game::Render()
 	// Coordinate system
 	// Loop through selected objects
 	for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
-	{
+	{		
 		// Draw local axes
 		DrawAxis(m_displayList[m_selectedObjectIDs[i]], m_selectedObjectIDs[i]);		
 	}
@@ -1105,7 +1106,7 @@ bool Game::PickingObjects(bool select)
 		{
 			// If isn't selecting
 			if (!select)
-			{
+			{				
 				// Remove from vector storage
 				m_selectedObjectIDs.erase(std::remove(m_selectedObjectIDs.begin(), m_selectedObjectIDs.end(), selectedID), m_selectedObjectIDs.end());
 			}
@@ -1266,6 +1267,9 @@ std::vector<TERRAIN> Game::PickingTerrains()
 				// Set as already chosen
 				alreadyChosen = true;
 
+				// Deselect (un-highlight)
+				m_displayChunk.SetSelected(false, terrain.row, terrain.column);
+
 				// Remove from storage
 				m_selectedTerrains.erase(m_selectedTerrains.begin() + i);
 
@@ -1288,6 +1292,9 @@ std::vector<TERRAIN> Game::PickingTerrains()
 		// If selected chunk isn't already chosen
 		if (!alreadyChosen)
 		{
+			// Select (highlight)
+			m_displayChunk.SetSelected(true, terrain.row, terrain.column);
+			
 			// Add to vector storage
 			m_selectedTerrains.push_back(terrain);
 		}

@@ -99,35 +99,13 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 		DrawTerrain(m_sand);
 		m_batch->End();
 	}
-
-	// Draw all blended grass/dirt geometry
-	if (m_grassAndDirt.size() != 0) {
-		m_batch->Begin();
-		/*m_terrainBlendOne->SetTexture(m_texture_splat_1);
-		m_terrainBlendOne->Apply(context);
-		m_terrainBlendTwo->SetTexture(m_texture_splat_2);
-		m_terrainBlendTwo->Apply(context);*/
-		m_terrainEffect->SetTexture(m_texture_blend_1_2);
-		m_terrainEffect->Apply(context);
-		DrawTerrain(m_grassAndDirt);
-		m_batch->End();
-	}
-
-	// Draw all blended grass/sand geometry
-	if (m_grassAndSand.size() != 0) {
-		m_batch->Begin();
-		m_terrainEffect->SetTexture(m_texture_blend_1_3);
-		m_terrainEffect->Apply(context);
-		DrawTerrain(m_grassAndSand);
-		m_batch->End();
-	}
 	
-	// Draw all blended dirt/sand geometry
-	if (m_dirtAndSand.size() != 0) {
+	// Draw all highlighted geometry
+	if (m_highlight.size() != 0) {
 		m_batch->Begin();
-		m_terrainEffect->SetTexture(m_texture_blend_2_3);
+		m_terrainEffect->SetTexture(m_texture_highlight);
 		m_terrainEffect->Apply(context);
-		DrawTerrain(m_dirtAndSand);
+		DrawTerrain(m_highlight);
 		m_batch->End();
 	}
 
@@ -205,6 +183,13 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 	std::wstring splat_3 = StringToWCHART(m_tex_splat_3_path);
 	HRESULT rs3;
 	rs3 = CreateDDSTextureFromFile(device, splat_3.c_str(), NULL, &m_texture_splat_3);
+
+	//////////////////////////////////////////////////////////////////////////////////////////
+
+	// Load highlight texture
+	std::wstring highlight = StringToWCHART("database/data/highlight.dds");
+	HRESULT rsH;
+	rsH = CreateDDSTextureFromFile(device, highlight.c_str(), NULL, &m_texture_highlight);
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 
@@ -920,32 +905,54 @@ void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_SCULPT sculpt, L
 	}								
 }
 
-void DisplayChunk::SetSelected(bool selected, int ID)
+void DisplayChunk::SetSelected(bool selected, int row, int column)
 {
-	// Loop through terrain geometry
-	for (int i = 0; i < (TERRAINRESOLUTION - 1); i++)
+	// If selecting
+	if (selected)
 	{
-		for (int j = 0; j < (TERRAINRESOLUTION - 1); j++)
+		// Remove from other vectors
+		CheckForDuplicates(row, column);
+
+		// Add to highlight vector
+		m_highlight.push_back(std::pair<int, int>(row, column));
+	}
+	// Else, if unselecting
+	else
+	{
+		// Temp
+		int index = -1;
+		std::pair<int, int> terrain = std::pair<int, int>(row, column);
+			
+		// Search through temp grass vector
+		if (FindInVector(index, m_grassTemp, terrain))
 		{
-			// If parameter ID matches current terrain ID
-			//if (ID == m_terrainGeometry[i][j].ID) 
-			//{
-			//	// If terrain is selected
-			//	if (selected)
-			//	{
-			//		//... highlight texture
-			//		///m_terrainGeometry[i][j].
-			//	}
-			//	// Else, if terrain isn't selected
-			//	else
-			//	{
-			//		//... un-highlight texture
-			//	}
-			//}
+			// Add to main storage
+			m_grass.push_back(terrain);
+
+			// Remove from temp storage
+			m_grassTemp.erase(m_grassTemp.begin() + index);
+		}
+
+		// Else, search through temp dirt vector
+		else if (FindInVector(index, m_dirtTemp, terrain))
+		{
+			// Add to main storage
+			m_dirt.push_back(terrain);
+
+			// Remove from temp storage
+			m_dirtTemp.erase(m_dirtTemp.begin() + index);
+		}
+
+		// Else, search through temp sand vector
+		else if (FindInVector(index, m_sandTemp, terrain))
+		{
+			// Add to main storage
+			m_sand.push_back(terrain);
+
+			// Remove from temp storage
+			m_sandTemp.erase(m_sandTemp.begin() + index);
 		}
 	}
-
-	///GenerateHeightmap();
 }
 
 void DisplayChunk::DrawTerrain(std::vector<std::pair<int, int>> terrain)
@@ -1003,15 +1010,6 @@ void DisplayChunk::CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint
 
 		// Else, loop through default vector & remove from storage
 		else if (FindInVector(index, m_default, terrain)) { m_default.erase(m_default.begin() + index); }
-
-		// Else, loop through grass and dirt vector & remove from storage
-		else if (FindInVector(index, m_grassAndDirt, terrain)) { m_grassAndDirt.erase(m_grassAndDirt.begin() + index); }
-
-		// Else, loop through grass and sand vector & remove from storage
-		else if (FindInVector(index, m_grassAndSand, terrain)) { m_grassAndSand.erase(m_grassAndSand.begin() + index); }
-
-		// Else, loop through dirt and sand vector & remove from storage
-		else if (FindInVector(index, m_dirtAndSand, terrain)) { m_dirtAndSand.erase(m_dirtAndSand.begin() + index); }
 	}
 	break;
 	case LANDSCAPE_PAINT::DIRT:
@@ -1024,15 +1022,6 @@ void DisplayChunk::CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint
 
 		// Else, loop through default vector & remove from storage
 		else if (FindInVector(index, m_default, terrain)) { m_default.erase(m_default.begin() + index); }
-
-		// Else, loop through grass and dirt vector & remove from storage
-		else if (FindInVector(index, m_grassAndDirt, terrain)) { m_grassAndDirt.erase(m_grassAndDirt.begin() + index); }
-
-		// Else, loop through grass and sand vector & remove from storage
-		else if (FindInVector(index, m_grassAndSand, terrain)) { m_grassAndSand.erase(m_grassAndSand.begin() + index); }
-
-		// Else, loop through dirt and sand vector & remove from storage
-		else if (FindInVector(index, m_dirtAndSand, terrain)) { m_dirtAndSand.erase(m_dirtAndSand.begin() + index); }
 	}
 	break;
 	case LANDSCAPE_PAINT::SAND:
@@ -1045,99 +1034,39 @@ void DisplayChunk::CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint
 
 		// Else, loop through default vector & remove from storage
 		else if (FindInVector(index, m_default, terrain)) { m_default.erase(m_default.begin() + index); }
-
-		// Else, loop through grass and dirt vector & remove from storage
-		else if (FindInVector(index, m_grassAndDirt, terrain)) { m_grassAndDirt.erase(m_grassAndDirt.begin() + index); }
-
-		// Else, loop through grass and sand vector & remove from storage
-		else if (FindInVector(index, m_grassAndSand, terrain)) { m_grassAndSand.erase(m_grassAndSand.begin() + index); }
-
-		// Else, loop through dirt and sand vector & remove from storage
-		else if (FindInVector(index, m_dirtAndSand, terrain)) { m_dirtAndSand.erase(m_dirtAndSand.begin() + index); }
-	}
-	break;
-	case LANDSCAPE_PAINT::GRASS_AND_DIRT:
-	{
-		// Loop through grass vector & remove from storage
-		if (FindInVector(index, m_grass, terrain)) { m_grass.erase(m_grass.begin() + index); }
-
-		// Else, loop through dirt vector & remove from storage
-		else if (FindInVector(index, m_dirt, terrain)) { m_dirt.erase(m_dirt.begin() + index); }
-
-		// Else, loop through sand vector & remove from storage
-		else if (FindInVector(index, m_sand, terrain)) { m_sand.erase(m_sand.begin() + index); }
-
-		// Else, loop through default vector & remove from storage
-		else if (FindInVector(index, m_default, terrain)) { m_default.erase(m_default.begin() + index); }
-
-		// Else, loop through grass and sand vector & remove from storage
-		else if (FindInVector(index, m_grassAndSand, terrain)) { m_grassAndSand.erase(m_grassAndSand.begin() + index); }
-
-		// Else, loop through dirt and sand vector & remove from storage
-		else if (FindInVector(index, m_dirtAndSand, terrain)) { m_dirtAndSand.erase(m_dirtAndSand.begin() + index); }
-	}
-	break;
-	case LANDSCAPE_PAINT::GRASS_AND_SAND:
-	{
-		// Loop through grass vector & remove from storage
-		if (FindInVector(index, m_grass, terrain)) { m_grass.erase(m_grass.begin() + index); }
-
-		// Else, loop through dirt vector & remove from storage
-		else if (FindInVector(index, m_dirt, terrain)) { m_dirt.erase(m_dirt.begin() + index); }
-
-		// Else, loop through sand vector & remove from storage
-		else if (FindInVector(index, m_sand, terrain)) { m_sand.erase(m_sand.begin() + index); }
-
-		// Else, loop through default vector & remove from storage
-		else if (FindInVector(index, m_default, terrain)) { m_default.erase(m_default.begin() + index); }
-
-		// Else, loop through grass and dirt vector & remove from storage
-		else if (FindInVector(index, m_grassAndDirt, terrain)) { m_grassAndDirt.erase(m_grassAndDirt.begin() + index); }
-
-		// Else, loop through dirt and sand vector & remove from storage
-		else if (FindInVector(index, m_dirtAndSand, terrain)) { m_dirtAndSand.erase(m_dirtAndSand.begin() + index); }
-	}
-	break;
-	case LANDSCAPE_PAINT::DIRT_AND_SAND:
-	{
-		// Loop through grass vector & remove from storage
-		if (FindInVector(index, m_grass, terrain)) { m_grass.erase(m_grass.begin() + index); }
-
-		// Else, loop through dirt vector & remove from storage
-		else if (FindInVector(index, m_dirt, terrain)) { m_dirt.erase(m_dirt.begin() + index); }
-
-		// Else, loop through sand vector & remove from storage
-		else if (FindInVector(index, m_sand, terrain)) { m_sand.erase(m_sand.begin() + index); }
-
-		// Else, loop through default vector & remove from storage
-		else if (FindInVector(index, m_default, terrain)) { m_default.erase(m_default.begin() + index); }
-
-		// Else, loop through grass and dirt vector & remove from storage
-		else if (FindInVector(index, m_grassAndDirt, terrain)) { m_grassAndDirt.erase(m_grassAndDirt.begin() + index); }
-
-		// Else, loop through grass and sand vector & remove from storage
-		else if (FindInVector(index, m_grassAndSand, terrain)) { m_grassAndSand.erase(m_grassAndSand.begin() + index); }
 	}
 	break;
 	case LANDSCAPE_PAINT::NA:
 	{		
-		// Loop through grass vector & remove from storage
-		if (FindInVector(index, m_grass, terrain)) { m_grass.erase(m_grass.begin() + index); }
+		// Search through grass vector
+		if (FindInVector(index, m_grass, terrain)) 
+		{ 
+			// Store temporarily
+			m_grassTemp.push_back(terrain);
 
-		// Else, loop through dirt vector & remove from storage
-		else if (FindInVector(index, m_dirt, terrain)) { m_dirt.erase(m_dirt.begin() + index); }
+			// Remove from main storage
+			m_grass.erase(m_grass.begin() + index); 
+		}
 
-		// Else, loop through sand vector & remove from storage
-		else if (FindInVector(index, m_sand, terrain)) { m_sand.erase(m_sand.begin() + index); }
+		// Else, search through dirt vector
+		else if (FindInVector(index, m_dirt, terrain)) 
+		{ 
+			// Store temporarily
+			m_dirtTemp.push_back(terrain);
 
-		// Else, loop through grass and dirt vector & remove from storage
-		else if (FindInVector(index, m_grassAndDirt, terrain)) { m_grassAndDirt.erase(m_grassAndDirt.begin() + index); }
+			// Remove from main storage
+			m_dirt.erase(m_dirt.begin() + index); 
+		}
 
-		// Else, loop through grass and sand vector & remove from storage
-		else if (FindInVector(index, m_grassAndSand, terrain)) { m_grassAndSand.erase(m_grassAndSand.begin() + index); }
+		// Else, search through sand vector
+		else if (FindInVector(index, m_sand, terrain)) 
+		{ 
+			// Store temporarily 
+			m_sandTemp.push_back(terrain);
 
-		// Else, loop through dirt and sand vector & remove from storage
-		else if (FindInVector(index, m_dirtAndSand, terrain)) { m_dirtAndSand.erase(m_dirtAndSand.begin() + index); }
+			// Remove from main storage
+			m_sand.erase(m_sand.begin() + index); 
+		}		
 	}
 	break;
 	}
@@ -1156,135 +1085,137 @@ void DisplayChunk::CheckSurroundings(int row, int column, LANDSCAPE_PAINT paint)
 	// just to blend it same as the rest if the value is '-1'
 	// if the rest is evenly spread, randomly choose ??
 
-	// Store each 'c' index
-	std::vector<std::pair<int, int>> c; {
-		c.push_back(std::pair<int, int>(row - 2, column - 2));		// 2 upward, 2 backward
-		c.push_back(std::pair<int, int>(row - 2, column));			// 2 upward
-		c.push_back(std::pair<int, int>(row - 2, column + 2));		// 2 upward, 2 forward
-		c.push_back(std::pair<int, int>(row, column - 2));			// 2 backward
-		c.push_back(std::pair<int, int>(row, column + 2));			// 2 forward
-		c.push_back(std::pair<int, int>(row + 2, column - 2));		// 2 downward, 2 backward
-		c.push_back(std::pair<int, int>(row + 2, column));			// 2 downward
-		c.push_back(std::pair<int, int>(row + 2, column + 2));		// 2 downward, 2 forward
-	}
-	
-	// Check each 'c' index for their current paints
-	std::vector<LANDSCAPE_PAINT> c_paints;
-	for (int i = 0; i < c.size(); ++i) { 
-		c_paints.push_back(CheckPaint(c[i].first, c[i].second)); 
-	}
-	
-	// Store each 'o' index
-	std::vector<std::pair<int, int>> o; {	
-		o.push_back(std::pair<int, int>(row - 1, column - 1));		// 1 upward, 1 backward
-		o.push_back(std::pair<int, int>(row - 1, column));			// 1 upward
-		o.push_back(std::pair<int, int>(row - 1, column + 1));		// 1 upward, 1 forward
-		o.push_back(std::pair<int, int>(row, column - 1));			// 1 backward
-		o.push_back(std::pair<int, int>(row, column + 1));			// 1 forward
-		o.push_back(std::pair<int, int>(row + 1, column - 1));		// 1 downward, 1 backward
-		o.push_back(std::pair<int, int>(row + 1, column));			// 1 downward
-		o.push_back(std::pair<int, int>(row + 1, column + 1));		// 1 downward, 1 forward
-	}
+	//// Store each 'c' index
+	//std::vector<std::pair<int, int>> c; {
+	//	c.push_back(std::pair<int, int>(row - 2, column - 2));		// 2 upward, 2 backward
+	//	c.push_back(std::pair<int, int>(row - 2, column));			// 2 upward
+	//	c.push_back(std::pair<int, int>(row - 2, column + 2));		// 2 upward, 2 forward
+	//	c.push_back(std::pair<int, int>(row, column - 2));			// 2 backward
+	//	c.push_back(std::pair<int, int>(row, column + 2));			// 2 forward
+	//	c.push_back(std::pair<int, int>(row + 2, column - 2));		// 2 downward, 2 backward
+	//	c.push_back(std::pair<int, int>(row + 2, column));			// 2 downward
+	//	c.push_back(std::pair<int, int>(row + 2, column + 2));		// 2 downward, 2 forward
+	//}
+	//
+	//// Check each 'c' index for their current paints
+	//std::vector<LANDSCAPE_PAINT> c_paints;
+	//for (int i = 0; i < c.size(); ++i) { 
+	//	c_paints.push_back(CheckPaint(c[i].first, c[i].second)); 
+	//}
+	//
+	//// Store each 'o' index
+	//std::vector<std::pair<int, int>> o; {	
+	//	o.push_back(std::pair<int, int>(row - 1, column - 1));		// 1 upward, 1 backward
+	//	o.push_back(std::pair<int, int>(row - 1, column));			// 1 upward
+	//	o.push_back(std::pair<int, int>(row - 1, column + 1));		// 1 upward, 1 forward
+	//	o.push_back(std::pair<int, int>(row, column - 1));			// 1 backward
+	//	o.push_back(std::pair<int, int>(row, column + 1));			// 1 forward
+	//	o.push_back(std::pair<int, int>(row + 1, column - 1));		// 1 downward, 1 backward
+	//	o.push_back(std::pair<int, int>(row + 1, column));			// 1 downward
+	//	o.push_back(std::pair<int, int>(row + 1, column + 1));		// 1 downward, 1 forward
+	//}
 
-	// Check each 'o' index for their current paints
-	std::vector<LANDSCAPE_PAINT> o_paints;
-	for (int i = 0; i < o.size(); ++i) { 
-		o_paints.push_back(CheckPaint(o[i].first, o[i].second)); 
-	}
-		
-	// Store 'x' paint
-	LANDSCAPE_PAINT x_paint = CheckPaint(row, column);
-	
-	// Blend each 'o' index depending on 'x' & adjacent 'c' paints
-	for (int i = 0; i < c.size(); ++i)
-	{
-		// Switch between 'c' paints
-		switch (c_paints[i])
-		{
-		case LANDSCAPE_PAINT::GRASS:
-		{
-			// Switch between 'x' paint
-			switch (x_paint)
-			{
-			case LANDSCAPE_PAINT::GRASS: o_paints[i] = LANDSCAPE_PAINT::GRASS; break;
-			case LANDSCAPE_PAINT::DIRT: o_paints[i] = LANDSCAPE_PAINT::GRASS_AND_DIRT; break;
-			case LANDSCAPE_PAINT::SAND: o_paints[i] = LANDSCAPE_PAINT::GRASS_AND_SAND; break;
-			}
-		}
-		break;
-		case LANDSCAPE_PAINT::DIRT:
-		{
-			// Switch between 'x' paint
-			switch (x_paint)
-			{
-			case LANDSCAPE_PAINT::GRASS: o_paints[i] = LANDSCAPE_PAINT::GRASS_AND_DIRT; break;
-			case LANDSCAPE_PAINT::DIRT: o_paints[i] = LANDSCAPE_PAINT::DIRT; break;
-			case LANDSCAPE_PAINT::SAND: o_paints[i] = LANDSCAPE_PAINT::GRASS_AND_SAND; break;
-			}
-		}
-		break;
-		case LANDSCAPE_PAINT::SAND:
-		{
-			// Switch between 'x' paint
-			switch (x_paint)
-			{
-			case LANDSCAPE_PAINT::GRASS: o_paints[i] = LANDSCAPE_PAINT::GRASS_AND_SAND; break;
-			case LANDSCAPE_PAINT::DIRT: o_paints[i] = LANDSCAPE_PAINT::DIRT_AND_SAND; break;
-			case LANDSCAPE_PAINT::SAND: o_paints[i] = LANDSCAPE_PAINT::SAND; break;
-			}
-		}
-		break;
-		}
-	}
+	//// Check each 'o' index for their current paints
+	//std::vector<LANDSCAPE_PAINT> o_paints;
+	//for (int i = 0; i < o.size(); ++i) { 
+	//	o_paints.push_back(CheckPaint(o[i].first, o[i].second)); 
+	//}
+	//	
+	//// Store 'x' paint
+	//LANDSCAPE_PAINT x_paint = CheckPaint(row, column);
+	//
+	//// Blend each 'o' index depending on 'x' & adjacent 'c' paints
+	//for (int i = 0; i < c.size(); ++i)
+	//{
+	//	// Switch between 'c' paints
+	//	switch (c_paints[i])
+	//	{
+	//	case LANDSCAPE_PAINT::GRASS:
+	//	{
+	//		// Switch between 'x' paint
+	//		switch (x_paint)
+	//		{
+	//		case LANDSCAPE_PAINT::GRASS: o_paints[i] = LANDSCAPE_PAINT::GRASS; break;
+	//		case LANDSCAPE_PAINT::DIRT: o_paints[i] = LANDSCAPE_PAINT::GRASS_AND_DIRT; break;
+	//		case LANDSCAPE_PAINT::SAND: o_paints[i] = LANDSCAPE_PAINT::GRASS_AND_SAND; break;
+	//		}
+	//	}
+	//	break;
+	//	case LANDSCAPE_PAINT::DIRT:
+	//	{
+	//		// Switch between 'x' paint
+	//		switch (x_paint)
+	//		{
+	//		case LANDSCAPE_PAINT::GRASS: o_paints[i] = LANDSCAPE_PAINT::GRASS_AND_DIRT; break;
+	//		case LANDSCAPE_PAINT::DIRT: o_paints[i] = LANDSCAPE_PAINT::DIRT; break;
+	//		case LANDSCAPE_PAINT::SAND: o_paints[i] = LANDSCAPE_PAINT::GRASS_AND_SAND; break;
+	//		}
+	//	}
+	//	break;
+	//	case LANDSCAPE_PAINT::SAND:
+	//	{
+	//		// Switch between 'x' paint
+	//		switch (x_paint)
+	//		{
+	//		case LANDSCAPE_PAINT::GRASS: o_paints[i] = LANDSCAPE_PAINT::GRASS_AND_SAND; break;
+	//		case LANDSCAPE_PAINT::DIRT: o_paints[i] = LANDSCAPE_PAINT::DIRT_AND_SAND; break;
+	//		case LANDSCAPE_PAINT::SAND: o_paints[i] = LANDSCAPE_PAINT::SAND; break;
+	//		}
+	//	}
+	//	break;
+	//	}
+	//}
 
-	// Loop through blended 'o' indexes
-	for (int i = 0; i < o.size(); ++i)
-	{
-		// Remove any duplicates
-		CheckForDuplicates(o[i].first, o[i].second, o_paints[i]);
+	//// Loop through blended 'o' indexes
+	//for (int i = 0; i < o.size(); ++i)
+	//{
+	//	// Remove any duplicates
+	//	CheckForDuplicates(o[i].first, o[i].second, o_paints[i]);
 
-		// Switch between blended paint
-		switch (o_paints[i])
-		{
-		case LANDSCAPE_PAINT::GRASS: m_grass.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
-		case LANDSCAPE_PAINT::DIRT: m_dirt.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
-		case LANDSCAPE_PAINT::SAND: m_sand.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
-		case LANDSCAPE_PAINT::GRASS_AND_DIRT: m_grassAndDirt.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
-		case LANDSCAPE_PAINT::GRASS_AND_SAND: m_grassAndSand.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
-		case LANDSCAPE_PAINT::DIRT_AND_SAND: m_dirtAndSand.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
-		case LANDSCAPE_PAINT::NA: m_default.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
-		}
-	}
+	//	// Switch between blended paint
+	//	switch (o_paints[i])
+	//	{
+	//	case LANDSCAPE_PAINT::GRASS: m_grass.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
+	//	case LANDSCAPE_PAINT::DIRT: m_dirt.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
+	//	case LANDSCAPE_PAINT::SAND: m_sand.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
+	//	case LANDSCAPE_PAINT::GRASS_AND_DIRT: m_grassAndDirt.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
+	//	case LANDSCAPE_PAINT::GRASS_AND_SAND: m_grassAndSand.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
+	//	case LANDSCAPE_PAINT::DIRT_AND_SAND: m_dirtAndSand.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
+	//	case LANDSCAPE_PAINT::NA: m_default.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
+	//	}
+	//}
 }
 
 LANDSCAPE_PAINT DisplayChunk::CheckPaint(int row, int column)
 {
 	// Temp
-	int index = -1;
-	std::pair<int, int> terrain;
-	terrain.first = row;
-	terrain.second = column;
+	//int index = -1;
+	//std::pair<int, int> terrain;
+	//terrain.first = row;
+	//terrain.second = column;
 
-	// Loop through grass vector & remove from storage
-	if (FindInVector(index, m_grass, terrain)) { return LANDSCAPE_PAINT::GRASS; }
+	//// Loop through grass vector & remove from storage
+	//if (FindInVector(index, m_grass, terrain)) { return LANDSCAPE_PAINT::GRASS; }
 
-	// Else, loop through dirt vector & return paint
-	else if (FindInVector(index, m_dirt, terrain)) { return LANDSCAPE_PAINT::DIRT; }
+	//// Else, loop through dirt vector & return paint
+	//else if (FindInVector(index, m_dirt, terrain)) { return LANDSCAPE_PAINT::DIRT; }
 
-	// Else, loop through sand vector & return paint
-	else if (FindInVector(index, m_sand, terrain)) { return LANDSCAPE_PAINT::SAND; }
+	//// Else, loop through sand vector & return paint
+	//else if (FindInVector(index, m_sand, terrain)) { return LANDSCAPE_PAINT::SAND; }
 
-	// Else, loop through grass and dirt vector & return paint
-	else if (FindInVector(index, m_grassAndDirt, terrain)) { return LANDSCAPE_PAINT::GRASS_AND_DIRT; }
+	//// Else, loop through grass and dirt vector & return paint
+	//else if (FindInVector(index, m_grassAndDirt, terrain)) { return LANDSCAPE_PAINT::GRASS_AND_DIRT; }
 
-	// Else, loop through grass and sand vector & return paint
-	else if (FindInVector(index, m_grassAndSand, terrain)) { return LANDSCAPE_PAINT::GRASS_AND_SAND; }
+	//// Else, loop through grass and sand vector & return paint
+	//else if (FindInVector(index, m_grassAndSand, terrain)) { return LANDSCAPE_PAINT::GRASS_AND_SAND; }
 
-	// Else, loop through dirt and sand vector & return paint
-	else if (FindInVector(index, m_dirtAndSand, terrain)) { return LANDSCAPE_PAINT::DIRT_AND_SAND; }
+	//// Else, loop through dirt and sand vector & return paint
+	//else if (FindInVector(index, m_dirtAndSand, terrain)) { return LANDSCAPE_PAINT::DIRT_AND_SAND; }
 
-	// Else, return default paint
-	else { return LANDSCAPE_PAINT::NA; }
+	//// Else, return default paint
+	//else { return LANDSCAPE_PAINT::NA; }
+
+	return LANDSCAPE_PAINT::NA;
 }
 
 void DisplayChunk::SavePaints(std::string path, std::vector<std::pair<int, int>> vector)

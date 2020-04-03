@@ -25,7 +25,7 @@ enum class OBJECT_SPAWN {
 	WATER
 };
 
-enum class OBJECT_TRANSFORM {
+enum class OBJECT_FUNCTION {
 	NA,
 	SELECT,
 	SCALE,
@@ -49,9 +49,8 @@ enum class LANDSCAPE_PAINT {
 	GRASS,
 	DIRT,
 	SAND,
-	GRASS_AND_DIRT,
-	GRASS_AND_SAND,
-	DIRT_AND_SAND
+	STONE,
+	SNOW
 };
 
 enum class LANDSCAPE_SCULPT {

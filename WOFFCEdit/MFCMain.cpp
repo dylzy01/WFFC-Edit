@@ -11,6 +11,10 @@ BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_WIREFRAME_ON, &MFCMain::MenuEditWireframeOn)
 	ON_COMMAND(ID_WIREFRAME_OFF, &MFCMain::MenuEditWireframeOff)
 	ON_COMMAND(ID_BUTTON40001,	&MFCMain::ToolBarButton1)
+	ON_COMMAND(ID_BUTTON40055, &MFCMain::ToolBarObjectSelect)
+	ON_COMMAND(ID_BUTTON40050, &MFCMain::ToolBarObjectSpawn)
+	ON_COMMAND(ID_BUTTON40052, &MFCMain::ToolBarTerrainSculpt)
+	ON_COMMAND(ID_BUTTON40048, &MFCMain::ToolBarTerrainPaint)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_TOOL, &CMyFrame::OnUpdatePage)
 END_MESSAGE_MAP()
 
@@ -72,7 +76,7 @@ int MFCMain::Run()
 			m_toolSystem.UpdateInput(&msg);
 		}
 		else
-		{	
+		{
 			// Empty status string
 			std::wstring statusString = L"";
 
@@ -107,116 +111,127 @@ int MFCMain::Run()
 				std::vector<TERRAIN> chunks = m_toolSystem.getCurrentTerrainSelection();
 				for (int i = 0; i < chunks.size(); ++i)
 				{
-					if (i != 0) { statusString += L", (" + std::to_wstring(chunks[i].row) + L","
-							+ std::to_wstring(chunks[i].column) + L")";	}
-					else { statusString += L"(" + std::to_wstring(chunks[i].row) + L","
-							+ std::to_wstring(chunks[i].column) + L")"; }
+					if (i != 0) {
+						statusString += L", (" + std::to_wstring(chunks[i].row) + L","
+							+ std::to_wstring(chunks[i].column) + L")";
+					}
+					else {
+						statusString += L"(" + std::to_wstring(chunks[i].row) + L","
+							+ std::to_wstring(chunks[i].column) + L")";
+					}
 				}
 			}
 			break;
 			}
 
+			// Check which dialogue is open & update ToolMain
+			CheckDialogues();
+
 			// If object editor window is open
-			if (m_toolObjectDialogue.m_active)
 			{
-				// Set editor mode
-				m_toolSystem.SetEditor(m_toolObjectDialogue.GetEditor());
-				
-				// Switch between spawning/transforming
-				switch (m_toolObjectDialogue.GetEditor())
-				{
-				case EDITOR::OBJECT_SPAWN:
-				{
-					// Set object spawn to specific spawn
-					m_toolSystem.SetObjectSpawn(m_toolObjectDialogue.GetSpawn());
-				}
-				break;
-				case EDITOR::OBJECT_TRANSFORM:
-				{
-					// Set transform function
-					m_toolSystem.SetObjectTransform(m_toolObjectDialogue.GetTransform());
+				//if (m_toolObjectDialogue.m_active)
+				//{
+				//	// Set editor mode
+				//	m_toolSystem.SetEditor(m_toolObjectDialogue.GetEditor());
 
-					// If x and y constraints are selected
-					if (m_toolObjectDialogue.GetConstraintX() && m_toolObjectDialogue.GetConstraintY()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::XY); }
+				//	// Switch between spawning/transforming
+				//	switch (m_toolObjectDialogue.GetEditor())
+				//	{
+				//	case EDITOR::OBJECT_SPAWN:
+				//	{
+				//		// Set object spawn to specific spawn
+				//		m_toolSystem.SetObjectSpawn(m_toolObjectDialogue.GetSpawn());
+				//	}
+				//	break;
+				//	case EDITOR::OBJECT_TRANSFORM:
+				//	{
+				//		// Set transform function
+				//		m_toolSystem.SetObjectTransform(m_toolObjectDialogue.GetTransform());
 
-					// Else, if x and z constraints are selected
-					else if (m_toolObjectDialogue.GetConstraintX() && m_toolObjectDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::XZ); }
+				//		// If x and y constraints are selected
+				//		if (m_toolObjectDialogue.GetConstraintX() && m_toolObjectDialogue.GetConstraintY()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::XY); }
 
-					// Else, if y and z constraints are selected
-					else if (m_toolObjectDialogue.GetConstraintY() && m_toolObjectDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::YZ); }
+				//		// Else, if x and z constraints are selected
+				//		else if (m_toolObjectDialogue.GetConstraintX() && m_toolObjectDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::XZ); }
 
-					// Else, if only x constraint is selected
-					else if (m_toolObjectDialogue.GetConstraintX()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::X); }
+				//		// Else, if y and z constraints are selected
+				//		else if (m_toolObjectDialogue.GetConstraintY() && m_toolObjectDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::YZ); }
 
-					// Else, if only y constraint is selected
-					else if (m_toolObjectDialogue.GetConstraintY()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::Y); }
+				//		// Else, if only x constraint is selected
+				//		else if (m_toolObjectDialogue.GetConstraintX()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::X); }
 
-					// Else, if only z constraint is selected
-					else if (m_toolObjectDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::Z); }
+				//		// Else, if only y constraint is selected
+				//		else if (m_toolObjectDialogue.GetConstraintY()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::Y); }
 
-					// Else, if no constraints are selected
-					else { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::ALL); }
-				}
-				break;
-				}			
+				//		// Else, if only z constraint is selected
+				//		else if (m_toolObjectDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::Z); }
+
+				//		// Else, if no constraints are selected
+				//		else { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::ALL); }
+				//	}
+				//	break;
+				//	}
+				//}
 			}
-
+						
 			// Else, if landscape editor window is open
-			else if (m_toolLandscapeDialogue.m_active)
 			{
-				// Set editor mode
-				m_toolSystem.SetEditor(m_toolLandscapeDialogue.GetEditor());
+				//else if (m_toolLandscapeDialogue.m_active)
+				//{
+				//	// Set editor mode
+				//	m_toolSystem.SetEditor(m_toolLandscapeDialogue.GetEditor());
 
-				// Switch between editor modes
-				switch (m_toolSystem.GetEditor())
-				{
-				case EDITOR::LANDSCAPE_PAINT:
-				{
-					// If grass paint is selected
-					if (m_toolLandscapeDialogue.GetPaintGrass()) { m_toolSystem.SetLandscapePaint(LANDSCAPE_PAINT::GRASS); }
+				//	// Switch between editor modes
+				//	switch (m_toolSystem.GetEditor())
+				//	{
+				//	case EDITOR::LANDSCAPE_PAINT:
+				//	{
+				//		// If grass paint is selected
+				//		if (m_toolLandscapeDialogue.GetPaintGrass()) { m_toolSystem.SetLandscapePaint(LANDSCAPE_PAINT::GRASS); }
 
-					// Else, if dirt paint is selected
-					else if (m_toolLandscapeDialogue.GetPaintDirt()) { m_toolSystem.SetLandscapePaint(LANDSCAPE_PAINT::DIRT); }
+				//		// Else, if dirt paint is selected
+				//		else if (m_toolLandscapeDialogue.GetPaintDirt()) { m_toolSystem.SetLandscapePaint(LANDSCAPE_PAINT::DIRT); }
 
-					// Else, if sand paint is selected
-					else if (m_toolLandscapeDialogue.GetPaintSand()) { m_toolSystem.SetLandscapePaint(LANDSCAPE_PAINT::SAND); }
-				}
-				break;
-				case EDITOR::LANDSCAPE_SCULPT:
-				{
-					// Set tool editor
-					m_toolSystem.SetLandscapeSculpt(m_toolLandscapeDialogue.GetSculpt());
+				//		// Else, if sand paint is selected
+				//		else if (m_toolLandscapeDialogue.GetPaintSand()) { m_toolSystem.SetLandscapePaint(LANDSCAPE_PAINT::SAND); }
+				//	}
+				//	break;
+				//	case EDITOR::LANDSCAPE_SCULPT:
+				//	{
+				//		// Set tool editor
+				//		m_toolSystem.SetLandscapeSculpt(m_toolLandscapeDialogue.GetSculpt());
 
-					// If x and y constraints are selected
-					if (m_toolLandscapeDialogue.GetConstraintX() && m_toolLandscapeDialogue.GetConstraintY()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::XY); }
+				//		// If x and y constraints are selected
+				//		if (m_toolLandscapeDialogue.GetConstraintX() && m_toolLandscapeDialogue.GetConstraintY()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::XY); }
 
-					// Else, if x and z constraints are selected
-					else if (m_toolLandscapeDialogue.GetConstraintX() && m_toolLandscapeDialogue.GetConstraintZ()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::XZ); }
+				//		// Else, if x and z constraints are selected
+				//		else if (m_toolLandscapeDialogue.GetConstraintX() && m_toolLandscapeDialogue.GetConstraintZ()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::XZ); }
 
-					// Else, if y and z constraints are selected
-					else if (m_toolLandscapeDialogue.GetConstraintY() && m_toolLandscapeDialogue.GetConstraintZ()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::YZ); }
+				//		// Else, if y and z constraints are selected
+				//		else if (m_toolLandscapeDialogue.GetConstraintY() && m_toolLandscapeDialogue.GetConstraintZ()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::YZ); }
 
-					// Else, if only x constraint is selected
-					else if (m_toolLandscapeDialogue.GetConstraintX()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::X); }
+				//		// Else, if only x constraint is selected
+				//		else if (m_toolLandscapeDialogue.GetConstraintX()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::X); }
 
-					// Else, if only y constraint is selected
-					else if (m_toolLandscapeDialogue.GetConstraintY()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::Y); }
+				//		// Else, if only y constraint is selected
+				//		else if (m_toolLandscapeDialogue.GetConstraintY()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::Y); }
 
-					// Else, if only z constraint is selected
-					else if (m_toolLandscapeDialogue.GetConstraintZ()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::Z); }
+				//		// Else, if only z constraint is selected
+				//		else if (m_toolLandscapeDialogue.GetConstraintZ()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::Z); }
 
-					// Else, if no constraints are selected
-					else { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::ALL); }
-				}
-				break;
-				}
+				//		// Else, if no constraints are selected
+				//		else { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::ALL); }
+				//	}
+				//	break;
+				//	}
+				//}
 			}
 
 			// Else, if no editors are open
-			else
+			/*else
 			{
 				m_toolSystem.SetEditor(EDITOR::NA);
-			}
+			}*/
 			
 			// Update tool system
 			m_toolSystem.Tick(&msg);			
@@ -227,6 +242,103 @@ int MFCMain::Run()
 	}
 
 	return (int)msg.wParam;
+}
+
+void MFCMain::CheckDialogues()
+{
+	// If object editor is active
+	if (m_objectEditorDialogue.GetActive())
+	{
+		// Set tool editor
+		m_toolSystem.SetEditor(EDITOR::OBJECT_TRANSFORM);
+
+		// Set transform mode
+		m_toolSystem.SetObjectTransform(m_objectEditorDialogue.GetFunction());
+
+		// If x and y constraints are selected
+		if (m_objectEditorDialogue.GetConstraintX() && m_objectEditorDialogue.GetConstraintY()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::XY); }
+
+		// Else, if x and z constraints are selected
+		else if (m_objectEditorDialogue.GetConstraintX() && m_objectEditorDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::XZ); }
+
+		// Else, if y and z constraints are selected
+		else if (m_objectEditorDialogue.GetConstraintY() && m_objectEditorDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::YZ); }
+
+		// Else, if only x constraint is selected
+		else if (m_objectEditorDialogue.GetConstraintX()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::X); }
+
+		// Else, if only y constraint is selected
+		else if (m_objectEditorDialogue.GetConstraintY()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::Y); }
+
+		// Else, if only z constraint is selected
+		else if (m_objectEditorDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::Z); }
+
+		// Else, if no constraints are selected
+		else { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::ALL); }
+	}
+	
+	// Else, if object spawner is active
+	else if (m_objectSpawnDialogue.GetActive())
+	{
+		// Set tool editor
+		m_toolSystem.SetEditor(EDITOR::OBJECT_SPAWN);
+
+		// Set spawn mode
+		m_toolSystem.SetObjectSpawn(m_objectSpawnDialogue.GetSpawn());
+	}
+
+	// Else, if terrain sculpter is active
+	else if (m_terrainSculptDialogue.GetActive())
+	{
+		// Set tool editor
+		m_toolSystem.SetEditor(EDITOR::LANDSCAPE_SCULPT);
+
+		// Set sculpt mode
+		m_toolSystem.SetLandscapeSculpt(m_terrainSculptDialogue.GetSculpt());
+
+		// If x and y constraints are selected
+		if (m_terrainSculptDialogue.GetConstraintX() && m_terrainSculptDialogue.GetConstraintY()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::XY); }
+
+		// Else, if x and z constraints are selected
+		else if (m_terrainSculptDialogue.GetConstraintX() && m_terrainSculptDialogue.GetConstraintZ()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::XZ); }
+
+		// Else, if y and z constraints are selected
+		else if (m_terrainSculptDialogue.GetConstraintY() && m_terrainSculptDialogue.GetConstraintZ()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::YZ); }
+
+		// Else, if only x constraint is selected
+		else if (m_terrainSculptDialogue.GetConstraintX()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::X); }
+
+		// Else, if only y constraint is selected
+		else if (m_terrainSculptDialogue.GetConstraintY()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::Y); }
+
+		// Else, if only z constraint is selected
+		else if (m_terrainSculptDialogue.GetConstraintZ()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::Z); }
+
+		// Else, if no constraints are selected
+		else { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::ALL); }
+	}
+
+	// Else, if terrain painter is active
+	else if (m_terrainPaintDialogue.GetActive())
+	{
+		// Set tool editor
+		m_toolSystem.SetEditor(EDITOR::LANDSCAPE_PAINT);
+
+		// Set paint mode
+		m_toolSystem.SetLandscapePaint(m_terrainPaintDialogue.GetPaint());
+	}
+
+	// Else, if no dialogues are active
+	else
+	{
+		// Set tool editor
+		m_toolSystem.SetEditor(EDITOR::NA);
+
+		// Set all modes to none
+		m_toolSystem.SetObjectSpawn(OBJECT_SPAWN::NA);
+		m_toolSystem.SetLandscapeSculpt(LANDSCAPE_SCULPT::NA);
+		m_toolSystem.SetLandscapePaint(LANDSCAPE_PAINT::NA);
+	}
 }
 
 void MFCMain::MenuFileQuit()
@@ -282,6 +394,57 @@ void MFCMain::MenuEditWireframeOff()
 void MFCMain::ToolBarButton1()
 {	
 	m_toolSystem.onActionSave();
+}
+
+void MFCMain::ToolBarObjectSpawn()
+{
+	// Destroy other windows
+	m_terrainSculptDialogue.DestroyWindow();
+	m_terrainPaintDialogue.DestroyWindow();
+
+	// Create & display dialogue window
+	m_objectSpawnDialogue.Create(IDD_DIALOG4);
+	m_objectSpawnDialogue.ShowWindow(SW_SHOW);
+	m_objectSpawnDialogue.SetActive(true);
+}
+
+void MFCMain::ToolBarObjectSelect()
+{
+	// Destroy other windows
+	m_objectSpawnDialogue.DestroyWindow();
+	m_terrainSculptDialogue.DestroyWindow();
+	m_terrainPaintDialogue.DestroyWindow();
+
+	// Create & display dialogue window
+	m_objectEditorDialogue.Create(IDD_DIALOG7);
+	m_objectEditorDialogue.ShowWindow(SW_SHOW);
+	m_objectEditorDialogue.SetActive(true);
+}
+
+void MFCMain::ToolBarTerrainSculpt()
+{
+	// Destroy other windows
+	m_objectEditorDialogue.DestroyWindow();
+	m_objectSpawnDialogue.DestroyWindow();
+	m_terrainPaintDialogue.DestroyWindow();
+	
+	// Create & display dialogue window
+	m_terrainSculptDialogue.Create(IDD_DIALOG5);
+	m_terrainSculptDialogue.ShowWindow(SW_SHOW);
+	m_terrainSculptDialogue.SetActive(true);
+}
+
+void MFCMain::ToolBarTerrainPaint()
+{
+	// Destroy other windows
+	m_objectEditorDialogue.DestroyWindow();
+	m_objectSpawnDialogue.DestroyWindow();
+	m_terrainSculptDialogue.DestroyWindow();
+	
+	// Create & display dialogue window
+	m_terrainPaintDialogue.Create(IDD_DIALOG6);
+	m_terrainPaintDialogue.ShowWindow(SW_SHOW);
+	m_terrainPaintDialogue.SetActive(true);
 }
 
 MFCMain::MFCMain()

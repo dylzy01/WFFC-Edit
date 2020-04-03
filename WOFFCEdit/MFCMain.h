@@ -12,6 +12,11 @@
 #include "ObjectDialogue.h"
 #include "LandscapeDialogue.h"
 
+#include "ObjectEditorDialogue.h"
+#include "ObjectSpawnDialogue.h"
+#include "TerrainSculptDialogue.h"
+#include "TerrainPaintDialogue.h"
+
 class MFCMain : public CWinApp 
 {
 public:
@@ -21,6 +26,7 @@ public:
 	int  Run();
 
 private:
+	void CheckDialogues();
 
 	CMyFrame * m_frame;	//handle to the frame where all our UI is
 	HWND m_toolHandle;	//Handle to the MFC window
@@ -30,7 +36,10 @@ private:
 	ObjectDialogue m_toolObjectDialogue;
 	LandscapeDialogue m_toolLandscapeDialogue;
 
-	EDITOR m_mode;	//Local mode controller
+	ObjectEditorDialogue m_objectEditorDialogue;
+	ObjectSpawnDialogue m_objectSpawnDialogue;
+	TerrainSculptDialogue m_terrainSculptDialogue;
+	TerrainPaintDialogue m_terrainPaintDialogue;
 
 	int m_width;		
 	int m_height;
@@ -44,6 +53,10 @@ private:
 	afx_msg void MenuEditWireframeOn();
 	afx_msg void MenuEditWireframeOff();
 	afx_msg	void ToolBarButton1();
+	afx_msg void ToolBarObjectSpawn();
+	afx_msg void ToolBarObjectSelect();
+	afx_msg void ToolBarTerrainSculpt();
+	afx_msg void ToolBarTerrainPaint();
 
 	DECLARE_MESSAGE_MAP()	// required macro for message map functionality  One per class
 };

@@ -23,7 +23,7 @@ public:
 	bool GetActive() { return m_active; }
 	EDITOR GetEditor() { return m_editor; }
 	OBJECT_SPAWN GetSpawn() { return m_spawn; }
-	OBJECT_TRANSFORM GetTransform() { return m_transform; }
+	OBJECT_FUNCTION GetTransform() { return m_transform; }
 	bool GetConstraintX() { return m_x; }
 	bool GetConstraintY() { return m_y; }
 	bool GetConstraintZ() { return m_z; }
@@ -46,7 +46,7 @@ protected:
 	void ResetConstraints() { m_x = m_y = m_z = false; }
 
 	// Enable/disable other functions
-	void UpdateTransform(OBJECT_TRANSFORM function, bool enable);
+	void UpdateTransform(OBJECT_FUNCTION function, bool enable);
 
 	// Enable/disable other spawns
 	void UpdateSpawns(OBJECT_SPAWN spawn, bool enable);
@@ -71,7 +71,7 @@ public:
 	bool m_active = false;
 	EDITOR m_editor = EDITOR::NA;
 	OBJECT_SPAWN m_spawn = OBJECT_SPAWN::NA;
-	OBJECT_TRANSFORM m_transform = OBJECT_TRANSFORM::NA;
+	OBJECT_FUNCTION m_transform = OBJECT_FUNCTION::NA;
 	bool m_x = false, m_y = false, m_z = false;
 
 	DECLARE_MESSAGE_MAP()
