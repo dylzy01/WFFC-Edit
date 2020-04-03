@@ -129,6 +129,22 @@ void Game::Update(DX::StepTimer const& timer)
 	auto light = XMVector3Rotate(DirectX::g_XMOne, quat);
 	m_displayChunk.m_terrainEffect->SetLightDirection(0, light);*/
 	
+	// Loop through all objects
+	//for (int i = 0; i < m_displayList.size(); ++i)
+	//{
+	//	// Offset position based on sine wave
+	//	float yPos = sin(m_displayList[i].m_position.x + (m_deltaTime * 15));
+
+	//	// Modify normals
+	//	float xNorm = 1 - cos(m_displayList[i].m_position.x + m_deltaTime);
+	//	float yNorm = abs(cos(m_displayList[i].m_position.x + m_deltaTime));
+	//	
+	//	// Calculate position of vertex against world, view and projection matrices
+	//	m_displayList[i].m_position.y = yPos;
+	//}
+
+	///m_displayChunk.Wave(m_deltaTime);
+	
 	// Handle all input
 	HandleInput();
 	
@@ -178,19 +194,31 @@ void Game::HandleInput()
 			// Switch between objects to spawn
 			switch (m_objectSpawn)
 			{
-			case OBJECT_SPAWN::CUBE:
+			case OBJECT_SPAWN::GRASS:
 			{
 				// Add new default cube to database at picking point
-				SQL::AddObject(CreateDefaultCube(m_pickingPoint));
+				SQL::AddObject(CreateObject(OBJECT_SPAWN::GRASS, m_pickingPoint));
 
-				// Update scene graph here...
+				// Update scene graph here
+				BuildDisplayList(&m_sceneGraph);
+			}
+			break;
+			case OBJECT_SPAWN::TREE:
+			{
+				// Add new default cube to database at picking point
+				SQL::AddObject(CreateObject(OBJECT_SPAWN::TREE, m_pickingPoint));
+
+				// Update scene graph here
 				BuildDisplayList(&m_sceneGraph);
 			}
 			break;
 			case OBJECT_SPAWN::WATER:
 			{
-				// Add water at picking point...
-				CreateWater(m_pickingPoint);
+				// Add new default cube to database at picking point
+				SQL::AddObject(CreateObject(OBJECT_SPAWN::WATER, m_pickingPoint));
+
+				// Update scene graph here
+				BuildDisplayList(&m_sceneGraph);
 			}
 			break;
 			}
@@ -248,14 +276,14 @@ void Game::HandleInput()
 					}
 					
 					// If current object is intersecting with the ray trace
-					if (ObjectIntersection(i))
+					///if (ObjectIntersection(i))
 					// If picking point has moved
 					///if (m_pickingPoint != m_storedPickingPoint)
 					{
 						// Switch between S, R, T
 						switch (m_objectTransform)
 						{
-						case OBJECT_FUNCTION::SCALE:
+						case OBJECT_TRANSFORM::SCALE:
 						{
 							// If should be scaled on the X and Y axis
 							if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
@@ -315,7 +343,7 @@ void Game::HandleInput()
 							///m_storedObjectScales[i] = m_displayList[m_selectedObjectIDs[i]].m_scale;						
 						}
 						break;
-						case OBJECT_FUNCTION::TRANSLATE:
+						case OBJECT_TRANSFORM::TRANSLATE:
 						{
 							// If should be translated on the X and Y axis
 							if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
@@ -382,7 +410,7 @@ void Game::HandleInput()
 							}
 						}
 						break;
-						case OBJECT_FUNCTION::ROTATE:
+						case OBJECT_TRANSFORM::ROTATE:
 						{
 							// If should be rotated on the X and Y axis
 							if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
@@ -1384,89 +1412,116 @@ DirectX::SimpleMath::Vector3 Game::GetDragPoint(DirectX::SimpleMath::Vector3 * d
 
 // Creation functions...
 
-SceneObject Game::CreateDefaultCube(DirectX::SimpleMath::Vector3 position)
+SceneObject Game::CreateObject(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 position)
 {
 	// Setup temp cube
-	SceneObject cube;
+	SceneObject object;	
 	
-	// Define cube values
-	cube.ID = m_sceneGraph.size() + 1;
-	cube.chunk_ID = 0;
-	cube.model_path = "database/data/placeholder.cmo";
-	cube.tex_diffuse_path = "database/data/placeholder.dds";
-	cube.posX = position.x;
-	cube.posY = position.y;
-	cube.posZ = position.z;
-	cube.rotX = 0.f;
-	cube.rotY = 0.f;
-	cube.rotZ = 0.f;
-	cube.scaX = 1.f;
-	cube.scaY = 1.f;
-	cube.scaZ = 1.f;
-	cube.render = false;
-	cube.collectable = false;
-	cube.collision_mesh = "";
-	cube.collectable = false;
-	cube.destructable = false;
-	cube.health_amount = 0;
-	cube.editor_render = true;
-	cube.editor_texture_vis = true;
-	cube.editor_normals_vis = false;
-	cube.editor_collision_vis = false;
-	cube.editor_pivot_vis = false;
-	cube.pivotX = 0.f;
-	cube.pivotY = 0.f;
-	cube.pivotZ = 0.f;
-	cube.snapToGround = false;
-	cube.AINode = false;
-	cube.audio_path = "";
-	cube.volume = 0.f;
-	cube.pitch = 0.f;
-	cube.pan = 0.f;
-	cube.one_shot = false;
-	cube.play_on_init = false;
-	cube.play_in_editor = false;
-	cube.min_dist = 0.f;
-	cube.max_dist = 0.f;
-	cube.camera = false;
-	cube.path_node = false;
-	cube.path_node_start = false;
-	cube.path_node_end = false;
-	cube.parent_id = 0;
-	cube.editor_wireframe = false;
-	cube.name = "Name";
-	cube.light_type = 1;
-	cube.light_diffuse_r = 2.f;
-	cube.light_diffuse_g = 3.f;
-	cube.light_diffuse_b = 4.f;
-	cube.light_specular_r = 5.f;
-	cube.light_specular_g = 6.f;
-	cube.light_specular_b = 7.f;
-	cube.light_spot_cutoff = 8.f;
-	cube.light_constant = 9.f;
-	cube.light_linear = 0.f;
-	cube.light_quadratic = 1.f;
+	// Define object values
+	object.ID = m_sceneGraph.size() + 1;
+	object.chunk_ID = 0;
+	object.posX = position.x;
+	object.posY = position.y;
+	object.posZ = position.z;
+	object.rotX = 0.f;
+	object.rotY = 0.f;
+	object.rotZ = 0.f;
+	object.scaX = 1.f;
+	object.scaY = 1.f;
+	object.scaZ = 1.f;
+	object.render = false;
+	object.collectable = false;
+	object.collision_mesh = "";
+	object.collectable = false;
+	object.destructable = false;
+	object.health_amount = 0;
+	object.editor_render = true;
+	object.editor_texture_vis = true;
+	object.editor_normals_vis = false;
+	object.editor_collision_vis = false;
+	object.editor_pivot_vis = false;
+	object.pivotX = 0.f;
+	object.pivotY = 0.f;
+	object.pivotZ = 0.f;
+	object.snapToGround = false;
+	object.AINode = false;
+	object.audio_path = "";
+	object.volume = 0.f;
+	object.pitch = 0.f;
+	object.pan = 0.f;
+	object.one_shot = false;
+	object.play_on_init = false;
+	object.play_in_editor = false;
+	object.min_dist = 0.f;
+	object.max_dist = 0.f;
+	object.camera = false;
+	object.path_node = false;
+	object.path_node_start = false;
+	object.path_node_end = false;
+	object.parent_id = 0;
+	object.editor_wireframe = false;
+	object.name = "Name";
+	object.light_type = 1;
+	object.light_diffuse_r = 2.f;
+	object.light_diffuse_g = 3.f;
+	object.light_diffuse_b = 4.f;
+	object.light_specular_r = 5.f;
+	object.light_specular_g = 6.f;
+	object.light_specular_b = 7.f;
+	object.light_spot_cutoff = 8.f;
+	object.light_constant = 9.f;
+	object.light_linear = 0.f;
+	object.light_quadratic = 1.f;
 
-	// Add default cube to scene graph
-	m_sceneGraph.push_back(cube);
+	// Switch between spawn
+	switch (spawn)
+	{
+	case OBJECT_SPAWN::GRASS:
+	{
+		// Set model to grass
+		object.model_path = "database/data/grass.cmo";
+		object.tex_diffuse_path = "database/data/grass.dds";
+	}
+	break;
+	case OBJECT_SPAWN::TREE:
+	{
+		// Set model to tree
+		object.model_path = "database/data/tree.cmo";
+		object.tex_diffuse_path = "database/data/tree.dds";
+	}
+	break;
+	case OBJECT_SPAWN::WATER:
+	{
+		// Set model to water
+		object.model_path = "database/data/water.cmo";
+		object.tex_diffuse_path = "database/data/water.dds";
+		m_waterIDs.push_back(object.ID);
+	}
+	break;
+	}
+
+	// Add object to scene graph
+	m_sceneGraph.push_back(object);
 	
-	// Return default cube
-	return cube;
+	// Return object
+	return object;
 }
 
 Water Game::CreateWater(DirectX::SimpleMath::Vector3 position)
 {
+	// Setup water
+	Water water;
+	
 	// Setup cube
 	///m_shapes.push_back(GeometricPrimitive::CreateBox(m_deviceResources->GetD3DDeviceContext(), { 5.f, 5.f, 5.f }));
 	///m_shapes.push_back(GeometricPrimitive::CreateBox(m_deviceResources->GetD3DDeviceContext(), { -5.f, -5.f, -5.f }));
-	m_shapes.push_back(GeometricPrimitive::CreateBox(m_deviceResources->GetD3DDeviceContext(), { 5.f, 5.f, 5.f }, false));
-
-	// Setup water
-	Water water;
-
+	///m_shapes.push_back(GeometricPrimitive::CreateBox(m_deviceResources->GetD3DDeviceContext(), { 5.f, 5.f, 5.f }, false));
+	
 	///m_shape = GeometricPrimitive::CreateSphere(m_deviceResources->GetD3DDeviceContext());	
 	///m_shape = GeometricPrimitive::CreateBox(m_deviceResources->GetD3DDeviceContext(), { 5.f, 5.f, 5.f });
-	m_waterPositions.push_back(position);
+	///m_waterPositions.push_back(position);
+
+	///DirectX::SimpleMath::Plane plane(position, 0);
 
 	if (!m_spawnWater) { m_spawnWater = true; }
 	

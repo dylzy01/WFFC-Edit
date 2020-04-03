@@ -20,11 +20,10 @@ public:
 	void SetObjectData(std::vector<SceneObject>* sceneGraph, std::vector<int> * objects);	
 
 	// Getters
-	bool GetSpawnCube() { return m_cube; }
-	bool GetSpawnWater() { return m_water; }
-	bool GetFunctionTranslate() { return m_translate; }
-	bool GetFunctionRotate() { return m_rotate; }
-	bool GetFunctionScale() { return m_scale; }
+	bool GetActive() { return m_active; }
+	EDITOR GetEditor() { return m_editor; }
+	OBJECT_SPAWN GetSpawn() { return m_spawn; }
+	OBJECT_TRANSFORM GetTransform() { return m_transform; }
 	bool GetConstraintX() { return m_x; }
 	bool GetConstraintY() { return m_y; }
 	bool GetConstraintZ() { return m_z; }
@@ -47,7 +46,7 @@ protected:
 	void ResetConstraints() { m_x = m_y = m_z = false; }
 
 	// Enable/disable other functions
-	void UpdateFunctions(OBJECT_FUNCTION function, bool enable);
+	void UpdateTransform(OBJECT_TRANSFORM function, bool enable);
 
 	// Enable/disable other spawns
 	void UpdateSpawns(OBJECT_SPAWN spawn, bool enable);
@@ -58,7 +57,8 @@ protected:
 
 public:
 	afx_msg void OnBnClickedOk();
-	afx_msg void OnBnClickedCube();
+	afx_msg void OnBnClickedGrass();
+	afx_msg void OnBnClickedTree();
 	afx_msg void OnBnClickedWater();
 	afx_msg void OnBnClickedScale();
 	afx_msg void OnBnClickedTranslate();
@@ -68,9 +68,10 @@ public:
 	afx_msg void OnBnClickedZ();
 
 	// Controllers
-	bool m_active = false, m_spawn = false;
-	bool m_cube = false, m_water = false;
-	bool m_translate = false, m_rotate = false, m_scale = false;
+	bool m_active = false;
+	EDITOR m_editor = EDITOR::NA;
+	OBJECT_SPAWN m_spawn = OBJECT_SPAWN::NA;
+	OBJECT_TRANSFORM m_transform = OBJECT_TRANSFORM::NA;
 	bool m_x = false, m_y = false, m_z = false;
 
 	DECLARE_MESSAGE_MAP()

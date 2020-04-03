@@ -18,12 +18,10 @@ public:
 
 	// Getters
 	EDITOR GetEditor() { return m_editor; }
+	LANDSCAPE_SCULPT GetSculpt() { return m_sculpt; }
 	bool GetPaintGrass() { return m_grass; }
 	bool GetPaintDirt() { return m_dirt; }
 	bool GetPaintSand() { return m_sand; }
-	bool GetSculptIncrease() { return m_increase; }
-	bool GetSculptDecrease() { return m_decrease; }
-	bool GetSculptFlatten() { return m_flatten; }
 	bool GetConstraintX() { return m_x; }
 	bool GetConstraintY() { return m_y; }
 	bool GetConstraintZ() { return m_z; }
@@ -69,9 +67,9 @@ public:
 
 	// Controllers
 	EDITOR m_editor = EDITOR::NA;
+	LANDSCAPE_SCULPT m_sculpt = LANDSCAPE_SCULPT::NA;
 	bool m_active = false;
 	bool m_grass = false, m_dirt = false, m_sand = false;
-	bool m_increase = false, m_decrease = false, m_flatten = false;
 	bool m_x = false, m_y = false, m_z = false;
 
 	DECLARE_MESSAGE_MAP()

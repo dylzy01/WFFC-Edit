@@ -18,6 +18,26 @@ DisplayChunk::~DisplayChunk()
 {
 }
 
+void DisplayChunk::Wave(float deltaTime)
+{
+	/*for (int i = 0; i < TERRAINRESOLUTION - 1; ++i)
+	{
+		for (int j = 0; j < TERRAINRESOLUTION - 1; ++j)
+		{			
+			m_terrainGeometry[i][j].position.y = sin(m_terrainGeometry[i][j].position.x + (deltaTime * 100.f));
+
+			m_terrainGeometry[i][j].normal.x = 1 - cos(m_terrainGeometry[i][j].position.x + (deltaTime * 100.f));
+			m_terrainGeometry[i][j].normal.y = abs(cos(m_terrainGeometry[i][j].position.x + (deltaTime * 100.f)));
+
+			///m_terrainGeometry[i][j].position = DirectX::
+		}
+	}*/
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Read #1 and #2 of the Lab >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+}
+
 void DisplayChunk::PopulateChunkData(ChunkObject * SceneChunk)
 {
 	m_name = SceneChunk->name;
@@ -336,7 +356,7 @@ void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint, bool checkS
 	CheckForDuplicates(i, j, paint);
 
 	// Blend surrounding geometry paints
-	if (checkSurroundings) { CheckSurroundings(i, j, paint); }
+	///if (checkSurroundings) { CheckSurroundings(i, j, paint); }
 
 	// Switch between paints
 	switch (paint)
@@ -350,6 +370,55 @@ void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint, bool checkS
 
 void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_SCULPT sculpt, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position)
 {
+	// Store starting vertex
+	//Vector3 start = m_terrainGeometry[row][column].position; 
+
+	//// Store other vertices of quad
+	//std::vector<Vector3> others;
+	//others.push_back(m_terrainGeometry[row][column + 1].position);
+	//others.push_back(m_terrainGeometry[row + 1][column + 1].position);
+	//others.push_back(m_terrainGeometry[row + 1][column].position);
+
+	//// Store distances between start and other vertices
+	//std::vector<float> distances;
+	//for (int i = 0; i < others.size(); ++i)
+	//{
+	//	float dist = sqrt(
+	//		(start.x - others[i].x) * (start.x - others[i].x) +
+	//		(start.y - others[i].y) * (start.y - others[i].y) +
+	//		(start.z - others[i].z) * (start.z - others[i].z));
+	//	distances.push_back(dist);
+	//}
+	//	
+	//// Loop through distances
+	//for (int i = 0; i < distances.size(); ++i)
+	//{
+	//	// Divide each distance to put in 0,1 interval
+	//	distances[i] = (distances[i] * 2.f) - 1.f;
+
+	//	// Plug into cosine
+	//	distances[i] = sin(distances[i]);
+
+	//	///cos(m_terrainGeometry[i][j].position.x + (deltaTime * 100.f))
+	//}
+
+	//// Test
+	//if (sculpt == LANDSCAPE_SCULPT::INCREASE)
+	//{
+	//	switch (constraint)
+	//	{
+	//	case LANDSCAPE_CONSTRAINT::Y:
+	//	{
+	//		// Increase position
+	//		m_terrainGeometry[row][column].position.y += 1.f;
+	//		m_terrainGeometry[row][column + 1].position.y += distances[0];
+	//		m_terrainGeometry[row + 1][column + 1].position.y += distances[1];
+	//		m_terrainGeometry[row + 1][column].position.y += distances[2];
+	//	}
+	//	break;
+	//	}
+	//}
+	
 	// Switch between sculpt parameter
 	switch (sculpt)
 	{

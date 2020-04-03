@@ -32,64 +32,58 @@ void ObjectDialogue::DoDataExchange(CDataExchange* pDX)
 }
 
 // Enable/disable other functions
-void ObjectDialogue::UpdateFunctions(OBJECT_FUNCTION function, bool enable)
+void ObjectDialogue::UpdateTransform(OBJECT_TRANSFORM transform, bool enable)
 {
+	if (enable) { m_transform = OBJECT_TRANSFORM::NA; }
+	else { m_transform = transform; }
+	
 	// Switch between functions
-	switch (function)
+	switch (transform)
 	{
-	case OBJECT_FUNCTION::NA:
+	case OBJECT_TRANSFORM::NA:
 	{
 		// Enable/disable translate function
-		m_translate = enable;
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
 		GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
 
 		// Enable/disable rotate function
-		m_rotate = enable;
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
 		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
 
 		// Enable/disable scale function
-		m_scale = enable;
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
 		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 	}
 	break;
-	case OBJECT_FUNCTION::TRANSLATE:
+	case OBJECT_TRANSFORM::TRANSLATE:
 	{
 		// Enable/disable rotate function
-		m_rotate = enable;
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
 		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
 
 		// Enable/disable scale function
-		m_scale = enable;
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
 		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 	}
 	break;
-	case OBJECT_FUNCTION::ROTATE:
+	case OBJECT_TRANSFORM::ROTATE:
 	{
 		// Enable/disable translate function
-		m_translate = enable;
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
 		GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
 
 		// Enable/disable scale function
-		m_scale = enable;
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
 		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 	}
 	break;
-	case OBJECT_FUNCTION::SCALE:
+	case OBJECT_TRANSFORM::SCALE:
 	{
 		// Enable/disable translate function
-		m_translate = enable;
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
 		GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
 
 		// Enable/disable rotate function
-		m_rotate = enable;
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
 		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
 	}
@@ -100,23 +94,43 @@ void ObjectDialogue::UpdateFunctions(OBJECT_FUNCTION function, bool enable)
 // Enable/disable other spawns
 void ObjectDialogue::UpdateSpawns(OBJECT_SPAWN spawn, bool enable)
 {
+	if (enable) { m_spawn = OBJECT_SPAWN::NA; }
+	else { m_spawn = spawn; }
+	
 	// Switch between spawns
 	switch (spawn)
 	{
-	case OBJECT_SPAWN::CUBE:
+	case OBJECT_SPAWN::GRASS:
 	{
+		// Enable/disable tree spawn
+		if (!enable) { CheckDlgButton(IDC_CHECK10, enable); }
+		GetDlgItem(IDC_CHECK10)->EnableWindow(enable);
+		
 		// Enable/disable water spawn
-		m_water = enable;
+		if (!enable) { CheckDlgButton(IDC_CHECK11, enable); }
+		GetDlgItem(IDC_CHECK11)->EnableWindow(enable);
+	}
+	break;
+	case OBJECT_SPAWN::TREE:
+	{
+		// Enable/disable grass spawn
+		if (!enable) { CheckDlgButton(IDC_CHECK9, enable); }
+		GetDlgItem(IDC_CHECK9)->EnableWindow(enable);
+
+		// Enable/disable water spawn
 		if (!enable) { CheckDlgButton(IDC_CHECK11, enable); }
 		GetDlgItem(IDC_CHECK11)->EnableWindow(enable);
 	}
 	break;
 	case OBJECT_SPAWN::WATER:
 	{
-		// Enable/disable cube spawn
-		m_cube = enable;
+		// Enable/disable grass spawn
 		if (!enable) { CheckDlgButton(IDC_CHECK9, enable); }
 		GetDlgItem(IDC_CHECK9)->EnableWindow(enable);
+
+		// Enable/disable tree spawn
+		if (!enable) { CheckDlgButton(IDC_CHECK10, enable); }
+		GetDlgItem(IDC_CHECK10)->EnableWindow(enable);
 	}
 	break;
 	}
@@ -125,7 +139,8 @@ void ObjectDialogue::UpdateSpawns(OBJECT_SPAWN spawn, bool enable)
 BEGIN_MESSAGE_MAP(ObjectDialogue, CDialogEx)
 	ON_COMMAND(IDOK, &ObjectDialogue::End)
 	ON_BN_CLICKED(IDOK, &ObjectDialogue::OnBnClickedOk)
-	ON_BN_CLICKED(IDC_CHECK9, &ObjectDialogue::OnBnClickedCube)
+	ON_BN_CLICKED(IDC_CHECK9, &ObjectDialogue::OnBnClickedGrass)
+	ON_BN_CLICKED(IDC_CHECK10, &ObjectDialogue::OnBnClickedTree)
 	ON_BN_CLICKED(IDC_CHECK11, &ObjectDialogue::OnBnClickedWater)
 	ON_BN_CLICKED(IDC_CHECK8, &ObjectDialogue::OnBnClickedScale)
 	ON_BN_CLICKED(IDC_CHECK6, &ObjectDialogue::OnBnClickedTranslate)
@@ -141,46 +156,78 @@ END_MESSAGE_MAP()
 // Destroy window & set unactive
 void ObjectDialogue::End()
 {
-	m_active = m_translate = m_rotate = m_scale = false;
+	m_active = false;
+	ResetConstraints();
 	DestroyWindow();
 }
 
+// Close window
 void ObjectDialogue::OnBnClickedOk()
 {
 	// Parent
 	CDialogEx::OnOK();
 
-	// Save object manipulation...
+	// Save object manipulation... ?
+
+	// End window
+	End();
 }
 
-// Set spawn to cube
-void ObjectDialogue::OnBnClickedCube()
+// Set spawn to grass
+void ObjectDialogue::OnBnClickedGrass()
 {
 	// Set spawning
-	m_spawn = true;
-
-	// Check/uncheck button
-	m_cube = IsDlgButtonChecked(IDC_CHECK9);
+	m_editor = EDITOR::OBJECT_SPAWN;
 	
 	// Switch between checked/unchecked
-	switch (m_cube)
+	switch (IsDlgButtonChecked(IDC_CHECK9))
 	{
 	case true:
 	{
 		// Uncheck & disable other spawns
-		UpdateSpawns(OBJECT_SPAWN::CUBE, false);
+		UpdateSpawns(OBJECT_SPAWN::GRASS, false);
 
 		// Uncheck & disable other functions
-		UpdateFunctions(OBJECT_FUNCTION::NA, false);
+		UpdateTransform(OBJECT_TRANSFORM::NA, false);
 	}
 	break;
 	case false:
 	{		
 		// Enable other spawns
-		UpdateSpawns(OBJECT_SPAWN::CUBE, true);
+		UpdateSpawns(OBJECT_SPAWN::GRASS, true);
 
 		// Enable other functions
-		UpdateFunctions(OBJECT_FUNCTION::NA, true);
+		UpdateTransform(OBJECT_TRANSFORM::NA, true);
+	}
+	break;
+	}
+}
+
+// Set spawn to tree
+void ObjectDialogue::OnBnClickedTree()
+{
+	// Set spawning
+	m_editor = EDITOR::OBJECT_SPAWN;
+
+	// Switch between check/unchecked
+	switch (IsDlgButtonChecked(IDC_CHECK10))
+	{
+	case true:
+	{
+		// Uncheck & disable other spawns
+		UpdateSpawns(OBJECT_SPAWN::TREE, false);
+
+		// Uncheck & disable other functions
+		UpdateTransform(OBJECT_TRANSFORM::NA, false);
+	}
+	break;
+	case false:
+	{
+		// Enable other spawns
+		UpdateSpawns(OBJECT_SPAWN::TREE, true);
+
+		// Enable other functions
+		UpdateTransform(OBJECT_TRANSFORM::NA, true);
 	}
 	break;
 	}
@@ -190,13 +237,10 @@ void ObjectDialogue::OnBnClickedCube()
 void ObjectDialogue::OnBnClickedWater()
 {
 	// Set spawning
-	m_spawn = true;
-
-	// Check/uncheck button
-	m_water = IsDlgButtonChecked(IDC_CHECK11);
+	m_editor = EDITOR::OBJECT_SPAWN;
 
 	// Switch between check/unchecked
-	switch (m_water)
+	switch (IsDlgButtonChecked(IDC_CHECK11))
 	{
 	case true:
 	{
@@ -204,7 +248,7 @@ void ObjectDialogue::OnBnClickedWater()
 		UpdateSpawns(OBJECT_SPAWN::WATER, false);
 
 		// Uncheck & disable other functions
-		UpdateFunctions(OBJECT_FUNCTION::NA, false);
+		UpdateTransform(OBJECT_TRANSFORM::NA, false);
 	}
 	break;
 	case false:
@@ -213,7 +257,7 @@ void ObjectDialogue::OnBnClickedWater()
 		UpdateSpawns(OBJECT_SPAWN::WATER, true);
 
 		// Enable other functions
-		UpdateFunctions(OBJECT_FUNCTION::NA, true);
+		UpdateTransform(OBJECT_TRANSFORM::NA, true);
 	}
 	break;
 	}
@@ -222,31 +266,25 @@ void ObjectDialogue::OnBnClickedWater()
 // Set object manipulation to scaling
 void ObjectDialogue::OnBnClickedScale()
 {
-	// Set not spawning
-	m_spawn = false;
+	// Set transforming
+	m_editor = EDITOR::OBJECT_TRANSFORM;
 	
 	// Switch between checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK8))
 	{
 	case true:
 	{
-		// Check button
-		m_scale = true;
-
 		// Uncheck & disable other functions
-		UpdateFunctions(OBJECT_FUNCTION::SCALE, false);
+		UpdateTransform(OBJECT_TRANSFORM::SCALE, false);
 	}
 	break;
 	case false:
 	{
-		// Uncheck button
-		m_scale = false;
-
 		// Uncheck any active constraints
 		ResetConstraints();
 
 		// Enable other functions
-		UpdateFunctions(OBJECT_FUNCTION::SCALE, true);
+		UpdateTransform(OBJECT_TRANSFORM::SCALE, true);
 	}
 	break;
 	}
@@ -255,31 +293,25 @@ void ObjectDialogue::OnBnClickedScale()
 // Set object manipulation to translating
 void ObjectDialogue::OnBnClickedTranslate()
 {
-	// Set not spawning
-	m_spawn = false;
+	// Set transforming
+	m_editor = EDITOR::OBJECT_TRANSFORM;
 	
 	// Switch between checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK6))
 	{
 	case true:
 	{
-		// Check button
-		m_translate = true;
-
 		// Uncheck & disable other functions
-		UpdateFunctions(OBJECT_FUNCTION::TRANSLATE, false);
+		UpdateTransform(OBJECT_TRANSFORM::TRANSLATE, false);
 	}
 	break;
 	case false:
 	{
-		// Uncheck button
-		m_translate = false;
-
 		// Uncheck any active constraints
 		ResetConstraints();
 
 		// Enable other functions
-		UpdateFunctions(OBJECT_FUNCTION::TRANSLATE, true);
+		UpdateTransform(OBJECT_TRANSFORM::TRANSLATE, true);
 	}
 	break;
 	}
@@ -288,31 +320,25 @@ void ObjectDialogue::OnBnClickedTranslate()
 // Set object manipulation to rotating
 void ObjectDialogue::OnBnClickedRotate()
 {
-	// Set not spawning
-	m_spawn = false;
+	// Set transforming
+	m_editor = EDITOR::OBJECT_TRANSFORM;
 	
 	// Switch between checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK7))
 	{
 	case true:
 	{
-		// Check button
-		m_rotate = true;
-
 		// Uncheck & disable other functions
-		UpdateFunctions(OBJECT_FUNCTION::ROTATE, false);
+		UpdateTransform(OBJECT_TRANSFORM::ROTATE, false);
 	}
 	break;
 	case false:
 	{
-		// Uncheck button
-		m_rotate = false;
-
 		// Uncheck any active constraints
 		ResetConstraints();
 
 		// Enable other functions
-		UpdateFunctions(OBJECT_FUNCTION::ROTATE, true);
+		UpdateTransform(OBJECT_TRANSFORM::ROTATE, true);
 	}
 	break;
 	}
@@ -321,8 +347,8 @@ void ObjectDialogue::OnBnClickedRotate()
 // Constrain object manipulation to X axis
 void ObjectDialogue::OnBnClickedX()
 {
-	// Set not spawning
-	m_spawn = false;
+	// Set transforming
+	m_editor = EDITOR::OBJECT_TRANSFORM;
 	
 	// Check/uncheck constraint
 	m_x = IsDlgButtonChecked(IDC_CHECK3);
@@ -331,8 +357,8 @@ void ObjectDialogue::OnBnClickedX()
 // Constrain object manipulation to Y axis
 void ObjectDialogue::OnBnClickedY()
 {
-	// Set not spawning
-	m_spawn = false;
+	// Set transforming
+	m_editor = EDITOR::OBJECT_TRANSFORM;
 	
 	// Check/uncheck constraint
 	m_y = IsDlgButtonChecked(IDC_CHECK4);
@@ -341,8 +367,8 @@ void ObjectDialogue::OnBnClickedY()
 // Constrain object manipulation to Z axis
 void ObjectDialogue::OnBnClickedZ()
 {
-	// Set not spawning
-	m_spawn = false;
+	// Set transforming
+	m_editor = EDITOR::OBJECT_TRANSFORM;
 	
 	// Check/uncheck constraint
 	m_z = IsDlgButtonChecked(IDC_CHECK5);

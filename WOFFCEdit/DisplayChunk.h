@@ -11,6 +11,7 @@ class DisplayChunk
 public:
 	DisplayChunk();
 	~DisplayChunk();
+	void Wave(float deltaTime);
 	void PopulateChunkData(ChunkObject * SceneChunk);
 	void RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResources);
 	void InitialiseBatch();	//initial setup, base coordinates etc based on scale

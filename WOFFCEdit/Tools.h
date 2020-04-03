@@ -20,11 +20,12 @@ enum class EDITOR {
 
 enum class OBJECT_SPAWN {
 	NA,
-	CUBE,
+	GRASS,
+	TREE,
 	WATER
 };
 
-enum class OBJECT_FUNCTION {
+enum class OBJECT_TRANSFORM {
 	NA,
 	SELECT,
 	SCALE,

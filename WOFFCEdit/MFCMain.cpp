@@ -119,34 +119,22 @@ int MFCMain::Run()
 			// If object editor window is open
 			if (m_toolObjectDialogue.m_active)
 			{
-				// Switch between spawning/not spawning
-				switch (m_toolObjectDialogue.m_spawn)
-				{
-				case true:
-				{
-					// Set editor mode to object spawning
-					m_toolSystem.SetEditor(EDITOR::OBJECT_SPAWN);
-
-					// If cube spawn is selected
-					if (m_toolObjectDialogue.GetSpawnCube()) { m_toolSystem.SetObjectSpawn(OBJECT_SPAWN::CUBE); }
+				// Set editor mode
+				m_toolSystem.SetEditor(m_toolObjectDialogue.GetEditor());
 				
-					// Else, if water spawn is selected
-					else if (m_toolObjectDialogue.GetSpawnWater()) { m_toolSystem.SetObjectSpawn(OBJECT_SPAWN::WATER); }
+				// Switch between spawning/transforming
+				switch (m_toolObjectDialogue.GetEditor())
+				{
+				case EDITOR::OBJECT_SPAWN:
+				{
+					// Set object spawn to specific spawn
+					m_toolSystem.SetObjectSpawn(m_toolObjectDialogue.GetSpawn());
 				}
 				break;
-				case false:
+				case EDITOR::OBJECT_TRANSFORM:
 				{
-					// Set editor mode to object transforming
-					m_toolSystem.SetEditor(EDITOR::OBJECT_TRANSFORM);
-
-					// If translate function is selected
-					if (m_toolObjectDialogue.GetFunctionTranslate()) { m_toolSystem.SetObjectTransform(OBJECT_FUNCTION::TRANSLATE); }
-
-					// Else, if rotate function is selected
-					else if (m_toolObjectDialogue.GetFunctionRotate()) { m_toolSystem.SetObjectTransform(OBJECT_FUNCTION::ROTATE); }
-
-					// Else, if scale function is selected
-					else if (m_toolObjectDialogue.GetFunctionScale()) { m_toolSystem.SetObjectTransform(OBJECT_FUNCTION::SCALE); }
+					// Set transform function
+					m_toolSystem.SetObjectTransform(m_toolObjectDialogue.GetTransform());
 
 					// If x and y constraints are selected
 					if (m_toolObjectDialogue.GetConstraintX() && m_toolObjectDialogue.GetConstraintY()) { m_toolSystem.SetObjectConstraint(OBJECT_CONSTRAINT::XY); }
@@ -196,14 +184,8 @@ int MFCMain::Run()
 				break;
 				case EDITOR::LANDSCAPE_SCULPT:
 				{
-					// If increase sculpt is selected
-					if (m_toolLandscapeDialogue.GetSculptIncrease()) { m_toolSystem.SetLandscapeSculpt(LANDSCAPE_SCULPT::INCREASE); }
-
-					// Else, if decrease sculpt is selected
-					else if (m_toolLandscapeDialogue.GetSculptDecrease()) { m_toolSystem.SetLandscapeSculpt(LANDSCAPE_SCULPT::DECREASE); }
-
-					// Else, if flatten sculpt is selecteed
-					else if (m_toolLandscapeDialogue.GetSculptFlatten()) { m_toolSystem.SetLandscapeSculpt(LANDSCAPE_SCULPT::FLATTEN); }
+					// Set tool editor
+					m_toolSystem.SetLandscapeSculpt(m_toolLandscapeDialogue.GetSculpt());
 
 					// If x and y constraints are selected
 					if (m_toolLandscapeDialogue.GetConstraintX() && m_toolLandscapeDialogue.GetConstraintY()) { m_toolSystem.SetLandscapeConstraint(LANDSCAPE_CONSTRAINT::XY); }

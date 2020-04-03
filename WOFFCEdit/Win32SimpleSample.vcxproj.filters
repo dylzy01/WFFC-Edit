@@ -143,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="..\Tree_1.mtl.mtl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Win32SimpleSample.rc">
