@@ -194,34 +194,16 @@ void Game::HandleInput()
 			// Switch between objects to spawn
 			switch (m_objectSpawn)
 			{
-			case OBJECT_SPAWN::GRASS:
-			{
-				// Add new default cube to database at picking point
-				SQL::AddObject(CreateObject(OBJECT_SPAWN::GRASS, m_pickingPoint));
+			// Spawn grass at picking point
+			case OBJECT_SPAWN::GRASS: SQL::AddObject(CreateObject(OBJECT_SPAWN::GRASS, m_pickingPoint)); break;
+			// Spawn a tree at picking point
+			case OBJECT_SPAWN::TREE: SQL::AddObject(CreateObject(OBJECT_SPAWN::TREE, m_pickingPoint)); break;
+			// Spawn water at picking point
+			case OBJECT_SPAWN::WATER: SQL::AddObject(CreateObject(OBJECT_SPAWN::WATER, m_pickingPoint)); break;
+			}
 
-				// Update scene graph here
-				BuildDisplayList(&m_sceneGraph);
-			}
-			break;
-			case OBJECT_SPAWN::TREE:
-			{
-				// Add new default cube to database at picking point
-				SQL::AddObject(CreateObject(OBJECT_SPAWN::TREE, m_pickingPoint));
-
-				// Update scene graph here
-				BuildDisplayList(&m_sceneGraph);
-			}
-			break;
-			case OBJECT_SPAWN::WATER:
-			{
-				// Add new default cube to database at picking point
-				SQL::AddObject(CreateObject(OBJECT_SPAWN::WATER, m_pickingPoint));
-
-				// Update scene graph here
-				BuildDisplayList(&m_sceneGraph);
-			}
-			break;
-			}
+			// Update scene graph
+			BuildDisplayList(&m_sceneGraph);
 		}
 	}
 	break;
@@ -955,13 +937,13 @@ void Game::BuildDisplayChunk(ChunkObject * SceneChunk, std::vector<DirectX::Simp
 	m_displayChunk.InitialiseBatch();
 	
 	// Initialise default texture across all geometry
-	for (int i = 0; i < TERRAINRESOLUTION - 1; ++i)
+	/*for (int i = 0; i < TERRAINRESOLUTION - 1; ++i)
 	{
 		for (int j = 0; j < TERRAINRESOLUTION - 1; ++j)
 		{
 			m_displayChunk.PaintTerrain(i, j, LANDSCAPE_PAINT::GRASS);
 		}
-	}
+	}*/
 }
 
 void Game::SaveDisplayChunk(ChunkObject * SceneChunk)

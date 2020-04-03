@@ -215,7 +215,6 @@
       <DeploymentContent>true</DeploymentContent>
       <FileType>Document</FileType>
     </Media>
-    <None Include="..\Tree_1.mtl.mtl" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

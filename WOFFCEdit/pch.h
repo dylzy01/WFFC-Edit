@@ -42,6 +42,13 @@
 #include <memory>
 #include <stdexcept>
 
+#include <string>
+#include <fstream>
+#include <vector>
+#include <sstream>
+#include <stdexcept>
+#include <iostream>
+
 //#include <stdio.h>
 
 #ifdef DXTK_AUDIO

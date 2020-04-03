@@ -74,7 +74,9 @@
     <ClCompile Include="LandscapeDialogue.cpp">
       <Filter>MFC</Filter>
     </ClCompile>
-    <ClCompile Include="Water.cpp" />
+    <ClCompile Include="Water.cpp">
+      <Filter>Custom</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -139,11 +141,12 @@
     <ClInclude Include="LandscapeDialogue.h">
       <Filter>MFC</Filter>
     </ClInclude>
-    <ClInclude Include="Water.h" />
+    <ClInclude Include="Water.h">
+      <Filter>Custom</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="..\Tree_1.mtl.mtl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Win32SimpleSample.rc">

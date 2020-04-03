@@ -208,27 +208,6 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 
-	// Load first blend texture
-	std::wstring blend_1 = StringToWCHART("database/data/grassDirt.dds");
-	HRESULT rsb1;
-	rsb1 = CreateDDSTextureFromFile(device, blend_1.c_str(), NULL, &m_texture_blend_1_2);
-
-	//////////////////////////////////////////////////////////////////////////////////////////
-
-	// Load second blend texture
-	std::wstring blend_2 = StringToWCHART("database/data/grassSand.dds");
-	HRESULT rsb2;
-	rsb2 = CreateDDSTextureFromFile(device, blend_1.c_str(), NULL, &m_texture_blend_1_3);
-
-	//////////////////////////////////////////////////////////////////////////////////////////
-
-	// Load first blend texture
-	std::wstring blend_3 = StringToWCHART("database/data/dirtSand.dds");
-	HRESULT rsb3;
-	rsb3 = CreateDDSTextureFromFile(device, blend_1.c_str(), NULL, &m_texture_blend_2_3);
-	
-	//////////////////////////////////////////////////////////////////////////////////////////
-
 	//load the default texture
 	std::wstring diffuse = StringToWCHART(m_tex_diffuse_path);
 	HRESULT rs0;
@@ -303,6 +282,11 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 	m_terrainBlendTwo->SetLightingEnabled(true);
 	m_terrainBlendTwo->SetTextureEnabled(true);
 	m_terrainBlendTwo->SetAlpha(.5f);*/
+
+	// Load all paints
+	ReadPaints("database/grass.csv", m_grass);
+	ReadPaints("database/dirt.csv", m_dirt);
+	ReadPaints("database/sand.csv", m_sand);
 }
 
 void DisplayChunk::SaveHeightMap()
@@ -312,20 +296,35 @@ void DisplayChunk::SaveHeightMap()
 		m_heightMap[i] = 0;
 	}*/
 
-	FILE *pFile = NULL;
-
-	// Open The File In Read / Binary Mode.
-	pFile = fopen(m_heightmap_path.c_str(), "wb+");;
-	// Check To See If We Found The File And Could Open It
-	if (pFile == NULL)
+	// Height map
 	{
-		// Display Error Message And Stop The Function
-		MessageBox(NULL, L"Can't Find The Height Map!", L"Error", MB_OK);
-		return;
+		FILE *pFile = NULL;
+
+		// Open The File In Read / Binary Mode.
+		pFile = fopen(m_heightmap_path.c_str(), "wb+");;
+		// Check To See If We Found The File And Could Open It
+		if (pFile == NULL)
+		{
+			// Display Error Message And Stop The Function
+			MessageBox(NULL, L"Can't Find The Height Map!", L"Error", MB_OK);
+			return;
+		}
+
+		fwrite(m_heightMap, 1, TERRAINRESOLUTION*TERRAINRESOLUTION, pFile);
+		fclose(pFile);
 	}
 
-	fwrite(m_heightMap, 1, TERRAINRESOLUTION*TERRAINRESOLUTION, pFile);
-	fclose(pFile);	
+	// Paints
+	{
+		// Grass
+		SavePaints("database/grass.csv", m_grass);
+
+		// Dirt
+		SavePaints("database/dirt.csv", m_dirt);
+
+		// Sand
+		SavePaints("database/sand.csv", m_sand);
+	}
 }
 
 void DisplayChunk::UpdateTerrain()
@@ -1286,6 +1285,106 @@ LANDSCAPE_PAINT DisplayChunk::CheckPaint(int row, int column)
 
 	// Else, return default paint
 	else { return LANDSCAPE_PAINT::NA; }
+}
+
+void DisplayChunk::SavePaints(std::string path, std::vector<std::pair<int, int>> vector)
+{
+	// Create output filestream object
+	std::ofstream file(path);
+	
+	// Loop through terrain
+	for (int i = 0; i < vector.size(); ++i)
+	{
+		// Store row, column & paint
+		file << vector[i].first << ",";
+		file << vector[i].second << "\n";
+	}
+
+	// Close file
+	file.close();
+}
+
+void DisplayChunk::ReadPaints(std::string path, std::vector<std::pair<int, int>> &vector)
+{
+	// Create input filestream
+	std::ifstream file(path);
+
+	// Ensure file is open
+	if (!file.is_open()) { MessageBox(NULL, L"Can't Find The Paint File!", L"Error", MB_OK); }
+
+	std::vector<std::string> lines;
+	std::string line;
+	int val;
+	
+	// Read data, line by line
+	while (std::getline(file, line))
+	{
+		// Create stringstream of current line
+		std::stringstream ss(line);
+
+		lines.push_back(line);
+
+		//// Keep track of current geometry
+		//int ID = 0;
+
+		//// Extract each integer
+		//while (ss >> val)
+		//{
+		//	// Add current integer to vector
+		//	vector.at(ID).first = val;
+
+		//	// If next token is a point, ignore and carry on
+		//	if (ss.peek() == ',') { ss.ignore(); }
+		//	else 
+		//	{
+		//		// Add next integer
+		//		vector.at(ID).second = val;
+		//	}
+
+		//	// If next token isn't a comma, add both integers together
+		//	if (ss.peek() != ',') {  }
+		//}
+	}
+	
+	// Loop through lines
+	for (int i = 0; i < lines.size(); ++i)
+	{
+		std::string one, two;
+		bool comma = false;
+		
+		// Loop through individual line size
+		for (int j = 0; j < lines[i].size(); ++j)
+		{			
+			// If there hasn't been a comma
+			if (!comma)
+			{
+				// If token isn't a comma
+				if (lines[i][j] != ',')
+				{
+					// Add to temp
+					one += lines[i][j];
+				}
+				else { comma = true; }
+			}
+
+			// If there has been a comma			
+			if (comma)
+			{
+				// If token isn't a comma
+				if (lines[i][j] != ',')
+				{
+					// Add to temp
+					two += lines[i][j];
+				}
+			}			
+		}
+
+		// Add to vector
+		std::pair<int, int> pair;
+		pair.first = std::stoi(one);
+		pair.second = std::stoi(two);
+		vector.push_back(pair);
+	}
 }
 
 void DisplayChunk::CalculateTerrainNormals()

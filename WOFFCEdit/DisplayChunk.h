@@ -53,6 +53,8 @@ private:
 	void CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint);
 	void CheckSurroundings(int row, int column, LANDSCAPE_PAINT paint);
 	LANDSCAPE_PAINT CheckPaint(int row, int column);
+	void SavePaints(std::string path, std::vector<std::pair<int, int>> vector);
+	void ReadPaints(std::string path, std::vector<std::pair<int, int>> &vector);
 
 	float	m_terrainHeightScale;
 	int		m_terrainSize;				//size of terrain in metres
