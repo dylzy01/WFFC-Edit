@@ -1,7 +1,8 @@
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\vc141.pdb
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\vc141.idb
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\water.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\toolmain.obj
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\terrainsculptdialogue.obj
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\terrainpaintdialogue.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\sql.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\selectdialogue.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\sceneobject.obj
@@ -18,9 +19,10 @@ c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\displ
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\deviceresources.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\chunkobject.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\camera.obj
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\water.obj
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\objectspawndialogue.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\sqlite3.obj
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\terrainsculptdialogue.obj
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\terrainpaintdialogue.obj
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\objecteditordialogue.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\wofedit.exe
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\wofedit.ilk
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\wofedit.pdb

@@ -142,14 +142,16 @@ void Game::Update(DX::StepTimer const& timer)
 	//	// Calculate position of vertex against world, view and projection matrices
 	//	m_displayList[i].m_position.y = yPos;
 	//}
-
-	///m_displayChunk.Wave(m_deltaTime);
-	
+		
 	// Handle all input
 	HandleInput();
 	
 	// Custom camera
 	UpdateCamera();
+
+	// Water waves
+	///m_displayChunk.Wave(m_deltaTime, m_world, m_view, m_projection);
+	UpdateWaves();
 
 #ifdef DXTK_AUDIO
     m_audioTimerAcc -= (float)timer.GetElapsedSeconds();
@@ -524,6 +526,7 @@ void Game::HandleInput()
 	}
 }
 
+// Updates the camera
 void Game::UpdateCamera()
 {
 	DirectX::SimpleMath::Vector2 centre;
@@ -551,6 +554,70 @@ void Game::UpdateCamera()
 	m_displayChunk.m_terrainBlendOne->SetWorld(Matrix::Identity);
 	m_displayChunk.m_terrainBlendTwo->SetView(m_view);
 	m_displayChunk.m_terrainBlendTwo->SetWorld(Matrix::Identity);*/
+}
+
+// Updates the waves of all water objects
+void Game::UpdateWaves()
+{
+	// Temp y position
+	float tempY = 0.f;
+	
+	// Loop through display list
+	for (int i = 0; i < m_displayList.size(); ++i)
+	{
+		// Store y position
+		tempY = m_displayList[i].m_position.y;
+
+		// If current object is water
+		if (m_displayList[i].m_type == MODEL_TYPE::WATER)
+		{			
+			///m_displayList[i].m_position.y = sin(m_displayList[i].m_position.x - (m_deltaTime));/// *100.f));
+			
+			///float speed = 3.f, height = 10.f;
+			///m_displayList[i].m_position.y = sin(speed * m_deltaTime) * height;
+
+			///float amplitude = 10.f, freq = 1.f;
+			///m_displayList[i].m_position.x += m_deltaTime;
+			///m_displayList[i].m_position.y = (amplitude * (sin(2 * PI * freq * m_deltaTime + 5)));
+
+			///m_displayList[i].m_position.y = Pulse();
+
+			///m_displayList[i].m_position.y = GetNewHeight(tempY);
+
+			///m_displayList[i].m_position.y = sin((((i / 5.f)*40.f) / 360.f)*PI*2.f);
+
+			///m_displayList[i].m_position.y = sin(m_displayList[i].m_position.x / 3.f) * 10.f + 300.f;
+		
+			// Store temp position
+			//Vector3 position = m_displayList[i].m_position;
+
+			//// Offset position based on sinewave
+			//position.y = sin(position.x + m_deltaTime) * 10.f;
+
+			//// Calculate position of vertex against world, view and projection matrices
+			//m_displayList[i].m_position = (Vector3)XMVector3Transform(position, m_world);
+			//m_displayList[i].m_position = (Vector3)XMVector3Transform((Vector3)m_displayList[i].m_position, m_world);
+			//m_displayList[i].m_position = (Vector3)XMVector3Transform((Vector3)m_displayList[i].m_position, m_world);
+
+			m_waterTranslation += 0.001f;
+			if (m_waterTranslation > .1f) 
+			{ 
+				m_waterTranslation -= .2f; 
+			}
+			m_displayList[i].m_position.y += m_waterTranslation;
+			///m_displayList[i].m_position.y += 1.f;
+		}
+	}
+}
+float Game::Pulse()
+{
+	const float freq = 10.f; //Frequency in Hz
+	return 0.5 * (1 + sin(2 * PI * freq * m_deltaTime));
+}
+float Game::GetNewHeight(float OGheight)
+{
+	float theta = sin(m_deltaTime);
+	return OGheight + (theta * 10.f);
 }
 #pragma endregion
 
@@ -856,6 +923,12 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 	{		
 		//create a temp display object that we will populate then append to the display list.
 		DisplayObject newDisplayObject;
+
+		// Check & set model type
+		if (sceneGraph->at(i).model_path == "database/data/grass.cmo") { newDisplayObject.m_type = MODEL_TYPE::GRASS; }
+		else if (sceneGraph->at(i).model_path == "database/data/tree.cmo") { newDisplayObject.m_type = MODEL_TYPE::TREE; }
+		else if (sceneGraph->at(i).model_path == "database/data/water.cmo") { newDisplayObject.m_type = MODEL_TYPE::WATER; }
+		else { newDisplayObject.m_type = MODEL_TYPE::PLACEHOLDER; }
 		
 		//load model
 		std::wstring modelwstr = StringToWCHART(sceneGraph->at(i).model_path);							//convect string to Wchar
@@ -1468,6 +1541,7 @@ SceneObject Game::CreateObject(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 
 	case OBJECT_SPAWN::GRASS:
 	{
 		// Set model to grass
+		object.m_type = MODEL_TYPE::GRASS;
 		object.model_path = "database/data/grass.cmo";
 		object.tex_diffuse_path = "database/data/grass.dds";
 	}
@@ -1475,6 +1549,7 @@ SceneObject Game::CreateObject(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 
 	case OBJECT_SPAWN::TREE:
 	{
 		// Set model to tree
+		object.m_type = MODEL_TYPE::TREE;
 		object.model_path = "database/data/tree.cmo";
 		object.tex_diffuse_path = "database/data/tree.dds";
 	}
@@ -1482,6 +1557,7 @@ SceneObject Game::CreateObject(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 
 	case OBJECT_SPAWN::WATER:
 	{
 		// Set model to water
+		object.m_type = MODEL_TYPE::WATER;
 		object.model_path = "database/data/water.cmo";
 		object.tex_diffuse_path = "database/data/water.dds";
 		m_waterIDs.push_back(object.ID);

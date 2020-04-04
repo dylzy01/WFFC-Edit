@@ -11,7 +11,8 @@ class DisplayChunk
 public:
 	DisplayChunk();
 	~DisplayChunk();
-	void Wave(float deltaTime);
+	void Wave(float deltaTime, DirectX::SimpleMath::Matrix world,
+		DirectX::SimpleMath::Matrix view, DirectX::SimpleMath::Matrix projection);
 	void PopulateChunkData(ChunkObject * SceneChunk);
 	void RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResources);
 	void InitialiseBatch();	//initial setup, base coordinates etc based on scale
@@ -55,6 +56,9 @@ private:
 	LANDSCAPE_PAINT CheckPaint(int row, int column);
 	void SavePaints(std::string path, std::vector<std::pair<int, int>> vector);
 	void ReadPaints(std::string path, std::vector<std::pair<int, int>> &vector);
+
+	///Vector3 Mul(Vector3 vector, DirectX::SimpleMath::Matrix matrix);
+	///Vector3 Mul(Vector3 vector, Matrix matrix);
 
 	float	m_terrainHeightScale;
 	int		m_terrainSize;				//size of terrain in metres

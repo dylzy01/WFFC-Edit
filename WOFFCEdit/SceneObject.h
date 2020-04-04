@@ -2,7 +2,7 @@
 
 #include <string>
 
-
+#include "Tools.h"
 //This object should accurately and totally reflect the information stored in the object table
 
 
@@ -12,6 +12,7 @@ public:
 	SceneObject();
 	~SceneObject();
 
+	MODEL_TYPE m_type;
 	int ID;
 	int chunk_ID;
 	std::string model_path;

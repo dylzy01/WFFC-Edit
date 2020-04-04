@@ -114,6 +114,9 @@ private:
 
 	void Update(DX::StepTimer const& timer);
 	void UpdateCamera();
+	void UpdateWaves();
+	float Pulse();
+	float GetNewHeight(float OGheight);
 
 	void CreateDeviceDependentResources();
 	void CreateWindowSizeDependentResources();
@@ -172,6 +175,7 @@ private:
 	std::vector<int> m_waterIDs;
 	bool m_spawnWater = false;
 	std::vector<DirectX::SimpleMath::Vector3> m_waterPositions;
+	float m_waterTranslation = 0.f;
 
 	// Device resources.
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;

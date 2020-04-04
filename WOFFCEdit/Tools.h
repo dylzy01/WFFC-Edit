@@ -10,6 +10,13 @@ struct TERRAIN {
 	DirectX::SimpleMath::Vector3 position;
 };
 
+enum class MODEL_TYPE {
+	PLACEHOLDER,
+	GRASS,
+	TREE,
+	WATER
+};
+
 enum class EDITOR {
 	NA,
 	OBJECT_SPAWN,

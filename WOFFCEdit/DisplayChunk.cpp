@@ -18,20 +18,45 @@ DisplayChunk::~DisplayChunk()
 {
 }
 
-void DisplayChunk::Wave(float deltaTime)
+void DisplayChunk::Wave(float deltaTime, DirectX::SimpleMath::Matrix world,
+	DirectX::SimpleMath::Matrix view, DirectX::SimpleMath::Matrix projection)
 {
-	/*for (int i = 0; i < TERRAINRESOLUTION - 1; ++i)
+	for (int i = 0; i < TERRAINRESOLUTION; ++i)
 	{
-		for (int j = 0; j < TERRAINRESOLUTION - 1; ++j)
+		for (int j = 0; j < TERRAINRESOLUTION; ++j)
 		{			
-			m_terrainGeometry[i][j].position.y = sin(m_terrainGeometry[i][j].position.x + (deltaTime * 100.f));
-
-			m_terrainGeometry[i][j].normal.x = 1 - cos(m_terrainGeometry[i][j].position.x + (deltaTime * 100.f));
-			m_terrainGeometry[i][j].normal.y = abs(cos(m_terrainGeometry[i][j].position.x + (deltaTime * 100.f)));
-
+			// Store temp position & normal
+			Vector3 position = m_terrainGeometry[i][j].position;
+			Vector3 normal = m_terrainGeometry[i][j].normal;
+			
+			// Offset position based on sine wave
+			position.y = sin(position.x + deltaTime) * 2.5f;
+			///position.y = (100.f * (sin(2 * PI * 1.f * deltaTime + 5)));
+			///position.y = 0.5 * (1 + sin(2 * PI * 10.f * deltaTime));
+			///position.y = sin((((5.0f)*140.f) / 360.f)*PI*200.f);
+			
+			// Modify normals
+			normal.x = 1 - cos(position.x + deltaTime);
+			normal.y = abs(cos(position.x + deltaTime));
+			///normal.Normalize();
+			
+			// Calculate position of the vertex against the world, view and projection matrices
+			m_terrainGeometry[i][j].position = (Vector3)XMVector3Transform(position, world);
+			m_terrainGeometry[i][j].position = (Vector3)XMVector3Transform((Vector3)m_terrainGeometry[i][j].position, view);
+			m_terrainGeometry[i][j].position = (Vector3)XMVector3Transform((Vector3)m_terrainGeometry[i][j].position, projection);
+			m_terrainGeometry[i][j].normal = normal;
+			
+			///m_terrainGeometry[i][j].position.y = sin(m_terrainGeometry[i][j].position.x + (deltaTime * 100.f));
+			///m_terrainGeometry[i][j].normal.x = 1 - cos(m_terrainGeometry[i][j].position.x + (deltaTime * 100.f));
+			///m_terrainGeometry[i][j].normal.y = abs(cos(m_terrainGeometry[i][j].position.x + (deltaTime * 100.f)));
 			///m_terrainGeometry[i][j].position = DirectX::
+
+			///m_terrainGeometry[i][j].position.y = sin(3.f * deltaTime) * 10.f;
+			///m_terrainGeometry[i][j].normal.y = abs(cos(3.f * deltaTime) * 10.f);
+
+			
 		}
-	}*/
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Read #1 and #2 of the Lab >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1427,6 +1452,48 @@ void DisplayChunk::ReadPaints(std::string path, std::vector<std::pair<int, int>>
 		vector.push_back(pair);
 	}
 }
+
+//Vector3 DisplayChunk::Mul(Vector3 vector, Matrix matrix)
+//{
+//	int solution[3]{ 0,0,0 };
+//	Vector3 output;
+//
+//	///DirectX::SimpleMath::Matrix::Transform()
+//	output = XMVector3Transform(vector, matrix);
+//	
+//	// Multiply first row
+//	//output.x = (matrix.Translation().x * vector.x) + (matrix.Translation().y * vector.x) + (matrix.Translation().z * vector.x);
+//	//
+//	//// Multiply second row
+//	//output.y = (matrix)
+//
+//	
+//	// Loop through each row of the matrix
+//	//for (int i = 0; i < 3; ++i)
+//	//{
+//	//	// Loop through each column of the matrix
+//	//	for (int j = 0; j < 3; ++j)
+//	//	{
+//	//		solution[i] += (matrix[i][j] * vector[i]);
+//	//	}
+//	//}
+//
+//	return output;
+//}
+
+//Vector3 DisplayChunk::Mul(Vector3 vector, DirectX::SimpleMath::Matrix matrix)
+//{
+//	Vector3 output;
+//
+//	///output.x = matrix.
+//
+//	// ???
+//	// create matrix from vector, set rotation & scale to identity
+//	// multiply matrices using function: DirectX::XMMatrixMultiply();
+//	// ???
+//
+//	return output;
+//}
 
 void DisplayChunk::CalculateTerrainNormals()
 {
