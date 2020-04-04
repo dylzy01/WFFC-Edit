@@ -99,6 +99,24 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 		DrawTerrain(m_sand);
 		m_batch->End();
 	}
+
+	// Draw all stone geometry
+	if (m_stone.size() != 0) {
+		m_batch->Begin();
+		m_terrainEffect->SetTexture(m_texture_splat_4);
+		m_terrainEffect->Apply(context);
+		DrawTerrain(m_stone);
+		m_batch->End();
+	}
+
+	// Draw all snow geometry
+	if (m_snow.size() != 0) {
+		m_batch->Begin();
+		m_terrainEffect->SetTexture(m_texture_splat_5);
+		m_terrainEffect->Apply(context);
+		DrawTerrain(m_snow);
+		m_batch->End();
+	}
 	
 	// Draw all highlighted geometry
 	if (m_highlight.size() != 0) {
@@ -165,24 +183,38 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 		
 	//////////////////////////////////////////////////////////////////////////////////////////
 
-	// Load first splat texture
+	// Load first splat texture (grass)
 	std::wstring splat_1 = StringToWCHART(m_tex_splat_1_path);
 	HRESULT rs1;
 	rs1 = CreateDDSTextureFromFile(device, splat_1.c_str(), NULL, &m_texture_splat_1);
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 
-	// Load second splat texture
+	// Load second splat texture (dirt)
 	std::wstring splat_2 = StringToWCHART(m_tex_splat_2_path);
 	HRESULT rs2;
 	rs2 = CreateDDSTextureFromFile(device, splat_2.c_str(), NULL, &m_texture_splat_2);
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 
-	// Load third splat texture
+	// Load third splat texture (sand)
 	std::wstring splat_3 = StringToWCHART(m_tex_splat_3_path);
 	HRESULT rs3;
 	rs3 = CreateDDSTextureFromFile(device, splat_3.c_str(), NULL, &m_texture_splat_3);
+
+	//////////////////////////////////////////////////////////////////////////////////////////
+
+	// Load fourth splat texture (stone)
+	std::wstring splat_4 = StringToWCHART(m_tex_splat_4_path);
+	HRESULT rs4;
+	rs4 = CreateDDSTextureFromFile(device, splat_4.c_str(), NULL, &m_texture_splat_4);
+	
+	//////////////////////////////////////////////////////////////////////////////////////////
+
+	// Load fifth splat texture (snow)
+	std::wstring splat_5 = StringToWCHART("database/data/snow.dds");
+	HRESULT rs5;
+	rs5 = CreateDDSTextureFromFile(device, splat_5.c_str(), NULL, &m_texture_splat_5);
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 
@@ -201,9 +233,9 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 	//////////////////////////////////////////////////////////////////////////////////////////
 
 	// Load normal map
-	std::wstring normal = StringToWCHART("database/data/normalMap.dds");
+	/*std::wstring normal = StringToWCHART("database/data/normalMap.dds");
 	HRESULT rsn;
-	rsn = CreateDDSTextureFromFile(device, normal.c_str(), NULL, &m_normalMap);
+	rsn = CreateDDSTextureFromFile(device, normal.c_str(), NULL, &m_normalMap);*/
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 
@@ -219,9 +251,9 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 	//////////////////////////////////////////////////////////////////////////////////////////
 
 	// Setup dual texture effect
-	m_dualEffect = std::make_unique<DualTextureEffect>(device);
+	/*m_dualEffect = std::make_unique<DualTextureEffect>(device);
 	m_dualEffect->SetTexture(m_texture_splat_1);
-	m_dualEffect->SetTexture2(m_texture_splat_2);
+	m_dualEffect->SetTexture2(m_texture_splat_2);*/
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 
@@ -272,6 +304,8 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 	ReadPaints("database/grass.csv", m_grass);
 	ReadPaints("database/dirt.csv", m_dirt);
 	ReadPaints("database/sand.csv", m_sand);
+	ReadPaints("database/stone.csv", m_stone);
+	ReadPaints("database/snow.csv", m_snow);
 }
 
 void DisplayChunk::SaveHeightMap()
@@ -348,6 +382,8 @@ void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint, bool checkS
 	case LANDSCAPE_PAINT::GRASS: m_grass.push_back(std::pair<int, int>(i, j)); break;
 	case LANDSCAPE_PAINT::DIRT: m_dirt.push_back(std::pair<int, int>(i, j)); break;
 	case LANDSCAPE_PAINT::SAND: m_sand.push_back(std::pair<int, int>(i, j)); break;
+	case LANDSCAPE_PAINT::STONE: m_stone.push_back(std::pair<int, int>(i, j)); break;
+	case LANDSCAPE_PAINT::SNOW: m_snow.push_back(std::pair<int, int>(i, j)); break;
 	case LANDSCAPE_PAINT::NA: m_default.push_back(std::pair<int, int>(i, j)); break;
 	}
 }
@@ -1006,7 +1042,13 @@ void DisplayChunk::CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint
 		if (FindInVector(index, m_dirt, terrain)) { m_dirt.erase(m_dirt.begin() + index); }
 
 		// Else, loop through sand vector & remove from storage
-		else if (FindInVector(index, m_sand, terrain)) { m_sand.erase(m_sand.begin() + index); }		
+		else if (FindInVector(index, m_sand, terrain)) { m_sand.erase(m_sand.begin() + index); }
+
+		// Else, loop through stone vector & remove from storage
+		else if (FindInVector(index, m_stone, terrain)) { m_stone.erase(m_stone.begin() + index); }
+
+		// Else, loop through snow vector & remove from storage
+		else if (FindInVector(index, m_snow, terrain)) { m_snow.erase(m_snow.begin() + index); }
 
 		// Else, loop through default vector & remove from storage
 		else if (FindInVector(index, m_default, terrain)) { m_default.erase(m_default.begin() + index); }
@@ -1020,6 +1062,12 @@ void DisplayChunk::CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint
 		// Else, loop through sand vector & remove from storage
 		else if (FindInVector(index, m_sand, terrain)) { m_sand.erase(m_sand.begin() + index); }
 
+		// Else, loop through stone vector & remove from storage
+		else if (FindInVector(index, m_stone, terrain)) { m_stone.erase(m_stone.begin() + index); }
+
+		// Else, loop through snow vector & remove from storage
+		else if (FindInVector(index, m_snow, terrain)) { m_snow.erase(m_snow.begin() + index); }
+
 		// Else, loop through default vector & remove from storage
 		else if (FindInVector(index, m_default, terrain)) { m_default.erase(m_default.begin() + index); }
 	}
@@ -1031,6 +1079,48 @@ void DisplayChunk::CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint
 
 		// Else, loop through dirt vector & remove from storage
 		else if (FindInVector(index, m_dirt, terrain)) { m_dirt.erase(m_dirt.begin() + index); }
+
+		// Else, loop through stone vector & remove from storage
+		else if (FindInVector(index, m_stone, terrain)) { m_stone.erase(m_stone.begin() + index); }
+
+		// Else, loop through snow vector & remove from storage
+		else if (FindInVector(index, m_snow, terrain)) { m_snow.erase(m_snow.begin() + index); }
+
+		// Else, loop through default vector & remove from storage
+		else if (FindInVector(index, m_default, terrain)) { m_default.erase(m_default.begin() + index); }
+	}
+	break;
+	case LANDSCAPE_PAINT::STONE:
+	{
+		// Loop through grass vector & remove from storage
+		if (FindInVector(index, m_grass, terrain)) { m_grass.erase(m_grass.begin() + index); }
+
+		// Else, loop through dirt vector & remove from storage
+		else if (FindInVector(index, m_dirt, terrain)) { m_dirt.erase(m_dirt.begin() + index); }
+
+		// Else, loop through sand vector & remove from storage
+		else if (FindInVector(index, m_sand, terrain)) { m_sand.erase(m_sand.begin() + index); }
+
+		// Else, loop through snow vector & remove from storage
+		else if (FindInVector(index, m_snow, terrain)) { m_snow.erase(m_snow.begin() + index); }
+
+		// Else, loop through default vector & remove from storage
+		else if (FindInVector(index, m_default, terrain)) { m_default.erase(m_default.begin() + index); }
+	}
+	break;
+	case LANDSCAPE_PAINT::SNOW:
+	{
+		// Loop through grass vector & remove from storage
+		if (FindInVector(index, m_grass, terrain)) { m_grass.erase(m_grass.begin() + index); }
+
+		// Else, loop through dirt vector & remove from storage
+		else if (FindInVector(index, m_dirt, terrain)) { m_dirt.erase(m_dirt.begin() + index); }
+
+		// Else, loop through sand vector & remove from storage
+		else if (FindInVector(index, m_sand, terrain)) { m_sand.erase(m_sand.begin() + index); }
+
+		// Else, loop through stone vector & remove from storage
+		else if (FindInVector(index, m_stone, terrain)) { m_stone.erase(m_stone.begin() + index); }
 
 		// Else, loop through default vector & remove from storage
 		else if (FindInVector(index, m_default, terrain)) { m_default.erase(m_default.begin() + index); }
@@ -1066,7 +1156,27 @@ void DisplayChunk::CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint
 
 			// Remove from main storage
 			m_sand.erase(m_sand.begin() + index); 
-		}		
+		}	
+
+		// Else, search through stone vector
+		else if (FindInVector(index, m_stone, terrain))
+		{
+			// Store temporarily 
+			m_stoneTemp.push_back(terrain);
+
+			// Remove from main storage
+			m_stone.erase(m_stone.begin() + index);
+		}
+
+		// Else, search through snow vector
+		else if (FindInVector(index, m_snow, terrain))
+		{
+			// Store temporarily 
+			m_snowTemp.push_back(terrain);
+
+			// Remove from main storage
+			m_snow.erase(m_snow.begin() + index);
+		}
 	}
 	break;
 	}

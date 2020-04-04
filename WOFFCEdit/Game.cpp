@@ -545,8 +545,8 @@ void Game::UpdateCamera()
 	m_batchEffect->SetWorld(Matrix::Identity);
 	m_displayChunk.m_terrainEffect->SetView(m_view);
 	m_displayChunk.m_terrainEffect->SetWorld(Matrix::Identity);
-	m_displayChunk.m_dualEffect->SetView(m_view);
-	m_displayChunk.m_dualEffect->SetWorld(Matrix::Identity);
+	///m_displayChunk.m_dualEffect->SetView(m_view);
+	///m_displayChunk.m_dualEffect->SetWorld(Matrix::Identity);
 	/*m_displayChunk.m_terrainBlendOne->SetView(m_view);
 	m_displayChunk.m_terrainBlendOne->SetWorld(Matrix::Identity);
 	m_displayChunk.m_terrainBlendTwo->SetView(m_view);
@@ -932,7 +932,7 @@ void Game::BuildDisplayChunk(ChunkObject * SceneChunk, std::vector<DirectX::Simp
 	m_displayChunk.PopulateChunkData(SceneChunk);		//migrate chunk data
 	m_displayChunk.LoadHeightMap(m_deviceResources);
 	m_displayChunk.m_terrainEffect->SetProjection(m_projection);
-	m_displayChunk.m_dualEffect->SetProjection(m_projection);
+	///m_displayChunk.m_dualEffect->SetProjection(m_projection);
 	/*m_displayChunk.m_terrainBlendOne->SetProjection(m_projection);
 	m_displayChunk.m_terrainBlendTwo->SetProjection(m_projection);*/
 	m_displayChunk.InitialiseBatch();

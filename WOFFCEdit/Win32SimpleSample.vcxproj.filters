@@ -98,7 +98,9 @@
     <ClCompile Include="ObjectSpawnDialogue.cpp">
       <Filter>MFC\Dialogues\Object</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectEditorDialogue.cpp" />
+    <ClCompile Include="ObjectEditorDialogue.cpp">
+      <Filter>MFC\Dialogues\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -175,7 +177,9 @@
     <ClInclude Include="ObjectSpawnDialogue.h">
       <Filter>MFC\Dialogues\Object</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectEditorDialogue.h" />
+    <ClInclude Include="ObjectEditorDialogue.h">
+      <Filter>MFC\Dialogues\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

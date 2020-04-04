@@ -31,9 +31,8 @@ public:
 	ID3D11ShaderResourceView *					m_texture_splat_1;				//grass texture
 	ID3D11ShaderResourceView *					m_texture_splat_2;				//dirt texture
 	ID3D11ShaderResourceView *					m_texture_splat_3;				//sand texture
-	ID3D11ShaderResourceView *					m_texture_blend_1_2;			//grass/dirt texture
-	ID3D11ShaderResourceView *					m_texture_blend_1_3;			//grass/sand texture
-	ID3D11ShaderResourceView *					m_texture_blend_2_3;			//dirt/sand texture
+	ID3D11ShaderResourceView *					m_texture_splat_4;				//stone texture
+	ID3D11ShaderResourceView *					m_texture_splat_5;				//snow texture
 	ID3D11ShaderResourceView *					m_texture_highlight;			//highlight texture
 	ID3D11ShaderResourceView *					m_normalMap;					//normal map texture
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>   m_terrainInputLayout;
@@ -83,8 +82,8 @@ private:
 
 	// Geometry containers
 	std::vector<std::pair<int, int>> m_default;
-	std::vector<std::pair<int, int>> m_grass, m_dirt, m_sand;
-	std::vector<std::pair<int, int>> m_grassTemp, m_dirtTemp, m_sandTemp;
+	std::vector<std::pair<int, int>> m_grass, m_dirt, m_sand, m_stone, m_snow;
+	std::vector<std::pair<int, int>> m_grassTemp, m_dirtTemp, m_sandTemp, m_stoneTemp, m_snowTemp;
 	std::vector<std::pair<int, int>> m_highlight;
 	/*std::vector<DirectX::VertexPositionNormalTexture> m_defaultGeometry,
 		m_grassGeometry, m_dirtGeometry, m_sandGeometry;
