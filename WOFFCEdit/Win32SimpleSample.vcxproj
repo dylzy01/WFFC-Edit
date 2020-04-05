@@ -175,11 +175,13 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MFCFrame.cpp" />
     <ClCompile Include="MFCRenderFrame.cpp" />
+    <ClCompile Include="NatureObjectDialogue.cpp" />
     <ClCompile Include="ObjectDialogue.cpp" />
     <ClCompile Include="ObjectEditorDialogue.cpp" />
     <ClCompile Include="ObjectSpawnDialogue.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="MFCMain.cpp" />
+    <ClCompile Include="ResidentialObjectDialogue.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="SelectDialogue.cpp" />
     <ClCompile Include="SQL.cpp" />
@@ -200,10 +202,12 @@
     <ClInclude Include="LandscapeDialogue.h" />
     <ClInclude Include="MFCFrame.h" />
     <ClInclude Include="MFCRenderFrame.h" />
+    <ClInclude Include="NatureObjectDialogue.h" />
     <ClInclude Include="ObjectDialogue.h" />
     <ClInclude Include="ObjectEditorDialogue.h" />
     <ClInclude Include="ObjectSpawnDialogue.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="ResidentialObjectDialogue.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="SelectDialogue.h" />

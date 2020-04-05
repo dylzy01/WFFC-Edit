@@ -156,6 +156,7 @@ void TerrainPaintDialogue::UpdateButtons(bool enable)
 
 
 BEGIN_MESSAGE_MAP(TerrainPaintDialogue, CDialogEx)
+	ON_COMMAND(IDOK, &TerrainPaintDialogue::End)
 	ON_BN_CLICKED(IDOK, &TerrainPaintDialogue::OnBnClickedOk)
 	ON_BN_CLICKED(IDC_CHECK5, &TerrainPaintDialogue::OnBnClickedGrass)
 	ON_BN_CLICKED(IDC_CHECK6, &TerrainPaintDialogue::OnBnClickedDirt)
@@ -166,6 +167,12 @@ END_MESSAGE_MAP()
 
 
 // TerrainPaintDialogue message handlers
+
+// Kill the dialogue
+void TerrainPaintDialogue::End()
+{
+	DestroyWindow();
+}
 
 // Set paint to none & de-activate
 void TerrainPaintDialogue::OnBnClickedOk() 

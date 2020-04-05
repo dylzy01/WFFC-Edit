@@ -111,7 +111,7 @@ void ObjectDialogue::UpdateSpawns(OBJECT_SPAWN spawn, bool enable)
 		GetDlgItem(IDC_CHECK11)->EnableWindow(enable);
 	}
 	break;
-	case OBJECT_SPAWN::TREE:
+	case OBJECT_SPAWN::TREE_ONE:
 	{
 		// Enable/disable grass spawn
 		if (!enable) { CheckDlgButton(IDC_CHECK9, enable); }
@@ -215,7 +215,7 @@ void ObjectDialogue::OnBnClickedTree()
 	case true:
 	{
 		// Uncheck & disable other spawns
-		UpdateSpawns(OBJECT_SPAWN::TREE, false);
+		UpdateSpawns(OBJECT_SPAWN::TREE_ONE, false);
 
 		// Uncheck & disable other functions
 		UpdateTransform(OBJECT_FUNCTION::NA, false);
@@ -224,7 +224,7 @@ void ObjectDialogue::OnBnClickedTree()
 	case false:
 	{
 		// Enable other spawns
-		UpdateSpawns(OBJECT_SPAWN::TREE, true);
+		UpdateSpawns(OBJECT_SPAWN::TREE_ONE, true);
 
 		// Enable other functions
 		UpdateTransform(OBJECT_FUNCTION::NA, true);

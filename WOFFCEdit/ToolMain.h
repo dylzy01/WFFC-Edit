@@ -23,6 +23,7 @@ public: //methods
 	afx_msg void		onActionSave();
 	afx_msg	void		onActionSave_();												//save the current chunk
 	afx_msg void		onActionSaveTerrain();										//save chunk geometry
+	afx_msg void		onActionDeleteObjects();
 
 	void	Tick(MSG *msg);
 	void	UpdateInput(MSG *msg);
@@ -35,6 +36,8 @@ public: //methods
 	void SetWireframe(bool wireframe) { m_d3dRenderer.SetWireframe(wireframe); }
 	void SetEditor(EDITOR editor) { m_d3dRenderer.SetEditor(editor); }
 	void SetObjectSpawn(OBJECT_SPAWN spawn) { m_d3dRenderer.SetObjectSpawn(spawn); }
+	void SetResidentialSpawn(RESIDENTIAL_SPAWN spawn) { m_d3dRenderer.SetResidentialSpawn(spawn); }
+	void SetNatureSpawn(NATURE_SPAWN spawn) { m_d3dRenderer.SetNatureSpawn(spawn); }
 	void SetObjectTransform(OBJECT_FUNCTION function) { m_d3dRenderer.SetObjectTransform(function); }
 	void SetObjectConstraint(OBJECT_CONSTRAINT constraint) { m_d3dRenderer.SetObjectConstraint(constraint); }
 	void SetLandscapePaint(LANDSCAPE_PAINT paint) { m_d3dRenderer.SetLandscapePaint(paint); }

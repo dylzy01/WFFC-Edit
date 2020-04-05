@@ -57,6 +57,7 @@ public:
 	void BuildDisplayChunk(ChunkObject *SceneChunk, std::vector<DirectX::SimpleMath::Vector2> location = { { 0.f, 0.f } });
 	void SaveDisplayChunk(ChunkObject *SceneChunk);	//saves geometry et al
 	void ClearDisplayList();
+	void DeleteSelectedObjects();
 
 	// Mouse picking
 	void MousePicking(int i = -1);
@@ -92,6 +93,8 @@ public:
 		}
 	}
 	void SetObjectSpawn(OBJECT_SPAWN spawn) { m_objectSpawn = spawn; }
+	void SetResidentialSpawn(RESIDENTIAL_SPAWN spawn) { m_residentialSpawn = spawn; }
+	void SetNatureSpawn(NATURE_SPAWN spawn) { m_natureSpawn = spawn; }
 	void SetObjectTransform(OBJECT_FUNCTION function) { m_objectTransform = function; }
 	void SetObjectConstraint(OBJECT_CONSTRAINT constraint) { m_objectConstraint = constraint; }
 	void SetLandscapePaint(LANDSCAPE_PAINT paint) { m_landscapePaint = paint; }
@@ -165,6 +168,8 @@ private:
 	// Editor controllers
 	EDITOR m_editor;
 	OBJECT_SPAWN m_objectSpawn = OBJECT_SPAWN::NA;
+	RESIDENTIAL_SPAWN m_residentialSpawn = RESIDENTIAL_SPAWN::NA;
+	NATURE_SPAWN m_natureSpawn = NATURE_SPAWN::NA;
 	OBJECT_FUNCTION m_objectTransform = OBJECT_FUNCTION::NA;
 	OBJECT_CONSTRAINT m_objectConstraint = OBJECT_CONSTRAINT::NA;
 	LANDSCAPE_PAINT m_landscapePaint = LANDSCAPE_PAINT::NA;

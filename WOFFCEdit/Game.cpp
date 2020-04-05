@@ -193,15 +193,49 @@ void Game::HandleInput()
 			// Update picking point
 			MousePicking();
 
+			// Switch between object types to spawn
+			switch (m_objectSpawn)
+			{
+			case OBJECT_SPAWN::RESIDENTIAL:
+			{
+				// Switch between residential spawn
+				switch (m_residentialSpawn)
+				{
+				case RESIDENTIAL_SPAWN::HOUSE_ONE: SQL::AddObject(CreateObject(OBJECT_SPAWN::HOUSE_ONE, m_pickingPoint)); break;
+				case RESIDENTIAL_SPAWN::HOUSE_TWO: SQL::AddObject(CreateObject(OBJECT_SPAWN::HOUSE_TWO, m_pickingPoint)); break;
+				case RESIDENTIAL_SPAWN::CAVE: SQL::AddObject(CreateObject(OBJECT_SPAWN::CAVE, m_pickingPoint)); break;
+				}
+			}
+			break;
+			case OBJECT_SPAWN::NATURE:
+			{
+				// Switch between nature spawn
+				switch (m_natureSpawn)
+				{
+				case NATURE_SPAWN::GRASS: SQL::AddObject(CreateObject(OBJECT_SPAWN::GRASS, m_pickingPoint));
+				case NATURE_SPAWN::BUSH: SQL::AddObject(CreateObject(OBJECT_SPAWN::BUSH, m_pickingPoint));
+				case NATURE_SPAWN::TREE_ONE: SQL::AddObject(CreateObject(OBJECT_SPAWN::TREE_ONE, m_pickingPoint));
+				case NATURE_SPAWN::TREE_TWO: SQL::AddObject(CreateObject(OBJECT_SPAWN::TREE_TWO, m_pickingPoint));
+				case NATURE_SPAWN::WATER: SQL::AddObject(CreateObject(OBJECT_SPAWN::WATER, m_pickingPoint));
+				}
+			}
+			break;
+			}
+
+			
 			// Switch between objects to spawn
 			switch (m_objectSpawn)
 			{
 				// Spawn grass at picking point
 			case OBJECT_SPAWN::GRASS: SQL::AddObject(CreateObject(OBJECT_SPAWN::GRASS, m_pickingPoint)); break;
 				// Spawn a tree at picking point
-			case OBJECT_SPAWN::TREE: SQL::AddObject(CreateObject(OBJECT_SPAWN::TREE, m_pickingPoint)); break;
+			case OBJECT_SPAWN::TREE_ONE: SQL::AddObject(CreateObject(OBJECT_SPAWN::TREE_ONE, m_pickingPoint)); break;
 				// Spawn water at picking point
 			case OBJECT_SPAWN::WATER: SQL::AddObject(CreateObject(OBJECT_SPAWN::WATER, m_pickingPoint)); break;
+				// Spawn house at picking point
+			/*case OBJECT_SPAWN::HOUSE: SQL::AddObject(CreateObject(OBJECT_SPAWN::HOUSE, m_pickingPoint)); break;*/
+				// Spawn cave at picking point
+			case OBJECT_SPAWN::CAVE: SQL::AddObject(CreateObject(OBJECT_SPAWN::CAVE, m_pickingPoint)); break;
 			}
 
 			// Update scene graph
@@ -342,11 +376,11 @@ void Game::HandleInput()
 							if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
 							{
 								// Translate selected object based on picking point
-								///m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;								
-								///m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
+								m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;								
+								m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
 
-								m_sceneGraph[m_selectedObjectIDs[i]].posX = m_pickingPoint.x;
-								m_sceneGraph[m_selectedObjectIDs[i]].posY = m_pickingPoint.y;
+								///m_sceneGraph[m_selectedObjectIDs[i]].posX = m_pickingPoint.x;
+								///m_sceneGraph[m_selectedObjectIDs[i]].posY = m_pickingPoint.y;
 								save = true;
 							}
 
@@ -354,11 +388,11 @@ void Game::HandleInput()
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::XZ)
 							{
 								// Translate selected object based on picking point
-								///m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
-								///m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
+								m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
+								m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
 
-								m_sceneGraph[m_selectedObjectIDs[i]].posX = m_pickingPoint.x;
-								m_sceneGraph[m_selectedObjectIDs[i]].posZ = m_pickingPoint.z;
+								///m_sceneGraph[m_selectedObjectIDs[i]].posX = m_pickingPoint.x;
+								///m_sceneGraph[m_selectedObjectIDs[i]].posZ = m_pickingPoint.z;
 
 								save = true;
 							}
@@ -367,11 +401,11 @@ void Game::HandleInput()
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::YZ)
 							{
 								// Translate selected object based on picking point								
-								///m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
-								///m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
+								m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
+								m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
 
-								m_sceneGraph[m_selectedObjectIDs[i]].posY = m_pickingPoint.y;
-								m_sceneGraph[m_selectedObjectIDs[i]].posZ = m_pickingPoint.z;
+								///m_sceneGraph[m_selectedObjectIDs[i]].posY = m_pickingPoint.y;
+								///m_sceneGraph[m_selectedObjectIDs[i]].posZ = m_pickingPoint.z;
 								save = true;
 							}
 
@@ -379,8 +413,8 @@ void Game::HandleInput()
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::X)
 							{
 								// Translate selected object based on picking point
-								///m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
-								m_sceneGraph[m_selectedObjectIDs[i]].posX = m_pickingPoint.x;
+								m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
+								///m_sceneGraph[m_selectedObjectIDs[i]].posX = m_pickingPoint.x;
 
 								///Vector3 dragPoint = GetDragPoint(&m_xAxes[m_selectedObjectIDs[i]], &m_pickingPoint);
 								///m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x - dragPoint.x;
@@ -391,8 +425,8 @@ void Game::HandleInput()
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::Y)
 							{
 								// Translate selected object based on picking point
-								///m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
-								m_sceneGraph[m_selectedObjectIDs[i]].posY = m_pickingPoint.y;
+								m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
+								///m_sceneGraph[m_selectedObjectIDs[i]].posY = m_pickingPoint.y;
 								save = true;
 							}
 
@@ -400,8 +434,8 @@ void Game::HandleInput()
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::Z)
 							{
 								// Translate selected object based on picking point
-								///m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
-								m_sceneGraph[m_selectedObjectIDs[i]].posZ = m_pickingPoint.z;
+								m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
+								///m_sceneGraph[m_selectedObjectIDs[i]].posZ = m_pickingPoint.z;
 								save = true;
 							}
 
@@ -417,12 +451,12 @@ void Game::HandleInput()
 									(m_pickingPoint.z - m_storedObjectTranslations[i].z) * (m_pickingPoint.z - m_storedObjectTranslations[i].z));*/
 
 									// Translate selected object based on picking point
-									///m_displayList[m_selectedObjectIDs[i]].m_position = m_pickingPoint;
+									m_displayList[m_selectedObjectIDs[i]].m_position = m_pickingPoint;
 									///m_displayList[m_selectedObjectIDs[i]].m_position = m_storedObjectTranslations[i] + m_pickingPoint;
 
-								m_sceneGraph[m_selectedObjectIDs[i]].posX = m_pickingPoint.x;
+								/*m_sceneGraph[m_selectedObjectIDs[i]].posX = m_pickingPoint.x;
 								m_sceneGraph[m_selectedObjectIDs[i]].posY = m_pickingPoint.y;
-								m_sceneGraph[m_selectedObjectIDs[i]].posZ = m_pickingPoint.z;
+								m_sceneGraph[m_selectedObjectIDs[i]].posZ = m_pickingPoint.z;*/
 
 								save = true;
 							}
@@ -493,7 +527,7 @@ void Game::HandleInput()
 			if (save)
 			{
 				// Update scene graph
-				BuildDisplayList(&m_sceneGraph);
+				///BuildDisplayList(&m_sceneGraph);
 			}
 		}
 		// Else, if mouse isn't being pressed
@@ -791,20 +825,12 @@ void Game::Render()
 	
 	// Coordinate system
 	// Loop through selected objects
-	for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
-	{		
-		// Draw local axes
-		DrawAxis(m_displayList[m_selectedObjectIDs[i]], m_selectedObjectIDs[i]);		
-	}
-
-	// WATER
-	if (m_spawnWater) 
+	if (m_displayList.size() != 0)
 	{
-		// Loop through all shapes
-		for (int i = 0; i < m_shapes.size(); ++i) 
+		for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
 		{
-			// Draw each shape
-			m_shapes[i]->Draw(m_world, m_view, m_projection, Colors::Yellow);
+			// Draw local axes
+			DrawAxis(m_displayList[m_selectedObjectIDs[i]], m_selectedObjectIDs[i]);
 		}
 	}
 
@@ -998,6 +1024,8 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 		if (sceneGraph->at(i).model_path == "database/data/grass.cmo") { newDisplayObject.m_type = MODEL_TYPE::GRASS; }
 		else if (sceneGraph->at(i).model_path == "database/data/tree.cmo") { newDisplayObject.m_type = MODEL_TYPE::TREE; }
 		else if (sceneGraph->at(i).model_path == "database/data/water.cmo") { newDisplayObject.m_type = MODEL_TYPE::WATER; }
+		else if (sceneGraph->at(i).model_path == "database/data/house0.cmo" || sceneGraph->at(i).model_path == "database/data/house1.cmo") { newDisplayObject.m_type = MODEL_TYPE::HOUSE; }
+		else if (sceneGraph->at(i).model_path == "database/data/cave.cmo") { newDisplayObject.m_type = MODEL_TYPE::CAVE; }
 		else { newDisplayObject.m_type = MODEL_TYPE::PLACEHOLDER; }
 		
 		//load model
@@ -1093,6 +1121,22 @@ void Game::BuildDisplayChunk(ChunkObject * SceneChunk, std::vector<DirectX::Simp
 void Game::SaveDisplayChunk(ChunkObject * SceneChunk)
 {
 	m_displayChunk.SaveHeightMap();			//save heightmap to file.
+}
+
+void Game::DeleteSelectedObjects()
+{
+	// Loop through selected objects
+	for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+	{
+		// Remove objects from database
+		SQL::RemoveObject(m_sceneGraph[m_selectedObjectIDs[i]]);
+		m_selectedObjectIDs.erase(m_selectedObjectIDs.begin() + i);
+		///m_sceneGraph.erase(m_sceneGraph.begin() + i);
+		///SQL::RemoveObject(m_displayList[m_selectedObjectIDs[i]]);
+	}
+		
+	// Build display list from updated scene graph
+	///BuildDisplayList(&m_sceneGraph);
 }
 
 void Game::MousePicking(int i)
@@ -1592,7 +1636,6 @@ SceneObject Game::CreateObject(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 
 	object.path_node_end = false;
 	object.parent_id = 0;
 	object.editor_wireframe = false;
-	object.name = "Name";
 	object.light_type = 1;
 	object.light_diffuse_r = 2.f;
 	object.light_diffuse_g = 3.f;
@@ -1608,28 +1651,85 @@ SceneObject Game::CreateObject(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 
 	// Switch between spawn
 	switch (spawn)
 	{
+	// Residential //////////////////////////////////////////////////////////////////////////
+	case OBJECT_SPAWN::HOUSE_ONE:
+	{
+		// Set object to house #1
+		object.m_type = MODEL_TYPE::HOUSE;
+		object.model_path = "database/data/house0.cmo";
+		object.tex_diffuse_path = "database/data/house0.dds";
+
+		object.name = "House #" + object.ID;
+	}
+	break;
+	case OBJECT_SPAWN::HOUSE_TWO:
+	{
+		// Set object to house #2
+		object.m_type = MODEL_TYPE::HOUSE;
+		object.model_path = "database/data/house1.cmo";
+		object.tex_diffuse_path = "database/data/house1.dds";
+
+		object.name = "House #" + object.ID;
+	}
+	break;
+	case OBJECT_SPAWN::CAVE:
+	{
+		// Set object to cave
+		object.m_type = MODEL_TYPE::CAVE;
+		object.model_path = "database/data/cave.cmo";
+		object.tex_diffuse_path = "database/data/cave.dds";
+
+		object.name = "Cave #" + object.ID;
+	}
+	break;
+	// Nature ///////////////////////////////////////////////////////////////////////////////
 	case OBJECT_SPAWN::GRASS:
 	{
-		// Set model to grass
+		// Set object to grass
 		object.m_type = MODEL_TYPE::GRASS;
 		object.model_path = "database/data/grass.cmo";
 		object.tex_diffuse_path = "database/data/grass.dds";
+
+		object.name = "Grass #" + object.ID;
 	}
 	break;
-	case OBJECT_SPAWN::TREE:
+	case OBJECT_SPAWN::BUSH:
 	{
-		// Set model to tree
+		// Set object to bush
+		object.m_type = MODEL_TYPE::BUSH;
+		object.model_path = "database/data/bush.cmo";
+		object.tex_diffuse_path = "database/data/bush.dds";
+
+		object.name = "Bush #" + object.ID;
+	}
+	break;
+	case OBJECT_SPAWN::TREE_ONE:
+	{
+		// Set object to tree
 		object.m_type = MODEL_TYPE::TREE;
-		object.model_path = "database/data/tree.cmo";
-		object.tex_diffuse_path = "database/data/tree.dds";
+		object.model_path = "database/data/tree0.cmo";
+		object.tex_diffuse_path = "database/data/tree0.dds";
+
+		object.name = "Tree #" + object.ID;
+	}
+	break;
+	case OBJECT_SPAWN::TREE_TWO:
+	{
+		// Set object to tree
+		object.m_type = MODEL_TYPE::TREE;
+		object.model_path = "database/data/tree1.cmo";
+		object.tex_diffuse_path = "database/data/tree1.dds";
+
+		object.name = "Tree #" + object.ID;
 	}
 	break;
 	case OBJECT_SPAWN::WATER:
 	{
-		// Set model to water
+		// Set object to water
 		object.m_type = MODEL_TYPE::WATER;
 		object.model_path = "database/data/water.cmo";
 		object.tex_diffuse_path = "database/data/water.dds";
+		object.name = "Water #" + object.ID;
 		m_waterIDs.push_back(object.ID);
 	}
 	break;

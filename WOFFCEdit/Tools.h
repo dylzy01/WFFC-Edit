@@ -4,6 +4,8 @@
 #include <DirectXMath.h>
 #include "SimpleMath.h"
 
+#include <random>
+
 struct TERRAIN {
 	int row, column, ID;
 	bool intersect = false;
@@ -12,7 +14,10 @@ struct TERRAIN {
 
 enum class MODEL_TYPE {
 	PLACEHOLDER,
+	HOUSE,
+	CAVE,
 	GRASS,
+	BUSH,
 	TREE,
 	WATER
 };
@@ -27,8 +32,33 @@ enum class EDITOR {
 
 enum class OBJECT_SPAWN {
 	NA,
+	RESIDENTIAL,
+	NATURE,
+	PROPS,
+
+	HOUSE_ONE,
+	HOUSE_TWO,
+	CAVE,
 	GRASS,
-	TREE,
+	BUSH,
+	TREE_ONE,
+	TREE_TWO,
+	WATER
+};
+
+enum class RESIDENTIAL_SPAWN {
+	NA,
+	HOUSE_ONE,
+	HOUSE_TWO,
+	CAVE
+};
+
+enum class NATURE_SPAWN {
+	NA,
+	GRASS,
+	TREE_ONE,
+	TREE_TWO,
+	BUSH,
 	WATER
 };
 
@@ -77,4 +107,20 @@ enum class LANDSCAPE_CONSTRAINT {
 	Y,
 	Z,
 	ALL
+};
+
+class Tools
+{
+public:
+	int GetRandomNumber(int start, int end) {
+		// Uniformly-distributed integer random number generator, that produces non-deterministic random numbers!
+		std::random_device rd;
+
+		//  Mersenne Twister pseudo-random generator of 32-bit numbers with a state size of 19937 bits
+		std::mt19937 mt(rd());
+
+		// Uniform distribution
+		std::uniform_int_distribution<> distribution(start, end);
+		return distribution(mt);
+	}
 };

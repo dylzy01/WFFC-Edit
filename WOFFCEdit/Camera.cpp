@@ -42,7 +42,8 @@ Camera::Camera()
 	// Initialise rotation
 	m_yaw = m_pitch = m_roll = 0.f;
 	///m_speed = 0.3f;
-	m_speed = 1.f;
+	///m_speed = 1.f;
+	m_speed = 2.f;
 }
 
 void Camera::Update()

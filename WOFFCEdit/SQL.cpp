@@ -4,10 +4,16 @@ sqlite3 *SQL::m_databaseConnection;
 sqlite3_stmt *SQL::m_resultObject, *SQL::m_resultChunk;
 
 // Send query to database
-void SQL::SendQuery(char * query, bool isObject)
+bool SQL::SendQuery(char * query, bool isObject)
 {
-	if (isObject) { sqlite3_prepare_v2(m_databaseConnection, query, -1, &m_resultObject, 0); }
-	else { sqlite3_prepare_v2(m_databaseConnection, query, -1, &m_resultChunk, 0); }
+	// Controller
+	int rc = -1;
+	
+	if (isObject) { rc = sqlite3_prepare_v2(m_databaseConnection, query, -1, &m_resultObject, 0); }
+	else { rc = sqlite3_prepare_v2(m_databaseConnection, query, -1, &m_resultChunk, 0); }
+
+	if (rc) { return false; }
+	else { return true; }
 }
 
 // Create object from object table
@@ -189,6 +195,29 @@ bool SQL::AddObject(SceneObject object)
 	else { return true; }
 }
 
+// Remove an object from object table
+bool SQL::RemoveObject(SceneObject object)
+{
+	// Controller
+	int rc = -1;
+	
+	// Setup command stream from object data
+	std::stringstream ss;
+	ss << "DELETE FROM Objects WHERE ID = " << object.ID;
+
+	
+	/*SQL::SendQuery(ss.str().c_str(), true);
+	SQL::SetObjectStep();*/
+
+	// Add stream to query string
+	std::string command = ss.str();
+	rc = sqlite3_prepare_v2(m_databaseConnection, command.c_str(), -1, &m_resultObject, 0);
+	sqlite3_step(m_resultObject);
+
+	if (rc) { return false; }
+	else { return true; }
+}
+
 // Save updated scene graph
 bool SQL::SaveWorld(std::vector<SceneObject> sceneGraph)
 {
@@ -270,17 +299,6 @@ bool SQL::SaveWorld(std::vector<SceneObject> sceneGraph)
 		rc = sqlite3_prepare_v2(m_databaseConnection, command.c_str(), -1, &m_resultObject, 0);
 		sqlite3_step(m_resultObject);
 	}
-
-	if (rc) { return false; }
-	else { return true; }
-}
-
-bool SQL::PaintTerrain(DirectX::SimpleMath::Vector2 location, LANDSCAPE_PAINT paint)
-{
-	// Controller
-	int rc = -1;
-
-
 
 	if (rc) { return false; }
 	else { return true; }

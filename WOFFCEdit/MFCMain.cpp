@@ -13,6 +13,7 @@ BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_BUTTON40001,	&MFCMain::ToolBarButton1)
 	ON_COMMAND(ID_BUTTON40055, &MFCMain::ToolBarObjectSelect)
 	ON_COMMAND(ID_BUTTON40050, &MFCMain::ToolBarObjectSpawn)
+	ON_COMMAND(ID_BUTTON40059, &MFCMain::ToolBarObjectDelete)
 	ON_COMMAND(ID_BUTTON40052, &MFCMain::ToolBarTerrainSculpt)
 	ON_COMMAND(ID_BUTTON40048, &MFCMain::ToolBarTerrainPaint)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_TOOL, &CMyFrame::OnUpdatePage)
@@ -285,6 +286,20 @@ void MFCMain::CheckDialogues()
 
 		// Set spawn mode
 		m_toolSystem.SetObjectSpawn(m_objectSpawnDialogue.GetSpawn());
+
+		// Check if residential spawn is active
+		if (m_objectSpawnDialogue.GetResidentialObjectDialogue()->GetActive())
+		{
+			// Set residential spawner
+			m_toolSystem.SetResidentialSpawn(m_objectSpawnDialogue.GetResidentialObjectDialogue()->GetSpawn());
+		}
+
+		// Else, check if nature spawn is active
+		else if (m_objectSpawnDialogue.GetNatureObjectDialogue()->GetActive())
+		{
+			// Set nature spawner
+			m_toolSystem.SetNatureSpawn(m_objectSpawnDialogue.GetNatureObjectDialogue()->GetSpawn());
+		}
 	}
 
 	// Else, if terrain sculpter is active
@@ -394,6 +409,7 @@ void MFCMain::MenuEditWireframeOff()
 void MFCMain::ToolBarButton1()
 {	
 	m_toolSystem.onActionSave();
+	m_toolSystem.onActionSaveTerrain();
 }
 
 void MFCMain::ToolBarObjectSpawn()
@@ -419,6 +435,11 @@ void MFCMain::ToolBarObjectSelect()
 	m_objectEditorDialogue.Create(IDD_DIALOG7);
 	m_objectEditorDialogue.ShowWindow(SW_SHOW);
 	m_objectEditorDialogue.SetActive(true);
+}
+
+void MFCMain::ToolBarObjectDelete()
+{
+	m_toolSystem.onActionDeleteObjects();
 }
 
 void MFCMain::ToolBarTerrainSculpt()

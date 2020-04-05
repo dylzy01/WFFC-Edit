@@ -101,6 +101,10 @@
     <ClCompile Include="ObjectEditorDialogue.cpp">
       <Filter>MFC\Dialogues\Object</Filter>
     </ClCompile>
+    <ClCompile Include="NatureObjectDialogue.cpp" />
+    <ClCompile Include="ResidentialObjectDialogue.cpp">
+      <Filter>MFC\Dialogues\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -178,6 +182,10 @@
       <Filter>MFC\Dialogues\Object</Filter>
     </ClInclude>
     <ClInclude Include="ObjectEditorDialogue.h">
+      <Filter>MFC\Dialogues\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="NatureObjectDialogue.h" />
+    <ClInclude Include="ResidentialObjectDialogue.h">
       <Filter>MFC\Dialogues\Object</Filter>
     </ClInclude>
   </ItemGroup>

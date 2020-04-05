@@ -48,6 +48,7 @@ private:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	afx_msg void End();
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedSelect();
 	afx_msg void OnBnClickedTranslate();

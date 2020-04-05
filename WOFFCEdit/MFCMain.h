@@ -55,6 +55,7 @@ private:
 	afx_msg	void ToolBarButton1();
 	afx_msg void ToolBarObjectSpawn();
 	afx_msg void ToolBarObjectSelect();
+	afx_msg void ToolBarObjectDelete();
 	afx_msg void ToolBarTerrainSculpt();
 	afx_msg void ToolBarTerrainPaint();
 

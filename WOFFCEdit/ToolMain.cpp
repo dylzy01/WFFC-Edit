@@ -220,14 +220,14 @@ void ToolMain::onActionLoad_()
 }
 
 void ToolMain::onActionSave()
-{
+{	
 	// Database query to delete all records from objects table
 	SQL::SendQuery("DELETE FROM Objects", true);
 	SQL::SetObjectStep();
 
 	// Save new scene graph
-	if (SQL::SaveWorld(m_sceneGraph)) { MessageBox(NULL, L"Objects Saved", L"Notification", MB_OK); }
-	else { MessageBox(NULL, L"Objects Failed to Save", L"Notification", MB_OK); }
+	if (SQL::SaveWorld(m_sceneGraph)) { MessageBox(NULL, L"World Saved", L"Notification", MB_OK); }
+	else { MessageBox(NULL, L"World Failed to Save", L"Notification", MB_OK); }
 }
 
 void ToolMain::onActionSave_()
@@ -323,6 +323,17 @@ void ToolMain::onActionSave_()
 void ToolMain::onActionSaveTerrain()
 {
 	m_d3dRenderer.SaveDisplayChunk(&m_chunk);
+}
+
+void ToolMain::onActionDeleteObjects()
+{
+	m_d3dRenderer.DeleteSelectedObjects();
+
+	// Re-setup scene graph
+	m_sceneGraph.clear();
+	SQL::SendQuery("SELECT * FROM Objects", true);
+	while (SQL::GetObjectStep() == SQLITE_ROW) { m_sceneGraph.push_back(SQL::CreateObject()); }
+	m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
 }
 
 void ToolMain::Tick(MSG *msg)

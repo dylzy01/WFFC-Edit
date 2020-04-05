@@ -64,15 +64,12 @@ void ObjectEditorDialogue::UpdateButtons(bool enable)
 	{
 		// Enable/disable select button
 		if (!enable) { CheckDlgButton(IDC_CHECK4, enable); }
-		GetDlgItem(IDC_CHECK4)->EnableWindow(enable);
 
 		// Enable/disable rotate button
 		if (!enable) { CheckDlgButton(IDC_CHECK2, enable); }
-		GetDlgItem(IDC_CHECK2)->EnableWindow(enable);
 
 		// Enable/disable scale button
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
-		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
 
 		// Enable X button
 		GetDlgItem(IDC_CHECK8)->EnableWindow(true);
@@ -88,15 +85,12 @@ void ObjectEditorDialogue::UpdateButtons(bool enable)
 	{
 		// Enable/disable select button
 		if (!enable) { CheckDlgButton(IDC_CHECK4, enable); }
-		GetDlgItem(IDC_CHECK4)->EnableWindow(enable);
 
 		// Enable/disable translate button
 		if (!enable) { CheckDlgButton(IDC_CHECK1, enable); }
-		GetDlgItem(IDC_CHECK1)->EnableWindow(enable);
 
 		// Enable/disable scale button
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
-		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
 
 		// Enable X button
 		GetDlgItem(IDC_CHECK8)->EnableWindow(true);
@@ -112,15 +106,12 @@ void ObjectEditorDialogue::UpdateButtons(bool enable)
 	{
 		// Enable/disable select button
 		if (!enable) { CheckDlgButton(IDC_CHECK4, enable); }
-		GetDlgItem(IDC_CHECK4)->EnableWindow(enable);
 
 		// Enable/disable translate button
 		if (!enable) { CheckDlgButton(IDC_CHECK1, enable); }
-		GetDlgItem(IDC_CHECK1)->EnableWindow(enable);
 
 		// Enable/disable rotate button
 		if (!enable) { CheckDlgButton(IDC_CHECK2, enable); }
-		GetDlgItem(IDC_CHECK2)->EnableWindow(enable);
 
 		// Enable X button
 		GetDlgItem(IDC_CHECK8)->EnableWindow(true);
@@ -136,19 +127,15 @@ void ObjectEditorDialogue::UpdateButtons(bool enable)
 	{
 		// Enable/disable select button
 		if (!enable) { CheckDlgButton(IDC_CHECK4, enable); }
-		GetDlgItem(IDC_CHECK4)->EnableWindow(enable);
 
 		// Enable/disable translate button
 		if (!enable) { CheckDlgButton(IDC_CHECK1, enable); }
-		GetDlgItem(IDC_CHECK1)->EnableWindow(enable);
 
 		// Enable/disable rotate button
 		if (!enable) { CheckDlgButton(IDC_CHECK2, enable); }
-		GetDlgItem(IDC_CHECK2)->EnableWindow(enable);
 
 		// Enable/disable scale button
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
-		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
 
 		// Enable X button
 		GetDlgItem(IDC_CHECK8)->EnableWindow(true);
@@ -165,6 +152,7 @@ void ObjectEditorDialogue::UpdateButtons(bool enable)
 
 
 BEGIN_MESSAGE_MAP(ObjectEditorDialogue, CDialogEx)
+	ON_COMMAND(IDOK, &ObjectEditorDialogue::End)
 	ON_BN_CLICKED(IDOK, &ObjectEditorDialogue::OnBnClickedOk)
 	ON_BN_CLICKED(IDC_CHECK4, &ObjectEditorDialogue::OnBnClickedSelect)
 	ON_BN_CLICKED(IDC_CHECK1, &ObjectEditorDialogue::OnBnClickedTranslate)
@@ -178,11 +166,18 @@ END_MESSAGE_MAP()
 
 // ObjectEditorDialogue message handlers
 
+// Kill the dialogue
+void ObjectEditorDialogue::End()
+{
+	DestroyWindow();
+}
+
 // Set function to none & de-activate
 void ObjectEditorDialogue::OnBnClickedOk()
 {
 	m_active = m_x = m_y = m_z = false;
-	UpdateButtons(true);
+	m_function = OBJECT_FUNCTION::NA;
+	UpdateButtons(false);
 	CDialogEx::OnOK();
 }
 

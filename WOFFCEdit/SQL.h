@@ -20,7 +20,7 @@ public:
 	static bool Disconnect() { return sqlite3_close(m_databaseConnection); }
 
 	// Send query to database
-	static void SendQuery(char* query, bool isObject);
+	static bool SendQuery(char* query, bool isObject);
 
 	// Create object from object table
 	static SceneObject CreateObject();
@@ -30,6 +30,9 @@ public:
 
 	// Add new object to object table
 	static bool AddObject(SceneObject object);
+
+	// Remove an object from object table
+	static bool RemoveObject(SceneObject object);
 
 	// Save updated scene graph
 	static bool SaveWorld(std::vector<SceneObject> sceneGraph);

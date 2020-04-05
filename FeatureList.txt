@@ -6,6 +6,7 @@ MOUSE PICKING
 - Can select more than one object
 - Can select terrain
 - Can deselect objects
+- Can delete objects
 
 TERRAIN
 - Can increase x,y,z positions

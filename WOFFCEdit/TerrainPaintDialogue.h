@@ -41,6 +41,7 @@ private:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	afx_msg void End();
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedGrass();
 	afx_msg void OnBnClickedDirt();

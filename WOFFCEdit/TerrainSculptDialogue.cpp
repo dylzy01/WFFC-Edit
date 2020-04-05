@@ -85,6 +85,7 @@ void TerrainSculptDialogue::UpdateButtons(bool enable)
 }
 
 BEGIN_MESSAGE_MAP(TerrainSculptDialogue, CDialogEx)
+	ON_COMMAND(IDOK, &TerrainSculptDialogue::End)
 	ON_BN_CLICKED(IDOK, &TerrainSculptDialogue::OnBnClickedOk)
 	ON_BN_CLICKED(IDC_CHECK1, &TerrainSculptDialogue::OnBnClickedIncrease)
 	ON_BN_CLICKED(IDC_CHECK2, &TerrainSculptDialogue::OnBnClickedFlatten)
@@ -96,6 +97,12 @@ END_MESSAGE_MAP()
 
 
 // TerrainSculptDialogue message handlers
+
+// Kill the dialogue
+void TerrainSculptDialogue::End()
+{
+	DestroyWindow();
+}
 
 // Set sculpt to none & de-activate
 void TerrainSculptDialogue::OnBnClickedOk() 
