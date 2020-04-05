@@ -368,6 +368,12 @@ void DisplayChunk::SaveHeightMap()
 
 		// Sand
 		SavePaints("database/sand.csv", m_sand);
+
+		// Stone
+		SavePaints("database/stone.csv", m_stone);
+
+		// Snow
+		SavePaints("database/snow.csv", m_snow);
 	}
 }
 

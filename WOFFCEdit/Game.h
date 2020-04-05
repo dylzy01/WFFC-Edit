@@ -176,6 +176,8 @@ private:
 	bool m_spawnWater = false;
 	std::vector<DirectX::SimpleMath::Vector3> m_waterPositions;
 	float m_waterTranslation = 0.f;
+	float m_elapsedTime = 0.f;
+	bool m_switch = true;
 
 	// Device resources.
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;

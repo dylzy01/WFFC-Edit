@@ -180,9 +180,8 @@ void Game::Update(DX::StepTimer const& timer)
 
 }
 
-// Handles all world input
 void Game::HandleInput()
-{	
+{
 	// Switch between modes
 	switch (m_editor)
 	{
@@ -197,11 +196,11 @@ void Game::HandleInput()
 			// Switch between objects to spawn
 			switch (m_objectSpawn)
 			{
-			// Spawn grass at picking point
+				// Spawn grass at picking point
 			case OBJECT_SPAWN::GRASS: SQL::AddObject(CreateObject(OBJECT_SPAWN::GRASS, m_pickingPoint)); break;
-			// Spawn a tree at picking point
+				// Spawn a tree at picking point
 			case OBJECT_SPAWN::TREE: SQL::AddObject(CreateObject(OBJECT_SPAWN::TREE, m_pickingPoint)); break;
-			// Spawn water at picking point
+				// Spawn water at picking point
 			case OBJECT_SPAWN::WATER: SQL::AddObject(CreateObject(OBJECT_SPAWN::WATER, m_pickingPoint)); break;
 			}
 
@@ -211,20 +210,22 @@ void Game::HandleInput()
 	}
 	break;
 	case EDITOR::OBJECT_TRANSFORM:
-	{		
+	{
 		// If mouse left is being pressed
 		if (m_inputCommands.mouseLeft)
-		{						
+		{
+			bool save = false;
+
 			// If any objects are selected
 			if (m_selectedObjectIDs.size() != 0)
-			{				
+			{
 				// If object positions should be stored
 				if (m_storeObjectDetails)
 				{
 					// Reset vectors
 					m_storedObjectScales.clear();
 					m_storedObjectTranslations.clear();
-					m_storedObjectRotations.clear();					
+					m_storedObjectRotations.clear();
 
 					// Loop through selected objects
 					for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
@@ -236,7 +237,7 @@ void Game::HandleInput()
 							m_storedObjectScales.push_back(m_displayList[m_selectedObjectIDs[i]].m_scale);
 							m_storedObjectTranslations.push_back(m_displayList[m_selectedObjectIDs[i]].m_position);
 							m_storedObjectRotations.push_back(m_displayList[m_selectedObjectIDs[i]].m_orientation);
-						}						
+						}
 					}
 
 					// Reset controller
@@ -245,9 +246,9 @@ void Game::HandleInput()
 
 				// Loop through selected objects
 				for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
-				{				
+				{
 					// Update picking point
-					MousePicking(i);	
+					MousePicking(i);
 
 					// If picking point should be stored
 					if (m_inputCommands.storeOnce)
@@ -259,7 +260,7 @@ void Game::HandleInput()
 						// Reset controller
 						m_inputCommands.storeOnce = false;
 					}
-					
+
 					// If current object is intersecting with the ray trace
 					///if (ObjectIntersection(i))
 					// If picking point has moved
@@ -273,55 +274,62 @@ void Game::HandleInput()
 							// If should be scaled on the X and Y axis
 							if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
 							{
-								// Scale selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
-								m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
+								// Scale selected object based on picking point								
+								m_sceneGraph[m_selectedObjectIDs[i]].scaX = m_storedObjectScales[i].x - m_pickingPoint.x;
+								m_sceneGraph[m_selectedObjectIDs[i]].scaY = m_storedObjectScales[i].y - m_pickingPoint.y;
+								save = true;
 							}
 
 							// Else, if should be scaled on the X and Z axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::XZ)
 							{
 								// Scale selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
-								m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
+								m_sceneGraph[m_selectedObjectIDs[i]].scaX = m_storedObjectScales[i].x - m_pickingPoint.x;
+								m_sceneGraph[m_selectedObjectIDs[i]].scaZ = m_storedObjectScales[i].z - m_pickingPoint.z;
+								save = true;
 							}
 
 							// Else, if should be scaled on the Y and Z axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::YZ)
 							{
 								// Scale selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
-								m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
+								m_sceneGraph[m_selectedObjectIDs[i]].scaY = m_storedObjectScales[i].y - m_pickingPoint.y;
+								m_sceneGraph[m_selectedObjectIDs[i]].scaZ = m_storedObjectScales[i].z - m_pickingPoint.z;
+								save = true;
 							}
 
 							// Else, if should be scaled on the X axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::X)
 							{
 								// Scale selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
+								m_sceneGraph[m_selectedObjectIDs[i]].scaX = m_storedObjectScales[i].x - m_pickingPoint.x;
+								save = true;
 							}
 
 							// Else, if should be scaled on the Y axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::Y)
 							{
 								// Scale selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
+								m_sceneGraph[m_selectedObjectIDs[i]].scaY = m_storedObjectScales[i].y - m_pickingPoint.y;
+								save = true;
 							}
 
 							// Else, if should be scaled on the Z axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::Z)
 							{
 								// Scale selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
+								m_sceneGraph[m_selectedObjectIDs[i]].scaZ = m_storedObjectScales[i].z - m_pickingPoint.z;
+								save = true;
 							}
 
 							// Else, if should be scaled freely
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::ALL)
 							{
 								// Scale selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_scale.x = m_storedObjectScales[i].x - m_pickingPoint.x;
-								m_displayList[m_selectedObjectIDs[i]].m_scale.y = m_storedObjectScales[i].y - m_pickingPoint.y;
-								m_displayList[m_selectedObjectIDs[i]].m_scale.z = m_storedObjectScales[i].z - m_pickingPoint.z;
+								m_sceneGraph[m_selectedObjectIDs[i]].scaX = m_storedObjectScales[i].x - m_pickingPoint.x;
+								m_sceneGraph[m_selectedObjectIDs[i]].scaY = m_storedObjectScales[i].y - m_pickingPoint.y;
+								m_sceneGraph[m_selectedObjectIDs[i]].scaZ = m_storedObjectScales[i].z - m_pickingPoint.z;
+								save = true;
 							}
 
 							// Store manipulated scale
@@ -334,48 +342,67 @@ void Game::HandleInput()
 							if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
 							{
 								// Translate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
-								m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
+								///m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;								
+								///m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
+
+								m_sceneGraph[m_selectedObjectIDs[i]].posX = m_pickingPoint.x;
+								m_sceneGraph[m_selectedObjectIDs[i]].posY = m_pickingPoint.y;
+								save = true;
 							}
 
 							// Else, if should be translated on the X and Z axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::XZ)
 							{
 								// Translate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
-								m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
+								///m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
+								///m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
+
+								m_sceneGraph[m_selectedObjectIDs[i]].posX = m_pickingPoint.x;
+								m_sceneGraph[m_selectedObjectIDs[i]].posZ = m_pickingPoint.z;
+
+								save = true;
 							}
 
 							// Else, if should be translated on the Y and Z axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::YZ)
 							{
-								// Translate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
-								m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
+								// Translate selected object based on picking point								
+								///m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
+								///m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
+
+								m_sceneGraph[m_selectedObjectIDs[i]].posY = m_pickingPoint.y;
+								m_sceneGraph[m_selectedObjectIDs[i]].posZ = m_pickingPoint.z;
+								save = true;
 							}
 
 							// Else, if should be translated on the X axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::X)
 							{
 								// Translate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
+								///m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
+								m_sceneGraph[m_selectedObjectIDs[i]].posX = m_pickingPoint.x;
 
 								///Vector3 dragPoint = GetDragPoint(&m_xAxes[m_selectedObjectIDs[i]], &m_pickingPoint);
 								///m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x - dragPoint.x;
+								save = true;
 							}
 
 							// Else, if should be translated on the Y axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::Y)
 							{
 								// Translate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
+								///m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
+								m_sceneGraph[m_selectedObjectIDs[i]].posY = m_pickingPoint.y;
+								save = true;
 							}
 
 							// Else, if should be translated on the Z axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::Z)
 							{
 								// Translate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
+								///m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
+								m_sceneGraph[m_selectedObjectIDs[i]].posZ = m_pickingPoint.z;
+								save = true;
 							}
 
 							// Else, if should be translated freely
@@ -388,10 +415,16 @@ void Game::HandleInput()
 								float distance = sqrt((m_pickingPoint.x - m_storedObjectTranslations[i].x) * (m_pickingPoint.x - m_storedObjectTranslations[i].x) +
 									(m_pickingPoint.y - m_storedObjectTranslations[i].y) * (m_pickingPoint.y - m_storedObjectTranslations[i].y) +
 									(m_pickingPoint.z - m_storedObjectTranslations[i].z) * (m_pickingPoint.z - m_storedObjectTranslations[i].z));*/
-								
-								// Translate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_position = m_pickingPoint;
-								///m_displayList[m_selectedObjectIDs[i]].m_position = m_storedObjectTranslations[i] + m_pickingPoint;
+
+									// Translate selected object based on picking point
+									///m_displayList[m_selectedObjectIDs[i]].m_position = m_pickingPoint;
+									///m_displayList[m_selectedObjectIDs[i]].m_position = m_storedObjectTranslations[i] + m_pickingPoint;
+
+								m_sceneGraph[m_selectedObjectIDs[i]].posX = m_pickingPoint.x;
+								m_sceneGraph[m_selectedObjectIDs[i]].posY = m_pickingPoint.y;
+								m_sceneGraph[m_selectedObjectIDs[i]].posZ = m_pickingPoint.z;
+
+								save = true;
 							}
 						}
 						break;
@@ -401,58 +434,66 @@ void Game::HandleInput()
 							if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
 							{
 								// Rotate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.x += m_pickingPoint.x;
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.y += m_pickingPoint.y;
+								m_sceneGraph[m_selectedObjectIDs[i]].rotX += m_pickingPoint.x;
+								m_sceneGraph[m_selectedObjectIDs[i]].rotY += m_pickingPoint.y;
 							}
 
 							// Else, if should be rotated on the X and Z axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::XZ)
 							{
 								// Rotate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.x += m_pickingPoint.x;
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.z += m_pickingPoint.z;
+								m_sceneGraph[m_selectedObjectIDs[i]].rotX += m_pickingPoint.x;
+								m_sceneGraph[m_selectedObjectIDs[i]].rotZ += m_pickingPoint.z;
 							}
 
 							// Else, if should be rotated on the Y and Z axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::YZ)
 							{
 								// Rotate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.y += m_pickingPoint.y;
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.z += m_pickingPoint.z;
+								m_sceneGraph[m_selectedObjectIDs[i]].rotY += m_pickingPoint.y;
+								m_sceneGraph[m_selectedObjectIDs[i]].rotZ += m_pickingPoint.z;
 							}
 
 							// Else, if should be rotated on the X axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::X)
 							{
 								// Rotate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.x += m_pickingPoint.x;
+								m_sceneGraph[m_selectedObjectIDs[i]].rotX += m_pickingPoint.x;
 							}
 
 							// Else, if should be rotated on the Y axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::Y)
 							{
 								// Rotate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.y += m_pickingPoint.y;
+								m_sceneGraph[m_selectedObjectIDs[i]].rotY += m_pickingPoint.y;
 							}
 
 							// Else, if should be rotated on the Z axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::Z)
 							{
 								// Rotate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.z += m_pickingPoint.z;
+								m_sceneGraph[m_selectedObjectIDs[i]].rotZ += m_pickingPoint.z;
 							}
 
 							// Else, if should be rotated freely
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::ALL)
 							{
 								// Rotate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_orientation += m_pickingPoint;
+								m_sceneGraph[m_selectedObjectIDs[i]].rotX += m_pickingPoint.x;
+								m_sceneGraph[m_selectedObjectIDs[i]].rotY += m_pickingPoint.y;
+								m_sceneGraph[m_selectedObjectIDs[i]].rotZ += m_pickingPoint.z;
 							}
 						}
 						break;
 						}
 					}
 				}
+			}
+
+			if (save)
+			{
+				// Update scene graph
+				BuildDisplayList(&m_sceneGraph);
 			}
 		}
 		// Else, if mouse isn't being pressed
@@ -500,7 +541,7 @@ void Game::HandleInput()
 
 				// Else, if flatten
 				else if (m_landscapeSculpt == LANDSCAPE_SCULPT::FLATTEN)
-				{					
+				{
 					// If first position should be stored
 					if (m_storeTerrainPosition)
 					{
@@ -520,7 +561,7 @@ void Game::HandleInput()
 					}
 				}
 			}
-		}			
+		}
 	}
 	break;
 	}
@@ -559,55 +600,84 @@ void Game::UpdateCamera()
 // Updates the waves of all water objects
 void Game::UpdateWaves()
 {
-	// Temp y position
-	float tempY = 0.f;
+	// Increase elapsed time
+	m_elapsedTime += m_deltaTime;
 	
 	// Loop through display list
 	for (int i = 0; i < m_displayList.size(); ++i)
 	{
-		// Store y position
-		tempY = m_displayList[i].m_position.y;
-
 		// If current object is water
 		if (m_displayList[i].m_type == MODEL_TYPE::WATER)
-		{			
-			///m_displayList[i].m_position.y = sin(m_displayList[i].m_position.x - (m_deltaTime));/// *100.f));
-			
-			///float speed = 3.f, height = 10.f;
-			///m_displayList[i].m_position.y = sin(speed * m_deltaTime) * height;
-
-			///float amplitude = 10.f, freq = 1.f;
-			///m_displayList[i].m_position.x += m_deltaTime;
-			///m_displayList[i].m_position.y = (amplitude * (sin(2 * PI * freq * m_deltaTime + 5)));
-
-			///m_displayList[i].m_position.y = Pulse();
-
-			///m_displayList[i].m_position.y = GetNewHeight(tempY);
-
-			///m_displayList[i].m_position.y = sin((((i / 5.f)*40.f) / 360.f)*PI*2.f);
-
-			///m_displayList[i].m_position.y = sin(m_displayList[i].m_position.x / 3.f) * 10.f + 300.f;
-		
-			// Store temp position
-			//Vector3 position = m_displayList[i].m_position;
-
-			//// Offset position based on sinewave
-			//position.y = sin(position.x + m_deltaTime) * 10.f;
-
-			//// Calculate position of vertex against world, view and projection matrices
-			//m_displayList[i].m_position = (Vector3)XMVector3Transform(position, m_world);
-			//m_displayList[i].m_position = (Vector3)XMVector3Transform((Vector3)m_displayList[i].m_position, m_world);
-			//m_displayList[i].m_position = (Vector3)XMVector3Transform((Vector3)m_displayList[i].m_position, m_world);
-
-			m_waterTranslation += 0.001f;
-			if (m_waterTranslation > .1f) 
-			{ 
-				m_waterTranslation -= .2f; 
+		{
+			// Switch between positive/negative
+			switch (m_switch)
+			{
+			case true: m_displayList[i].m_position.y += (m_elapsedTime / 6); break;
+			case false: m_displayList[i].m_position.y -= (m_elapsedTime / 6); break;
 			}
-			m_displayList[i].m_position.y += m_waterTranslation;
-			///m_displayList[i].m_position.y += 1.f;
 		}
 	}
+
+	// If elapsed time has passed half a second
+	if (m_elapsedTime > .5f)
+	{
+		// Reset timer
+		m_elapsedTime = 0.f;
+		
+		// Switch positive/negative
+		if (m_switch) { m_switch = false; }
+		else { m_switch = true; }
+	}
+	
+	//// Temp y position
+	//float tempY = 0.f;
+	//
+	//// Loop through display list
+	//for (int i = 0; i < m_displayList.size(); ++i)
+	//{
+	//	// Store y position
+	//	tempY = m_displayList[i].m_position.y;
+
+	//	// If current object is water
+	//	if (m_displayList[i].m_type == MODEL_TYPE::WATER)
+	//	{			
+	//		///m_displayList[i].m_position.y = sin(m_displayList[i].m_position.x - (m_deltaTime));/// *100.f));
+	//		
+	//		///float speed = 3.f, height = 10.f;
+	//		///m_displayList[i].m_position.y = sin(speed * m_deltaTime) * height;
+
+	//		///float amplitude = 10.f, freq = 1.f;
+	//		///m_displayList[i].m_position.x += m_deltaTime;
+	//		///m_displayList[i].m_position.y = (amplitude * (sin(2 * PI * freq * m_deltaTime + 5)));
+
+	//		///m_displayList[i].m_position.y = Pulse();
+
+	//		///m_displayList[i].m_position.y = GetNewHeight(tempY);
+
+	//		///m_displayList[i].m_position.y = sin((((i / 5.f)*40.f) / 360.f)*PI*2.f);
+
+	//		///m_displayList[i].m_position.y = sin(m_displayList[i].m_position.x / 3.f) * 10.f + 300.f;
+	//	
+	//		// Store temp position
+	//		//Vector3 position = m_displayList[i].m_position;
+
+	//		//// Offset position based on sinewave
+	//		//position.y = sin(position.x + m_deltaTime) * 10.f;
+
+	//		//// Calculate position of vertex against world, view and projection matrices
+	//		//m_displayList[i].m_position = (Vector3)XMVector3Transform(position, m_world);
+	//		//m_displayList[i].m_position = (Vector3)XMVector3Transform((Vector3)m_displayList[i].m_position, m_world);
+	//		//m_displayList[i].m_position = (Vector3)XMVector3Transform((Vector3)m_displayList[i].m_position, m_world);
+
+	//		m_waterTranslation += 0.001f;
+	//		if (m_waterTranslation > .1f) 
+	//		{ 
+	//			m_waterTranslation -= .2f; 
+	//		}
+	//		m_displayList[i].m_position.y += m_waterTranslation;
+	//		///m_displayList[i].m_position.y += 1.f;
+	//	}
+	//}
 }
 float Game::Pulse()
 {
