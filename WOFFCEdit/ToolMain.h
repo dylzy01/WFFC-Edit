@@ -36,8 +36,6 @@ public: //methods
 	void SetWireframe(bool wireframe) { m_d3dRenderer.SetWireframe(wireframe); }
 	void SetEditor(EDITOR editor) { m_d3dRenderer.SetEditor(editor); }
 	void SetObjectSpawn(OBJECT_SPAWN spawn) { m_d3dRenderer.SetObjectSpawn(spawn); }
-	void SetResidentialSpawn(RESIDENTIAL_SPAWN spawn) { m_d3dRenderer.SetResidentialSpawn(spawn); }
-	void SetNatureSpawn(NATURE_SPAWN spawn) { m_d3dRenderer.SetNatureSpawn(spawn); }
 	void SetObjectTransform(OBJECT_FUNCTION function) { m_d3dRenderer.SetObjectTransform(function); }
 	void SetObjectConstraint(OBJECT_CONSTRAINT constraint) { m_d3dRenderer.SetObjectConstraint(constraint); }
 	void SetLandscapePaint(LANDSCAPE_PAINT paint) { m_d3dRenderer.SetLandscapePaint(paint); }
@@ -68,4 +66,7 @@ private:	//variables
 	
 	// Mouse movement
 	bool m_mouseR, m_mouseL;
+
+	// Toggle controllers
+	bool m_lDown = false, m_rDown = false;
 };

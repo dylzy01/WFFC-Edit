@@ -286,20 +286,6 @@ void MFCMain::CheckDialogues()
 
 		// Set spawn mode
 		m_toolSystem.SetObjectSpawn(m_objectSpawnDialogue.GetSpawn());
-
-		// Check if residential spawn is active
-		if (m_objectSpawnDialogue.GetResidentialObjectDialogue()->GetActive())
-		{
-			// Set residential spawner
-			m_toolSystem.SetResidentialSpawn(m_objectSpawnDialogue.GetResidentialObjectDialogue()->GetSpawn());
-		}
-
-		// Else, check if nature spawn is active
-		else if (m_objectSpawnDialogue.GetNatureObjectDialogue()->GetActive())
-		{
-			// Set nature spawner
-			m_toolSystem.SetNatureSpawn(m_objectSpawnDialogue.GetNatureObjectDialogue()->GetSpawn());
-		}
 	}
 
 	// Else, if terrain sculpter is active

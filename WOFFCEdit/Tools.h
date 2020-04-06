@@ -13,12 +13,7 @@ struct TERRAIN {
 };
 
 enum class MODEL_TYPE {
-	PLACEHOLDER,
-	HOUSE,
-	CAVE,
-	GRASS,
-	BUSH,
-	TREE,
+	NOT_WATER,
 	WATER
 };
 
@@ -32,15 +27,22 @@ enum class EDITOR {
 
 enum class OBJECT_SPAWN {
 	NA,
-	RESIDENTIAL,
+	/*RESIDENTIAL,
 	NATURE,
-	PROPS,
+	PROPS,*/
 
+	// Residential
 	HOUSE_ONE,
 	HOUSE_TWO,
 	CAVE,
+
+	// Props
+	BRIDGE,
+	FENCE,
+	BOAT,
+
+	// Nature
 	GRASS,
-	BUSH,
 	TREE_ONE,
 	TREE_TWO,
 	WATER

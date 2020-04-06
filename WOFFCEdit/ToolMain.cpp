@@ -440,23 +440,33 @@ void ToolMain::UpdateInput(MSG * msg)
 		break;
 
 	case WM_LBUTTONDOWN:	
-		m_toolInputCommands.mouseLeft = true;
-		m_toolInputCommands.pickOnce = true;
-		if (m_toolInputCommands.toggle) { m_toolInputCommands.storeOnce = true; m_toolInputCommands.toggle = false; }
+		if (!m_lDown)
+		{
+			m_lDown = true;
+			m_toolInputCommands.mouseLeft = true;
+			m_toolInputCommands.pickOnce = true;
+			if (m_toolInputCommands.toggle) { m_toolInputCommands.storeOnce = true; m_toolInputCommands.toggle = false; }
+		}
 		break;
 
 	case WM_LBUTTONUP:
+		m_lDown = false;
 		m_toolInputCommands.mouseLeft = false;
 		m_toolInputCommands.toggle = true;
 		m_d3dRenderer.StoreTerrainPosition(true);
 		break;
 
 	case WM_RBUTTONDOWN:
-		m_toolInputCommands.mouseRight = true;
-		m_toolInputCommands.pickOnce = true;
+		if (!m_rDown)
+		{
+			m_rDown = true;
+			m_toolInputCommands.mouseRight = true;
+			m_toolInputCommands.pickOnce = true;
+		}
 		break;
 
 	case WM_RBUTTONUP:
+		m_rDown = false;
 		m_toolInputCommands.mouseRight = false;
 		break;
 

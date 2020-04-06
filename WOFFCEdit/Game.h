@@ -78,23 +78,63 @@ public:
 		m_editor = editor; 
 		switch (editor)
 		{
-		case EDITOR::OBJECT_TRANSFORM:
+		case EDITOR::OBJECT_SPAWN:
 		{
+			// Reset object transform
+			m_objectTransform = OBJECT_FUNCTION::NA;
+			m_objectConstraint = OBJECT_CONSTRAINT::NA;
+
+			// Reset landscape sculpt
 			m_landscapeSculpt = LANDSCAPE_SCULPT::NA;
 			m_landscapeConstraint = LANDSCAPE_CONSTRAINT::NA;
+
+			// Reset landscape paint
+			m_landscapePaint = LANDSCAPE_PAINT::NA;
+		}
+		break;
+		case EDITOR::OBJECT_TRANSFORM:
+		{
+			// Reset object spawn
+			m_objectSpawn = OBJECT_SPAWN::NA;
+			
+			// Reset landscape sculpt
+			m_landscapeSculpt = LANDSCAPE_SCULPT::NA;
+			m_landscapeConstraint = LANDSCAPE_CONSTRAINT::NA;
+
+			// Reset landscape paint
+			m_landscapePaint = LANDSCAPE_PAINT::NA;
 		}
 		break;
 		case EDITOR::LANDSCAPE_SCULPT:
 		{
+			// Reset object spawn
+			m_objectSpawn = OBJECT_SPAWN::NA;
+			
+			// Reset object transform
+			m_objectTransform = OBJECT_FUNCTION::NA;
+			m_objectConstraint = OBJECT_CONSTRAINT::NA;			
+
+			// Reset landscape paint
+			m_landscapePaint = LANDSCAPE_PAINT::NA;
+		}
+		case EDITOR::LANDSCAPE_PAINT:
+		{
+			// Reset object spawn
+			m_objectSpawn = OBJECT_SPAWN::NA;
+			
+			// Reset object transform
 			m_objectTransform = OBJECT_FUNCTION::NA;
 			m_objectConstraint = OBJECT_CONSTRAINT::NA;
+
+			// Reset landscape sculpt
+			m_landscapeSculpt = LANDSCAPE_SCULPT::NA;
+			m_landscapeConstraint = LANDSCAPE_CONSTRAINT::NA;
 		}
+		break;
 		break;
 		}
 	}
 	void SetObjectSpawn(OBJECT_SPAWN spawn) { m_objectSpawn = spawn; }
-	void SetResidentialSpawn(RESIDENTIAL_SPAWN spawn) { m_residentialSpawn = spawn; }
-	void SetNatureSpawn(NATURE_SPAWN spawn) { m_natureSpawn = spawn; }
 	void SetObjectTransform(OBJECT_FUNCTION function) { m_objectTransform = function; }
 	void SetObjectConstraint(OBJECT_CONSTRAINT constraint) { m_objectConstraint = constraint; }
 	void SetLandscapePaint(LANDSCAPE_PAINT paint) { m_landscapePaint = paint; }
@@ -168,8 +208,6 @@ private:
 	// Editor controllers
 	EDITOR m_editor;
 	OBJECT_SPAWN m_objectSpawn = OBJECT_SPAWN::NA;
-	RESIDENTIAL_SPAWN m_residentialSpawn = RESIDENTIAL_SPAWN::NA;
-	NATURE_SPAWN m_natureSpawn = NATURE_SPAWN::NA;
 	OBJECT_FUNCTION m_objectTransform = OBJECT_FUNCTION::NA;
 	OBJECT_CONSTRAINT m_objectConstraint = OBJECT_CONSTRAINT::NA;
 	LANDSCAPE_PAINT m_landscapePaint = LANDSCAPE_PAINT::NA;
