@@ -333,8 +333,8 @@ void ToolMain::Tick(MSG *msg)
 	// Controller for mouse drag check
 	bool check = false;
 		
-	// If left mouse left button is pressed
-	if (m_toolInputCommands.mouseLeft)
+	// If left mouse right button is pressed
+	if (m_toolInputCommands.mouseRight)
 	{
 		// Check mouse drag
 		check = true;		
@@ -353,6 +353,7 @@ void ToolMain::Tick(MSG *msg)
 					// Select an object
 					m_d3dRenderer.PickingObjects(true);
 					m_selectedObjects = m_d3dRenderer.GetSelectedObjectIDs();
+					m_d3dRenderer.StoreObjectDetails(true);
 				}
 
 				// Reset picking controller
@@ -375,8 +376,8 @@ void ToolMain::Tick(MSG *msg)
 		}		
 	}
 
-	// Else, if mouse right button is pressed
-	else if (m_toolInputCommands.mouseRight)
+	// Else, if mouse left button is pressed
+	else if (m_toolInputCommands.mouseLeft)
 	{
 		// Check mouse drag
 		check = true;
@@ -409,7 +410,7 @@ void ToolMain::Tick(MSG *msg)
 	if (check)
 	{
 		// Is stored mouse position different from current mouse position?
-		if (m_mousePosition != m_toolInputCommands.mousePos)
+		if (m_toolInputCommands.mousePosPrevious != m_toolInputCommands.mousePos)
 		{
 			// Mouse has been dragged
 			m_toolInputCommands.mouseDrag = true;
@@ -448,7 +449,7 @@ void ToolMain::UpdateInput(MSG * msg)
 			if (m_toolInputCommands.toggle) { m_toolInputCommands.storeOnce = true; m_toolInputCommands.toggle = false; }
 
 			// Store current mouse position
-			m_mousePosition = m_toolInputCommands.mousePos;
+			m_toolInputCommands.mousePosPrevious = m_toolInputCommands.mousePos;
 		}
 
 		// Check if mouse has moved
@@ -469,7 +470,7 @@ void ToolMain::UpdateInput(MSG * msg)
 			m_toolInputCommands.pickOnce = true;
 
 			// Store current mouse position
-			m_mousePosition = m_toolInputCommands.mousePos;
+			m_toolInputCommands.mousePosPrevious = m_toolInputCommands.mousePos;
 		}
 
 		// Check if mouse has moved

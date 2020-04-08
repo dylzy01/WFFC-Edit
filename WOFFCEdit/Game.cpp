@@ -180,12 +180,12 @@ void Game::Update(DX::StepTimer const& timer)
 
 }
 
+// Handles game input
 void Game::HandleInput()
 {
 	// If mouse right is being pressed
 	if (m_inputCommands.mouseRight)
 	{
-
 		// Switch between modes
 		switch (m_editor)
 		{
@@ -203,6 +203,9 @@ void Game::HandleInput()
 		break;
 		case EDITOR::OBJECT_TRANSFORM:
 		{
+			// Has mouse been dragged?
+			bool dragged = m_inputCommands.mouseDrag;
+			
 			// If any objects are selected
 			if (m_selectedObjectIDs.size() != 0)
 			{
@@ -237,226 +240,189 @@ void Game::HandleInput()
 					// Update picking point
 					MousePicking(i);
 
-					// If picking point should be stored
-					if (m_inputCommands.storeOnce)
-					{
-						// Store picking point position
-						m_storedPickingPoint = m_pickingPoint;
-						///m_storedPickingPoint = m_displayList[m_selectedObjectIDs[i]].m_position;
-
-						// Reset controller
-						m_inputCommands.storeOnce = false;
-					}
-
-					// If current object is intersecting with the ray trace
-					///if (ObjectIntersection(i))
-					// If picking point has moved
-					///if (m_pickingPoint != m_storedPickingPoint)
-					{
+					// If mouse has been dragged
+					if (dragged)
+					{						
 						// Switch between S, R, T
 						switch (m_objectTransform)
 						{
 						case OBJECT_FUNCTION::SCALE:
 						{
+							// Get manipulated scale from mouse drag
+							Vector3 scale = GetScale(i);
+
 							// If should be scaled on the X and Y axis
 							if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
 							{
-								// Scale selected object based on picking point								
-								m_sceneGraph[m_selectedObjectIDs[i]].scaX = m_storedObjectScales[i].x - m_pickingPoint.x;
-								m_sceneGraph[m_selectedObjectIDs[i]].scaY = m_storedObjectScales[i].y - m_pickingPoint.y;
+								// Scale selected object based on mouse drag 
+								m_displayList[m_selectedObjectIDs[i]].m_scale.x = scale.x;
+								m_displayList[m_selectedObjectIDs[i]].m_scale.y = scale.y;
 							}
 
 							// Else, if should be scaled on the X and Z axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::XZ)
 							{
-								// Scale selected object based on picking point
-								m_sceneGraph[m_selectedObjectIDs[i]].scaX = m_storedObjectScales[i].x - m_pickingPoint.x;
-								m_sceneGraph[m_selectedObjectIDs[i]].scaZ = m_storedObjectScales[i].z - m_pickingPoint.z;
+								// Scale selected object based on mouse drag 
+								m_displayList[m_selectedObjectIDs[i]].m_scale.x = scale.x;
+								m_displayList[m_selectedObjectIDs[i]].m_scale.z = scale.z;
 							}
 
 							// Else, if should be scaled on the Y and Z axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::YZ)
 							{
-								// Scale selected object based on picking point
-								m_sceneGraph[m_selectedObjectIDs[i]].scaY = m_storedObjectScales[i].y - m_pickingPoint.y;
-								m_sceneGraph[m_selectedObjectIDs[i]].scaZ = m_storedObjectScales[i].z - m_pickingPoint.z;
+								// Scale selected object based on mouse drag 
+								m_displayList[m_selectedObjectIDs[i]].m_scale.y = scale.y;
+								m_displayList[m_selectedObjectIDs[i]].m_scale.z = scale.z;
 							}
 
 							// Else, if should be scaled on the X axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::X)
 							{
-								// Scale selected object based on picking point
-								m_sceneGraph[m_selectedObjectIDs[i]].scaX = m_storedObjectScales[i].x - m_pickingPoint.x;
+								// Scale selected object based on mouse drag 
+								m_displayList[m_selectedObjectIDs[i]].m_scale.x = scale.x;
 							}
 
 							// Else, if should be scaled on the Y axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::Y)
 							{
-								// Scale selected object based on picking point
-								m_sceneGraph[m_selectedObjectIDs[i]].scaY = m_storedObjectScales[i].y - m_pickingPoint.y;
+								// Scale selected object based on mouse drag 
+								m_displayList[m_selectedObjectIDs[i]].m_scale.y = scale.y;
 							}
 
 							// Else, if should be scaled on the Z axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::Z)
 							{
-								// Scale selected object based on picking point
-								m_sceneGraph[m_selectedObjectIDs[i]].scaZ = m_storedObjectScales[i].z - m_pickingPoint.z;
+								// Scale selected object based on mouse drag 
+								m_displayList[m_selectedObjectIDs[i]].m_scale.z = scale.z;
 							}
 
 							// Else, if should be scaled freely
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::ALL)
 							{
-								// Scale selected object based on picking point
-								m_sceneGraph[m_selectedObjectIDs[i]].scaX = m_storedObjectScales[i].x - m_pickingPoint.x;
-								m_sceneGraph[m_selectedObjectIDs[i]].scaY = m_storedObjectScales[i].y - m_pickingPoint.y;
-								m_sceneGraph[m_selectedObjectIDs[i]].scaZ = m_storedObjectScales[i].z - m_pickingPoint.z;
+								// Scale selected object based on mouse drag 
+								m_displayList[m_selectedObjectIDs[i]].m_scale = scale;
 							}
 
-							// Store manipulated scale
-							///m_storedObjectScales[i] = m_displayList[m_selectedObjectIDs[i]].m_scale;						
 						}
-						break;
-						case OBJECT_FUNCTION::TRANSLATE:
-						{
-							// If should be translated on the X and Y axis
-							if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
-							{
-								// Translate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
-								m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
-
-								///m_sceneGraph[m_selectedObjectIDs[i]].posX = m_pickingPoint.x;
-								///m_sceneGraph[m_selectedObjectIDs[i]].posY = m_pickingPoint.y;
-							}
-
-							// Else, if should be translated on the X and Z axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::XZ)
-							{
-								// Translate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
-								m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
-
-								///m_sceneGraph[m_selectedObjectIDs[i]].posX = m_pickingPoint.x;
-								///m_sceneGraph[m_selectedObjectIDs[i]].posZ = m_pickingPoint.z;
-							}
-
-							// Else, if should be translated on the Y and Z axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::YZ)
-							{
-								// Translate selected object based on picking point								
-								m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
-								m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
-
-								///m_sceneGraph[m_selectedObjectIDs[i]].posY = m_pickingPoint.y;
-								///m_sceneGraph[m_selectedObjectIDs[i]].posZ = m_pickingPoint.z;
-							}
-
-							// Else, if should be translated on the X axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::X)
-							{
-								// Translate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x;
-								///m_sceneGraph[m_selectedObjectIDs[i]].posX = m_pickingPoint.x;
-
-								///Vector3 dragPoint = GetDragPoint(&m_xAxes[m_selectedObjectIDs[i]], &m_pickingPoint);
-								///m_displayList[m_selectedObjectIDs[i]].m_position.x = m_pickingPoint.x - dragPoint.x;
-							}
-
-							// Else, if should be translated on the Y axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::Y)
-							{
-								// Translate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_position.y = m_pickingPoint.y;
-								///m_sceneGraph[m_selectedObjectIDs[i]].posY = m_pickingPoint.y;
-							}
-
-							// Else, if should be translated on the Z axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::Z)
-							{
-								// Translate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_position.z = m_pickingPoint.z;
-								///m_sceneGraph[m_selectedObjectIDs[i]].posZ = m_pickingPoint.z;
-							}
-
-							// Else, if should be translated freely
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::ALL)
-							{
-								// Get distance between picking point and stored object position
-								/*float x = sqrt((m_pickingPoint.x - m_storedObjectTranslations[i].x) * (m_pickingPoint.x - m_storedObjectTranslations[i].x));
-								float y = sqrt((m_pickingPoint.y - m_storedObjectTranslations[i].y) * (m_pickingPoint.y - m_storedObjectTranslations[i].y));
-								float z = sqrt((m_pickingPoint.z - m_storedObjectTranslations[i].z) * (m_pickingPoint.z - m_storedObjectTranslations[i].z));
-								float distance = sqrt((m_pickingPoint.x - m_storedObjectTranslations[i].x) * (m_pickingPoint.x - m_storedObjectTranslations[i].x) +
-									(m_pickingPoint.y - m_storedObjectTranslations[i].y) * (m_pickingPoint.y - m_storedObjectTranslations[i].y) +
-									(m_pickingPoint.z - m_storedObjectTranslations[i].z) * (m_pickingPoint.z - m_storedObjectTranslations[i].z));*/
-
-									// Translate selected object based on picking point
-								m_displayList[m_selectedObjectIDs[i]].m_position = m_pickingPoint;
-								///m_displayList[m_selectedObjectIDs[i]].m_position = m_storedObjectTranslations[i] + m_pickingPoint;
-
-							/*m_sceneGraph[m_selectedObjectIDs[i]].posX = m_pickingPoint.x;
-							m_sceneGraph[m_selectedObjectIDs[i]].posY = m_pickingPoint.y;
-							m_sceneGraph[m_selectedObjectIDs[i]].posZ = m_pickingPoint.z;*/
-							}
-						}
-						break;
+						break;						
 						case OBJECT_FUNCTION::ROTATE:
 						{
+							// Get manipulated rotation from mouse drag
+							Vector3 rotate = GetRotation(i);
+								
 							// If should be rotated on the X and Y axis
 							if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
 							{
-								// Rotate selected object based on picking point
-								m_sceneGraph[m_selectedObjectIDs[i]].rotX += m_pickingPoint.x;
-								m_sceneGraph[m_selectedObjectIDs[i]].rotY += m_pickingPoint.y;
+								// Rotate selected object based on mouse drag
+								m_displayList[m_selectedObjectIDs[i]].m_orientation.x = rotate.x;
+								m_displayList[m_selectedObjectIDs[i]].m_orientation.y = rotate.y;
 							}
 
 							// Else, if should be rotated on the X and Z axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::XZ)
 							{
-								// Rotate selected object based on picking point
-								m_sceneGraph[m_selectedObjectIDs[i]].rotX += m_pickingPoint.x;
-								m_sceneGraph[m_selectedObjectIDs[i]].rotZ += m_pickingPoint.z;
+								// Rotate selected object based on mouse drag
+								m_displayList[m_selectedObjectIDs[i]].m_orientation.x = rotate.x;
+								m_displayList[m_selectedObjectIDs[i]].m_orientation.z = rotate.z;
 							}
 
 							// Else, if should be rotated on the Y and Z axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::YZ)
 							{
-								// Rotate selected object based on picking point
-								m_sceneGraph[m_selectedObjectIDs[i]].rotY += m_pickingPoint.y;
-								m_sceneGraph[m_selectedObjectIDs[i]].rotZ += m_pickingPoint.z;
+								// Rotate selected object based on mouse drag
+								m_displayList[m_selectedObjectIDs[i]].m_orientation.y = rotate.y;
+								m_displayList[m_selectedObjectIDs[i]].m_orientation.z = rotate.z;
 							}
 
 							// Else, if should be rotated on the X axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::X)
 							{
-								// Rotate selected object based on picking point
-								m_sceneGraph[m_selectedObjectIDs[i]].rotX += m_pickingPoint.x;
+								// Rotate selected object based on mouse drag
+								m_displayList[m_selectedObjectIDs[i]].m_orientation.x = rotate.x;
 							}
 
 							// Else, if should be rotated on the Y axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::Y)
 							{
-								// Rotate selected object based on picking point
-								m_sceneGraph[m_selectedObjectIDs[i]].rotY += m_pickingPoint.y;
+								// Rotate selected object based on mouse drag
+								m_displayList[m_selectedObjectIDs[i]].m_orientation.y = rotate.y;
 							}
 
 							// Else, if should be rotated on the Z axis
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::Z)
 							{
-								// Rotate selected object based on picking point
-								m_sceneGraph[m_selectedObjectIDs[i]].rotZ += m_pickingPoint.z;
+								// Rotate selected object based on mouse drag
+								m_displayList[m_selectedObjectIDs[i]].m_orientation.z = rotate.z;
 							}
 
 							// Else, if should be rotated freely
 							else if (m_objectConstraint == OBJECT_CONSTRAINT::ALL)
 							{
-								// Rotate selected object based on picking point
-								m_sceneGraph[m_selectedObjectIDs[i]].rotX += m_pickingPoint.x;
-								m_sceneGraph[m_selectedObjectIDs[i]].rotY += m_pickingPoint.y;
-								m_sceneGraph[m_selectedObjectIDs[i]].rotZ += m_pickingPoint.z;
+								// Rotate selected object based on mouse drag
+								m_displayList[m_selectedObjectIDs[i]].m_orientation = rotate;
+							}
+						}
+						break;
+						case OBJECT_FUNCTION::TRANSLATE:
+						{
+							// Get manipulated translation from mouse drag
+							Vector3 translate = GetTranslation(i);
+
+							// If should be translated on the X and Y axis
+							if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
+							{
+								// Translate selected object based on mouse drag
+								m_displayList[m_selectedObjectIDs[i]].m_position.x = translate.x;
+								m_displayList[m_selectedObjectIDs[i]].m_position.y = translate.y;
+							}
+
+							// Else, if should be translated on the X and Z axis
+							else if (m_objectConstraint == OBJECT_CONSTRAINT::XZ)
+							{
+								// Translate selected object based on mouse drag
+								m_displayList[m_selectedObjectIDs[i]].m_position.x = translate.x;
+								m_displayList[m_selectedObjectIDs[i]].m_position.z = translate.z;
+							}
+
+							// Else, if should be translated on the Y and Z axis
+							else if (m_objectConstraint == OBJECT_CONSTRAINT::YZ)
+							{
+								// Translate selected object based on mouse drag
+								m_displayList[m_selectedObjectIDs[i]].m_position.y = translate.y;
+								m_displayList[m_selectedObjectIDs[i]].m_position.z = translate.z;
+							}
+
+							// Else, if should be translated on the X axis
+							else if (m_objectConstraint == OBJECT_CONSTRAINT::X)
+							{
+								// Translate selected object based on mouse drag
+								m_displayList[m_selectedObjectIDs[i]].m_position.x = translate.x;
+							}
+
+							// Else, if should be translated on the Y axis
+							else if (m_objectConstraint == OBJECT_CONSTRAINT::Y)
+							{
+								// Translate selected object based on mouse drag
+								m_displayList[m_selectedObjectIDs[i]].m_position.y = translate.y;
+							}
+
+							// Else, if should be translated on the Z axis
+							else if (m_objectConstraint == OBJECT_CONSTRAINT::Z)
+							{
+								// Translate selected object based on mouse drag
+								m_displayList[m_selectedObjectIDs[i]].m_position.z = translate.z;
+							}
+
+							// Else, if should be translated freely
+							else if (m_objectConstraint == OBJECT_CONSTRAINT::ALL)
+							{
+								// Translate selected object based on mouse drag
+								m_displayList[m_selectedObjectIDs[i]].m_position = translate;
 							}
 						}
 						break;
 						}
+						
 					}
 				}
 			}
@@ -897,6 +863,125 @@ void Game::DrawAxis(DisplayObject object, int ID)
 
 	m_deviceResources->PIXEndEvent();
 }
+
+// Get scale for object manipulation via mouse drag
+DirectX::SimpleMath::Vector3 Game::GetScale(int ID)
+{
+	// Temp storage 
+	Vector2 previous = m_inputCommands.mousePosPrevious;
+	Vector2 current = m_inputCommands.mousePos;
+	Vector3 object = m_displayList[m_selectedObjectIDs[ID]].m_position;
+
+	// Setup previous & current ray traces
+	Ray pre = SetupRayTrace(previous);
+	Ray cur = SetupRayTrace(current);
+
+	// Distance between previous & object
+	float distP = sqrt(
+		(pre.position.x - object.x) * (pre.position.x - object.x) +
+		(pre.position.y - object.y) * (pre.position.y - object.y) +
+		(pre.position.z - object.z) * (pre.position.z - object.z));
+
+	// Distance between current & object
+	float distC = sqrt(
+		(cur.position.x - object.x) * (cur.position.x - object.x) +
+		(cur.position.y - object.y) * (cur.position.y - object.y) +
+		(cur.position.z - object.z) * (cur.position.z - object.z));
+
+	// Setup temp picking points
+	Vector3 pickingP = pre.position + (pre.direction * distP);
+	Vector3 pickingC = cur.position + (cur.direction * distC);
+
+	// Setup temp scale
+	Vector3 scale;
+	scale.x = m_storedObjectScales[ID].x + (pickingC.x - pickingP.x);
+	scale.y = m_storedObjectScales[ID].y + (pickingC.y - pickingP.y);
+	scale.z = m_storedObjectScales[ID].z + (pickingC.z - pickingP.z);
+
+	// If scale is below minimum scale
+	if (scale.x < .1f) { scale.x = .1f; }
+	if (scale.y < .1f) { scale.y = .1f; }
+	if (scale.z < .1f) { scale.z = .1f; }
+
+	// Return manipulated scale
+	return scale;
+}
+
+// Get transform for object manipulation via mouse drag
+DirectX::SimpleMath::Vector3 Game::GetTranslation(int ID)
+{
+	// Temp storage 
+	Vector2 previous = m_inputCommands.mousePosPrevious;
+	Vector2 current = m_inputCommands.mousePos;
+	Vector3 object = m_displayList[m_selectedObjectIDs[ID]].m_position;
+
+	// Setup previous & current ray traces
+	Ray pre = SetupRayTrace(previous);
+	Ray cur = SetupRayTrace(current);
+
+	// Distance between previous & object
+	float distP = sqrt(
+		(pre.position.x - object.x) * (pre.position.x - object.x) +
+		(pre.position.y - object.y) * (pre.position.y - object.y) +
+		(pre.position.z - object.z) * (pre.position.z - object.z));
+
+	// Distance between current & object
+	float distC = sqrt(
+		(cur.position.x - object.x) * (cur.position.x - object.x) +
+		(cur.position.y - object.y) * (cur.position.y - object.y) +
+		(cur.position.z - object.z) * (cur.position.z - object.z));
+
+	// Setup temp picking points
+	Vector3 pickingP = pre.position + (pre.direction * distP);
+	Vector3 pickingC = cur.position + (cur.direction * distC);
+
+	// Setup temp translation
+	Vector3 position;
+	position.x = m_storedObjectTranslations[ID].x + (pickingC.x - pickingP.x);
+	position.y = m_storedObjectTranslations[ID].y + (pickingC.y - pickingP.y);
+	position.z = m_storedObjectTranslations[ID].z + (pickingC.z - pickingP.z);
+
+	// Return manipulated translation
+	return position;
+}
+
+// Get rotation for object manipulation via mouse drag
+DirectX::SimpleMath::Vector3 Game::GetRotation(int ID)
+{
+	// Temp storage 
+	Vector2 previous = m_inputCommands.mousePosPrevious;
+	Vector2 current = m_inputCommands.mousePos;
+	Vector3 object = m_displayList[m_selectedObjectIDs[ID]].m_position;
+
+	// Setup previous & current ray traces
+	Ray pre = SetupRayTrace(previous);
+	Ray cur = SetupRayTrace(current);
+
+	// Distance between previous & object
+	float distP = sqrt(
+		(pre.position.x - object.x) * (pre.position.x - object.x) +
+		(pre.position.y - object.y) * (pre.position.y - object.y) +
+		(pre.position.z - object.z) * (pre.position.z - object.z));
+
+	// Distance between current & object
+	float distC = sqrt(
+		(cur.position.x - object.x) * (cur.position.x - object.x) +
+		(cur.position.y - object.y) * (cur.position.y - object.y) +
+		(cur.position.z - object.z) * (cur.position.z - object.z));
+
+	// Setup temp picking points
+	Vector3 pickingP = pre.position + (pre.direction * distP);
+	Vector3 pickingC = cur.position + (cur.direction * distC);
+
+	// Setup temp rotation
+	Vector3 rotate;
+	rotate.x = m_storedObjectRotations[ID].x + (pickingC.x - pickingP.x) * 50.f;
+	rotate.y = m_storedObjectRotations[ID].y + (pickingC.y - pickingP.y) * 50.f;
+	rotate.z = m_storedObjectRotations[ID].z + (pickingC.z - pickingP.z) * 50.f;
+
+	// Return manipulated rotation
+	return rotate;
+}
 #pragma endregion
 
 #pragma region Message Handlers
@@ -1068,10 +1153,11 @@ void Game::DeleteSelectedObjects()
 	///BuildDisplayList(&m_sceneGraph);
 }
 
-void Game::MousePicking(int i)
+// Setup a ray trace from given position
+DirectX::SimpleMath::Ray Game::SetupRayTrace(DirectX::SimpleMath::Vector2 position)
 {
 	// Setup ray trace origin
-	Vector3 origin = XMVector3Unproject(Vector3(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 0.f),
+	Vector3 origin = XMVector3Unproject(DirectX::SimpleMath::Vector3(position.x, position.y, 0.f),
 		0,
 		0,
 		m_deviceResources->GetScreenViewport().Width,
@@ -1083,7 +1169,7 @@ void Game::MousePicking(int i)
 		m_world);
 
 	// Setup ray trace destination
-	Vector3 destination = XMVector3Unproject(Vector3(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 1.f),
+	Vector3 destination = XMVector3Unproject(Vector3(position.x, position.y, 1.f),
 		0,
 		0,
 		m_deviceResources->GetScreenViewport().Width,
@@ -1097,18 +1183,25 @@ void Game::MousePicking(int i)
 	// Setup ray trace direction
 	Vector3 direction = destination - origin;
 	direction.Normalize();
-	
+
+	// Return ray trace
+	return DirectX::SimpleMath::Ray(origin, direction);
+}
+
+// Setup mouse picking point
+void Game::MousePicking(int i)
+{
 	// Setup ray trace
-	Ray ray(origin, direction);
+	Ray ray = SetupRayTrace(m_inputCommands.mousePos);
 
 	// Setup temp mouse position
-	Vector3 mouse = ray.position;
+	DirectX::SimpleMath::Vector3 mouse = ray.position;
 
 	// If an object has been specified
 	if (i != -1)
 	{		
 		// Setup temp object position
-		Vector3 object = m_displayList[m_selectedObjectIDs[i]].m_position;
+		DirectX::SimpleMath::Vector3 object = m_displayList[m_selectedObjectIDs[i]].m_position;
 
 		// Distance between the two
 		float distance = sqrt(
@@ -1684,27 +1777,6 @@ SceneObject Game::CreateObject(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 
 	
 	// Return object
 	return object;
-}
-
-Water Game::CreateWater(DirectX::SimpleMath::Vector3 position)
-{
-	// Setup water
-	Water water;
-	
-	// Setup cube
-	///m_shapes.push_back(GeometricPrimitive::CreateBox(m_deviceResources->GetD3DDeviceContext(), { 5.f, 5.f, 5.f }));
-	///m_shapes.push_back(GeometricPrimitive::CreateBox(m_deviceResources->GetD3DDeviceContext(), { -5.f, -5.f, -5.f }));
-	///m_shapes.push_back(GeometricPrimitive::CreateBox(m_deviceResources->GetD3DDeviceContext(), { 5.f, 5.f, 5.f }, false));
-	
-	///m_shape = GeometricPrimitive::CreateSphere(m_deviceResources->GetD3DDeviceContext());	
-	///m_shape = GeometricPrimitive::CreateBox(m_deviceResources->GetD3DDeviceContext(), { 5.f, 5.f, 5.f });
-	///m_waterPositions.push_back(position);
-
-	///DirectX::SimpleMath::Plane plane(position, 0);
-
-	if (!m_spawnWater) { m_spawnWater = true; }
-	
-	return water;
 }
 
 #ifdef DXTK_AUDIO

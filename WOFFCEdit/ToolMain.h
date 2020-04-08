@@ -66,7 +66,6 @@ private:	//variables
 	
 	// Mouse movement
 	bool m_mouseR, m_mouseL;
-	DirectX::SimpleMath::Vector2 m_mousePosition = { 0.f,0.f };
 
 	// Toggle controllers
 	bool m_lDown = false, m_rDown = false;

@@ -60,6 +60,8 @@ public:
 	void DeleteSelectedObjects();
 
 	// Mouse picking
+	DirectX::SimpleMath::Ray SetupRayTrace(DirectX::SimpleMath::Vector2 position);
+	///Ray Trace(Vector2 position);
 	void MousePicking(int i = -1);
 	bool PickingObjects(bool select);
 	bool ObjectIntersection(int i);
@@ -167,6 +169,11 @@ private:
 	void XM_CALLCONV DrawGrid(DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
 	void DrawAxis(DisplayObject object, int ID);
 
+	// Getters for object manipulation
+	DirectX::SimpleMath::Vector3 GetScale(int ID);
+	DirectX::SimpleMath::Vector3 GetTranslation(int ID);
+	DirectX::SimpleMath::Vector3 GetRotation(int ID);
+
 	// frame time
 	float								m_deltaTime;
 
@@ -196,13 +203,12 @@ private:
 	TERRAIN m_selectedTerrain;
 	std::vector<TERRAIN> m_selectedTerrains;
 	DirectX::SimpleMath::Vector3 m_pickingPoint;
+	float m_distance = 0.f;
 
-	// Stored terrain position for flattening
+	// Stored details of objects & terrain
 	bool m_storePickingPoint, m_storeObjectDetails, m_storeTerrainPosition;
 	///std::vector<DirectX::SimpleMath::Matrix> m_storedObjectTransforms, m_storedTerrainTransforms;
 	std::vector<DirectX::SimpleMath::Vector3> m_storedObjectScales, m_storedObjectTranslations, m_storedObjectRotations;
-	DirectX::SimpleMath::Vector2 m_storedMousePosition;
-	DirectX::SimpleMath::Vector3 m_storedPickingPoint;
 	std::vector<DirectX::SimpleMath::Vector3> m_storedTerrainPositions;
 
 	// Editor controllers

@@ -21,9 +21,12 @@ OBJECT
 - Can spawn grass, trees, water
 - Spawning snaps to nearest terrain if within distance bounds,
 	if not then just spawns at 100.f along ray trace
-- Can translate freely or along constrained x,y,z
-- Can rotate freely or along constrained x,y,z
-- Can scale freely or along constrained x,y,z
+- Can edit transforms
+	- Can translate freely or along constrained x,y,z
+	- Can rotate freely or along constrained x,y,z
+	- Can scale freely or along constrained x,y,z
+		- Scale has minimum scale value of 0.1f to avoid the object scaling
+			inside itself
 
 SQL Controller
 - Static class for all SQL functionality
