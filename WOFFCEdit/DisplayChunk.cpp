@@ -486,7 +486,6 @@ void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_SCULPT sculpt, L
 			m_terrainGeometry[row + 1][column + 1].position.x += 1.f;
 			m_terrainGeometry[row + 1][column].position.x += 1.f;
 
-
 			m_terrainGeometry[row][column].position.y += 1.f;
 			m_terrainGeometry[row][column + 1].position.y += 1.f;
 			m_terrainGeometry[row + 1][column + 1].position.y += 1.f;
@@ -501,7 +500,6 @@ void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_SCULPT sculpt, L
 			m_terrainGeometry[row + 1][column + 1].position.x += 1.f;
 			m_terrainGeometry[row + 1][column].position.x += 1.f;
 
-
 			m_terrainGeometry[row][column].position.z += 1.f;
 			m_terrainGeometry[row][column + 1].position.y += 1.f;
 			m_terrainGeometry[row + 1][column + 1].position.y += 1.f;
@@ -515,7 +513,6 @@ void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_SCULPT sculpt, L
 			m_terrainGeometry[row][column + 1].position.y += 1.f;
 			m_terrainGeometry[row + 1][column + 1].position.y += 1.f;
 			m_terrainGeometry[row + 1][column].position.y += 1.f;
-
 
 			m_terrainGeometry[row][column].position.z += 1.f;
 			m_terrainGeometry[row][column + 1].position.z += 1.f;
@@ -558,12 +555,10 @@ void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_SCULPT sculpt, L
 			m_terrainGeometry[row + 1][column + 1].position.x += 1.f;
 			m_terrainGeometry[row + 1][column].position.x += 1.f;
 
-
 			m_terrainGeometry[row][column].position.y += 1.f;
 			m_terrainGeometry[row][column + 1].position.y += 1.f;
 			m_terrainGeometry[row + 1][column + 1].position.y += 1.f;
 			m_terrainGeometry[row + 1][column].position.y += 1.f;
-
 
 			m_terrainGeometry[row][column].position.z += 1.f;
 			m_terrainGeometry[row][column + 1].position.z += 1.f;
@@ -587,7 +582,6 @@ void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_SCULPT sculpt, L
 			m_terrainGeometry[row + 1][column + 1].position.x -= 1.f;
 			m_terrainGeometry[row + 1][column].position.x -= 1.f;
 
-
 			m_terrainGeometry[row][column].position.y -= 1.f;
 			m_terrainGeometry[row][column + 1].position.y -= 1.f;
 			m_terrainGeometry[row + 1][column + 1].position.y -= 1.f;
@@ -657,12 +651,10 @@ void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_SCULPT sculpt, L
 			m_terrainGeometry[row + 1][column + 1].position.x -= 1.f;
 			m_terrainGeometry[row + 1][column].position.x -= 1.f;
 
-
 			m_terrainGeometry[row][column].position.y -= 1.f;
 			m_terrainGeometry[row][column + 1].position.y -= 1.f;
 			m_terrainGeometry[row + 1][column + 1].position.y -= 1.f;
 			m_terrainGeometry[row + 1][column].position.y -= 1.f;
-
 
 			m_terrainGeometry[row][column].position.z -= 1.f;
 			m_terrainGeometry[row][column + 1].position.z -= 1.f;
@@ -1033,6 +1025,35 @@ void DisplayChunk::DrawTerrain(std::vector<std::pair<int, int>> terrain)
 			m_terrainGeometry[terrain[i].first + 1][terrain[i].second]
 		);
 	}
+}
+
+ChunkObject DisplayChunk::GetChunk()
+{
+	// Setup temp chunk object
+	ChunkObject temp;
+	
+	// Populate temp chunk object
+	temp.name = m_name;
+	temp.chunk_x_size_metres = m_chunk_x_size_metres;
+	temp.chunk_y_size_metres = m_chunk_y_size_metres;
+	temp.chunk_base_resolution = m_chunk_base_resolution;
+	temp.heightmap_path = m_heightmap_path;
+	temp.tex_diffuse_path = m_tex_diffuse_path;
+	temp.tex_splat_alpha_path = m_tex_splat_alpha_path;
+	temp.tex_splat_1_path = m_tex_splat_1_path;
+	temp.tex_splat_2_path = m_tex_splat_2_path;
+	temp.tex_splat_3_path = m_tex_splat_3_path;
+	temp.tex_splat_4_path = m_tex_splat_4_path;
+	temp.render_wireframe = m_render_wireframe;
+	temp.render_normals = m_render_normals;
+	temp.tex_diffuse_tiling = m_tex_diffuse_tiling;
+	temp.tex_splat_1_tiling = m_tex_splat_1_tiling;
+	temp.tex_splat_2_tiling = m_tex_splat_2_tiling;
+	temp.tex_splat_3_tiling = m_tex_splat_3_tiling;
+	temp.tex_splat_4_tiling = m_tex_splat_4_tiling;
+
+	// Return temp chunk object
+	return temp;
 }
 
 bool DisplayChunk::FindInVector(int & index, std::vector<std::pair<int, int>> vector, std::pair<int, int> terrain)
@@ -1458,48 +1479,6 @@ void DisplayChunk::ReadPaints(std::string path, std::vector<std::pair<int, int>>
 		vector.push_back(pair);
 	}
 }
-
-//Vector3 DisplayChunk::Mul(Vector3 vector, Matrix matrix)
-//{
-//	int solution[3]{ 0,0,0 };
-//	Vector3 output;
-//
-//	///DirectX::SimpleMath::Matrix::Transform()
-//	output = XMVector3Transform(vector, matrix);
-//	
-//	// Multiply first row
-//	//output.x = (matrix.Translation().x * vector.x) + (matrix.Translation().y * vector.x) + (matrix.Translation().z * vector.x);
-//	//
-//	//// Multiply second row
-//	//output.y = (matrix)
-//
-//	
-//	// Loop through each row of the matrix
-//	//for (int i = 0; i < 3; ++i)
-//	//{
-//	//	// Loop through each column of the matrix
-//	//	for (int j = 0; j < 3; ++j)
-//	//	{
-//	//		solution[i] += (matrix[i][j] * vector[i]);
-//	//	}
-//	//}
-//
-//	return output;
-//}
-
-//Vector3 DisplayChunk::Mul(Vector3 vector, DirectX::SimpleMath::Matrix matrix)
-//{
-//	Vector3 output;
-//
-//	///output.x = matrix.
-//
-//	// ???
-//	// create matrix from vector, set rotation & scale to identity
-//	// multiply matrices using function: DirectX::XMMatrixMultiply();
-//	// ???
-//
-//	return output;
-//}
 
 void DisplayChunk::CalculateTerrainNormals()
 {

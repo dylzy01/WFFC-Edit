@@ -205,12 +205,19 @@ void ToolMain::onActionLoad_()
 
 void ToolMain::onActionSave()
 {	
+	// Update scene graph
+	///m_sceneGraph = m_d3dRenderer.GetSceneGraph();
+	m_d3dRenderer.SaveDisplayList();
+	
+	// Save terrain
+	m_d3dRenderer.SaveDisplayChunk();
+	
 	// Database query to delete all records from objects table
 	SQL::SendQuery("DELETE FROM Objects", true);
 	SQL::SetObjectStep();
 
 	// Save new scene graph
-	if (SQL::SaveWorld(m_sceneGraph)) { MessageBox(NULL, L"World Saved", L"Notification", MB_OK); }
+	if (SQL::SaveObjects(m_d3dRenderer.GetSceneGraph())) { MessageBox(NULL, L"World Saved", L"Notification", MB_OK); }
 	else { MessageBox(NULL, L"World Failed to Save", L"Notification", MB_OK); }
 }
 
@@ -306,7 +313,7 @@ void ToolMain::onActionSave_()
 
 void ToolMain::onActionSaveTerrain()
 {
-	m_d3dRenderer.SaveDisplayChunk(&m_chunk);
+	m_d3dRenderer.SaveDisplayChunk();
 }
 
 void ToolMain::onActionDeleteObjects()
@@ -347,12 +354,17 @@ void ToolMain::Tick(MSG *msg)
 			// If allowed to pick
 			if (m_toolInputCommands.pickOnce)
 			{
-				// If an object has been intersected
-				///if (m_d3dRenderer.PickingObjects(true))
+				// If selecting objects
+				if (m_d3dRenderer.GetObjectFunction() == OBJECT_FUNCTION::SELECT)
 				{
 					// Select an object
 					m_d3dRenderer.PickingObjects(true);
 					m_selectedObjects = m_d3dRenderer.GetSelectedObjectIDs();
+				}
+
+				// Else, if any other object function is active
+				else
+				{
 					m_d3dRenderer.StoreObjectDetails(true);
 				}
 
@@ -419,6 +431,9 @@ void ToolMain::Tick(MSG *msg)
 
 	//Renderer Update Call
 	m_d3dRenderer.Tick(&m_toolInputCommands);
+
+	// Update local scene graph
+	m_sceneGraph = m_d3dRenderer.GetSceneGraph();
 }
 
 void ToolMain::UpdateInput(MSG * msg)

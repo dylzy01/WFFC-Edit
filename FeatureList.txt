@@ -31,3 +31,8 @@ OBJECT
 SQL Controller
 - Static class for all SQL functionality
 - i.e. queries, adding rows etc
+
+SAVE
+- Can save objects
+	- All object manipulations edit the display list, on saving the display list
+		is transferred to the scene graph

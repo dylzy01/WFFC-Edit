@@ -35,7 +35,7 @@ public:
 	static bool RemoveObject(SceneObject object);
 
 	// Save updated scene graph
-	static bool SaveWorld(std::vector<SceneObject> sceneGraph);
+	static bool SaveObjects(std::vector<SceneObject> sceneGraph);
 
 	// Paint terrain a different texture
 	static bool PaintTerrain(DirectX::SimpleMath::Vector2 location, LANDSCAPE_PAINT paint);

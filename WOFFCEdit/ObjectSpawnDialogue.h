@@ -4,9 +4,6 @@
 #include "afxwin.h"
 #include "Tools.h"
 
-#include "ResidentialObjectDialogue.h"
-#include "NatureObjectDialogue.h"
-
 // ObjectSpawnDialogue dialog
 
 class ObjectSpawnDialogue : public CDialogEx

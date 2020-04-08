@@ -203,9 +203,6 @@ void Game::HandleInput()
 		break;
 		case EDITOR::OBJECT_TRANSFORM:
 		{
-			// Has mouse been dragged?
-			bool dragged = m_inputCommands.mouseDrag;
-			
 			// If any objects are selected
 			if (m_selectedObjectIDs.size() != 0)
 			{
@@ -238,13 +235,13 @@ void Game::HandleInput()
 				for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
 				{
 					// Update picking point
-					MousePicking(i);
+					///MousePicking(i);
 
 					// If mouse has been dragged
-					if (dragged)
+					if (m_inputCommands.mouseDrag)
 					{						
 						// Switch between S, R, T
-						switch (m_objectTransform)
+						switch (m_objectFunction)
 						{
 						case OBJECT_FUNCTION::SCALE:
 						{
@@ -422,7 +419,6 @@ void Game::HandleInput()
 						}
 						break;
 						}
-						
 					}
 				}
 			}
@@ -605,16 +601,6 @@ void Game::UpdateWaves()
 	//	}
 	//}
 }
-float Game::Pulse()
-{
-	const float freq = 10.f; //Frequency in Hz
-	return 0.5 * (1 + sin(2 * PI * freq * m_deltaTime));
-}
-float Game::GetNewHeight(float OGheight)
-{
-	float theta = sin(m_deltaTime);
-	return OGheight + (theta * 10.f);
-}
 #pragma endregion
 
 #pragma region Frame Render
@@ -700,8 +686,8 @@ void Game::Render()
 	m_font->DrawString(m_sprites.get(), point.c_str(), XMFLOAT2(100, 70), Colors::Yellow);*/
 
 	// Frames Per Second
-	/*std::wstring fps = L"FPS: " + std::to_wstring(int(1 / m_deltaTime));
-	m_font->DrawString(m_sprites.get(), fps.c_str(), XMFLOAT2(800, 10), Colors::Red);*/
+	std::wstring fps = L"FPS: " + std::to_wstring(int(1 / m_deltaTime));
+	m_font->DrawString(m_sprites.get(), fps.c_str(), XMFLOAT2(800, 10), Colors::Red);
 
 	// Current mode
 	//std::wstring mode;
@@ -713,25 +699,18 @@ void Game::Render()
 	//}
 	//m_font->DrawString(m_sprites.get(), mode.c_str(), XMFLOAT2(100, 120), Colors::Yellow);
 
-	// Mouse drag yes/no
-	std::wstring drag = L"Drag: ";
-	if (m_inputCommands.mouseDrag) { drag += L"YES"; }
-	else { drag += L"NO"; }
-	m_font->DrawString(m_sprites.get(), drag.c_str(), XMFLOAT2(800, 10), Colors::Red);
-
 	m_sprites->End();
 	
-	// Coordinate system
-	
-	//if (m_displayList.size() != 0)
-	//{
-	//	// Loop through selected objects
-	//	for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
-	//	{
-	//		// Draw local axes
-	//		DrawAxis(m_displayList[m_selectedObjectIDs[i]], m_selectedObjectIDs[i]);
-	//	}
-	//}
+	// Coordinate system	
+	if (m_displayList.size() != 0)
+	{
+		// Loop through selected objects
+		for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+		{
+			// Draw local axes
+			DrawAxis(m_displayList[m_selectedObjectIDs[i]], m_selectedObjectIDs[i]);
+		}
+	}
 
     m_deviceResources->Present();
 }
@@ -873,8 +852,8 @@ DirectX::SimpleMath::Vector3 Game::GetScale(int ID)
 	Vector3 object = m_displayList[m_selectedObjectIDs[ID]].m_position;
 
 	// Setup previous & current ray traces
-	Ray pre = SetupRayTrace(previous);
-	Ray cur = SetupRayTrace(current);
+	Ray pre = RayTrace(previous);
+	Ray cur = RayTrace(current);
 
 	// Distance between previous & object
 	float distP = sqrt(
@@ -916,8 +895,8 @@ DirectX::SimpleMath::Vector3 Game::GetTranslation(int ID)
 	Vector3 object = m_displayList[m_selectedObjectIDs[ID]].m_position;
 
 	// Setup previous & current ray traces
-	Ray pre = SetupRayTrace(previous);
-	Ray cur = SetupRayTrace(current);
+	Ray pre = RayTrace(previous);
+	Ray cur = RayTrace(current);
 
 	// Distance between previous & object
 	float distP = sqrt(
@@ -954,8 +933,8 @@ DirectX::SimpleMath::Vector3 Game::GetRotation(int ID)
 	Vector3 object = m_displayList[m_selectedObjectIDs[ID]].m_position;
 
 	// Setup previous & current ray traces
-	Ray pre = SetupRayTrace(previous);
-	Ray cur = SetupRayTrace(current);
+	Ray pre = RayTrace(previous);
+	Ray cur = RayTrace(current);
 
 	// Distance between previous & object
 	float distP = sqrt(
@@ -1117,23 +1096,12 @@ void Game::BuildDisplayChunk(ChunkObject * SceneChunk, std::vector<DirectX::Simp
 	m_displayChunk.PopulateChunkData(SceneChunk);		//migrate chunk data
 	m_displayChunk.LoadHeightMap(m_deviceResources);
 	m_displayChunk.m_terrainEffect->SetProjection(m_projection);
-	///m_displayChunk.m_dualEffect->SetProjection(m_projection);
-	/*m_displayChunk.m_terrainBlendOne->SetProjection(m_projection);
-	m_displayChunk.m_terrainBlendTwo->SetProjection(m_projection);*/
 	m_displayChunk.InitialiseBatch();
-	
-	// Initialise default texture across all geometry
-	/*for (int i = 0; i < TERRAINRESOLUTION - 1; ++i)
-	{
-		for (int j = 0; j < TERRAINRESOLUTION - 1; ++j)
-		{
-			m_displayChunk.PaintTerrain(i, j, LANDSCAPE_PAINT::GRASS);
-		}
-	}*/
 }
 
-void Game::SaveDisplayChunk(ChunkObject * SceneChunk)
+void Game::SaveDisplayChunk()
 {
+	///BuildDisplayList(&m_sceneGraph);
 	m_displayChunk.SaveHeightMap();			//save heightmap to file.
 }
 
@@ -1153,8 +1121,30 @@ void Game::DeleteSelectedObjects()
 	///BuildDisplayList(&m_sceneGraph);
 }
 
+void Game::SaveDisplayList()
+{
+	// Loop through display list
+	for (int i = 0; i < m_displayList.size(); ++i)
+	{
+		// Update scene graph positions
+		m_sceneGraph[i].posX = m_displayList[i].m_position.x;
+		m_sceneGraph[i].posY = m_displayList[i].m_position.y;
+		m_sceneGraph[i].posZ = m_displayList[i].m_position.z;
+
+		// Update scene graph rotations
+		m_sceneGraph[i].rotX = m_displayList[i].m_orientation.x;
+		m_sceneGraph[i].rotY = m_displayList[i].m_orientation.y;
+		m_sceneGraph[i].rotZ = m_displayList[i].m_orientation.z;
+
+		// Update scene graph scales
+		m_sceneGraph[i].scaX = m_displayList[i].m_scale.x;
+		m_sceneGraph[i].scaY = m_displayList[i].m_scale.y;
+		m_sceneGraph[i].scaZ = m_displayList[i].m_scale.z;
+	}
+}
+
 // Setup a ray trace from given position
-DirectX::SimpleMath::Ray Game::SetupRayTrace(DirectX::SimpleMath::Vector2 position)
+DirectX::SimpleMath::Ray Game::RayTrace(DirectX::SimpleMath::Vector2 position)
 {
 	// Setup ray trace origin
 	Vector3 origin = XMVector3Unproject(DirectX::SimpleMath::Vector3(position.x, position.y, 0.f),
@@ -1192,7 +1182,7 @@ DirectX::SimpleMath::Ray Game::SetupRayTrace(DirectX::SimpleMath::Vector2 positi
 void Game::MousePicking(int i)
 {
 	// Setup ray trace
-	Ray ray = SetupRayTrace(m_inputCommands.mousePos);
+	Ray ray = RayTrace(m_inputCommands.mousePos);
 
 	// Setup temp mouse position
 	DirectX::SimpleMath::Vector3 mouse = ray.position;

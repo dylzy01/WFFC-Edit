@@ -46,6 +46,8 @@ public:
 	void SetSelected(bool selected, int row, int column);
 	void DrawTerrain(std::vector<std::pair<int, int>> terrain);
 
+	ChunkObject GetChunk();
+
 private:
 	DirectX::VertexPositionNormalTexture m_terrainGeometry[TERRAINRESOLUTION][TERRAINRESOLUTION];
 	BYTE m_heightMap[TERRAINRESOLUTION*TERRAINRESOLUTION];

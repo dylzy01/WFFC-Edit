@@ -219,7 +219,7 @@ bool SQL::RemoveObject(SceneObject object)
 }
 
 // Save updated scene graph
-bool SQL::SaveWorld(std::vector<SceneObject> sceneGraph)
+bool SQL::SaveObjects(std::vector<SceneObject> sceneGraph)
 {
 	// Controller
 	int rc = -1;

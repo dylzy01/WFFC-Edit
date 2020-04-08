@@ -37,27 +37,21 @@ void ObjectEditorDialogue::UpdateButtons(bool enable)
 	{
 		// Enable/disable translate button
 		if (!enable) { CheckDlgButton(IDC_CHECK1, enable); }
-		GetDlgItem(IDC_CHECK1)->EnableWindow(enable);
 
 		// Enable/disable rotate button
 		if (!enable) { CheckDlgButton(IDC_CHECK2, enable); }
-		GetDlgItem(IDC_CHECK2)->EnableWindow(enable);
 
 		// Enable/disable scale button
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
-		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
 
 		// Enable/disable X button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
-		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 
 		// Enable/disable Y button
 		if (!enable) { CheckDlgButton(IDC_CHECK13, enable); }
-		GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
 
 		// Enable/disable Z button
 		if (!enable) { CheckDlgButton(IDC_CHECK14, enable); }
-		GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
 	}
 	break;
 	case OBJECT_FUNCTION::TRANSLATE:
