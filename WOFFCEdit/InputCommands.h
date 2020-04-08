@@ -13,7 +13,7 @@ struct InputCommands
 	bool mouseLeft;
 	bool mouseRight;
 	bool mouseWheel;
-	bool mouseMoved;
+	bool mouseDrag;
 	bool pickOnce, storeOnce, toggle;
 	bool escape;
 	DirectX::SimpleMath::Vector2 mousePos;

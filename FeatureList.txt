@@ -3,6 +3,8 @@ IMPROVED CAMERA
 
 MOUSE PICKING
 - Similar to Blender
+- Changed to right mouse click as when selecting dialogue options it would take the mouse
+	position and compute the current action...
 - Can select more than one object
 - Can select terrain
 - Can deselect objects

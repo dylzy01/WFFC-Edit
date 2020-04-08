@@ -20,28 +20,12 @@ ToolMain::ToolMain()
 	m_toolInputCommands.mouseLeft	= false;
 	m_toolInputCommands.mouseRight	= false;
 	m_toolInputCommands.mouseWheel	= false;
-	m_toolInputCommands.mouseMoved	= false;
+	m_toolInputCommands.mouseDrag	= false;
 	m_toolInputCommands.escape		= false;
 	m_toolInputCommands.pickOnce	= true;
 	m_toolInputCommands.storeOnce	= true;
 	m_toolInputCommands.toggle		= true;
 	m_toolInputCommands.mousePos	= DirectX::SimpleMath::Vector2(0.f, 0.f);
-}
-
-ToolMain::~ToolMain()
-{
-	///sqlite3_close(m_databaseConnection);		//close the database connection
-	SQL::Disconnect();
-}
-
-std::vector<int> ToolMain::getCurrentObjectSelectionID()
-{
-	return m_selectedObjects;
-}
-
-std::vector<TERRAIN> ToolMain::getCurrentTerrainSelection()
-{
-	return m_selectedTerrains;
 }
 
 void ToolMain::onActionInitialise(HWND handle, int width, int height)
@@ -346,9 +330,15 @@ void ToolMain::Tick(MSG *msg)
 		//add to scenegraph
 		//resend scenegraph to Direct X renderer
 
+	// Controller for mouse drag check
+	bool check = false;
+		
 	// If left mouse left button is pressed
 	if (m_toolInputCommands.mouseLeft)
 	{
+		// Check mouse drag
+		check = true;		
+		
 		// Switch between modes
 		switch(m_d3dRenderer.GetEditor())
 		{
@@ -367,10 +357,7 @@ void ToolMain::Tick(MSG *msg)
 
 				// Reset picking controller
 				m_toolInputCommands.pickOnce = false;
-			}
-
-			// If should be spawning a cube
-			
+			}			
 		}
 		break;
 		case EDITOR::LANDSCAPE_PAINT:
@@ -391,6 +378,9 @@ void ToolMain::Tick(MSG *msg)
 	// Else, if mouse right button is pressed
 	else if (m_toolInputCommands.mouseRight)
 	{
+		// Check mouse drag
+		check = true;
+		
 		// Switch between modes
 		switch (m_d3dRenderer.GetEditor())
 		{
@@ -415,6 +405,17 @@ void ToolMain::Tick(MSG *msg)
 		}
 	}
 
+	// If mouse drag should be checked
+	if (check)
+	{
+		// Is stored mouse position different from current mouse position?
+		if (m_mousePosition != m_toolInputCommands.mousePos)
+		{
+			// Mouse has been dragged
+			m_toolInputCommands.mouseDrag = true;
+		}
+	}
+
 	//Renderer Update Call
 	m_d3dRenderer.Tick(&m_toolInputCommands);
 }
@@ -436,7 +437,6 @@ void ToolMain::UpdateInput(MSG * msg)
 		// Update mouse x,y to send to the Renderer
 		m_toolInputCommands.mousePos.x = GET_X_LPARAM(msg->lParam);
 		m_toolInputCommands.mousePos.y = GET_Y_LPARAM(msg->lParam);
-		m_toolInputCommands.mouseMoved = true;
 		break;
 
 	case WM_LBUTTONDOWN:	
@@ -446,12 +446,17 @@ void ToolMain::UpdateInput(MSG * msg)
 			m_toolInputCommands.mouseLeft = true;
 			m_toolInputCommands.pickOnce = true;
 			if (m_toolInputCommands.toggle) { m_toolInputCommands.storeOnce = true; m_toolInputCommands.toggle = false; }
+
+			// Store current mouse position
+			m_mousePosition = m_toolInputCommands.mousePos;
 		}
+
+		// Check if mouse has moved
+		///if (m_mousePosition != m_toolInputCommands.mousePos) { m_toolInputCommands.mouseDrag = true; }
 		break;
 
 	case WM_LBUTTONUP:
-		m_lDown = false;
-		m_toolInputCommands.mouseLeft = false;
+		m_lDown = m_toolInputCommands.mouseLeft = m_toolInputCommands.mouseDrag = false;
 		m_toolInputCommands.toggle = true;
 		m_d3dRenderer.StoreTerrainPosition(true);
 		break;
@@ -462,12 +467,17 @@ void ToolMain::UpdateInput(MSG * msg)
 			m_rDown = true;
 			m_toolInputCommands.mouseRight = true;
 			m_toolInputCommands.pickOnce = true;
+
+			// Store current mouse position
+			m_mousePosition = m_toolInputCommands.mousePos;
 		}
+
+		// Check if mouse has moved
+		///if (m_mousePosition != m_toolInputCommands.mousePos) { m_toolInputCommands.mouseDrag = true; }
 		break;
 
 	case WM_RBUTTONUP:
-		m_rDown = false;
-		m_toolInputCommands.mouseRight = false;
+		m_rDown = m_toolInputCommands.mouseRight = m_toolInputCommands.mouseDrag = false;
 		break;
 
 	case WM_MBUTTONDOWN:
@@ -481,21 +491,27 @@ void ToolMain::UpdateInput(MSG * msg)
 
 	//here we update all the actual app functionality that we want.  This information will either be used int toolmain, or sent down to the renderer (Camera movement etc
 	
-	//WASD movement
+	// W key to move forward
 	if (m_keyArray['W']) { m_toolInputCommands.W = true; }
 	else { m_toolInputCommands.W = false; }
 	
+	// S key to move backward
 	if (m_keyArray['S']) { m_toolInputCommands.S = true; }
 	else { m_toolInputCommands.S = false; }
+
+	// A key to strafe left
 	if (m_keyArray['A']) { m_toolInputCommands.A = true; }
 	else { m_toolInputCommands.A = false; }
 
+	// D key to strafe right
 	if (m_keyArray['D']) { m_toolInputCommands.D = true; }
 	else { m_toolInputCommands.D = false; }
 
-	//QE up/down
+	// E key to move upward
 	if (m_keyArray['E']) { m_toolInputCommands.E = true; }
 	else { m_toolInputCommands.E = false; }
+
+	// Q key to move downward
 	if (m_keyArray['Q']) { m_toolInputCommands.Q = true; }
 	else { m_toolInputCommands.Q = false; }
 }

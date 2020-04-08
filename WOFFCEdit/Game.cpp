@@ -734,8 +734,8 @@ void Game::Render()
 	m_font->DrawString(m_sprites.get(), point.c_str(), XMFLOAT2(100, 70), Colors::Yellow);*/
 
 	// Frames Per Second
-	std::wstring fps = L"FPS: " + std::to_wstring(int(1 / m_deltaTime));
-	m_font->DrawString(m_sprites.get(), fps.c_str(), XMFLOAT2(800, 10), Colors::Red);
+	/*std::wstring fps = L"FPS: " + std::to_wstring(int(1 / m_deltaTime));
+	m_font->DrawString(m_sprites.get(), fps.c_str(), XMFLOAT2(800, 10), Colors::Red);*/
 
 	// Current mode
 	//std::wstring mode;
@@ -746,6 +746,12 @@ void Game::Render()
 	//case EDITOR::LANDSCAPE_SCULPT: mode = L"MODE: SCULPT"; break;
 	//}
 	//m_font->DrawString(m_sprites.get(), mode.c_str(), XMFLOAT2(100, 120), Colors::Yellow);
+
+	// Mouse drag yes/no
+	std::wstring drag = L"Drag: ";
+	if (m_inputCommands.mouseDrag) { drag += L"YES"; }
+	else { drag += L"NO"; }
+	m_font->DrawString(m_sprites.get(), drag.c_str(), XMFLOAT2(800, 10), Colors::Red);
 
 	m_sprites->End();
 	
