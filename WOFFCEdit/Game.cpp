@@ -1239,6 +1239,70 @@ void Game::MousePicking(int i)
 	m_camera->TrackObject(centre.x, centre.y, m_displayList[m_selectedObjectIDs[i]].m_position, m_deltaTime);*/
 }
 
+// Pick a single object
+int Game::PickObject()
+{
+	// Controllers
+	int selectedID = -1;
+	float pickedDistance = 0.f, storedDistance = 1.f;
+	bool firstPick = true;
+
+	// Setup near & far planes of frustrum with mouse x,y passed from ToolMain
+	const XMVECTOR nearSource = XMVectorSet(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 0.f, 1.f);
+	const XMVECTOR farSource = XMVectorSet(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 1.f, 1.f);
+
+	// Loop through entire object display list & pick em
+	for (int i = 0; i < m_displayList.size(); i++)
+	{
+		// Get object scale factor & translation
+		const XMVECTORF32 scale = { m_displayList[i].m_scale.x, m_displayList[i].m_scale.y, m_displayList[i].m_scale.z };
+		const XMVECTORF32 translate = { m_displayList[i].m_position.x, m_displayList[i].m_position.y, m_displayList[i].m_position.z };
+
+		// Convert euler angles into a quaternion for object rotation
+		XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_displayList[i].m_orientation.y * PI / 180,
+			m_displayList[i].m_orientation.x * PI / 180, m_displayList[i].m_orientation.z * PI / 180);
+
+		// Set selected object matrix in the world based on scale, rotation & translation
+		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
+
+		// UNPROJECT the points on the near & far plane, respecting the previously created matrix
+		XMVECTOR nearPoint = XMVector3Unproject(nearSource, 0.f, 0.f, m_screenDimensions.right, m_screenDimensions.bottom,
+			m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
+
+		XMVECTOR farPoint = XMVector3Unproject(farSource, 0.f, 0.f, m_screenDimensions.right, m_screenDimensions.bottom,
+			m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
+
+		// Turn transformed points into picking vector
+		XMVECTOR pickingVector = farPoint - nearPoint;
+		pickingVector = XMVector3Normalize(pickingVector);
+
+		// Loop through mesh list for object
+		for (int j = 0; j < m_displayList[i].m_model.get()->meshes.size(); j++)
+		{
+			// Check for intersection
+			if (m_displayList[i].m_model.get()->meshes[j]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance))
+			{
+				// Update ID with the first intersected object
+				if (firstPick)
+				{
+					firstPick = false;
+					storedDistance = pickedDistance;
+					selectedID = i;
+				}
+				// Update ID if a closer object has been intersected
+				else if (pickedDistance < storedDistance)
+				{
+					storedDistance = pickedDistance;
+					selectedID = i;
+				}
+			}
+		}
+	}
+
+	return selectedID;
+}
+
+// Pick multiple objects
 std::vector<int> Game::PickObjects(bool select)
 {
 	// Controllers

@@ -181,9 +181,19 @@ SceneObject ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector
 }
 
 // Remove an object from scene graph & database
-void ObjectManager::Remove(SceneObject, std::vector<SceneObject>& sceneGraph)
+void ObjectManager::Remove(int i, std::vector<int> & IDs, std::vector<SceneObject> & sceneGraph)
 {
+	// Remove selected object from database
+	//SQLManager::RemoveObject(sceneGraph[IDs[i]]);
+	//
+	//// Remove selected object from scene graph
+	//sceneGraph.erase(sceneGraph.begin() + IDs[i]);
 
+	//// Remove selected object from selected objects list
+	//IDs.erase(IDs.begin() + i);
+
+	//// Overwrite selected objects list
+	//m_selectedObjectIDs = IDs;
 }
 
 // Temporarily store details of all objects

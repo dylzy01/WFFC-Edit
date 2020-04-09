@@ -65,6 +65,7 @@ public:
 	// Mouse picking
 	DirectX::SimpleMath::Ray RayTrace(DirectX::SimpleMath::Vector2 position);
 	void MousePicking(int i = -1);
+	int PickObject();
 	std::vector<int> PickObjects(bool select);
 	bool ObjectIntersection(int i);
 	TERRAIN PickingTerrain();

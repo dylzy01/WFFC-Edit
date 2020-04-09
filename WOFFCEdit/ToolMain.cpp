@@ -454,10 +454,10 @@ void ToolMain::Tick(MSG *msg)
 		if (m_editor == EDITOR::OBJECT_SPAWN)
 		{
 			// Remove an object
-			// ...
+			///ObjectManager::Remove(m_d3dRenderer.PickObject(), m_selectedObjectIDs, m_sceneGraph);
 
 			// Update scene graph
-			m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+			///m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
 		}
 
 		// Else, if any other editors are active
