@@ -25,16 +25,16 @@ void LandscapeDialogue::DoDataExchange(CDataExchange* pDX)
 }
 
 // Enable/disable other sculpts
-void LandscapeDialogue::UpdateSculpt(LANDSCAPE_SCULPT function, bool enable)
+void LandscapeDialogue::UpdateSculpt(LANDSCAPE_FUNCTION function, bool enable)
 {
 	// Update sculpt controller
-	if (enable) { m_sculpt = LANDSCAPE_SCULPT::NA; }
+	if (enable) { m_sculpt = LANDSCAPE_FUNCTION::NA; }
 	else { m_sculpt = function; }	
 	
 	// Switch between functions
 	switch (function)
 	{
-	case LANDSCAPE_SCULPT::INCREASE:
+	case LANDSCAPE_FUNCTION::INCREASE:
 	{
 		// Enable/disable decrease function
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
@@ -45,7 +45,7 @@ void LandscapeDialogue::UpdateSculpt(LANDSCAPE_SCULPT function, bool enable)
 		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 	}
 	break;
-	case LANDSCAPE_SCULPT::DECREASE:
+	case LANDSCAPE_FUNCTION::DECREASE:
 	{
 		// Enable/disable increase function
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
@@ -56,7 +56,7 @@ void LandscapeDialogue::UpdateSculpt(LANDSCAPE_SCULPT function, bool enable)
 		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 	}
 	break;
-	case LANDSCAPE_SCULPT::FLATTEN:
+	case LANDSCAPE_FUNCTION::FLATTEN:
 	{
 		// Enable/disable increase function
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
@@ -244,7 +244,7 @@ void LandscapeDialogue::OnBnClickedSand()
 void LandscapeDialogue::OnBnClickedIncrease()
 {
 	// Set editor to sculpt
-	m_editor = EDITOR::LANDSCAPE_SCULPT;
+	m_editor = EDITOR::LANDSCAPE_FUNCTION;
 	
 	// Switch between checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK6))
@@ -252,7 +252,7 @@ void LandscapeDialogue::OnBnClickedIncrease()
 	case true:
 	{
 		// Uncheck & disable other functions
-		UpdateSculpt(LANDSCAPE_SCULPT::INCREASE, false);
+		UpdateSculpt(LANDSCAPE_FUNCTION::INCREASE, false);
 	}
 	break;
 	case false:
@@ -261,7 +261,7 @@ void LandscapeDialogue::OnBnClickedIncrease()
 		ResetConstraints();
 
 		// Enable other functions
-		UpdateSculpt(LANDSCAPE_SCULPT::INCREASE, true);
+		UpdateSculpt(LANDSCAPE_FUNCTION::INCREASE, true);
 	}
 	break;
 	}
@@ -271,7 +271,7 @@ void LandscapeDialogue::OnBnClickedIncrease()
 void LandscapeDialogue::OnBnClickedDecrease()
 {
 	// Set editor to sculpt
-	m_editor = EDITOR::LANDSCAPE_SCULPT;
+	m_editor = EDITOR::LANDSCAPE_FUNCTION;
 	
 	// Switch between checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK7))
@@ -279,7 +279,7 @@ void LandscapeDialogue::OnBnClickedDecrease()
 	case true:
 	{
 		// Uncheck & disable other functions
-		UpdateSculpt(LANDSCAPE_SCULPT::DECREASE, false);
+		UpdateSculpt(LANDSCAPE_FUNCTION::DECREASE, false);
 	}
 	break;
 	case false:
@@ -288,7 +288,7 @@ void LandscapeDialogue::OnBnClickedDecrease()
 		ResetConstraints();
 
 		// Enable other functions
-		UpdateSculpt(LANDSCAPE_SCULPT::DECREASE, true);
+		UpdateSculpt(LANDSCAPE_FUNCTION::DECREASE, true);
 	}
 	break;
 	}
@@ -298,7 +298,7 @@ void LandscapeDialogue::OnBnClickedDecrease()
 void LandscapeDialogue::OnBnClickedFlatten()
 {
 	// Set editor to sculpt
-	m_editor = EDITOR::LANDSCAPE_SCULPT;
+	m_editor = EDITOR::LANDSCAPE_FUNCTION;
 		
 	// Switch between checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK8))
@@ -306,7 +306,7 @@ void LandscapeDialogue::OnBnClickedFlatten()
 	case true:
 	{
 		// Uncheck & disable other functions
-		UpdateSculpt(LANDSCAPE_SCULPT::FLATTEN, false);
+		UpdateSculpt(LANDSCAPE_FUNCTION::FLATTEN, false);
 	}
 	break;
 	case false:
@@ -315,7 +315,7 @@ void LandscapeDialogue::OnBnClickedFlatten()
 		ResetConstraints();
 
 		// Enable other functions
-		UpdateSculpt(LANDSCAPE_SCULPT::FLATTEN, true);
+		UpdateSculpt(LANDSCAPE_FUNCTION::FLATTEN, true);
 	}
 	break;
 	}

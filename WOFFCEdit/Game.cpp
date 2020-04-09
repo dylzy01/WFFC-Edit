@@ -192,16 +192,17 @@ void Game::HandleInput()
 		case EDITOR::OBJECT_SPAWN:
 		{
 			// Update picking point
-			MousePicking();
+			///MousePicking();
+			///MouseManager::PickSpawn(m_pickingPoint);
 
 			// Create object at picking point
-			SQL::AddObject(CreateObject(m_objectSpawn, m_pickingPoint));
+			///SQLManager::AddObject(CreateObject(m_objectSpawn, m_pickingPoint));
 
 			// Update scene graph
-			BuildDisplayList(&m_sceneGraph);			
+			///BuildDisplayList(&m_sceneGraph);			
 		}
 		break;
-		case EDITOR::OBJECT_TRANSFORM:
+		case EDITOR::OBJECT_FUNCTION:
 		{
 			// If any objects are selected
 			if (m_selectedObjectIDs.size() != 0)
@@ -447,21 +448,21 @@ void Game::HandleInput()
 			
 		}
 		break;
-		case EDITOR::LANDSCAPE_SCULPT:
+		case EDITOR::LANDSCAPE_FUNCTION:
 		{
 			// If selected terrain is intersected by ray trace
 			if (m_selectedTerrain.intersect)
 			{
 				// If increase or decrease
-				if (m_landscapeSculpt == LANDSCAPE_SCULPT::INCREASE ||
-					m_landscapeSculpt == LANDSCAPE_SCULPT::DECREASE)
+				if (m_landscapeSculpt == LANDSCAPE_FUNCTION::INCREASE ||
+					m_landscapeSculpt == LANDSCAPE_FUNCTION::DECREASE)
 				{
 					// Increase/decrease terrain
 					m_displayChunk.SculptTerrain(m_selectedTerrain.row, m_selectedTerrain.column, m_landscapeSculpt, m_landscapeConstraint);
 				}
 
 				// Else, if flatten
-				else if (m_landscapeSculpt == LANDSCAPE_SCULPT::FLATTEN)
+				else if (m_landscapeSculpt == LANDSCAPE_FUNCTION::FLATTEN)
 				{
 					// If first position should be stored
 					if (m_storeTerrainPosition)
@@ -1111,7 +1112,7 @@ void Game::DeleteSelectedObjects()
 	for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
 	{
 		// Remove objects from database
-		SQL::RemoveObject(m_sceneGraph[m_selectedObjectIDs[i]]);
+		SQLManager::RemoveObject(m_sceneGraph[m_selectedObjectIDs[i]]);
 		m_selectedObjectIDs.erase(m_selectedObjectIDs.begin() + i);
 		///m_sceneGraph.erase(m_sceneGraph.begin() + i);
 		///SQL::RemoveObject(m_displayList[m_selectedObjectIDs[i]]);
@@ -1598,11 +1599,10 @@ DirectX::SimpleMath::Vector3 Game::GetDragPoint(DirectX::SimpleMath::Vector3 * d
 	return dragPoint;
 }
 
-// Creation functions...
-
+// Create an object at the picking point location
 SceneObject Game::CreateObject(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 position)
 {
-	// Setup temp cube
+	// Setup temp object
 	SceneObject object;	
 	
 	// Define object values

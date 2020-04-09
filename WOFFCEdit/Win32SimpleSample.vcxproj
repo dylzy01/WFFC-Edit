@@ -175,6 +175,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MFCFrame.cpp" />
     <ClCompile Include="MFCRenderFrame.cpp" />
+    <ClCompile Include="MouseManager.cpp" />
     <ClCompile Include="ObjectDialogue.cpp" />
     <ClCompile Include="ObjectEditorDialogue.cpp" />
     <ClCompile Include="ObjectSpawnDialogue.cpp" />
@@ -182,7 +183,7 @@
     <ClCompile Include="MFCMain.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="SelectDialogue.cpp" />
-    <ClCompile Include="SQL.cpp" />
+    <ClCompile Include="SQLManager.cpp" />
     <ClCompile Include="sqlite3.c" />
     <ClCompile Include="TerrainPaintDialogue.cpp" />
     <ClCompile Include="TerrainSculptDialogue.cpp" />
@@ -200,6 +201,7 @@
     <ClInclude Include="LandscapeDialogue.h" />
     <ClInclude Include="MFCFrame.h" />
     <ClInclude Include="MFCRenderFrame.h" />
+    <ClInclude Include="MouseManager.h" />
     <ClInclude Include="ObjectDialogue.h" />
     <ClInclude Include="ObjectEditorDialogue.h" />
     <ClInclude Include="ObjectSpawnDialogue.h" />
@@ -207,7 +209,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="SelectDialogue.h" />
-    <ClInclude Include="SQL.h" />
+    <ClInclude Include="SQLManager.h" />
     <ClInclude Include="sqlite3.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StepTimer.h" />

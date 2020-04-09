@@ -95,7 +95,7 @@ int MFCMain::Run()
 				}
 			}
 			break;
-			case EDITOR::OBJECT_TRANSFORM:
+			case EDITOR::OBJECT_FUNCTION:
 			{
 				// Fill status string with selected object IDs
 				std::vector<int> IDs = m_toolSystem.getCurrentObjectSelectionID();
@@ -106,7 +106,7 @@ int MFCMain::Run()
 				}
 			}
 			break;
-			case EDITOR::LANDSCAPE_SCULPT:
+			case EDITOR::LANDSCAPE_FUNCTION:
 			{
 				// Fill status string with selected chunk row,column(s)
 				std::vector<TERRAIN> chunks = m_toolSystem.getCurrentTerrainSelection();
@@ -146,11 +146,11 @@ void MFCMain::CheckDialogues()
 	{
 		// Set other modes to none
 		m_toolSystem.SetObjectSpawn(OBJECT_SPAWN::NA);
-		m_toolSystem.SetLandscapeSculpt(LANDSCAPE_SCULPT::NA);
+		m_toolSystem.SetLandscapeSculpt(LANDSCAPE_FUNCTION::NA);
 		m_toolSystem.SetLandscapePaint(LANDSCAPE_PAINT::NA);
 		
 		// Set tool editor
-		m_toolSystem.SetEditor(EDITOR::OBJECT_TRANSFORM);
+		m_toolSystem.SetEditor(EDITOR::OBJECT_FUNCTION);
 
 		// Set transform mode
 		m_toolSystem.SetObjectFunction(m_objectEditorDialogue.GetFunction());
@@ -182,7 +182,7 @@ void MFCMain::CheckDialogues()
 	{
 		// Set other modes to none
 		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
-		m_toolSystem.SetLandscapeSculpt(LANDSCAPE_SCULPT::NA);
+		m_toolSystem.SetLandscapeSculpt(LANDSCAPE_FUNCTION::NA);
 		m_toolSystem.SetLandscapePaint(LANDSCAPE_PAINT::NA);
 		
 		// Set tool editor
@@ -201,7 +201,7 @@ void MFCMain::CheckDialogues()
 		m_toolSystem.SetLandscapePaint(LANDSCAPE_PAINT::NA);
 		
 		// Set tool editor
-		m_toolSystem.SetEditor(EDITOR::LANDSCAPE_SCULPT);
+		m_toolSystem.SetEditor(EDITOR::LANDSCAPE_FUNCTION);
 
 		// Set sculpt mode
 		m_toolSystem.SetLandscapeSculpt(m_terrainSculptDialogue.GetSculpt());
@@ -234,7 +234,7 @@ void MFCMain::CheckDialogues()
 		// Set other modes to none
 		m_toolSystem.SetObjectSpawn(OBJECT_SPAWN::NA);
 		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
-		m_toolSystem.SetLandscapeSculpt(LANDSCAPE_SCULPT::NA);
+		m_toolSystem.SetLandscapeSculpt(LANDSCAPE_FUNCTION::NA);
 		
 		// Set tool editor
 		m_toolSystem.SetEditor(EDITOR::LANDSCAPE_PAINT);
@@ -252,7 +252,7 @@ void MFCMain::CheckDialogues()
 		// Set all modes to none
 		m_toolSystem.SetObjectSpawn(OBJECT_SPAWN::NA);
 		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
-		m_toolSystem.SetLandscapeSculpt(LANDSCAPE_SCULPT::NA);
+		m_toolSystem.SetLandscapeSculpt(LANDSCAPE_FUNCTION::NA);
 		m_toolSystem.SetLandscapePaint(LANDSCAPE_PAINT::NA);
 	}
 }

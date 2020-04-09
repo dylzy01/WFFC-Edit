@@ -34,10 +34,15 @@ void ToolMain::onActionInitialise(HWND handle, int width, int height)
 	m_width		= width;
 	m_height	= height;
 	
+	// Setup game
 	m_d3dRenderer.Initialize(handle, m_width, m_height);
 
+	// Set static mouse game & input commands
+	MouseManager::SetGame(&m_d3dRenderer);
+	MouseManager::SetInput(&m_toolInputCommands);
+
 	// Estable database connection
-	if (SQL::Connect()) { TRACE("Database connection: fail"); }
+	if (SQLManager::Connect()) { TRACE("Database connection: fail"); }
 	else { TRACE("Database connection: success"); }
 
 	// Load data from database
@@ -55,22 +60,22 @@ void ToolMain::onActionLoad()
 	// Objects ///////////////////////////////////////////////////
 
 	// Database query to retrieve all records from objects table
-	SQL::SendQuery("SELECT * FROM Objects", true);
+	SQLManager::SendQuery("SELECT * FROM Objects", true);
 
 	// Loop through each row in results
-	while (SQL::GetObjectStep() == SQLITE_ROW)
+	while (SQLManager::GetObjectStep() == SQLITE_ROW)
 	{
 		// Create & store an object from table data
-		m_sceneGraph.push_back(SQL::CreateObject());
+		m_sceneGraph.push_back(SQLManager::CreateObject());
 	}
 
 	// Chunk /////////////////////////////////////////////////////
 
 	// Database query to retrieve all records from chunks table
-	SQL::SendQuery("SELECT * FROM Chunks", false);
+	SQLManager::SendQuery("SELECT * FROM Chunks", false);
 
 	// Create & store chunk from table data
-	m_chunk = SQL::CreateChunk();
+	m_chunk = SQLManager::CreateChunk();
 
 	// Process results into renderable
 	m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
@@ -213,11 +218,11 @@ void ToolMain::onActionSave()
 	m_d3dRenderer.SaveDisplayChunk();
 	
 	// Database query to delete all records from objects table
-	SQL::SendQuery("DELETE FROM Objects", true);
-	SQL::SetObjectStep();
+	SQLManager::SendQuery("DELETE FROM Objects", true);
+	SQLManager::SetObjectStep();
 
 	// Save new scene graph
-	if (SQL::SaveObjects(m_d3dRenderer.GetSceneGraph())) { MessageBox(NULL, L"World Saved", L"Notification", MB_OK); }
+	if (SQLManager::SaveObjects(m_d3dRenderer.GetSceneGraph())) { MessageBox(NULL, L"World Saved", L"Notification", MB_OK); }
 	else { MessageBox(NULL, L"World Failed to Save", L"Notification", MB_OK); }
 }
 
@@ -322,8 +327,8 @@ void ToolMain::onActionDeleteObjects()
 
 	// Re-setup scene graph
 	m_sceneGraph.clear();
-	SQL::SendQuery("SELECT * FROM Objects", true);
-	while (SQL::GetObjectStep() == SQLITE_ROW) { m_sceneGraph.push_back(SQL::CreateObject()); }
+	SQLManager::SendQuery("SELECT * FROM Objects", true);
+	while (SQLManager::GetObjectStep() == SQLITE_ROW) { m_sceneGraph.push_back(SQLManager::CreateObject()); }
 	m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
 }
 
@@ -337,19 +342,30 @@ void ToolMain::Tick(MSG *msg)
 		//add to scenegraph
 		//resend scenegraph to Direct X renderer
 
-	// Controller for mouse drag check
-	bool check = false;
+	// If mouse right has been pressed & mouse position is different from stored
+	if (m_toolInputCommands.mouseRight &&
+		m_toolInputCommands.mousePosPrevious != m_toolInputCommands.mousePos)
+	{
+		// Mouse has been dragged
+		m_toolInputCommands.mouseDrag = true;
+	}
 		
 	// If left mouse right button is pressed
 	if (m_toolInputCommands.mouseRight)
-	{
-		// Check mouse drag
-		check = true;		
-		
+	{		
 		// Switch between modes
-		switch(m_d3dRenderer.GetEditor())
+		switch(m_editor)
 		{
-		case EDITOR::OBJECT_TRANSFORM:
+		case EDITOR::OBJECT_SPAWN:
+		{
+			// Create object at picking point
+			SQLManager::AddObject(m_d3dRenderer.CreateObject(m_objectSpawn, MouseManager::PickSpawn()));
+
+			// Update scene graph
+			m_d3dRenderer.BuildDisplayList(&m_d3dRenderer.GetSceneGraph());
+		}
+		break;
+		case EDITOR::OBJECT_FUNCTION:
 		{
 			// If allowed to pick
 			if (m_toolInputCommands.pickOnce)
@@ -379,7 +395,7 @@ void ToolMain::Tick(MSG *msg)
 			m_selectedTerrain = m_d3dRenderer.PickingTerrain();
 		}
 		break;
-		case EDITOR::LANDSCAPE_SCULPT:
+		case EDITOR::LANDSCAPE_FUNCTION:
 		{
 			// Select terrain
 			m_selectedTerrain = m_d3dRenderer.PickingTerrain();
@@ -390,14 +406,11 @@ void ToolMain::Tick(MSG *msg)
 
 	// Else, if mouse left button is pressed
 	else if (m_toolInputCommands.mouseLeft)
-	{
-		// Check mouse drag
-		check = true;
-		
+	{		
 		// Switch between modes
 		switch (m_d3dRenderer.GetEditor())
 		{
-		case EDITOR::OBJECT_TRANSFORM:
+		case EDITOR::OBJECT_FUNCTION:
 		{
 			// If allowed to pick
 			if (m_toolInputCommands.pickOnce)
@@ -415,17 +428,6 @@ void ToolMain::Tick(MSG *msg)
 			}
 		}
 		break;
-		}
-	}
-
-	// If mouse drag should be checked
-	if (check)
-	{
-		// Is stored mouse position different from current mouse position?
-		if (m_toolInputCommands.mousePosPrevious != m_toolInputCommands.mousePos)
-		{
-			// Mouse has been dragged
-			m_toolInputCommands.mouseDrag = true;
 		}
 	}
 
@@ -530,12 +532,4 @@ void ToolMain::UpdateInput(MSG * msg)
 	// Q key to move downward
 	if (m_keyArray['Q']) { m_toolInputCommands.Q = true; }
 	else { m_toolInputCommands.Q = false; }
-}
-
-void ToolMain::TryConnect()
-{
-	while (!SQL::Connect())
-	{
-		SQL::Connect();
-	}
 }

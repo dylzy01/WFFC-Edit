@@ -419,7 +419,7 @@ void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint, bool checkS
 	}
 }
 
-void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_SCULPT sculpt, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position)
+void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_FUNCTION sculpt, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position)
 {
 	// Store starting vertex
 	//Vector3 start = m_terrainGeometry[row][column].position; 
@@ -473,7 +473,7 @@ void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_SCULPT sculpt, L
 	// Switch between sculpt parameter
 	switch (sculpt)
 	{
-	case LANDSCAPE_SCULPT::INCREASE:
+	case LANDSCAPE_FUNCTION::INCREASE:
 	{
 		// Switch between constraint
 		switch (constraint)
@@ -569,7 +569,7 @@ void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_SCULPT sculpt, L
 		}
 	}
 	break;
-	case LANDSCAPE_SCULPT::DECREASE:
+	case LANDSCAPE_FUNCTION::DECREASE:
 	{
 		// Switch between constraint
 		switch (constraint)
@@ -665,7 +665,7 @@ void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_SCULPT sculpt, L
 		}
 	}
 	break;
-	case LANDSCAPE_SCULPT::FLATTEN:
+	case LANDSCAPE_FUNCTION::FLATTEN:
 	{
 		// Switch between constraint
 		switch (constraint)

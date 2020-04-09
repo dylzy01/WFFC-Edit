@@ -12,8 +12,10 @@
 #include "ChunkObject.h"
 #include "InputCommands.h"
 #include "Camera.h"
-#include "SQL.h"
 #include "Water.h"
+
+#include "SQLManager.h"
+///#include "MouseManager.h"
 
 #include <vector>
 #include <algorithm>
@@ -70,7 +72,10 @@ public:
 	TERRAIN TerrainIntersection(DirectX::SimpleMath::Ray ray);	
 
 	// Getters
+	std::shared_ptr<DX::DeviceResources> GetDeviceResources() { return m_deviceResources; }
+	std::vector<DirectX::SimpleMath::Matrix> GetProjViewWorld() { return std::vector<DirectX::SimpleMath::Matrix>{m_projection, m_view, m_world}; }
 	std::vector<SceneObject> GetSceneGraph() { return m_sceneGraph; }
+	DisplayChunk* GetDisplayChunk() { return &m_displayChunk; }
 	EDITOR GetEditor() { return m_editor; }
 	OBJECT_FUNCTION GetObjectFunction() { return m_objectFunction; }
 	std::vector<int> GetSelectedObjectIDs() { return m_selectedObjectIDs; }
@@ -89,27 +94,27 @@ public:
 			m_objectConstraint = OBJECT_CONSTRAINT::NA;
 
 			// Reset landscape sculpt
-			m_landscapeSculpt = LANDSCAPE_SCULPT::NA;
+			m_landscapeSculpt = LANDSCAPE_FUNCTION::NA;
 			m_landscapeConstraint = LANDSCAPE_CONSTRAINT::NA;
 
 			// Reset landscape paint
 			m_landscapePaint = LANDSCAPE_PAINT::NA;
 		}
 		break;
-		case EDITOR::OBJECT_TRANSFORM:
+		case EDITOR::OBJECT_FUNCTION:
 		{
 			// Reset object spawn
 			m_objectSpawn = OBJECT_SPAWN::NA;
 			
 			// Reset landscape sculpt
-			m_landscapeSculpt = LANDSCAPE_SCULPT::NA;
+			m_landscapeSculpt = LANDSCAPE_FUNCTION::NA;
 			m_landscapeConstraint = LANDSCAPE_CONSTRAINT::NA;
 
 			// Reset landscape paint
 			m_landscapePaint = LANDSCAPE_PAINT::NA;
 		}
 		break;
-		case EDITOR::LANDSCAPE_SCULPT:
+		case EDITOR::LANDSCAPE_FUNCTION:
 		{
 			// Reset object spawn
 			m_objectSpawn = OBJECT_SPAWN::NA;
@@ -131,7 +136,7 @@ public:
 			m_objectConstraint = OBJECT_CONSTRAINT::NA;
 
 			// Reset landscape sculpt
-			m_landscapeSculpt = LANDSCAPE_SCULPT::NA;
+			m_landscapeSculpt = LANDSCAPE_FUNCTION::NA;
 			m_landscapeConstraint = LANDSCAPE_CONSTRAINT::NA;
 		}
 		break;
@@ -142,7 +147,7 @@ public:
 	void SetObjectTransform(OBJECT_FUNCTION function) { m_objectFunction = function; }
 	void SetObjectConstraint(OBJECT_CONSTRAINT constraint) { m_objectConstraint = constraint; }
 	void SetLandscapePaint(LANDSCAPE_PAINT paint) { m_landscapePaint = paint; }
-	void SetLandscapeSculpt(LANDSCAPE_SCULPT function) { m_landscapeSculpt = function; }
+	void SetLandscapeSculpt(LANDSCAPE_FUNCTION function) { m_landscapeSculpt = function; }
 	void SetLandscapeConstraint(LANDSCAPE_CONSTRAINT constraint) { m_landscapeConstraint = constraint; }
 	void StorePickingPoint(bool store) { m_storePickingPoint = store; }
 	void StoreObjectDetails(bool store) { m_storeObjectDetails = store; }
@@ -216,7 +221,7 @@ private:
 	OBJECT_FUNCTION m_objectFunction = OBJECT_FUNCTION::NA;
 	OBJECT_CONSTRAINT m_objectConstraint = OBJECT_CONSTRAINT::NA;
 	LANDSCAPE_PAINT m_landscapePaint = LANDSCAPE_PAINT::NA;
-	LANDSCAPE_SCULPT m_landscapeSculpt = LANDSCAPE_SCULPT::NA;
+	LANDSCAPE_FUNCTION m_landscapeSculpt = LANDSCAPE_FUNCTION::NA;
 	LANDSCAPE_CONSTRAINT m_landscapeConstraint = LANDSCAPE_CONSTRAINT::NA;
 
 	// Water controllers

@@ -267,7 +267,7 @@ void ObjectDialogue::OnBnClickedWater()
 void ObjectDialogue::OnBnClickedScale()
 {
 	// Set transforming
-	m_editor = EDITOR::OBJECT_TRANSFORM;
+	m_editor = EDITOR::OBJECT_FUNCTION;
 	
 	// Switch between checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK8))
@@ -294,7 +294,7 @@ void ObjectDialogue::OnBnClickedScale()
 void ObjectDialogue::OnBnClickedTranslate()
 {
 	// Set transforming
-	m_editor = EDITOR::OBJECT_TRANSFORM;
+	m_editor = EDITOR::OBJECT_FUNCTION;
 	
 	// Switch between checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK6))
@@ -321,7 +321,7 @@ void ObjectDialogue::OnBnClickedTranslate()
 void ObjectDialogue::OnBnClickedRotate()
 {
 	// Set transforming
-	m_editor = EDITOR::OBJECT_TRANSFORM;
+	m_editor = EDITOR::OBJECT_FUNCTION;
 	
 	// Switch between checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK7))
@@ -348,7 +348,7 @@ void ObjectDialogue::OnBnClickedRotate()
 void ObjectDialogue::OnBnClickedX()
 {
 	// Set transforming
-	m_editor = EDITOR::OBJECT_TRANSFORM;
+	m_editor = EDITOR::OBJECT_FUNCTION;
 	
 	// Check/uncheck constraint
 	m_x = IsDlgButtonChecked(IDC_CHECK3);
@@ -358,7 +358,7 @@ void ObjectDialogue::OnBnClickedX()
 void ObjectDialogue::OnBnClickedY()
 {
 	// Set transforming
-	m_editor = EDITOR::OBJECT_TRANSFORM;
+	m_editor = EDITOR::OBJECT_FUNCTION;
 	
 	// Check/uncheck constraint
 	m_y = IsDlgButtonChecked(IDC_CHECK4);
@@ -368,7 +368,7 @@ void ObjectDialogue::OnBnClickedY()
 void ObjectDialogue::OnBnClickedZ()
 {
 	// Set transforming
-	m_editor = EDITOR::OBJECT_TRANSFORM;
+	m_editor = EDITOR::OBJECT_FUNCTION;
 	
 	// Check/uncheck constraint
 	m_z = IsDlgButtonChecked(IDC_CHECK5);
