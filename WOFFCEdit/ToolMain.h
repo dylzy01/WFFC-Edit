@@ -8,6 +8,7 @@
 
 #include "SQLManager.h"
 #include "MouseManager.h"
+#include "ObjectManager.h"
 
 class ToolMain
 {

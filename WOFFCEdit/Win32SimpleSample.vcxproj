@@ -178,6 +178,7 @@
     <ClCompile Include="MouseManager.cpp" />
     <ClCompile Include="ObjectDialogue.cpp" />
     <ClCompile Include="ObjectEditorDialogue.cpp" />
+    <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="ObjectSpawnDialogue.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="MFCMain.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="MouseManager.h" />
     <ClInclude Include="ObjectDialogue.h" />
     <ClInclude Include="ObjectEditorDialogue.h" />
+    <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="ObjectSpawnDialogue.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />

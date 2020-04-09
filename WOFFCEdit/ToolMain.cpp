@@ -359,10 +359,12 @@ void ToolMain::Tick(MSG *msg)
 		case EDITOR::OBJECT_SPAWN:
 		{
 			// Create object at picking point
-			SQLManager::AddObject(m_d3dRenderer.CreateObject(m_objectSpawn, MouseManager::PickSpawn()));
+			///SQLManager::AddObject(m_d3dRenderer.CreateObject(m_objectSpawn, MouseManager::PickSpawn()));
+			ObjectManager::Spawn(m_objectSpawn, MouseManager::PickSpawn(), m_sceneGraph);
 
 			// Update scene graph
-			m_d3dRenderer.BuildDisplayList(&m_d3dRenderer.GetSceneGraph());
+			///m_d3dRenderer.BuildDisplayList(&m_d3dRenderer.GetSceneGraph());
+			m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
 		}
 		break;
 		case EDITOR::OBJECT_FUNCTION:

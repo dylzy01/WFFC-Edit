@@ -107,6 +107,7 @@
     <ClCompile Include="MouseManager.cpp">
       <Filter>Custom\Managers</Filter>
     </ClCompile>
+    <ClCompile Include="ObjectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -189,6 +190,7 @@
     <ClInclude Include="MouseManager.h">
       <Filter>Custom\Managers</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
