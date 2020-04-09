@@ -1239,7 +1239,7 @@ void Game::MousePicking(int i)
 	m_camera->TrackObject(centre.x, centre.y, m_displayList[m_selectedObjectIDs[i]].m_position, m_deltaTime);*/
 }
 
-bool Game::PickingObjects(bool select)
+std::vector<int> Game::PickObjects(bool select)
 {
 	// Controllers
 	int selectedID = -1;
@@ -1323,7 +1323,7 @@ bool Game::PickingObjects(bool select)
 		}
 
 		// Object has been intersected
-		return true;
+		///return true;
 	}
 	else
 	{
@@ -1331,8 +1331,11 @@ bool Game::PickingObjects(bool select)
 		///m_selectedObjectIDs.clear();
 		
 		// Object hasn't been intersected
-		return false;
+		///return false;
 	}
+
+	// Return selected object IDs
+	return m_selectedObjectIDs;
 }
 
 bool Game::ObjectIntersection(int i)

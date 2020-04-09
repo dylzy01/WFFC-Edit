@@ -37,9 +37,13 @@ void ToolMain::onActionInitialise(HWND handle, int width, int height)
 	// Setup game
 	m_d3dRenderer.Initialize(handle, m_width, m_height);
 
-	// Set static mouse game & input commands
+	// Set static mouse manager game & input commands
 	MouseManager::SetGame(&m_d3dRenderer);
 	MouseManager::SetInput(&m_toolInputCommands);
+
+	// Set static object manager game & input commands
+	ObjectManager::SetGame(&m_d3dRenderer);
+	ObjectManager::SetInput(&m_toolInputCommands);
 
 	// Estable database connection
 	if (SQLManager::Connect()) { TRACE("Database connection: fail"); }
@@ -352,44 +356,81 @@ void ToolMain::Tick(MSG *msg)
 		
 	// If left mouse right button is pressed
 	if (m_toolInputCommands.mouseRight)
-	{		
+	{				
 		// Switch between modes
 		switch(m_editor)
 		{
 		case EDITOR::OBJECT_SPAWN:
 		{
 			// Create object at picking point
-			///SQLManager::AddObject(m_d3dRenderer.CreateObject(m_objectSpawn, MouseManager::PickSpawn()));
 			ObjectManager::Spawn(m_objectSpawn, MouseManager::PickSpawn(), m_sceneGraph);
 
 			// Update scene graph
-			///m_d3dRenderer.BuildDisplayList(&m_d3dRenderer.GetSceneGraph());
 			m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
 		}
 		break;
 		case EDITOR::OBJECT_FUNCTION:
-		{
-			// If allowed to pick
-			if (m_toolInputCommands.pickOnce)
+		{			
+			// Switch between object function
+			switch (m_objectFunction)
 			{
-				// If selecting objects
-				if (m_d3dRenderer.GetObjectFunction() == OBJECT_FUNCTION::SELECT)
+			case OBJECT_FUNCTION::SELECT:
+			{
+				// If allowed to pick
+				if (m_toolInputCommands.pickOnce)
 				{
 					// Select an object
-					m_d3dRenderer.PickingObjects(true);
-					m_selectedObjects = m_d3dRenderer.GetSelectedObjectIDs();
-				}
+					m_selectedObjectIDs = m_d3dRenderer.PickObjects(true);
 
-				// Else, if any other object function is active
-				else
+					// Reset picking controller
+					m_toolInputCommands.pickOnce = false;
+				}
+			}
+			break;
+			case OBJECT_FUNCTION::SCALE:
+			{
+				// If objects are selected and mouse has been dragged
+				if (m_selectedObjectIDs.size() != 0 &&
+					m_toolInputCommands.mouseDrag) 
 				{
-					m_d3dRenderer.StoreObjectDetails(true);
-				}
+					// Scale selected objects
+					ObjectManager::Scale(m_objectConstraint, m_selectedObjectIDs, m_sceneGraph);
 
-				// Reset picking controller
-				m_toolInputCommands.pickOnce = false;
+					// Update scene graph
+					m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+				}
+			}
+			break;
+			case OBJECT_FUNCTION::ROTATE:
+			{
+				// If objects are selected and mouse has been dragged
+				if (m_selectedObjectIDs.size() != 0 &&
+					m_toolInputCommands.mouseDrag)
+				{
+					// Scale selected objects
+					ObjectManager::Rotate(m_objectConstraint, m_selectedObjectIDs, m_sceneGraph);
+
+					// Update scene graph
+					m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+				}
+			}
+			break;
+			case OBJECT_FUNCTION::TRANSLATE:
+			{
+				// If objects are selected and mouse has been dragged
+				if (m_selectedObjectIDs.size() != 0 &&
+					m_toolInputCommands.mouseDrag)
+				{
+					// Scale selected objects
+					ObjectManager::Translate(m_objectConstraint, m_selectedObjectIDs, m_sceneGraph);
+
+					// Update scene graph
+					m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+				}
+			}
+			break;
 			}			
-		}
+		}			
 		break;
 		case EDITOR::LANDSCAPE_PAINT:
 		{
@@ -408,28 +449,29 @@ void ToolMain::Tick(MSG *msg)
 
 	// Else, if mouse left button is pressed
 	else if (m_toolInputCommands.mouseLeft)
-	{		
-		// Switch between modes
-		switch (m_d3dRenderer.GetEditor())
+	{
+		// If editor is set to spawn
+		if (m_editor == EDITOR::OBJECT_SPAWN)
 		{
-		case EDITOR::OBJECT_FUNCTION:
+			// Remove an object
+			// ...
+
+			// Update scene graph
+			m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+		}
+
+		// Else, if any other editors are active
+		else
 		{
 			// If allowed to pick
 			if (m_toolInputCommands.pickOnce)
 			{
-				// If an object has been intersected
-				///if (m_d3dRenderer.PickingObjects(false))
-				{
-					// Deselect an object
-					m_d3dRenderer.PickingObjects(false);
-					m_selectedObjects = m_d3dRenderer.GetSelectedObjectIDs();
-				}
+				// Deselect an object
+				m_selectedObjectIDs = m_d3dRenderer.PickObjects(true);
 
 				// Reset picking controller
 				m_toolInputCommands.pickOnce = false;
 			}
-		}
-		break;
 		}
 	}
 
@@ -487,6 +529,9 @@ void ToolMain::UpdateInput(MSG * msg)
 			m_rDown = true;
 			m_toolInputCommands.mouseRight = true;
 			m_toolInputCommands.pickOnce = true;
+
+			// Store all object details
+			ObjectManager::Store(m_selectedObjectIDs);
 
 			// Store current mouse position
 			m_toolInputCommands.mousePosPrevious = m_toolInputCommands.mousePos;

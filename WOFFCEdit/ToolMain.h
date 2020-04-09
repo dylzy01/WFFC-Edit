@@ -6,7 +6,6 @@
 #include "InputCommands.h"
 #include <vector>
 
-#include "SQLManager.h"
 #include "MouseManager.h"
 #include "ObjectManager.h"
 
@@ -17,7 +16,7 @@ public: //methods
 	~ToolMain() { SQLManager::Disconnect(); }
 
 	//onAction - These are the interface to MFC
-	std::vector<int>	getCurrentObjectSelectionID() { return m_selectedObjects; }			//returns the selection numbers of currently selected objects so that It can be displayed.
+	std::vector<int>	getCurrentObjectSelectionID() { return m_selectedObjectIDs; }			//returns the selection numbers of currently selected objects so that It can be displayed.
 	std::vector<TERRAIN>	getCurrentTerrainSelection() { return m_selectedTerrains; }		//returns the currently selected chunk so it can be displayed
 	void				onActionInitialise(HWND handle, int width, int height);				//Passes through handle and hieght and width and initialises DirectX renderer and SQL LITE
 	void				onActionFocusCamera();
@@ -108,7 +107,7 @@ public: //methods
 public:	//variables
 	std::vector<SceneObject>    m_sceneGraph;	//our scenegraph storing all the objects in the current chunk
 	ChunkObject					m_chunk;		//our landscape chunk
-	std::vector<int> m_selectedObjects;			//IDs of multiple current OBJECT selections
+	std::vector<int> m_selectedObjectIDs;			//IDs of multiple current OBJECT selections
 	TERRAIN m_selectedTerrain;				
 	std::vector<TERRAIN> m_selectedTerrains;	//IDs of multiple current TERRAIN selections
 

@@ -204,7 +204,6 @@ bool SQLManager::RemoveObject(SceneObject object)
 	// Setup command stream from object data
 	std::stringstream ss;
 	ss << "DELETE FROM Objects WHERE ID = " << object.ID;
-
 	
 	/*SQLManager::SendQuery(ss.str().c_str(), true);
 	SQLManager::SetObjectStep();*/

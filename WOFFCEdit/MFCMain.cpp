@@ -277,7 +277,7 @@ void MFCMain::MenuEditSelect()
 	m_toolSelectDialogue.Create(IDD_DIALOG1);	//Start up modeless
 	m_toolSelectDialogue.ShowWindow(SW_SHOW);	//show modeless
 	///m_ToolSelectDialogue.SetObjectData(&m_ToolSystem.m_sceneGraph, &m_ToolSystem.m_selectedObject);
-	m_toolSelectDialogue.SetObjectData(&m_toolSystem.m_sceneGraph, &m_toolSystem.m_selectedObjects);
+	m_toolSelectDialogue.SetObjectData(&m_toolSystem.m_sceneGraph, &m_toolSystem.m_selectedObjectIDs);
 }
 
 void MFCMain::MenuEditEditorObject()
@@ -285,7 +285,7 @@ void MFCMain::MenuEditEditorObject()
 	// Create & display dialogue window
 	m_toolObjectDialogue.Create(IDD_DIALOG2);
 	m_toolObjectDialogue.ShowWindow(SW_SHOW);
-	m_toolObjectDialogue.SetObjectData(&m_toolSystem.m_sceneGraph, &m_toolSystem.m_selectedObjects);
+	m_toolObjectDialogue.SetObjectData(&m_toolSystem.m_sceneGraph, &m_toolSystem.m_selectedObjectIDs);
 	m_toolObjectDialogue.SetActive(true);
 }
 

@@ -1,5 +1,12 @@
 #include "ObjectManager.h"
 
+Game * ObjectManager::m_game;
+InputCommands * ObjectManager::m_input;
+std::vector<int> ObjectManager::m_selectedObjectIDs;
+std::vector<DirectX::SimpleMath::Vector3> ObjectManager::m_storedObjectScales;
+std::vector<DirectX::SimpleMath::Vector3> ObjectManager::m_storedObjectRotations;
+std::vector<DirectX::SimpleMath::Vector3> ObjectManager::m_storedObjectTranslations;
+
 // Spawn an object at a location
 SceneObject ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 position, 
 	std::vector<SceneObject> & sceneGraph)
@@ -171,4 +178,349 @@ SceneObject ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector
 
 	// Return object
 	return object;
+}
+
+// Remove an object from scene graph & database
+void ObjectManager::Remove(SceneObject, std::vector<SceneObject>& sceneGraph)
+{
+
+}
+
+// Temporarily store details of all objects
+void ObjectManager::Store(std::vector<int> IDs)
+{
+	// Reset storages vectors
+	m_storedObjectScales.clear();
+	m_storedObjectRotations.clear();
+	m_storedObjectTranslations.clear();
+	m_selectedObjectIDs.clear();
+
+	// Loop through selected objects
+	for (int i = 0; i < IDs.size(); ++i)
+	{
+		// If selected ID isn't -1
+		if (IDs[i] != -1)
+		{
+			m_selectedObjectIDs.push_back(IDs[i]);
+			// Add selected object details to storage
+			m_storedObjectScales.push_back(m_game->GetDisplayList()[m_selectedObjectIDs[i]].m_scale);
+			m_storedObjectRotations.push_back(m_game->GetDisplayList()[m_selectedObjectIDs[i]].m_orientation);
+			m_storedObjectTranslations.push_back(m_game->GetDisplayList()[m_selectedObjectIDs[i]].m_position);			
+		}
+	}
+}
+
+// Scale selected objects
+void ObjectManager::Scale(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject>& sceneGraph)
+{
+	// Overwrite selected object IDs
+	m_selectedObjectIDs = IDs;
+
+	// Loop through selected objects
+	for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+	{
+		DirectX::SimpleMath::Vector3 scale = GetScale(i);
+
+		// Switch between object constraint
+		switch (constraint)
+		{
+		case OBJECT_CONSTRAINT::X:
+		{
+			// Scale selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].scaX = scale.x;
+		}
+		break;
+		case OBJECT_CONSTRAINT::Y:
+		{
+			// Scale selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].scaY = scale.y;
+		}
+		break;
+		case OBJECT_CONSTRAINT::Z:
+		{
+			// Scale selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].scaZ = scale.z;
+		}
+		break;
+		case OBJECT_CONSTRAINT::XY:
+		{
+			// Scale selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].scaX = scale.x;
+			sceneGraph[m_selectedObjectIDs[i]].scaY = scale.y;
+		}
+		break;
+		case OBJECT_CONSTRAINT::XZ:
+		{
+			// Scale selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].scaX = scale.x;
+			sceneGraph[m_selectedObjectIDs[i]].scaZ = scale.z;
+		}
+		break;
+		case OBJECT_CONSTRAINT::YZ:
+		{
+			// Scale selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].scaY = scale.y;
+			sceneGraph[m_selectedObjectIDs[i]].scaZ = scale.z;
+		}
+		break;
+		case OBJECT_CONSTRAINT::ALL:
+		{
+			// Scale selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].scaX = scale.x;
+			sceneGraph[m_selectedObjectIDs[i]].scaY = scale.y;
+			sceneGraph[m_selectedObjectIDs[i]].scaZ = scale.z;
+		}
+		break;
+		}
+	}
+}
+
+// Rotate selected objects
+void ObjectManager::Rotate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject>& sceneGraph)
+{
+	// Overwrite selected object IDs
+	m_selectedObjectIDs = IDs;
+
+	// Loop through selected objects
+	for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+	{
+		DirectX::SimpleMath::Vector3 rotate = GetRotation(i);
+
+		// Switch between object constraint
+		switch (constraint)
+		{
+		case OBJECT_CONSTRAINT::X:
+		{
+			// Rotate selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].rotX = rotate.x;
+		}
+		break;
+		case OBJECT_CONSTRAINT::Y:
+		{
+			// Rotate selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].rotY = rotate.y;
+		}
+		break;
+		case OBJECT_CONSTRAINT::Z:
+		{
+			// Rotate selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].rotZ = rotate.z;
+		}
+		break;
+		case OBJECT_CONSTRAINT::XY:
+		{
+			// Rotate selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].rotX = rotate.x;
+			sceneGraph[m_selectedObjectIDs[i]].rotY = rotate.y;
+		}
+		break;
+		case OBJECT_CONSTRAINT::XZ:
+		{
+			// Rotate selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].rotX = rotate.x;
+			sceneGraph[m_selectedObjectIDs[i]].rotZ = rotate.z;
+		}
+		break;
+		case OBJECT_CONSTRAINT::YZ:
+		{
+			// Rotate selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].rotY = rotate.y;
+			sceneGraph[m_selectedObjectIDs[i]].rotZ = rotate.z;
+		}
+		break;
+		case OBJECT_CONSTRAINT::ALL:
+		{
+			// Rotate selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].rotX = rotate.x;
+			sceneGraph[m_selectedObjectIDs[i]].rotY = rotate.y;
+			sceneGraph[m_selectedObjectIDs[i]].rotZ = rotate.z;
+		}
+		break;
+		}
+	}
+}
+
+// Translate selected objects
+void ObjectManager::Translate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject>& sceneGraph)
+{
+	// Overwrite selected object IDs
+	m_selectedObjectIDs = IDs;
+
+	// Loop through selected objects
+	for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+	{
+		DirectX::SimpleMath::Vector3 translate = GetTranslation(i);
+
+		// Switch between object constraint
+		switch (constraint)
+		{
+		case OBJECT_CONSTRAINT::X:
+		{
+			// Translate selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].posX = translate.x;
+		}
+		break;
+		case OBJECT_CONSTRAINT::Y:
+		{
+			// Translate selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].posY = translate.y;
+		}
+		break;
+		case OBJECT_CONSTRAINT::Z:
+		{
+			// Translate selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].posZ = translate.z;
+		}
+		break;
+		case OBJECT_CONSTRAINT::XY:
+		{
+			// Translate selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].posX = translate.x;
+			sceneGraph[m_selectedObjectIDs[i]].posY = translate.y;
+		}
+		break;
+		case OBJECT_CONSTRAINT::XZ:
+		{
+			// Translate selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].posX = translate.x;
+			sceneGraph[m_selectedObjectIDs[i]].posZ = translate.z;
+		}
+		break;
+		case OBJECT_CONSTRAINT::YZ:
+		{
+			// Translate selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].posY = translate.y;
+			sceneGraph[m_selectedObjectIDs[i]].posZ = translate.z;
+		}
+		break;
+		case OBJECT_CONSTRAINT::ALL:
+		{
+			// Translate selected object based on mouse drag
+			sceneGraph[m_selectedObjectIDs[i]].posX = translate.x;
+			sceneGraph[m_selectedObjectIDs[i]].posY = translate.y;
+			sceneGraph[m_selectedObjectIDs[i]].posZ = translate.z;
+		}
+		break;
+		}
+	}
+}
+
+// Get scale for object manipulation via mouse drag
+DirectX::SimpleMath::Vector3 ObjectManager::GetScale(int ID)
+{
+	// Temp storage 
+	DirectX::SimpleMath::Vector2 previous = m_input->mousePosPrevious;
+	DirectX::SimpleMath::Vector2 current = m_input->mousePos;
+	DirectX::SimpleMath::Vector3 object = m_game->GetDisplayList()[m_selectedObjectIDs[ID]].m_position;
+	DirectX::SimpleMath::Vector3 s = m_game->GetDisplayList()[m_selectedObjectIDs[ID]].m_scale;
+
+	// Setup previous & current ray traces
+	DirectX::SimpleMath::Ray pre = MouseManager::RayTrace(previous);
+	DirectX::SimpleMath::Ray cur = MouseManager::RayTrace(current);
+
+	// Distance between previous & object
+	float distP = sqrt(
+		(pre.position.x - object.x) * (pre.position.x - object.x) +
+		(pre.position.y - object.y) * (pre.position.y - object.y) +
+		(pre.position.z - object.z) * (pre.position.z - object.z));
+
+	// Distance between current & object
+	float distC = sqrt(
+		(cur.position.x - object.x) * (cur.position.x - object.x) +
+		(cur.position.y - object.y) * (cur.position.y - object.y) +
+		(cur.position.z - object.z) * (cur.position.z - object.z));
+
+	// Setup temp picking points
+	DirectX::SimpleMath::Vector3 pickingP = pre.position + (pre.direction * distP);
+	DirectX::SimpleMath::Vector3 pickingC = cur.position + (cur.direction * distC);
+
+	// Setup temp scale
+	DirectX::SimpleMath::Vector3 scale;
+	scale.x = m_storedObjectScales[ID].x + (pickingC.x - pickingP.x);
+	scale.y = m_storedObjectScales[ID].y + (pickingC.y - pickingP.y);
+	scale.z = m_storedObjectScales[ID].z + (pickingC.z - pickingP.z);
+
+	// If scale is below minimum scale
+	if (scale.x < .1f) { scale.x = .1f; }
+	if (scale.y < .1f) { scale.y = .1f; }
+	if (scale.z < .1f) { scale.z = .1f; }
+
+	// Return manipulated scale
+	return scale;
+}
+
+// Get rotation for object manipulation via mouse drag
+DirectX::SimpleMath::Vector3 ObjectManager::GetRotation(int ID)
+{
+	// Temp storage 
+	DirectX::SimpleMath::Vector2 previous = m_input->mousePosPrevious;
+	DirectX::SimpleMath::Vector2 current = m_input->mousePos;
+	DirectX::SimpleMath::Vector3 object = m_game->GetDisplayList()[m_selectedObjectIDs[ID]].m_position;
+
+	// Setup previous & current ray traces
+	DirectX::SimpleMath::Ray pre = MouseManager::RayTrace(previous);
+	DirectX::SimpleMath::Ray cur = MouseManager::RayTrace(current);
+
+	// Distance between previous & object
+	float distP = sqrt(
+		(pre.position.x - object.x) * (pre.position.x - object.x) +
+		(pre.position.y - object.y) * (pre.position.y - object.y) +
+		(pre.position.z - object.z) * (pre.position.z - object.z));
+
+	// Distance between current & object
+	float distC = sqrt(
+		(cur.position.x - object.x) * (cur.position.x - object.x) +
+		(cur.position.y - object.y) * (cur.position.y - object.y) +
+		(cur.position.z - object.z) * (cur.position.z - object.z));
+
+	// Setup temp picking points
+	DirectX::SimpleMath::Vector3 pickingP = pre.position + (pre.direction * distP);
+	DirectX::SimpleMath::Vector3 pickingC = cur.position + (cur.direction * distC);
+
+	// Setup temp rotation
+	DirectX::SimpleMath::Vector3 rotate;
+	rotate.x = m_storedObjectRotations[ID].x + (pickingC.x - pickingP.x) * 50.f;
+	rotate.y = m_storedObjectRotations[ID].y + (pickingC.y - pickingP.y) * 50.f;
+	rotate.z = m_storedObjectRotations[ID].z + (pickingC.z - pickingP.z) * 50.f;
+
+	// Return manipulated rotation
+	return rotate;
+}
+
+// Get translation for object manipulation via mouse drag
+DirectX::SimpleMath::Vector3 ObjectManager::GetTranslation(int ID)
+{
+	// Temp storage 
+	DirectX::SimpleMath::Vector2 previous = m_input->mousePosPrevious;
+	DirectX::SimpleMath::Vector2 current = m_input->mousePos;
+	DirectX::SimpleMath::Vector3 object = m_game->GetDisplayList()[m_selectedObjectIDs[ID]].m_position;
+
+	// Setup previous & current ray traces
+	DirectX::SimpleMath::Ray pre = MouseManager::RayTrace(previous);
+	DirectX::SimpleMath::Ray cur = MouseManager::RayTrace(current);
+
+	// Distance between previous & object
+	float distP = sqrt(
+		(pre.position.x - object.x) * (pre.position.x - object.x) +
+		(pre.position.y - object.y) * (pre.position.y - object.y) +
+		(pre.position.z - object.z) * (pre.position.z - object.z));
+
+	// Distance between current & object
+	float distC = sqrt(
+		(cur.position.x - object.x) * (cur.position.x - object.x) +
+		(cur.position.y - object.y) * (cur.position.y - object.y) +
+		(cur.position.z - object.z) * (cur.position.z - object.z));
+
+	// Setup temp picking points
+	DirectX::SimpleMath::Vector3 pickingP = pre.position + (pre.direction * distP);
+	DirectX::SimpleMath::Vector3 pickingC = cur.position + (cur.direction * distC);
+
+	// Setup temp translation
+	DirectX::SimpleMath::Vector3 position;
+	position.x = m_storedObjectTranslations[ID].x + (pickingC.x - pickingP.x);
+	position.y = m_storedObjectTranslations[ID].y + (pickingC.y - pickingP.y);
+	position.z = m_storedObjectTranslations[ID].z + (pickingC.z - pickingP.z);
+
+	// Return manipulated translation
+	return position;
 }

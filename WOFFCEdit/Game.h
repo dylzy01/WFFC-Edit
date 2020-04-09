@@ -65,7 +65,7 @@ public:
 	// Mouse picking
 	DirectX::SimpleMath::Ray RayTrace(DirectX::SimpleMath::Vector2 position);
 	void MousePicking(int i = -1);
-	bool PickingObjects(bool select);
+	std::vector<int> PickObjects(bool select);
 	bool ObjectIntersection(int i);
 	TERRAIN PickingTerrain();
 	std::vector<TERRAIN> PickingTerrains();
@@ -75,10 +75,10 @@ public:
 	std::shared_ptr<DX::DeviceResources> GetDeviceResources() { return m_deviceResources; }
 	std::vector<DirectX::SimpleMath::Matrix> GetProjViewWorld() { return std::vector<DirectX::SimpleMath::Matrix>{m_projection, m_view, m_world}; }
 	std::vector<SceneObject> GetSceneGraph() { return m_sceneGraph; }
-	DisplayChunk* GetDisplayChunk() { return &m_displayChunk; }
+	std::vector<DisplayObject> GetDisplayList() { return m_displayList; }
+	DisplayChunk* GetDisplayChunk() { return &m_displayChunk; }	
 	EDITOR GetEditor() { return m_editor; }
 	OBJECT_FUNCTION GetObjectFunction() { return m_objectFunction; }
-	std::vector<int> GetSelectedObjectIDs() { return m_selectedObjectIDs; }
 	DirectX::SimpleMath::Vector3 GetDragPoint(DirectX::SimpleMath::Vector3* dragLine, DirectX::SimpleMath::Vector3* unProjLine);
 
 	// Setters
