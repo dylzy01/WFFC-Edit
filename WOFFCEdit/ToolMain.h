@@ -8,6 +8,7 @@
 
 #include "MouseManager.h"
 #include "ObjectManager.h"
+#include "LandscapeManager.h"
 
 class ToolMain
 {

@@ -24,20 +24,24 @@ public:
 	// Temporarily store details of all objects
 	static void Store(std::vector<int> IDs);
 
-	// Scale selected objects
-	static void Scale(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject> & sceneGraph);
-
-	// Rotate selected objects
-	static void Rotate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject> & sceneGraph);
-	
-	// Translate selected objects
-	static void Translate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject> & sceneGraph);
+	// Transform selected objects
+	static void Transform(OBJECT_FUNCTION function, OBJECT_CONSTRAINT constraint,
+		std::vector<int> IDs, std::vector<SceneObject> & sceneGraph);	
 	
 	// Setters
 	static void SetGame(Game * game) { m_game = game; }
 	static void SetInput(InputCommands * input) { m_input = input; }
 
 private:
+	// Scale selected objects
+	static void Scale(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject> & sceneGraph);
+
+	// Rotate selected objects
+	static void Rotate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject> & sceneGraph);
+
+	// Translate selected objects
+	static void Translate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject> & sceneGraph);
+
 	// Get S,R,T...
 	static DirectX::SimpleMath::Vector3 GetScale(int i);
 	static DirectX::SimpleMath::Vector3 GetRotation(int i);

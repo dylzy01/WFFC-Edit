@@ -45,6 +45,9 @@ void ToolMain::onActionInitialise(HWND handle, int width, int height)
 	ObjectManager::SetGame(&m_d3dRenderer);
 	ObjectManager::SetInput(&m_toolInputCommands);
 
+	// Set static landscape manager display chunk
+	LandscapeManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk());
+
 	// Estable database connection
 	if (SQLManager::Connect()) { TRACE("Database connection: fail"); }
 	else { TRACE("Database connection: success"); }
@@ -371,10 +374,8 @@ void ToolMain::Tick(MSG *msg)
 		break;
 		case EDITOR::OBJECT_FUNCTION:
 		{			
-			// Switch between object function
-			switch (m_objectFunction)
-			{
-			case OBJECT_FUNCTION::SELECT:
+			// If object function is select
+			if (m_objectFunction == OBJECT_FUNCTION::SELECT)
 			{
 				// If allowed to pick
 				if (m_toolInputCommands.pickOnce)
@@ -386,49 +387,20 @@ void ToolMain::Tick(MSG *msg)
 					m_toolInputCommands.pickOnce = false;
 				}
 			}
-			break;
-			case OBJECT_FUNCTION::SCALE:
-			{
-				// If objects are selected and mouse has been dragged
-				if (m_selectedObjectIDs.size() != 0 &&
-					m_toolInputCommands.mouseDrag) 
-				{
-					// Scale selected objects
-					ObjectManager::Scale(m_objectConstraint, m_selectedObjectIDs, m_sceneGraph);
-
-					// Update scene graph
-					m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
-				}
-			}
-			break;
-			case OBJECT_FUNCTION::ROTATE:
+			
+			// Else, if any other function is active
+			else
 			{
 				// If objects are selected and mouse has been dragged
 				if (m_selectedObjectIDs.size() != 0 &&
 					m_toolInputCommands.mouseDrag)
 				{
 					// Scale selected objects
-					ObjectManager::Rotate(m_objectConstraint, m_selectedObjectIDs, m_sceneGraph);
+					ObjectManager::Transform(m_objectFunction, m_objectConstraint, m_selectedObjectIDs, m_sceneGraph);
 
 					// Update scene graph
 					m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
 				}
-			}
-			break;
-			case OBJECT_FUNCTION::TRANSLATE:
-			{
-				// If objects are selected and mouse has been dragged
-				if (m_selectedObjectIDs.size() != 0 &&
-					m_toolInputCommands.mouseDrag)
-				{
-					// Scale selected objects
-					ObjectManager::Translate(m_objectConstraint, m_selectedObjectIDs, m_sceneGraph);
-
-					// Update scene graph
-					m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
-				}
-			}
-			break;
 			}			
 		}			
 		break;
@@ -436,12 +408,26 @@ void ToolMain::Tick(MSG *msg)
 		{
 			// Select terrain
 			m_selectedTerrain = m_d3dRenderer.PickingTerrain();
+
+			// If terrain is intersected
+			if (m_selectedTerrain.intersect)
+			{
+				// Store selected terrain row,column
+				DirectX::SimpleMath::Vector2 location;
+				location.x = m_selectedTerrain.row;
+				location.y = m_selectedTerrain.column;
+
+				// Paint terrain the selected texture
+				LandscapeManager::Paint(location.x, location.y, m_landscapePaint, true);
+			}
 		}
 		break;
 		case EDITOR::LANDSCAPE_FUNCTION:
 		{
 			// Select terrain
 			m_selectedTerrain = m_d3dRenderer.PickingTerrain();
+
+
 		}
 		break;
 		}		

@@ -172,6 +172,7 @@
     <ClCompile Include="DisplayObject.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="LandscapeDialogue.cpp" />
+    <ClCompile Include="LandscapeManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MFCFrame.cpp" />
     <ClCompile Include="MFCRenderFrame.cpp" />
@@ -200,6 +201,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="InputCommands.h" />
     <ClInclude Include="LandscapeDialogue.h" />
+    <ClInclude Include="LandscapeManager.h" />
     <ClInclude Include="MFCFrame.h" />
     <ClInclude Include="MFCRenderFrame.h" />
     <ClInclude Include="MouseManager.h" />

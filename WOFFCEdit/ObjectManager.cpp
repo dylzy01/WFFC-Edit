@@ -220,6 +220,18 @@ void ObjectManager::Store(std::vector<int> IDs)
 	}
 }
 
+// Transform selected objects
+void ObjectManager::Transform(OBJECT_FUNCTION function, OBJECT_CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject>& sceneGraph)
+{
+	// Switch between function
+	switch (function)
+	{
+	case OBJECT_FUNCTION::SCALE: Scale(constraint, IDs, sceneGraph); break;
+	case OBJECT_FUNCTION::ROTATE: Rotate(constraint, IDs, sceneGraph); break;
+	case OBJECT_FUNCTION::TRANSLATE: Translate(constraint, IDs, sceneGraph); break;
+	}
+}
+
 // Scale selected objects
 void ObjectManager::Scale(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject>& sceneGraph)
 {
