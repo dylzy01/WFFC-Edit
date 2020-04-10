@@ -16,6 +16,8 @@ BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_BUTTON40059, &MFCMain::ToolBarObjectDelete)
 	ON_COMMAND(ID_BUTTON40052, &MFCMain::ToolBarTerrainSculpt)
 	ON_COMMAND(ID_BUTTON40048, &MFCMain::ToolBarTerrainPaint)
+	ON_COMMAND(ID_BUTTON40053, &MFCMain::ToolBarUndo)
+	ON_COMMAND(ID_BUTTON40054, &MFCMain::ToolBarRedo)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_TOOL, &CMyFrame::OnUpdatePage)
 END_MESSAGE_MAP()
 
@@ -367,6 +369,16 @@ void MFCMain::ToolBarTerrainPaint()
 	m_terrainPaintDialogue.Create(IDD_DIALOG6);
 	m_terrainPaintDialogue.ShowWindow(SW_SHOW);
 	m_terrainPaintDialogue.SetActive(true);
+}
+
+void MFCMain::ToolBarUndo()
+{
+	m_toolSystem.onActionUndo();
+}
+
+void MFCMain::ToolBarRedo()
+{
+	m_toolSystem.onActionRedo();
 }
 
 MFCMain::MFCMain()

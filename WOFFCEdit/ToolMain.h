@@ -27,7 +27,9 @@ public: //methods
 	afx_msg void		onActionSave();
 	afx_msg	void		onActionSave_();													//save the current chunk
 	afx_msg void		onActionSaveTerrain();												//save chunk geometry
-	afx_msg void		onActionDeleteObjects();											//dekete selected objects
+	afx_msg void		onActionDeleteObjects();											//delete selected objects
+	afx_msg void		onActionUndo();
+	afx_msg void		onActionRedo();
 
 	void	Tick(MSG *msg);
 	void	UpdateInput(MSG *msg);

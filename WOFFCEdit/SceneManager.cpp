@@ -2,6 +2,8 @@
 
 Game * SceneManager::m_game;
 std::vector<SceneObject> * SceneManager::m_sceneGraph;
+std::vector<std::vector<SceneObject>> SceneManager::m_sceneGraphs;
+int SceneManager::m_currentID = 0;
 DisplayChunk * SceneManager::m_displayChunk;
 
 // Save current world state (scene graph + chunk)
@@ -20,4 +22,30 @@ void SceneManager::Save()
 	// Save new scene graph
 	if (SQLManager::SaveObjects(m_game->GetSceneGraph())) { MessageBox(NULL, L"World Saved", L"Notification", MB_OK); }
 	else { MessageBox(NULL, L"World Failed to Save", L"Notification", MB_OK); }
+}
+
+// Undo to previous world state
+std::vector<SceneObject> SceneManager::Undo()
+{
+	// Reduce current ID if possible
+	if (m_currentID != 1) { m_currentID--; }
+
+	// Update local scene graph
+	m_sceneGraph = &m_sceneGraphs[m_currentID - 1];
+
+	// Return local scene graph
+	return *m_sceneGraph;
+}
+
+// Redo to proceeding world state
+std::vector<SceneObject> SceneManager::Redo()
+{
+	// Increase current ID if possible
+	if (m_currentID != m_sceneGraphs.size() - 1) { m_currentID++; }
+
+	// Update local scene graph
+	m_sceneGraph = &m_sceneGraphs[m_currentID];
+
+	// Return local scene graph
+	return *m_sceneGraph;
 }

@@ -50,9 +50,8 @@ void ToolMain::onActionInitialise(HWND handle, int width, int height)
 	LandscapeManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk());
 	LandscapeManager::StorePosition(true);
 
-	// Set static scene manager game, scene graph & display chunk
+	// Set static scene manager game & display chunk
 	SceneManager::SetGame(&m_d3dRenderer);
-	SceneManager::SetSceneGraph(&m_sceneGraph);
 	SceneManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk());
 
 	// Estable database connection
@@ -348,6 +347,20 @@ void ToolMain::onActionDeleteObjects()
 	m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
 }
 
+void ToolMain::onActionUndo()
+{
+	m_sceneGraph = SceneManager::Undo();
+
+	m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+}
+
+void ToolMain::onActionRedo()
+{
+	m_sceneGraph = SceneManager::Redo();
+
+	m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+}
+
 void ToolMain::Tick(MSG *msg)
 {
 	//do we have a selection						//done
@@ -378,7 +391,7 @@ void ToolMain::Tick(MSG *msg)
 			ObjectManager::Spawn(m_objectSpawn, MouseManager::PickSpawn(), m_sceneGraph);
 
 			// Update scene graph
-			m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+			m_d3dRenderer.BuildDisplayList(&m_sceneGraph);			
 		}
 		break;
 		case EDITOR::OBJECT_FUNCTION:
@@ -523,6 +536,7 @@ void ToolMain::UpdateInput(MSG * msg)
 	case WM_RBUTTONUP:
 		m_rDown = m_toolInputCommands.mouseRight = m_toolInputCommands.mouseDrag = false;
 		LandscapeManager::StorePosition(true);
+		SceneManager::SetSceneGraph(&m_sceneGraph);
 		break;
 
 	case WM_MBUTTONDOWN:
