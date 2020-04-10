@@ -181,19 +181,54 @@ SceneObject ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector
 }
 
 // Remove an object from scene graph & database
-void ObjectManager::Remove(int i, std::vector<int> & IDs, std::vector<SceneObject> & sceneGraph)
+void ObjectManager::Remove(std::vector<int> & IDs, std::vector<SceneObject> & sceneGraph, int ID)
 {
+	// If ID has been specified
+	if (ID != -1)
+	{
+		// Remove object from database
+		SQLManager::RemoveObject(sceneGraph[ID]);
+		///IDs.erase(IDs.begin() + IDs[ID]);
+	}
+
+	// Else, if no ID has been specified (delete all selected objects)
+	else
+	{
+		// Loop through selected objects
+		for (int i = 0; i < IDs.size(); ++i)
+		{
+			// Remove objects from database
+			SQLManager::RemoveObject(sceneGraph[IDs[i]]);
+			IDs.erase(IDs.begin() + i);
+		}
+	}
+
+	// Clear old scene graph
+	sceneGraph.clear();
+
+	// Send query to select entire object table
+	SQLManager::SendQuery("SELECT * FROM Objects", true);
+
+	// Loop through entire object table & create each object into new scene graph
+	while (SQLManager::GetObjectStep() == SQLITE_ROW) { sceneGraph.push_back(SQLManager::CreateObject()); }
+
+	// Rebuild display list from new table data
+	m_game->BuildDisplayList(&sceneGraph);
+
+	// Setup temp index
+	///int i = MouseManager::PickSingle();
+
 	// Remove selected object from database
-	//SQLManager::RemoveObject(sceneGraph[IDs[i]]);
-	//
-	//// Remove selected object from scene graph
-	//sceneGraph.erase(sceneGraph.begin() + IDs[i]);
+	///SQLManager::RemoveObject(sceneGraph[IDs[i]]);
+
+	// Remove selected object from scene graph
+	///sceneGraph.erase(sceneGraph.begin() + IDs[i]);
 
 	//// Remove selected object from selected objects list
-	//IDs.erase(IDs.begin() + i);
+	///IDs.erase(IDs.begin() + i);
 
-	//// Overwrite selected objects list
-	//m_selectedObjectIDs = IDs;
+	// Overwrite selected objects list
+	m_selectedObjectIDs = IDs;
 }
 
 // Temporarily store details of all objects

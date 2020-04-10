@@ -19,7 +19,7 @@ public:
 		std::vector<SceneObject> & sceneGraph);
 
 	// Remove an object from scene graph & database
-	static void Remove(int i, std::vector<int> & IDs, std::vector<SceneObject> & sceneGraph);
+	static void Remove(std::vector<int> & IDs, std::vector<SceneObject> & sceneGraph, int ID = -1);
 
 	// Temporarily store details of all objects
 	static void Store(std::vector<int> IDs);

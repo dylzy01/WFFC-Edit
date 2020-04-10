@@ -338,13 +338,16 @@ void ToolMain::onActionSaveTerrain()
 
 void ToolMain::onActionDeleteObjects()
 {
-	m_d3dRenderer.DeleteSelectedObjects();
+	//m_d3dRenderer.DeleteSelectedObjects();
 
-	// Re-setup scene graph
-	m_sceneGraph.clear();
-	SQLManager::SendQuery("SELECT * FROM Objects", true);
-	while (SQLManager::GetObjectStep() == SQLITE_ROW) { m_sceneGraph.push_back(SQLManager::CreateObject()); }
-	m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+	//// Re-setup scene graph
+	//m_sceneGraph.clear();
+	//SQLManager::SendQuery("SELECT * FROM Objects", true);
+	//while (SQLManager::GetObjectStep() == SQLITE_ROW) { m_sceneGraph.push_back(SQLManager::CreateObject()); }
+	//m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+
+	// Delete all selected objects
+	ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph);
 }
 
 void ToolMain::onActionUndo()
@@ -365,7 +368,7 @@ void ToolMain::Tick(MSG *msg)
 {
 	//do we have a selection						//done
 	//do we have a mode								//done
-	//are we clicking / dragging /releasing
+	//are we clicking / dragging /releasing			//done
 	//has something changed
 		//update Scenegraph
 		//add to scenegraph
@@ -462,7 +465,7 @@ void ToolMain::Tick(MSG *msg)
 		if (m_editor == EDITOR::OBJECT_SPAWN)
 		{
 			// Remove an object
-			///ObjectManager::Remove(m_d3dRenderer.PickObject(), m_selectedObjectIDs, m_sceneGraph);
+			ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph, MouseManager::PickSingle());
 
 			// Update scene graph
 			///m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
@@ -473,9 +476,9 @@ void ToolMain::Tick(MSG *msg)
 		{
 			// If allowed to pick
 			if (m_toolInputCommands.pickOnce)
-			{				
+			{
 				// Deselect multiple objects
-				MouseManager::PickMultiple(m_selectedObjectIDs, false);				
+				MouseManager::PickMultiple(m_selectedObjectIDs, false);
 
 				// Reset picking controller
 				m_toolInputCommands.pickOnce = false;
