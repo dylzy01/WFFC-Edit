@@ -16,6 +16,7 @@ struct InputCommands
 	bool mouseDrag;
 	bool pickOnce, storeOnce, toggle;
 	bool escape;
+	bool Lshift;
 	DirectX::SimpleMath::Vector2 mousePos;
 	DirectX::SimpleMath::Vector2 mousePosPrevious;
 };

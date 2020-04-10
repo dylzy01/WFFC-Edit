@@ -13,6 +13,9 @@ public:
 	// Picking a spawn point for an object
 	static DirectX::SimpleMath::Vector3 PickSpawn();
 
+	// Picking a piece of terrain
+	static TERRAIN PickTerrain();
+
 	// Setters
 	static void SetGame(Game * game) { m_game = game; }
 	static void SetInput(InputCommands * input) { m_input = input; }

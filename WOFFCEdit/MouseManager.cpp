@@ -41,6 +41,13 @@ DirectX::SimpleMath::Vector3 MouseManager::PickSpawn()
 	return pickingPoint;
 }
 
+// Picking a piece of terrain
+TERRAIN MouseManager::PickTerrain()
+{
+	// Return picked terrain object
+	return TerrainIntersection(RayTrace(m_input->mousePos));
+}
+
 // Setup ray trace from given position
 DirectX::SimpleMath::Ray MouseManager::RayTrace(DirectX::SimpleMath::Vector2 position)
 {

@@ -22,6 +22,7 @@ ToolMain::ToolMain()
 	m_toolInputCommands.mouseWheel	= false;
 	m_toolInputCommands.mouseDrag	= false;
 	m_toolInputCommands.escape		= false;
+	m_toolInputCommands.Lshift		= false;
 	m_toolInputCommands.pickOnce	= true;
 	m_toolInputCommands.storeOnce	= true;
 	m_toolInputCommands.toggle		= true;
@@ -47,6 +48,7 @@ void ToolMain::onActionInitialise(HWND handle, int width, int height)
 
 	// Set static landscape manager display chunk
 	LandscapeManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk());
+	LandscapeManager::StorePosition(true);
 
 	// Estable database connection
 	if (SQLManager::Connect()) { TRACE("Database connection: fail"); }
@@ -392,42 +394,30 @@ void ToolMain::Tick(MSG *msg)
 			else
 			{
 				// If objects are selected and mouse has been dragged
-				if (m_selectedObjectIDs.size() != 0 &&
-					m_toolInputCommands.mouseDrag)
+				if (m_selectedObjectIDs.size() != 0 && m_toolInputCommands.mouseDrag)
 				{
 					// Scale selected objects
 					ObjectManager::Transform(m_objectFunction, m_objectConstraint, m_selectedObjectIDs, m_sceneGraph);
 
 					// Update scene graph
 					m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+
+					// REPLACE OBJECTS RATHER THAN REBUILDING ENTIRE DISPLAY LIST
+					///m_d3dRenderer.ReplaceObjects(m_selectedObjectIDs, &m_sceneGraph);
 				}
 			}			
 		}			
 		break;
 		case EDITOR::LANDSCAPE_PAINT:
 		{
-			// Select terrain
-			m_selectedTerrain = m_d3dRenderer.PickingTerrain();
-
-			// If terrain is intersected
-			if (m_selectedTerrain.intersect)
-			{
-				// Store selected terrain row,column
-				DirectX::SimpleMath::Vector2 location;
-				location.x = m_selectedTerrain.row;
-				location.y = m_selectedTerrain.column;
-
-				// Paint terrain the selected texture
-				LandscapeManager::Paint(location.x, location.y, m_landscapePaint, true);
-			}
+			// Paint terrain
+			LandscapeManager::Paint(m_selectedTerrain, m_landscapePaint, true);
 		}
 		break;
 		case EDITOR::LANDSCAPE_FUNCTION:
 		{
-			// Select terrain
-			m_selectedTerrain = m_d3dRenderer.PickingTerrain();
-
-
+			// Sculpt terrain
+			LandscapeManager::Sculpt(m_selectedTerrain, m_landscapeFunction, m_landscapeConstraint);
 		}
 		break;
 		}		
@@ -463,9 +453,6 @@ void ToolMain::Tick(MSG *msg)
 
 	//Renderer Update Call
 	m_d3dRenderer.Tick(&m_toolInputCommands);
-
-	// Update local scene graph
-	m_sceneGraph = m_d3dRenderer.GetSceneGraph();
 }
 
 void ToolMain::UpdateInput(MSG * msg)
@@ -487,7 +474,7 @@ void ToolMain::UpdateInput(MSG * msg)
 		m_toolInputCommands.mousePos.y = GET_Y_LPARAM(msg->lParam);
 		break;
 
-	case WM_LBUTTONDOWN:	
+	case WM_LBUTTONDOWN:
 		if (!m_lDown)
 		{
 			m_lDown = true;
@@ -506,7 +493,6 @@ void ToolMain::UpdateInput(MSG * msg)
 	case WM_LBUTTONUP:
 		m_lDown = m_toolInputCommands.mouseLeft = m_toolInputCommands.mouseDrag = false;
 		m_toolInputCommands.toggle = true;
-		m_d3dRenderer.StoreTerrainPosition(true);
 		break;
 
 	case WM_RBUTTONDOWN:
@@ -529,23 +515,24 @@ void ToolMain::UpdateInput(MSG * msg)
 
 	case WM_RBUTTONUP:
 		m_rDown = m_toolInputCommands.mouseRight = m_toolInputCommands.mouseDrag = false;
+		LandscapeManager::StorePosition(true);
 		break;
 
 	case WM_MBUTTONDOWN:
 		m_toolInputCommands.mouseWheel = true;
 		break;
-		
+
 	case WM_MBUTTONUP:
 		m_toolInputCommands.mouseWheel = false;
 		break;
 	}
 
 	//here we update all the actual app functionality that we want.  This information will either be used int toolmain, or sent down to the renderer (Camera movement etc
-	
+
 	// W key to move forward
 	if (m_keyArray['W']) { m_toolInputCommands.W = true; }
 	else { m_toolInputCommands.W = false; }
-	
+
 	// S key to move backward
 	if (m_keyArray['S']) { m_toolInputCommands.S = true; }
 	else { m_toolInputCommands.S = false; }
@@ -565,4 +552,9 @@ void ToolMain::UpdateInput(MSG * msg)
 	// Q key to move downward
 	if (m_keyArray['Q']) { m_toolInputCommands.Q = true; }
 	else { m_toolInputCommands.Q = false; }
+
+	// L Shift to select more than one object
+	if (m_keyArray['A0']) { m_toolInputCommands.Lshift = true; }
+	else { m_toolInputCommands.Lshift = false; }
+
 }

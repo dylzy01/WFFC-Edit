@@ -57,6 +57,7 @@ public:
 	// Tool specific
 	void BuildDisplayList(std::vector<SceneObject> * SceneGraph); //note vector passed by reference 
 	void BuildDisplayChunk(ChunkObject *SceneChunk, std::vector<DirectX::SimpleMath::Vector2> location = { { 0.f, 0.f } });
+	void BuildDisplayObject(std::vector<int> IDs, std::vector<SceneObject> * sceneGraph);
 	void SaveDisplayChunk();	//saves geometry et al
 	void ClearDisplayList();
 	void DeleteSelectedObjects();
@@ -84,85 +85,12 @@ public:
 
 	// Setters
 	void SetWireframe(bool wireframe) { m_wireframe = wireframe; }
-	void SetEditor(EDITOR editor) { 
-		m_editor = editor; 
-		switch (editor)
-		{
-		case EDITOR::OBJECT_SPAWN:
-		{
-			// Reset object transform
-			m_objectFunction = OBJECT_FUNCTION::NA;
-			m_objectConstraint = OBJECT_CONSTRAINT::NA;
-
-			// Reset landscape sculpt
-			m_landscapeSculpt = LANDSCAPE_FUNCTION::NA;
-			m_landscapeConstraint = LANDSCAPE_CONSTRAINT::NA;
-
-			// Reset landscape paint
-			m_landscapePaint = LANDSCAPE_PAINT::NA;
-		}
-		break;
-		case EDITOR::OBJECT_FUNCTION:
-		{
-			// Reset object spawn
-			m_objectSpawn = OBJECT_SPAWN::NA;
-			
-			// Reset landscape sculpt
-			m_landscapeSculpt = LANDSCAPE_FUNCTION::NA;
-			m_landscapeConstraint = LANDSCAPE_CONSTRAINT::NA;
-
-			// Reset landscape paint
-			m_landscapePaint = LANDSCAPE_PAINT::NA;
-		}
-		break;
-		case EDITOR::LANDSCAPE_FUNCTION:
-		{
-			// Reset object spawn
-			m_objectSpawn = OBJECT_SPAWN::NA;
-			
-			// Reset object transform
-			m_objectFunction = OBJECT_FUNCTION::NA;
-			m_objectConstraint = OBJECT_CONSTRAINT::NA;			
-
-			// Reset landscape paint
-			m_landscapePaint = LANDSCAPE_PAINT::NA;
-		}
-		case EDITOR::LANDSCAPE_PAINT:
-		{
-			// Reset object spawn
-			m_objectSpawn = OBJECT_SPAWN::NA;
-			
-			// Reset object transform
-			m_objectFunction = OBJECT_FUNCTION::NA;
-			m_objectConstraint = OBJECT_CONSTRAINT::NA;
-
-			// Reset landscape sculpt
-			m_landscapeSculpt = LANDSCAPE_FUNCTION::NA;
-			m_landscapeConstraint = LANDSCAPE_CONSTRAINT::NA;
-		}
-		break;
-		break;
-		}
-	}
-	void SetObjectSpawn(OBJECT_SPAWN spawn) { m_objectSpawn = spawn; }
-	void SetObjectTransform(OBJECT_FUNCTION function) { m_objectFunction = function; }
-	void SetObjectConstraint(OBJECT_CONSTRAINT constraint) { m_objectConstraint = constraint; }
-	void SetLandscapePaint(LANDSCAPE_PAINT paint) { m_landscapePaint = paint; }
-	void SetLandscapeSculpt(LANDSCAPE_FUNCTION function) { m_landscapeSculpt = function; }
-	void SetLandscapeConstraint(LANDSCAPE_CONSTRAINT constraint) { m_landscapeConstraint = constraint; }
-	void StorePickingPoint(bool store) { m_storePickingPoint = store; }
-	void StoreObjectDetails(bool store) { m_storeObjectDetails = store; }
-	void StoreTerrainPosition(bool store) { m_storeTerrainPosition = store; }
-
-	// Creation functions
-	SceneObject CreateObject(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 position);
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
 #endif
 
 private:
-	void HandleInput();
 
 	void Update(DX::StepTimer const& timer);
 	void UpdateCamera();

@@ -119,38 +119,11 @@ void Game::Update(DX::StepTimer const& timer)
 {
 	// Frame time
 	m_deltaTime = timer.GetElapsedSeconds();
-
-	// Light
-	/*auto time = static_cast<float>(timer.GetTotalSeconds());
-	float yaw = time * 0.4f;
-	float pitch = time * 0.7f;
-	float roll = time * 1.1f;
-	auto quat = Quaternion::CreateFromYawPitchRoll(pitch, yaw, roll);
-	auto light = XMVector3Rotate(DirectX::g_XMOne, quat);
-	m_displayChunk.m_terrainEffect->SetLightDirection(0, light);*/
-	
-	// Loop through all objects
-	//for (int i = 0; i < m_displayList.size(); ++i)
-	//{
-	//	// Offset position based on sine wave
-	//	float yPos = sin(m_displayList[i].m_position.x + (m_deltaTime * 15));
-
-	//	// Modify normals
-	//	float xNorm = 1 - cos(m_displayList[i].m_position.x + m_deltaTime);
-	//	float yNorm = abs(cos(m_displayList[i].m_position.x + m_deltaTime));
-	//	
-	//	// Calculate position of vertex against world, view and projection matrices
-	//	m_displayList[i].m_position.y = yPos;
-	//}
-		
-	// Handle all input
-	HandleInput();
 	
 	// Custom camera
 	UpdateCamera();
 
 	// Water waves
-	///m_displayChunk.Wave(m_deltaTime, m_world, m_view, m_projection);
 	UpdateWaves();
 
 #ifdef DXTK_AUDIO
@@ -180,316 +153,6 @@ void Game::Update(DX::StepTimer const& timer)
 
 }
 
-// Handles game input
-void Game::HandleInput()
-{
-	// If mouse right is being pressed
-	if (m_inputCommands.mouseRight)
-	{
-		// Switch between modes
-		switch (m_editor)
-		{
-		case EDITOR::OBJECT_SPAWN:
-		{
-			// Update picking point
-			///MousePicking();
-			///MouseManager::PickSpawn(m_pickingPoint);
-
-			// Create object at picking point
-			///SQLManager::AddObject(CreateObject(m_objectSpawn, m_pickingPoint));
-
-			// Update scene graph
-			///BuildDisplayList(&m_sceneGraph);			
-		}
-		break;
-		case EDITOR::OBJECT_FUNCTION:
-		{
-			// If any objects are selected
-			if (m_selectedObjectIDs.size() != 0)
-			{
-				// If object positions should be stored
-				if (m_storeObjectDetails)
-				{
-					// Reset vectors
-					m_storedObjectScales.clear();
-					m_storedObjectTranslations.clear();
-					m_storedObjectRotations.clear();
-
-					// Loop through selected objects
-					for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
-					{
-						// If selected ID isn't -1
-						if (m_selectedObjectIDs[i] != -1)
-						{
-							// Fill vectors with selected object data
-							m_storedObjectScales.push_back(m_displayList[m_selectedObjectIDs[i]].m_scale);
-							m_storedObjectTranslations.push_back(m_displayList[m_selectedObjectIDs[i]].m_position);
-							m_storedObjectRotations.push_back(m_displayList[m_selectedObjectIDs[i]].m_orientation);
-						}
-					}
-
-					// Reset controller
-					m_storeObjectDetails = false;
-				}
-
-				// Loop through selected objects
-				for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
-				{
-					// Update picking point
-					///MousePicking(i);
-
-					// If mouse has been dragged
-					if (m_inputCommands.mouseDrag)
-					{						
-						// Switch between S, R, T
-						switch (m_objectFunction)
-						{
-						case OBJECT_FUNCTION::SCALE:
-						{
-							// Get manipulated scale from mouse drag
-							Vector3 scale = GetScale(i);
-
-							// If should be scaled on the X and Y axis
-							if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
-							{
-								// Scale selected object based on mouse drag 
-								m_displayList[m_selectedObjectIDs[i]].m_scale.x = scale.x;
-								m_displayList[m_selectedObjectIDs[i]].m_scale.y = scale.y;
-							}
-
-							// Else, if should be scaled on the X and Z axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::XZ)
-							{
-								// Scale selected object based on mouse drag 
-								m_displayList[m_selectedObjectIDs[i]].m_scale.x = scale.x;
-								m_displayList[m_selectedObjectIDs[i]].m_scale.z = scale.z;
-							}
-
-							// Else, if should be scaled on the Y and Z axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::YZ)
-							{
-								// Scale selected object based on mouse drag 
-								m_displayList[m_selectedObjectIDs[i]].m_scale.y = scale.y;
-								m_displayList[m_selectedObjectIDs[i]].m_scale.z = scale.z;
-							}
-
-							// Else, if should be scaled on the X axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::X)
-							{
-								// Scale selected object based on mouse drag 
-								m_displayList[m_selectedObjectIDs[i]].m_scale.x = scale.x;
-							}
-
-							// Else, if should be scaled on the Y axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::Y)
-							{
-								// Scale selected object based on mouse drag 
-								m_displayList[m_selectedObjectIDs[i]].m_scale.y = scale.y;
-							}
-
-							// Else, if should be scaled on the Z axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::Z)
-							{
-								// Scale selected object based on mouse drag 
-								m_displayList[m_selectedObjectIDs[i]].m_scale.z = scale.z;
-							}
-
-							// Else, if should be scaled freely
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::ALL)
-							{
-								// Scale selected object based on mouse drag 
-								m_displayList[m_selectedObjectIDs[i]].m_scale = scale;
-							}
-
-						}
-						break;						
-						case OBJECT_FUNCTION::ROTATE:
-						{
-							// Get manipulated rotation from mouse drag
-							Vector3 rotate = GetRotation(i);
-								
-							// If should be rotated on the X and Y axis
-							if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
-							{
-								// Rotate selected object based on mouse drag
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.x = rotate.x;
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.y = rotate.y;
-							}
-
-							// Else, if should be rotated on the X and Z axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::XZ)
-							{
-								// Rotate selected object based on mouse drag
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.x = rotate.x;
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.z = rotate.z;
-							}
-
-							// Else, if should be rotated on the Y and Z axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::YZ)
-							{
-								// Rotate selected object based on mouse drag
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.y = rotate.y;
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.z = rotate.z;
-							}
-
-							// Else, if should be rotated on the X axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::X)
-							{
-								// Rotate selected object based on mouse drag
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.x = rotate.x;
-							}
-
-							// Else, if should be rotated on the Y axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::Y)
-							{
-								// Rotate selected object based on mouse drag
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.y = rotate.y;
-							}
-
-							// Else, if should be rotated on the Z axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::Z)
-							{
-								// Rotate selected object based on mouse drag
-								m_displayList[m_selectedObjectIDs[i]].m_orientation.z = rotate.z;
-							}
-
-							// Else, if should be rotated freely
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::ALL)
-							{
-								// Rotate selected object based on mouse drag
-								m_displayList[m_selectedObjectIDs[i]].m_orientation = rotate;
-							}
-						}
-						break;
-						case OBJECT_FUNCTION::TRANSLATE:
-						{
-							// Get manipulated translation from mouse drag
-							Vector3 translate = GetTranslation(i);
-
-							// If should be translated on the X and Y axis
-							if (m_objectConstraint == OBJECT_CONSTRAINT::XY)
-							{
-								// Translate selected object based on mouse drag
-								m_displayList[m_selectedObjectIDs[i]].m_position.x = translate.x;
-								m_displayList[m_selectedObjectIDs[i]].m_position.y = translate.y;
-							}
-
-							// Else, if should be translated on the X and Z axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::XZ)
-							{
-								// Translate selected object based on mouse drag
-								m_displayList[m_selectedObjectIDs[i]].m_position.x = translate.x;
-								m_displayList[m_selectedObjectIDs[i]].m_position.z = translate.z;
-							}
-
-							// Else, if should be translated on the Y and Z axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::YZ)
-							{
-								// Translate selected object based on mouse drag
-								m_displayList[m_selectedObjectIDs[i]].m_position.y = translate.y;
-								m_displayList[m_selectedObjectIDs[i]].m_position.z = translate.z;
-							}
-
-							// Else, if should be translated on the X axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::X)
-							{
-								// Translate selected object based on mouse drag
-								m_displayList[m_selectedObjectIDs[i]].m_position.x = translate.x;
-							}
-
-							// Else, if should be translated on the Y axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::Y)
-							{
-								// Translate selected object based on mouse drag
-								m_displayList[m_selectedObjectIDs[i]].m_position.y = translate.y;
-							}
-
-							// Else, if should be translated on the Z axis
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::Z)
-							{
-								// Translate selected object based on mouse drag
-								m_displayList[m_selectedObjectIDs[i]].m_position.z = translate.z;
-							}
-
-							// Else, if should be translated freely
-							else if (m_objectConstraint == OBJECT_CONSTRAINT::ALL)
-							{
-								// Translate selected object based on mouse drag
-								m_displayList[m_selectedObjectIDs[i]].m_position = translate;
-							}
-						}
-						break;
-						}
-					}
-				}
-			}
-			
-			// Else, if mouse isn't being pressed
-			{
-				// Reset camera look at
-				///m_camera->SetLookingAtObject(false);
-			}
-		}
-		break;
-		case EDITOR::LANDSCAPE_PAINT:
-		{
-			// If selected terrain is intersected by ray trace
-			if (m_selectedTerrain.intersect)
-			{
-				// Store selected terrain row,column
-				DirectX::SimpleMath::Vector2 location;
-				location.x = m_selectedTerrain.row;
-				location.y = m_selectedTerrain.column;
-
-				// Paint terrain the selected texture
-				m_displayChunk.PaintTerrain(m_selectedTerrain.row, m_selectedTerrain.column, m_landscapePaint, true);
-				///m_displayChunk.PaintTerrain(m_selectedTerrain.row, m_selectedTerrain.column, LANDSCAPE_PAINT::GRASS_AND_DIRT);
-			}
-			
-		}
-		break;
-		case EDITOR::LANDSCAPE_FUNCTION:
-		{
-			// If selected terrain is intersected by ray trace
-			if (m_selectedTerrain.intersect)
-			{
-				// If increase or decrease
-				if (m_landscapeSculpt == LANDSCAPE_FUNCTION::INCREASE ||
-					m_landscapeSculpt == LANDSCAPE_FUNCTION::DECREASE)
-				{
-					// Increase/decrease terrain
-					m_displayChunk.SculptTerrain(m_selectedTerrain.row, m_selectedTerrain.column, m_landscapeSculpt, m_landscapeConstraint);
-				}
-
-				// Else, if flatten
-				else if (m_landscapeSculpt == LANDSCAPE_FUNCTION::FLATTEN)
-				{
-					// If first position should be stored
-					if (m_storeTerrainPosition)
-					{
-						m_storeTerrainPosition = false;
-						m_storedTerrainPositions.clear();
-						m_storedTerrainPositions.push_back(m_displayChunk.GetGeometry(m_selectedTerrain.row, m_selectedTerrain.column).position);
-						m_storedTerrainPositions.push_back(m_displayChunk.GetGeometry(m_selectedTerrain.row, m_selectedTerrain.column + 1).position);
-						m_storedTerrainPositions.push_back(m_displayChunk.GetGeometry(m_selectedTerrain.row + 1, m_selectedTerrain.column + 1).position);
-						m_storedTerrainPositions.push_back(m_displayChunk.GetGeometry(m_selectedTerrain.row + 1, m_selectedTerrain.column).position);
-					}
-
-					// Check if selected terrain height doesn't match stored position height
-					///if (m_selectedTerrain.position.y != m_storedTerrainPositions.y)
-					{
-						// Flatten height of selected terrain
-						m_displayChunk.SculptTerrain(m_selectedTerrain.row, m_selectedTerrain.column, m_landscapeSculpt, m_landscapeConstraint, m_storedTerrainPositions);
-					}
-				}
-			}
-			
-		}
-		break;
-		}
-	}
-}
-
 // Updates the camera
 void Game::UpdateCamera()
 {
@@ -512,12 +175,6 @@ void Game::UpdateCamera()
 	m_batchEffect->SetWorld(Matrix::Identity);
 	m_displayChunk.m_terrainEffect->SetView(m_view);
 	m_displayChunk.m_terrainEffect->SetWorld(Matrix::Identity);
-	///m_displayChunk.m_dualEffect->SetView(m_view);
-	///m_displayChunk.m_dualEffect->SetWorld(Matrix::Identity);
-	/*m_displayChunk.m_terrainBlendOne->SetView(m_view);
-	m_displayChunk.m_terrainBlendOne->SetWorld(Matrix::Identity);
-	m_displayChunk.m_terrainBlendTwo->SetView(m_view);
-	m_displayChunk.m_terrainBlendTwo->SetWorld(Matrix::Identity);*/
 }
 
 // Updates the waves of all water objects
@@ -550,57 +207,7 @@ void Game::UpdateWaves()
 		// Switch positive/negative
 		if (m_switch) { m_switch = false; }
 		else { m_switch = true; }
-	}
-	
-	//// Temp y position
-	//float tempY = 0.f;
-	//
-	//// Loop through display list
-	//for (int i = 0; i < m_displayList.size(); ++i)
-	//{
-	//	// Store y position
-	//	tempY = m_displayList[i].m_position.y;
-
-	//	// If current object is water
-	//	if (m_displayList[i].m_type == MODEL_TYPE::WATER)
-	//	{			
-	//		///m_displayList[i].m_position.y = sin(m_displayList[i].m_position.x - (m_deltaTime));/// *100.f));
-	//		
-	//		///float speed = 3.f, height = 10.f;
-	//		///m_displayList[i].m_position.y = sin(speed * m_deltaTime) * height;
-
-	//		///float amplitude = 10.f, freq = 1.f;
-	//		///m_displayList[i].m_position.x += m_deltaTime;
-	//		///m_displayList[i].m_position.y = (amplitude * (sin(2 * PI * freq * m_deltaTime + 5)));
-
-	//		///m_displayList[i].m_position.y = Pulse();
-
-	//		///m_displayList[i].m_position.y = GetNewHeight(tempY);
-
-	//		///m_displayList[i].m_position.y = sin((((i / 5.f)*40.f) / 360.f)*PI*2.f);
-
-	//		///m_displayList[i].m_position.y = sin(m_displayList[i].m_position.x / 3.f) * 10.f + 300.f;
-	//	
-	//		// Store temp position
-	//		//Vector3 position = m_displayList[i].m_position;
-
-	//		//// Offset position based on sinewave
-	//		//position.y = sin(position.x + m_deltaTime) * 10.f;
-
-	//		//// Calculate position of vertex against world, view and projection matrices
-	//		//m_displayList[i].m_position = (Vector3)XMVector3Transform(position, m_world);
-	//		//m_displayList[i].m_position = (Vector3)XMVector3Transform((Vector3)m_displayList[i].m_position, m_world);
-	//		//m_displayList[i].m_position = (Vector3)XMVector3Transform((Vector3)m_displayList[i].m_position, m_world);
-
-	//		m_waterTranslation += 0.001f;
-	//		if (m_waterTranslation > .1f) 
-	//		{ 
-	//			m_waterTranslation -= .2f; 
-	//		}
-	//		m_displayList[i].m_position.y += m_waterTranslation;
-	//		///m_displayList[i].m_position.y += 1.f;
-	//	}
-	//}
+	}	
 }
 #pragma endregion
 
@@ -1098,6 +705,82 @@ void Game::BuildDisplayChunk(ChunkObject * SceneChunk, std::vector<DirectX::Simp
 	m_displayChunk.LoadHeightMap(m_deviceResources);
 	m_displayChunk.m_terrainEffect->SetProjection(m_projection);
 	m_displayChunk.InitialiseBatch();
+}
+
+void Game::BuildDisplayObject(std::vector<int> IDs, std::vector<SceneObject> * sceneGraph)
+{
+	auto device = m_deviceResources->GetD3DDevice();
+	auto devicecontext = m_deviceResources->GetD3DDeviceContext();
+	
+	// Loop through IDs size
+	for (int i = 0; i < IDs.size(); ++i)
+	{
+		//create a temp display object that we will populate then append to the display list.
+		DisplayObject newDisplayObject;
+
+		// Check & set model type
+		if (sceneGraph->at(i).model_path == "database/data/water.cmo") { newDisplayObject.m_type = MODEL_TYPE::WATER; }
+		else { newDisplayObject.m_type = MODEL_TYPE::NOT_WATER; }
+
+		//load model
+		std::wstring modelwstr = StringToWCHART(sceneGraph->at(i).model_path);							//convect string to Wchar
+		newDisplayObject.m_model = Model::CreateFromCMO(device, modelwstr.c_str(), *m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+
+		//Load Texture
+		std::wstring texturewstr = StringToWCHART(sceneGraph->at(i).tex_diffuse_path);								//convect string to Wchar
+		HRESULT rs;
+		rs = CreateDDSTextureFromFile(device, texturewstr.c_str(), nullptr, &newDisplayObject.m_texture_diffuse);	//load tex into Shader resource
+
+		//if texture fails.  load error default
+		if (rs)
+		{
+			CreateDDSTextureFromFile(device, L"database/data/Error.dds", nullptr, &newDisplayObject.m_texture_diffuse);	//load tex into Shader resource
+		}
+
+		//apply new texture to models effect
+		newDisplayObject.m_model->UpdateEffects([&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+		{
+			auto lights = dynamic_cast<BasicEffect*>(effect);
+			if (lights)
+			{
+				lights->SetTexture(newDisplayObject.m_texture_diffuse);
+			}
+		});
+
+		//set position
+		newDisplayObject.m_position.x = sceneGraph->at(i).posX;
+		newDisplayObject.m_position.y = sceneGraph->at(i).posY;
+		newDisplayObject.m_position.z = sceneGraph->at(i).posZ;
+
+		//setorientation
+		newDisplayObject.m_orientation.x = sceneGraph->at(i).rotX;
+		newDisplayObject.m_orientation.y = sceneGraph->at(i).rotY;
+		newDisplayObject.m_orientation.z = sceneGraph->at(i).rotZ;
+
+		//set scale
+		newDisplayObject.m_scale.x = sceneGraph->at(i).scaX;
+		newDisplayObject.m_scale.y = sceneGraph->at(i).scaY;
+		newDisplayObject.m_scale.z = sceneGraph->at(i).scaZ;
+
+		//set wireframe / render flags
+		newDisplayObject.m_render = sceneGraph->at(i).editor_render;
+		newDisplayObject.m_wireframe = sceneGraph->at(i).editor_wireframe;
+
+		newDisplayObject.m_light_type = sceneGraph->at(i).light_type;
+		newDisplayObject.m_light_diffuse_r = sceneGraph->at(i).light_diffuse_r;
+		newDisplayObject.m_light_diffuse_g = sceneGraph->at(i).light_diffuse_g;
+		newDisplayObject.m_light_diffuse_b = sceneGraph->at(i).light_diffuse_b;
+		newDisplayObject.m_light_specular_r = sceneGraph->at(i).light_specular_r;
+		newDisplayObject.m_light_specular_g = sceneGraph->at(i).light_specular_g;
+		newDisplayObject.m_light_specular_b = sceneGraph->at(i).light_specular_b;
+		newDisplayObject.m_light_spot_cutoff = sceneGraph->at(i).light_spot_cutoff;
+		newDisplayObject.m_light_constant = sceneGraph->at(i).light_constant;
+		newDisplayObject.m_light_linear = sceneGraph->at(i).light_linear;
+		newDisplayObject.m_light_quadratic = sceneGraph->at(i).light_quadratic;
+
+		// Replace old object with new
+		std::replace(m_displayList.begin(), m_displayList.end(), m_displayList[IDs[i]], newDisplayObject);
+	}
 }
 
 void Game::SaveDisplayChunk()
@@ -1664,176 +1347,6 @@ DirectX::SimpleMath::Vector3 Game::GetDragPoint(DirectX::SimpleMath::Vector3 * d
 	DirectX::SimpleMath::Vector3 dragPoint((P0 + Vp) * s);
 
 	return dragPoint;
-}
-
-// Create an object at the picking point location
-SceneObject Game::CreateObject(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 position)
-{
-	// Setup temp object
-	SceneObject object;	
-	
-	// Define object values
-	object.ID = m_sceneGraph.size() + 1;
-	object.chunk_ID = 0;
-	object.posX = position.x;
-	object.posY = position.y;
-	object.posZ = position.z;
-	object.rotX = 0.f;
-	object.rotY = 0.f;
-	object.rotZ = 0.f;
-	object.scaX = 1.f;
-	object.scaY = 1.f;
-	object.scaZ = 1.f;
-	object.render = false;
-	object.collectable = false;
-	object.collision_mesh = "";
-	object.collectable = false;
-	object.destructable = false;
-	object.health_amount = 0;
-	object.editor_render = true;
-	object.editor_texture_vis = true;
-	object.editor_normals_vis = false;
-	object.editor_collision_vis = false;
-	object.editor_pivot_vis = false;
-	object.pivotX = 0.f;
-	object.pivotY = 0.f;
-	object.pivotZ = 0.f;
-	object.snapToGround = false;
-	object.AINode = false;
-	object.audio_path = "";
-	object.volume = 0.f;
-	object.pitch = 0.f;
-	object.pan = 0.f;
-	object.one_shot = false;
-	object.play_on_init = false;
-	object.play_in_editor = false;
-	object.min_dist = 0.f;
-	object.max_dist = 0.f;
-	object.camera = false;
-	object.path_node = false;
-	object.path_node_start = false;
-	object.path_node_end = false;
-	object.parent_id = 0;
-	object.editor_wireframe = false;
-	object.light_type = 1;
-	object.light_diffuse_r = 2.f;
-	object.light_diffuse_g = 3.f;
-	object.light_diffuse_b = 4.f;
-	object.light_specular_r = 5.f;
-	object.light_specular_g = 6.f;
-	object.light_specular_b = 7.f;
-	object.light_spot_cutoff = 8.f;
-	object.light_constant = 9.f;
-	object.light_linear = 0.f;
-	object.light_quadratic = 1.f;
-
-	// Switch between spawn
-	switch (spawn)
-	{
-	// Residential //////////////////////////////////////////////////////////////////////////
-	case OBJECT_SPAWN::HOUSE_ONE:
-	{
-		// Set object to house #1
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/house0.cmo";
-		object.tex_diffuse_path = "database/data/house0.dds";
-
-		object.name = "House #" + object.ID;
-	}
-	break;
-	case OBJECT_SPAWN::HOUSE_TWO:
-	{
-		// Set object to house #2
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/house1.cmo";
-		object.tex_diffuse_path = "database/data/house1.dds";
-
-		object.name = "House #" + object.ID;
-	}
-	break;
-	case OBJECT_SPAWN::CAVE:
-	{
-		// Set object to cave
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/cave.cmo";
-		object.tex_diffuse_path = "database/data/cave.dds";
-
-		object.name = "Cave #" + object.ID;
-	}
-	break;
-	// Props ////////////////////////////////////////////////////////////////////////////////
-	case OBJECT_SPAWN::BRIDGE:
-	{
-		// Set object to bridge
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/bridge.cmo";
-		object.tex_diffuse_path = "database/data/sand.dds";
-	}
-	break;
-	case OBJECT_SPAWN::FENCE:
-	{
-		// Set object to fence
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/fence.cmo";
-		object.tex_diffuse_path = "database/data/sand.dds";
-	}
-	break;
-	case OBJECT_SPAWN::BOAT:
-	{
-		// Set object to boat
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/boat.cmo";
-		object.tex_diffuse_path = "database/data/sand.dds";
-	}
-	break;
-	// Nature ///////////////////////////////////////////////////////////////////////////////
-	case OBJECT_SPAWN::GRASS:
-	{
-		// Set object to grass
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/grass.cmo";
-		object.tex_diffuse_path = "database/data/grass.dds";
-
-		object.name = "Grass #" + object.ID;
-	}
-	break;
-	case OBJECT_SPAWN::TREE_ONE:
-	{
-		// Set object to tree
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/tree0.cmo";
-		object.tex_diffuse_path = "database/data/tree0.dds";
-
-		object.name = "Tree #" + object.ID;
-	}
-	break;
-	case OBJECT_SPAWN::TREE_TWO:
-	{
-		// Set object to tree
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/tree1.cmo";
-		object.tex_diffuse_path = "database/data/tree1.dds";
-
-		object.name = "Tree #" + object.ID;
-	}
-	break;
-	case OBJECT_SPAWN::WATER:
-	{
-		// Set object to water
-		object.m_type = MODEL_TYPE::WATER;
-		object.model_path = "database/data/water.cmo";
-		object.tex_diffuse_path = "database/data/water.dds";
-		object.name = "Water #" + object.ID;
-		m_waterIDs.push_back(object.ID);
-	}
-	break;
-	}
-
-	// Add object to scene graph
-	m_sceneGraph.push_back(object);
-	
-	// Return object
-	return object;
 }
 
 #ifdef DXTK_AUDIO
