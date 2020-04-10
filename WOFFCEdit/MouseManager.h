@@ -4,11 +4,18 @@
 #include "InputCommands.h"
 #include "DisplayObject.h"
 
+
 class MouseManager
 {
 public:
 	MouseManager() {}
 	~MouseManager() {}
+
+	// Picking a single object
+	static int PickSingle();
+
+	// Picking multiple objects
+	static void PickMultiple(std::vector<int> & selectedIDs, bool select = true);
 
 	// Picking a spawn point for an object
 	static DirectX::SimpleMath::Vector3 PickSpawn();

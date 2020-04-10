@@ -83,49 +83,57 @@ int MFCMain::Run()
 			// Empty status string
 			std::wstring statusString = L"";
 
+			// Fill status string with selected object IDs
+			std::vector<int> IDs = m_toolSystem.getCurrentObjectSelectionID();
+			for (int i = 0; i < IDs.size(); ++i)
+			{
+				if (i != 0) { statusString += L", " + std::to_wstring(IDs[i]); }
+				else { statusString += std::to_wstring(IDs[i]); }
+			}
+
 			// Switch between current mode
-			switch (m_toolSystem.GetEditor())
-			{
-			case EDITOR::OBJECT_SPAWN:
-			{
-				// Fill status string with selected object IDs
-				std::vector<int> IDs = m_toolSystem.getCurrentObjectSelectionID();
-				for (int i = 0; i < IDs.size(); ++i)
-				{
-					if (i != 0) { statusString += L", " + std::to_wstring(IDs[i]); }
-					else { statusString += std::to_wstring(IDs[i]); }
-				}
-			}
-			break;
-			case EDITOR::OBJECT_FUNCTION:
-			{
-				// Fill status string with selected object IDs
-				std::vector<int> IDs = m_toolSystem.getCurrentObjectSelectionID();
-				for (int i = 0; i < IDs.size(); ++i)
-				{
-					if (i != 0) { statusString += L", " + std::to_wstring(IDs[i]); }
-					else { statusString += std::to_wstring(IDs[i]); }
-				}
-			}
-			break;
-			case EDITOR::LANDSCAPE_FUNCTION:
-			{
-				// Fill status string with selected chunk row,column(s)
-				std::vector<TERRAIN> chunks = m_toolSystem.getCurrentTerrainSelection();
-				for (int i = 0; i < chunks.size(); ++i)
-				{
-					if (i != 0) {
-						statusString += L", (" + std::to_wstring(chunks[i].row) + L","
-							+ std::to_wstring(chunks[i].column) + L")";
-					}
-					else {
-						statusString += L"(" + std::to_wstring(chunks[i].row) + L","
-							+ std::to_wstring(chunks[i].column) + L")";
-					}
-				}
-			}
-			break;
-			}
+			//switch (m_toolSystem.GetEditor())
+			//{
+			//case EDITOR::OBJECT_SPAWN:
+			//{
+			//	// Fill status string with selected object IDs
+			//	std::vector<int> IDs = m_toolSystem.getCurrentObjectSelectionID();
+			//	for (int i = 0; i < IDs.size(); ++i)
+			//	{
+			//		if (i != 0) { statusString += L", " + std::to_wstring(IDs[i]); }
+			//		else { statusString += std::to_wstring(IDs[i]); }
+			//	}
+			//}
+			//break;
+			//case EDITOR::OBJECT_FUNCTION:
+			//{
+			//	// Fill status string with selected object IDs
+			//	std::vector<int> IDs = m_toolSystem.getCurrentObjectSelectionID();
+			//	for (int i = 0; i < IDs.size(); ++i)
+			//	{
+			//		if (i != 0) { statusString += L", " + std::to_wstring(IDs[i]); }
+			//		else { statusString += std::to_wstring(IDs[i]); }
+			//	}
+			//}
+			//break;
+			//case EDITOR::LANDSCAPE_FUNCTION:
+			//{
+			//	// Fill status string with selected chunk row,column(s)
+			//	std::vector<TERRAIN> chunks = m_toolSystem.getCurrentTerrainSelection();
+			//	for (int i = 0; i < chunks.size(); ++i)
+			//	{
+			//		if (i != 0) {
+			//			statusString += L", (" + std::to_wstring(chunks[i].row) + L","
+			//				+ std::to_wstring(chunks[i].column) + L")";
+			//		}
+			//		else {
+			//			statusString += L"(" + std::to_wstring(chunks[i].row) + L","
+			//				+ std::to_wstring(chunks[i].column) + L")";
+			//		}
+			//	}
+			//}
+			//break;
+			//}
 
 			// Check which dialogue is open & update ToolMain
 			CheckDialogues();

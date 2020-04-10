@@ -22,7 +22,7 @@ ToolMain::ToolMain()
 	m_toolInputCommands.mouseWheel	= false;
 	m_toolInputCommands.mouseDrag	= false;
 	m_toolInputCommands.escape		= false;
-	m_toolInputCommands.Lshift		= false;
+	m_toolInputCommands.SHIFT		= false;
 	m_toolInputCommands.pickOnce	= true;
 	m_toolInputCommands.storeOnce	= true;
 	m_toolInputCommands.toggle		= true;
@@ -402,8 +402,20 @@ void ToolMain::Tick(MSG *msg)
 				// If allowed to pick
 				if (m_toolInputCommands.pickOnce)
 				{
-					// Select an object
-					m_selectedObjectIDs = m_d3dRenderer.PickObjects(true);
+					// If shift is being pressed
+					if (m_toolInputCommands.SHIFT)
+					{
+						// Select multiple objects
+						MouseManager::PickMultiple(m_selectedObjectIDs, true);
+					}
+
+					// Else, if not
+					else
+					{
+						// Select a single object
+						m_selectedObjectIDs.clear();
+						m_selectedObjectIDs.push_back(MouseManager::PickSingle());
+					}	
 
 					// Reset picking controller
 					m_toolInputCommands.pickOnce = false;
@@ -461,9 +473,9 @@ void ToolMain::Tick(MSG *msg)
 		{
 			// If allowed to pick
 			if (m_toolInputCommands.pickOnce)
-			{
-				// Deselect an object
-				m_selectedObjectIDs = m_d3dRenderer.PickObjects(true);
+			{				
+				// Deselect multiple objects
+				MouseManager::PickMultiple(m_selectedObjectIDs, false);				
 
 				// Reset picking controller
 				m_toolInputCommands.pickOnce = false;
@@ -574,8 +586,7 @@ void ToolMain::UpdateInput(MSG * msg)
 	if (m_keyArray['Q']) { m_toolInputCommands.Q = true; }
 	else { m_toolInputCommands.Q = false; }
 
-	// L Shift to select more than one object
-	if (m_keyArray['A0']) { m_toolInputCommands.Lshift = true; }
-	else { m_toolInputCommands.Lshift = false; }
-
+	// SHIFT key to select more than one object
+	if (m_keyArray[(int)VK_SHIFT]) { m_toolInputCommands.SHIFT = true; }
+	else { m_toolInputCommands.SHIFT = false; } 	
 }

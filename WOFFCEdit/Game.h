@@ -28,7 +28,6 @@
 class Game : public DX::IDeviceNotify
 {
 public:
-
 	Game();
 	~Game();
 
@@ -82,6 +81,7 @@ public:
 	EDITOR GetEditor() { return m_editor; }
 	OBJECT_FUNCTION GetObjectFunction() { return m_objectFunction; }
 	DirectX::SimpleMath::Vector3 GetDragPoint(DirectX::SimpleMath::Vector3* dragLine, DirectX::SimpleMath::Vector3* unProjLine);
+	RECT GetScreenDimensions() { return m_screenDimensions; }
 
 	// Setters
 	void SetWireframe(bool wireframe) { m_wireframe = wireframe; }
