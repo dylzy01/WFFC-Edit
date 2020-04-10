@@ -15,7 +15,7 @@ public:
 	~ObjectManager() {}
 
 	// Spawn an object at a location & add to database
-	static SceneObject Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 position,
+	static void Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 position,
 		std::vector<SceneObject> & sceneGraph);
 
 	// Remove an object from scene graph & database

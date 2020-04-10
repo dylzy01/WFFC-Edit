@@ -23,6 +23,7 @@ ToolMain::ToolMain()
 	m_toolInputCommands.mouseDrag	= false;
 	m_toolInputCommands.escape		= false;
 	m_toolInputCommands.SHIFT		= false;
+	m_toolInputCommands.CTRL		= false;
 	m_toolInputCommands.pickOnce	= true;
 	m_toolInputCommands.storeOnce	= true;
 	m_toolInputCommands.toggle		= true;
@@ -338,14 +339,6 @@ void ToolMain::onActionSaveTerrain()
 
 void ToolMain::onActionDeleteObjects()
 {
-	//m_d3dRenderer.DeleteSelectedObjects();
-
-	//// Re-setup scene graph
-	//m_sceneGraph.clear();
-	//SQLManager::SendQuery("SELECT * FROM Objects", true);
-	//while (SQLManager::GetObjectStep() == SQLITE_ROW) { m_sceneGraph.push_back(SQLManager::CreateObject()); }
-	//m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
-
 	// Delete all selected objects
 	ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph);
 }
@@ -369,10 +362,10 @@ void ToolMain::Tick(MSG *msg)
 	//do we have a selection						//done
 	//do we have a mode								//done
 	//are we clicking / dragging /releasing			//done
-	//has something changed
-		//update Scenegraph
-		//add to scenegraph
-		//resend scenegraph to Direct X renderer
+	//has something changed							//*** still do write a check for this ***//
+		//update Scenegraph							//done
+		//add to scenegraph							//done
+		//resend scenegraph to Direct X renderer	//done
 
 	// If mouse right has been pressed & mouse position is different from stored
 	if (m_toolInputCommands.mouseRight &&
@@ -390,11 +383,22 @@ void ToolMain::Tick(MSG *msg)
 		{
 		case EDITOR::OBJECT_SPAWN:
 		{
-			// Create object at picking point
-			ObjectManager::Spawn(m_objectSpawn, MouseManager::PickSpawn(), m_sceneGraph);
+			// If control key is pressed
+			if (m_toolInputCommands.CTRL)
+			{
+				// Remove an object
+				ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph, MouseManager::PickSingle());
+			}
 
-			// Update scene graph
-			m_d3dRenderer.BuildDisplayList(&m_sceneGraph);			
+			// Else, if not
+			else
+			{
+				// Create object at picking point
+				ObjectManager::Spawn(m_objectSpawn, MouseManager::PickSpawn(), m_sceneGraph);
+
+				// Update scene graph
+				///m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+			}						
 		}
 		break;
 		case EDITOR::OBJECT_FUNCTION:
@@ -405,11 +409,18 @@ void ToolMain::Tick(MSG *msg)
 				// If allowed to pick
 				if (m_toolInputCommands.pickOnce)
 				{
-					// If shift is being pressed
+					// If shift key is pressed
 					if (m_toolInputCommands.SHIFT)
 					{
 						// Select multiple objects
 						MouseManager::PickMultiple(m_selectedObjectIDs, true);
+					}
+
+					// Else, if control key is pressed
+					else if (m_toolInputCommands.CTRL)
+					{
+						// Deselect multiple objects
+						MouseManager::PickMultiple(m_selectedObjectIDs, false);
 					}
 
 					// Else, if not
@@ -456,34 +467,6 @@ void ToolMain::Tick(MSG *msg)
 		}
 		break;
 		}		
-	}
-
-	// Else, if left mouse button is pressed
-	else if (m_toolInputCommands.mouseLeft)
-	{
-		// If editor is set to spawn
-		if (m_editor == EDITOR::OBJECT_SPAWN)
-		{
-			// Remove an object
-			ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph, MouseManager::PickSingle());
-
-			// Update scene graph
-			///m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
-		}
-
-		// Else, if any other editors are active
-		else
-		{
-			// If allowed to pick
-			if (m_toolInputCommands.pickOnce)
-			{
-				// Deselect multiple objects
-				MouseManager::PickMultiple(m_selectedObjectIDs, false);
-
-				// Reset picking controller
-				m_toolInputCommands.pickOnce = false;
-			}
-		}
 	}
 
 	//Renderer Update Call
@@ -592,4 +575,8 @@ void ToolMain::UpdateInput(MSG * msg)
 	// SHIFT key to select more than one object
 	if (m_keyArray[(int)VK_SHIFT]) { m_toolInputCommands.SHIFT = true; }
 	else { m_toolInputCommands.SHIFT = false; } 	
+
+	// CTRL key to delete objects rather than spawning
+	if (m_keyArray[(int)VK_CONTROL]) { m_toolInputCommands.CTRL = true; }
+	else { m_toolInputCommands.CTRL = false; }
 }
