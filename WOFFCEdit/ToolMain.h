@@ -9,6 +9,7 @@
 #include "MouseManager.h"
 #include "ObjectManager.h"
 #include "LandscapeManager.h"
+#include "SceneManager.h"
 
 class ToolMain
 {

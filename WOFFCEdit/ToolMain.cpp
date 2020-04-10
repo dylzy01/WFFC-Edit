@@ -50,6 +50,11 @@ void ToolMain::onActionInitialise(HWND handle, int width, int height)
 	LandscapeManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk());
 	LandscapeManager::StorePosition(true);
 
+	// Set static scene manager game, scene graph & display chunk
+	SceneManager::SetGame(&m_d3dRenderer);
+	SceneManager::SetSceneGraph(&m_sceneGraph);
+	SceneManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk());
+
 	// Estable database connection
 	if (SQLManager::Connect()) { TRACE("Database connection: fail"); }
 	else { TRACE("Database connection: success"); }
@@ -219,20 +224,22 @@ void ToolMain::onActionLoad_()
 
 void ToolMain::onActionSave()
 {	
+	SceneManager::Save();
+	
 	// Update scene graph
 	///m_sceneGraph = m_d3dRenderer.GetSceneGraph();
-	m_d3dRenderer.SaveDisplayList();
-	
-	// Save terrain
-	m_d3dRenderer.SaveDisplayChunk();
-	
-	// Database query to delete all records from objects table
-	SQLManager::SendQuery("DELETE FROM Objects", true);
-	SQLManager::SetObjectStep();
+	//m_d3dRenderer.SaveDisplayList();
+	//
+	//// Save terrain
+	//m_d3dRenderer.SaveDisplayChunk();
+	//
+	//// Database query to delete all records from objects table
+	//SQLManager::SendQuery("DELETE FROM Objects", true);
+	//SQLManager::SetObjectStep();
 
-	// Save new scene graph
-	if (SQLManager::SaveObjects(m_d3dRenderer.GetSceneGraph())) { MessageBox(NULL, L"World Saved", L"Notification", MB_OK); }
-	else { MessageBox(NULL, L"World Failed to Save", L"Notification", MB_OK); }
+	//// Save new scene graph
+	//if (SQLManager::SaveObjects(m_d3dRenderer.GetSceneGraph())) { MessageBox(NULL, L"World Saved", L"Notification", MB_OK); }
+	//else { MessageBox(NULL, L"World Failed to Save", L"Notification", MB_OK); }
 }
 
 void ToolMain::onActionSave_()
@@ -359,7 +366,7 @@ void ToolMain::Tick(MSG *msg)
 		m_toolInputCommands.mouseDrag = true;
 	}
 		
-	// If left mouse right button is pressed
+	// If right mouse button is pressed
 	if (m_toolInputCommands.mouseRight)
 	{				
 		// Switch between modes
@@ -423,7 +430,7 @@ void ToolMain::Tick(MSG *msg)
 		}		
 	}
 
-	// Else, if mouse left button is pressed
+	// Else, if left mouse button is pressed
 	else if (m_toolInputCommands.mouseLeft)
 	{
 		// If editor is set to spawn

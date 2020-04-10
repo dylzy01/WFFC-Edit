@@ -110,7 +110,12 @@
     <ClCompile Include="ObjectManager.cpp">
       <Filter>Custom\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="LandscapeManager.cpp" />
+    <ClCompile Include="LandscapeManager.cpp">
+      <Filter>Custom\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Custom\Managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -196,7 +201,12 @@
     <ClInclude Include="ObjectManager.h">
       <Filter>Custom\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="LandscapeManager.h" />
+    <ClInclude Include="LandscapeManager.h">
+      <Filter>Custom\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Custom\Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

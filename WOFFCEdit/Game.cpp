@@ -707,7 +707,7 @@ void Game::BuildDisplayChunk(ChunkObject * SceneChunk, std::vector<DirectX::Simp
 	m_displayChunk.InitialiseBatch();
 }
 
-void Game::BuildDisplayObject(std::vector<int> IDs, std::vector<SceneObject> * sceneGraph)
+void Game::ReplaceObjects(std::vector<int> IDs, std::vector<SceneObject> * sceneGraph)
 {
 	auto device = m_deviceResources->GetD3DDevice();
 	auto devicecontext = m_deviceResources->GetD3DDeviceContext();
@@ -779,12 +779,13 @@ void Game::BuildDisplayObject(std::vector<int> IDs, std::vector<SceneObject> * s
 		newDisplayObject.m_light_quadratic = sceneGraph->at(i).light_quadratic;
 
 		// Replace old object with new
-		std::replace(m_displayList.begin(), m_displayList.end(), m_displayList[IDs[i]], newDisplayObject);
+		///std::replace(m_displayList.begin(), m_displayList.end(), m_displayList[IDs[i]], newDisplayObject);
 	}
 }
 
 void Game::SaveDisplayChunk()
 {
+	m_displayChunk.GenerateHeightmap();
 	///BuildDisplayList(&m_sceneGraph);
 	m_displayChunk.SaveHeightMap();			//save heightmap to file.
 }

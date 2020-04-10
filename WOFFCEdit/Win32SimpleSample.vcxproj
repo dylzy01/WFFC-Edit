@@ -183,6 +183,7 @@
     <ClCompile Include="ObjectSpawnDialogue.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="MFCMain.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="SelectDialogue.cpp" />
     <ClCompile Include="SQLManager.cpp" />
@@ -211,6 +212,7 @@
     <ClInclude Include="ObjectSpawnDialogue.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="SelectDialogue.h" />
     <ClInclude Include="SQLManager.h" />

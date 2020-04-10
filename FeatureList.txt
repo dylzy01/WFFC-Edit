@@ -36,3 +36,5 @@ SAVE
 - Can save objects
 	- All object manipulations edit the display list, on saving the display list
 		is transferred to the scene graph
+- Can save height map
+	- Height map is updated from terrain geometry

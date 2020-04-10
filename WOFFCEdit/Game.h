@@ -57,7 +57,7 @@ public:
 	// Tool specific
 	void BuildDisplayList(std::vector<SceneObject> * SceneGraph); //note vector passed by reference 
 	void BuildDisplayChunk(ChunkObject *SceneChunk, std::vector<DirectX::SimpleMath::Vector2> location = { { 0.f, 0.f } });
-	void BuildDisplayObject(std::vector<int> IDs, std::vector<SceneObject> * sceneGraph);
+	void ReplaceObjects(std::vector<int> IDs, std::vector<SceneObject> * sceneGraph);
 	void SaveDisplayChunk();	//saves geometry et al
 	void ClearDisplayList();
 	void DeleteSelectedObjects();

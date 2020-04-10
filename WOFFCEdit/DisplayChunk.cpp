@@ -394,9 +394,16 @@ void DisplayChunk::UpdateTerrain()
 
 void DisplayChunk::GenerateHeightmap()
 {
-	//insert how YOU want to update the heightmap here! :D
-
-
+	// Updating height map to match manipulated geometry
+	int index;
+	for (size_t i = 0; i < TERRAINRESOLUTION; ++i)
+	{
+		for (size_t j = 0; j < TERRAINRESOLUTION; ++j)
+		{
+			index = (TERRAINRESOLUTION * i) + j;
+			m_heightMap[index] = m_terrainGeometry[i][j].position.y / m_terrainHeightScale;
+		}
+	}
 }
 
 void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint, bool checkSurroundings)
@@ -961,7 +968,13 @@ void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_FUNCTION sculpt,
 		}
 	}
 	break;
-	}								
+	}		
+
+	// Ensure terrain height can't go below 0
+	if (m_terrainGeometry[row][column].position.y < 0.f)			{ m_terrainGeometry[row][column].position.y = 0.f; }
+	if (m_terrainGeometry[row][column + 1].position.y < 0.f)		{ m_terrainGeometry[row][column + 1].position.y = 0.f; }
+	if (m_terrainGeometry[row + 1][column + 1].position.y < 0.f)	{ m_terrainGeometry[row + 1][column + 1].position.y = 0.f; }
+	if (m_terrainGeometry[row + 1][column].position.y < 0.f)		{ m_terrainGeometry[row + 1][column].position.y = 0.f; }
 }
 
 void DisplayChunk::SetSelected(bool selected, int row, int column)
