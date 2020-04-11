@@ -13,6 +13,7 @@
 #include "InputCommands.h"
 #include "Camera.h"
 #include "Water.h"
+#include "DebugDraw.h"
 
 #include "SQLManager.h"
 ///#include "MouseManager.h"
@@ -72,6 +73,8 @@ public:
 	std::vector<TERRAIN> PickingTerrains();
 	TERRAIN TerrainIntersection(DirectX::SimpleMath::Ray ray);	
 
+	void DrawBounds(DisplayObject object);
+
 	// Getters
 	std::shared_ptr<DX::DeviceResources> GetDeviceResources() { return m_deviceResources; }
 	std::vector<DirectX::SimpleMath::Matrix> GetProjViewWorld() { return std::vector<DirectX::SimpleMath::Matrix>{m_projection, m_view, m_world}; }
@@ -85,6 +88,7 @@ public:
 
 	// Setters
 	void SetWireframe(bool wireframe) { m_wireframe = wireframe; }
+	void SetSelectedObjectIDs(std::vector<int> selectedObjectIDs) { m_selectedObjectIDs = selectedObjectIDs; }
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
@@ -100,7 +104,7 @@ private:
 	void CreateWindowSizeDependentResources();
 
 	void XM_CALLCONV DrawGrid(DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
-	void DrawAxis(DisplayObject object, int ID);
+	void DrawAxis(DisplayObject object, int ID);	
 
 	// Getters for object manipulation
 	DirectX::SimpleMath::Vector3 GetScale(int ID);

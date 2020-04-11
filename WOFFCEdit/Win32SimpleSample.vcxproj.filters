@@ -116,6 +116,9 @@
     <ClCompile Include="SceneManager.cpp">
       <Filter>Custom\Managers</Filter>
     </ClCompile>
+    <ClCompile Include="DebugDraw.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -206,6 +209,9 @@
     </ClInclude>
     <ClInclude Include="SceneManager.h">
       <Filter>Custom\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugDraw.h">
+      <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

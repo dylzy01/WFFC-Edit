@@ -469,6 +469,9 @@ void ToolMain::Tick(MSG *msg)
 		}		
 	}
 
+	// Set renderer selected objects to draw bounding boxes
+	m_d3dRenderer.SetSelectedObjectIDs(m_selectedObjectIDs);
+
 	//Renderer Update Call
 	m_d3dRenderer.Tick(&m_toolInputCommands);
 }

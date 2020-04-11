@@ -27,11 +27,15 @@ void SceneManager::Save()
 // Undo to previous world state
 std::vector<SceneObject> SceneManager::Undo()
 {
-	// Reduce current ID if possible
-	if (m_currentID != 1) { m_currentID--; }
+	// If storage isn't empty
+	if (m_sceneGraphs.size() != 0)
+	{
+		// Reduce current ID if possible
+		if (m_currentID != 1) { m_currentID--; }
 
-	// Update local scene graph
-	m_sceneGraph = &m_sceneGraphs[m_currentID - 1];
+		// Update local scene graph
+		m_sceneGraph = &m_sceneGraphs[m_currentID - 1];		
+	}
 
 	// Return local scene graph
 	return *m_sceneGraph;
@@ -40,11 +44,15 @@ std::vector<SceneObject> SceneManager::Undo()
 // Redo to proceeding world state
 std::vector<SceneObject> SceneManager::Redo()
 {
-	// Increase current ID if possible
-	if (m_currentID != m_sceneGraphs.size() - 1) { m_currentID++; }
+	// If storage isn't empty
+	if (m_sceneGraphs.size() != 0)
+	{
+		// Increase current ID if possible
+		if (m_currentID != m_sceneGraphs.size() - 1) { m_currentID++; }
 
-	// Update local scene graph
-	m_sceneGraph = &m_sceneGraphs[m_currentID];
+		// Update local scene graph
+		m_sceneGraph = &m_sceneGraphs[m_currentID];
+	}
 
 	// Return local scene graph
 	return *m_sceneGraph;

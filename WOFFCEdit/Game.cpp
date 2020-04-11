@@ -315,8 +315,14 @@ void Game::Render()
 		// Loop through selected objects
 		for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
 		{
-			// Draw local axes
-			DrawAxis(m_displayList[m_selectedObjectIDs[i]], m_selectedObjectIDs[i]);
+			// If selected object ID is valid
+			if (m_selectedObjectIDs[i] != -1)
+			{
+				// Draw local axes
+				///DrawAxis(m_displayList[m_selectedObjectIDs[i]], m_selectedObjectIDs[i]);
+				///m_displayList[m_selectedObjectIDs[i]].m_model->meshes[0]->boundingBox.Extents
+				DrawBounds(m_displayList[m_selectedObjectIDs[i]]);
+			}
 		}
 	}
 
@@ -445,6 +451,28 @@ void Game::DrawAxis(DisplayObject object, int ID)
 		///m_zRays[ID] = Ray(v1.position, { 0.f, 0.f, 1.f });
 		m_zAxes[ID] = v1.position - v2.position;
 	}
+
+	m_batch->End();
+
+	m_deviceResources->PIXEndEvent();
+}
+
+void Game::DrawBounds(DisplayObject object)
+{
+	// Setup context
+	auto context = m_deviceResources->GetD3DDeviceContext();
+	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
+	context->OMSetDepthStencilState(m_states->DepthNone(), 0);
+	context->RSSetState(m_states->CullNone());
+
+	m_batchEffect->Apply(context);
+
+	context->IASetInputLayout(m_batchInputLayout.Get());
+
+	m_batch->Begin();
+
+	Draw(m_batch.get(), object.m_model->meshes[0]->boundingBox, Colors::Orange);
+	///Draw(m_batch.get(), object.m_model->meshes[0]->boundingSphere, Colors::Red);
 
 	m_batch->End();
 
@@ -684,6 +712,13 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 		newDisplayObject.m_light_constant	= sceneGraph->at(i).light_constant;
 		newDisplayObject.m_light_linear		= sceneGraph->at(i).light_linear;
 		newDisplayObject.m_light_quadratic	= sceneGraph->at(i).light_quadratic;
+
+		// Set bounding box		
+		newDisplayObject.m_model->meshes[0]->boundingBox.Extents.x *= newDisplayObject.m_scale.x;
+		newDisplayObject.m_model->meshes[0]->boundingBox.Extents.y *= newDisplayObject.m_scale.y;
+		newDisplayObject.m_model->meshes[0]->boundingBox.Extents.z *= newDisplayObject.m_scale.z;
+		newDisplayObject.m_model->meshes[0]->boundingBox.Center = newDisplayObject.m_position;
+		newDisplayObject.m_model->meshes[0]->boundingBox.Center.y += newDisplayObject.m_model->meshes[0]->boundingBox.Extents.y;
 		
 		m_displayList.push_back(newDisplayObject);	
 

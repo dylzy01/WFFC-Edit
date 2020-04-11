@@ -58,7 +58,8 @@ int MouseManager::PickSingle()
 					selectedID = i;
 				}
 				// Update ID if a closer object has been intersected
-				else if (pickedDistance > storedDistance)
+				else if (pickedDistance < storedDistance)
+				///else if (pickedDistance > storedDistance)
 				{
 					storedDistance = pickedDistance;
 					selectedID = i;
