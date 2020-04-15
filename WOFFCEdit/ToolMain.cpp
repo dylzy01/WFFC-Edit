@@ -387,7 +387,7 @@ void ToolMain::Tick(MSG *msg)
 			if (m_toolInputCommands.CTRL)
 			{
 				// Remove an object
-				ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph, MouseManager::PickSingle());
+				ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph, MouseManager::PickObject());
 			}
 
 			// Else, if not
@@ -413,14 +413,14 @@ void ToolMain::Tick(MSG *msg)
 					if (m_toolInputCommands.SHIFT)
 					{
 						// Select multiple objects
-						MouseManager::PickMultiple(m_selectedObjectIDs, true);
+						MouseManager::PickMultipleObjects(m_selectedObjectIDs, true);						
 					}
 
 					// Else, if control key is pressed
 					else if (m_toolInputCommands.CTRL)
 					{
 						// Deselect multiple objects
-						MouseManager::PickMultiple(m_selectedObjectIDs, false);
+						MouseManager::PickMultipleObjects(m_selectedObjectIDs, false);						
 					}
 
 					// Else, if not
@@ -428,7 +428,7 @@ void ToolMain::Tick(MSG *msg)
 					{
 						// Select a single object
 						m_selectedObjectIDs.clear();
-						m_selectedObjectIDs.push_back(MouseManager::PickSingle());
+						m_selectedObjectIDs.push_back(MouseManager::PickObject());
 					}	
 
 					// Reset picking controller

@@ -9,6 +9,7 @@ MOUSE PICKING
 - Can select terrain
 - Can deselect objects
 - Can delete objects
+- DebugDraw bounding box
 
 TERRAIN
 - Can increase x,y,z positions

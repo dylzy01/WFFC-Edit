@@ -7,75 +7,17 @@ Game * MouseManager::m_game;
 InputCommands * MouseManager::m_input;
 
 // Picking a single object
-int MouseManager::PickSingle()
+int MouseManager::PickObject()
 {
-	// Controllers
-	int selectedID = -1;
-	float pickedDistance = 0.f, storedDistance = 1.f;
-	bool firstPick = true;
-
-	// Setup near & far planes of frustrum with mouse x,y passed from ToolMain
-	const XMVECTOR nearSource = XMVectorSet(m_input->mousePos.x, m_input->mousePos.y, 0.f, 1.f);
-	const XMVECTOR farSource = XMVectorSet(m_input->mousePos.x, m_input->mousePos.y, 1.f, 1.f);
-
-	// Loop through entire object display list & pick em
-	for (int i = 0; i < m_game->GetDisplayList().size(); i++)
-	{
-		// Get object scale factor & translation
-		const DirectX::XMVECTORF32 scale = { m_game->GetDisplayList()[i].m_scale.x, m_game->GetDisplayList()[i].m_scale.y, m_game->GetDisplayList()[i].m_scale.z };
-		const DirectX::XMVECTORF32 translate = { m_game->GetDisplayList()[i].m_position.x, m_game->GetDisplayList()[i].m_position.y, m_game->GetDisplayList()[i].m_position.z };
-
-		// Convert euler angles into a quaternion for object rotation
-		XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_game->GetDisplayList()[i].m_orientation.y * PI / 180,
-			m_game->GetDisplayList()[i].m_orientation.x * PI / 180, m_game->GetDisplayList()[i].m_orientation.z * PI / 180);
-
-		// Set selected object matrix in the world based on scale, rotation & translation
-		XMMATRIX local = m_game->GetProjViewWorld()[2] * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
-
-		// UNPROJECT the points on the near & far plane, respecting the previously created matrix
-		
-		XMVECTOR nearPoint = XMVector3Unproject(nearSource, 0.f, 0.f, m_game->GetScreenDimensions().right, m_game->GetScreenDimensions().bottom,
-			m_game->GetDeviceResources()->GetScreenViewport().MinDepth, m_game->GetDeviceResources()->GetScreenViewport().MaxDepth, m_game->GetProjViewWorld()[0], m_game->GetProjViewWorld()[1], local);
-
-		XMVECTOR farPoint = XMVector3Unproject(farSource, 0.f, 0.f, m_game->GetScreenDimensions().right, m_game->GetScreenDimensions().bottom,
-			m_game->GetDeviceResources()->GetScreenViewport().MinDepth, m_game->GetDeviceResources()->GetScreenViewport().MaxDepth, m_game->GetProjViewWorld()[0], m_game->GetProjViewWorld()[1], local);
-
-		// Turn transformed points into picking vector
-		XMVECTOR pickingVector = farPoint - nearPoint;
-		pickingVector = XMVector3Normalize(pickingVector);
-
-		// Loop through mesh list for object
-		for (int j = 0; j < m_game->GetDisplayList()[i].m_model.get()->meshes.size(); j++)
-		{
-			// Check for intersection
-			if (m_game->GetDisplayList()[i].m_model.get()->meshes[j]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance))
-			{
-				// Update ID with the first intersected object
-				if (firstPick)
-				{
-					firstPick = false;
-					storedDistance = pickedDistance;
-					selectedID = i;
-				}
-				// Update ID if a closer object has been intersected
-				else if (pickedDistance < storedDistance)
-				///else if (pickedDistance > storedDistance)
-				{
-					storedDistance = pickedDistance;
-					selectedID = i;
-				}
-			}
-		}
-	}
-
-	return selectedID;
+	// Return picked object
+	return ObjectIntersection(RayTrace(m_input->mousePos));
 }
 
 // Picking multiple objects
-void MouseManager::PickMultiple(std::vector<int> & selectedIDs, bool select)
+void MouseManager::PickMultipleObjects(std::vector<int> & selectedIDs, bool select)
 {
 	// Setup temp
-	int temp = PickSingle();
+	int temp = PickObject();
 
 	// If an object has been selected
 	if (temp != -1)
@@ -182,6 +124,58 @@ DirectX::SimpleMath::Ray MouseManager::RayTrace(DirectX::SimpleMath::Vector2 pos
 
 	// Return ray trace
 	return DirectX::SimpleMath::Ray(origin, direction);
+}
+
+// Check if ray trace intersects an object
+int MouseManager::ObjectIntersection(DirectX::SimpleMath::Ray ray)
+{
+	// Define controllers
+	int ID = -1;
+	float distance = 10000.f, pickedDistance = 0.f, storedDistance = 1.f;
+	bool firstPick = true;
+	DirectX::SimpleMath::Vector3 one = ray.position;
+	DirectX::SimpleMath::Vector3 two = ray.position + (ray.direction * distance);
+
+	// Loop through all objects
+	for (int i = 0; i < m_game->GetDisplayList().size(); ++i)
+	{
+		// Loop through all meshes
+		for (int j = 0; j < m_game->GetDisplayList()[i].m_model->meshes.size(); ++j)
+		{
+			// Check if ray trace intersects with current mesh
+			///if (ray.Intersects(m_game->GetDisplayList()[i].m_model->meshes[j]->boundingBox, distance))
+			{
+				// If current object intersects ray trace
+				if (m_game->GetDisplayList()[i].m_model->meshes[j]->boundingBox.Intersects(ray.position, ray.direction, pickedDistance))
+				{
+					// If object is first picked
+					if (firstPick)
+					{
+						// Setup ID to return
+						ID = i;
+
+						// Store current distance
+						storedDistance = pickedDistance;
+
+						// Reset controller
+						firstPick = false;
+					}
+					// Else, if a closer object has been intersected
+					else if (pickedDistance < storedDistance)
+					{
+						// Setup ID to return
+						ID = i;
+
+						// Store current distance
+						storedDistance = pickedDistance;
+					}
+				}
+			}
+		}
+	}
+
+	// Return intersected object ID
+	return ID;
 }
 
 // Check if ray trace intersects a piece of terrain

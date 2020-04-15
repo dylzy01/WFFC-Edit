@@ -12,10 +12,10 @@ public:
 	~MouseManager() {}
 
 	// Picking a single object
-	static int PickSingle();
+	static int PickObject();
 
 	// Picking multiple objects
-	static void PickMultiple(std::vector<int> & selectedIDs, bool select = true);
+	static void PickMultipleObjects(std::vector<int> & selectedIDs, bool select = true);
 
 	// Picking a spawn point for an object
 	static DirectX::SimpleMath::Vector3 PickSpawn();
@@ -31,6 +31,9 @@ public:
 	static DirectX::SimpleMath::Ray RayTrace(DirectX::SimpleMath::Vector2 position);
 
 private:
+	// Check if ray trace intersects an object
+	static int ObjectIntersection(DirectX::SimpleMath::Ray ray);
+
 	// Check if ray trace intersects a piece of terrain
 	static TERRAIN TerrainIntersection(DirectX::SimpleMath::Ray ray);
 

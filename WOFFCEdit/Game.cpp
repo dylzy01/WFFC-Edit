@@ -471,9 +471,9 @@ void Game::DrawBounds(DisplayObject object)
 
 	m_batch->Begin();
 
-	Draw(m_batch.get(), object.m_model->meshes[0]->boundingBox, Colors::Orange);
+	for (int i = 0; i < object.m_model->meshes.size(); ++i) { Draw(m_batch.get(), object.m_model->meshes[i]->boundingBox, Colors::Orange); }		
 	///Draw(m_batch.get(), object.m_model->meshes[0]->boundingSphere, Colors::Red);
-
+	
 	m_batch->End();
 
 	m_deviceResources->PIXEndEvent();
@@ -959,7 +959,7 @@ void Game::MousePicking(int i)
 }
 
 // Pick a single object
-int Game::PickObject()
+int Game::PickObject(DirectX::SimpleMath::Vector2 position)
 {
 	// Controllers
 	int selectedID = -1;
@@ -967,8 +967,8 @@ int Game::PickObject()
 	bool firstPick = true;
 
 	// Setup near & far planes of frustrum with mouse x,y passed from ToolMain
-	const XMVECTOR nearSource = XMVectorSet(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 0.f, 1.f);
-	const XMVECTOR farSource = XMVectorSet(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 1.f, 1.f);
+	const XMVECTOR nearSource = XMVectorSet(position.x, position.y, 0.f, 1.f);
+	const XMVECTOR farSource = XMVectorSet(position.x, position.y, 1.f, 1.f);
 
 	// Loop through entire object display list & pick em
 	for (int i = 0; i < m_displayList.size(); i++)
