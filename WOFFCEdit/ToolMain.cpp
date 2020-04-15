@@ -17,6 +17,8 @@ ToolMain::ToolMain()
 	m_toolInputCommands.S			= false;
 	m_toolInputCommands.A			= false;
 	m_toolInputCommands.D			= false;
+	m_toolInputCommands.E			= false;
+	m_toolInputCommands.Q			= false;
 	m_toolInputCommands.mouseLeft	= false;
 	m_toolInputCommands.mouseRight	= false;
 	m_toolInputCommands.mouseWheel	= false;
@@ -24,6 +26,9 @@ ToolMain::ToolMain()
 	m_toolInputCommands.escape		= false;
 	m_toolInputCommands.SHIFT		= false;
 	m_toolInputCommands.CTRL		= false;
+	m_toolInputCommands.X			= false;
+	m_toolInputCommands.C			= false;
+	m_toolInputCommands.V			= false;
 	m_toolInputCommands.pickOnce	= true;
 	m_toolInputCommands.storeOnce	= true;
 	m_toolInputCommands.toggle		= true;
@@ -375,6 +380,19 @@ void ToolMain::Tick(MSG *msg)
 		m_toolInputCommands.mouseDrag = true;
 	}
 		
+	// If CTRL is pressed
+	if (m_toolInputCommands.CTRL)
+	{
+		// If X is pressed (cut)
+		if (m_toolInputCommands.X) { ObjectManager::Cut(m_selectedObjectIDs, m_sceneGraph); }
+			
+		// If C is pressed (copy)
+		else if (m_toolInputCommands.C) { ObjectManager::Copy(m_selectedObjectIDs, m_sceneGraph); }
+
+		// If V is pressed (paste)
+		else if (m_toolInputCommands.V) { ObjectManager::Paste(m_sceneGraph); }
+	}	
+		
 	// If right mouse button is pressed
 	if (m_toolInputCommands.mouseRight)
 	{				
@@ -444,12 +462,6 @@ void ToolMain::Tick(MSG *msg)
 				{
 					// Scale selected objects
 					ObjectManager::Transform(m_objectFunction, m_objectConstraint, m_selectedObjectIDs, m_sceneGraph);
-					
-					// Update scene graph
-					///m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
-
-					// REPLACE OBJECTS RATHER THAN REBUILDING ENTIRE DISPLAY LIST
-					///m_d3dRenderer.ReplaceObjects(m_selectedObjectIDs, &m_sceneGraph);
 				}
 			}			
 		}			
@@ -581,9 +593,22 @@ void ToolMain::UpdateInput(MSG * msg)
 	if (m_keyArray[(int)VK_SHIFT]) { m_toolInputCommands.SHIFT = true; }
 	else { m_toolInputCommands.SHIFT = false; } 	
 
-	// CTRL key to delete objects rather than spawning
+	// CTRL key to delete objects rather than spawning via mouseRight
+	// CTRL key to cut, copy or paste an object via X,C,V
 	if (m_keyArray[(int)VK_CONTROL]) { m_toolInputCommands.CTRL = true; }
 	else { m_toolInputCommands.CTRL = false; }
+
+	// X key to cut an object
+	if (m_keyArray['X']) { m_toolInputCommands.X = true; }
+	else { m_toolInputCommands.X = false; }
+
+	// C key to copy an object
+	if (m_keyArray['C']) { m_toolInputCommands.C = true; }
+	else { m_toolInputCommands.C = false; }
+
+	// V key to paste an object
+	if (m_keyArray['V']) { m_toolInputCommands.V = true; }
+	else { m_toolInputCommands.V = false; }
 }
 
 void ToolMain::SaveDisplayList(std::vector<DisplayObject> displayList)

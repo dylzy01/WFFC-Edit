@@ -114,6 +114,7 @@ public:	//variables
 	std::vector<int> m_selectedObjectIDs;			//IDs of multiple current OBJECT selections
 	TERRAIN m_selectedTerrain;				
 	std::vector<TERRAIN> m_selectedTerrains;	//IDs of multiple current TERRAIN selections
+	std::vector<int> m_objectIDsToCopy;
 
 	EDITOR m_editor;								//control which editor state is being applied
 	OBJECT_SPAWN m_objectSpawn;						//control which object is to be spawned

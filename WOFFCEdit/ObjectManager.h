@@ -16,7 +16,7 @@ public:
 
 	// Spawn an object at a location & add to database
 	static void Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 position,
-		std::vector<SceneObject> & sceneGraph);
+		std::vector<SceneObject> & sceneGraph);	
 
 	// Remove an object from scene graph & database
 	static void Remove(std::vector<int> & IDs, std::vector<SceneObject> & sceneGraph, int ID = -1);
@@ -27,6 +27,15 @@ public:
 	// Transform selected objects
 	static void Transform(OBJECT_FUNCTION function, OBJECT_CONSTRAINT constraint,
 		std::vector<int> IDs, std::vector<SceneObject> & sceneGraph);	
+
+	// Copy details of selected objects & remove from database
+	static void Cut(std::vector<int> & IDs, std::vector<SceneObject> & sceneGraph);
+
+	// Copy details of selected objects
+	static void Copy(std::vector<int> IDs, std::vector<SceneObject> sceneGraph);
+
+	// Create new objects from copied
+	static void Paste(std::vector<SceneObject> & sceneGraph);
 	
 	// Setters
 	static void SetGame(Game * game) { m_game = game; }
@@ -51,6 +60,7 @@ private:
 	static Game * m_game;
 	static InputCommands * m_input;
 	static std::vector<int> m_selectedObjectIDs;
+	static std::vector<SceneObject> m_objectsToCopy;
 	static std::vector<DirectX::SimpleMath::Vector3> m_storedObjectScales, m_storedObjectTranslations, m_storedObjectRotations;	
 };
 

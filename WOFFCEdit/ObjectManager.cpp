@@ -3,6 +3,7 @@
 Game * ObjectManager::m_game;
 InputCommands * ObjectManager::m_input;
 std::vector<int> ObjectManager::m_selectedObjectIDs;
+std::vector<SceneObject> ObjectManager::m_objectsToCopy;
 std::vector<DirectX::SimpleMath::Vector3> ObjectManager::m_storedObjectScales;
 std::vector<DirectX::SimpleMath::Vector3> ObjectManager::m_storedObjectRotations;
 std::vector<DirectX::SimpleMath::Vector3> ObjectManager::m_storedObjectTranslations;
@@ -226,7 +227,7 @@ void ObjectManager::Remove(std::vector<int> & IDs, std::vector<SceneObject> & sc
 	// Remove selected object from scene graph
 	///sceneGraph.erase(sceneGraph.begin() + IDs[i]);
 
-	//// Remove selected object from selected objects list
+	// Remove selected object from selected objects list
 	///IDs.erase(IDs.begin() + i);
 
 	// Overwrite selected objects list
@@ -266,6 +267,180 @@ void ObjectManager::Transform(OBJECT_FUNCTION function, OBJECT_CONSTRAINT constr
 	case OBJECT_FUNCTION::SCALE: Scale(constraint, IDs, sceneGraph); break;
 	case OBJECT_FUNCTION::ROTATE: Rotate(constraint, IDs, sceneGraph); break;
 	case OBJECT_FUNCTION::TRANSLATE: Translate(constraint, IDs, sceneGraph); break;
+	}
+}
+
+// Copy details of selected objects & remove from database
+void ObjectManager::Cut(std::vector<int> & IDs, std::vector<SceneObject> & sceneGraph)
+{
+	// Clear current objects to copy
+	m_objectsToCopy.clear();
+
+	// Loop through selected objects
+	for (int i = 0; i < IDs.size(); ++i)
+	{
+		// Setup temp scene object
+		SceneObject object;
+
+		// Define object values
+		{
+			object.ID = sceneGraph.size() + 1;
+			object.chunk_ID = sceneGraph[IDs[i]].chunk_ID;
+			object.posX = sceneGraph[IDs[i]].posX;
+			object.posY = sceneGraph[IDs[i]].posY;
+			object.posZ = sceneGraph[IDs[i]].posZ;
+			object.rotX = sceneGraph[IDs[i]].rotX;
+			object.rotY = sceneGraph[IDs[i]].rotY;
+			object.rotZ = sceneGraph[IDs[i]].rotZ;
+			object.scaX = sceneGraph[IDs[i]].scaX;
+			object.scaY = sceneGraph[IDs[i]].scaY;
+			object.scaZ = sceneGraph[IDs[i]].scaZ;
+			object.render = sceneGraph[IDs[i]].render;
+			object.collectable = sceneGraph[IDs[i]].collectable;
+			object.collision_mesh = sceneGraph[IDs[i]].collision_mesh;
+			object.destructable = sceneGraph[IDs[i]].destructable;
+			object.health_amount = sceneGraph[IDs[i]].health_amount;
+			object.editor_render = sceneGraph[IDs[i]].editor_render;
+			object.editor_texture_vis = sceneGraph[IDs[i]].editor_texture_vis;
+			object.editor_normals_vis = sceneGraph[IDs[i]].editor_normals_vis;
+			object.editor_collision_vis = sceneGraph[IDs[i]].editor_collision_vis;
+			object.editor_pivot_vis = sceneGraph[IDs[i]].editor_pivot_vis;
+			object.pivotX = sceneGraph[IDs[i]].pivotX;
+			object.pivotY = sceneGraph[IDs[i]].pivotY;
+			object.pivotZ = sceneGraph[IDs[i]].pivotZ;
+			object.snapToGround = sceneGraph[IDs[i]].snapToGround;
+			object.AINode = sceneGraph[IDs[i]].AINode;
+			object.audio_path = sceneGraph[IDs[i]].audio_path;
+			object.volume = sceneGraph[IDs[i]].volume;
+			object.pitch = sceneGraph[IDs[i]].pitch;
+			object.pan = sceneGraph[IDs[i]].pan;
+			object.one_shot = sceneGraph[IDs[i]].one_shot;
+			object.play_on_init = sceneGraph[IDs[i]].play_on_init;
+			object.play_in_editor = sceneGraph[IDs[i]].play_in_editor;
+			object.min_dist = sceneGraph[IDs[i]].min_dist;
+			object.max_dist = sceneGraph[IDs[i]].max_dist;
+			object.camera = sceneGraph[IDs[i]].camera;
+			object.path_node = sceneGraph[IDs[i]].path_node;
+			object.path_node_start = sceneGraph[IDs[i]].path_node_start;
+			object.path_node_end = sceneGraph[IDs[i]].path_node_end;
+			object.parent_id = sceneGraph[IDs[i]].parent_id;
+			object.editor_wireframe = sceneGraph[IDs[i]].editor_wireframe;
+			object.light_type = sceneGraph[IDs[i]].light_type;
+			object.light_diffuse_r = sceneGraph[IDs[i]].light_diffuse_r;
+			object.light_diffuse_g = sceneGraph[IDs[i]].light_diffuse_g;
+			object.light_diffuse_b = sceneGraph[IDs[i]].light_diffuse_b;
+			object.light_specular_r = sceneGraph[IDs[i]].light_specular_r;
+			object.light_specular_g = sceneGraph[IDs[i]].light_specular_g;
+			object.light_specular_b = sceneGraph[IDs[i]].light_specular_b;
+			object.light_spot_cutoff = sceneGraph[IDs[i]].light_spot_cutoff;
+			object.light_constant = sceneGraph[IDs[i]].light_constant;
+			object.light_linear = sceneGraph[IDs[i]].light_linear;
+			object.light_quadratic = sceneGraph[IDs[i]].light_quadratic;
+
+			object.m_type = sceneGraph[IDs[i]].m_type;
+			object.model_path = sceneGraph[IDs[i]].model_path;
+			object.tex_diffuse_path = sceneGraph[IDs[i]].tex_diffuse_path;
+		}
+
+		// Add object to storage
+		m_objectsToCopy.push_back(object);
+	}
+
+	// Remove objects from database
+	Remove(IDs, sceneGraph);
+}
+
+// Copy details of selected objects
+void ObjectManager::Copy(std::vector<int> IDs, std::vector<SceneObject> sceneGraph)
+{
+	// Clear current objects to copy
+	m_objectsToCopy.clear();
+	
+	// Loop through selected objects
+	for (int i = 0; i < IDs.size(); ++i)
+	{
+		// Setup temp scene object
+		SceneObject object;
+
+		// Define object values
+		{
+			object.ID = sceneGraph.size() + 1;
+			object.chunk_ID = sceneGraph[IDs[i]].chunk_ID;
+			object.posX = sceneGraph[IDs[i]].posX + 5.f;
+			object.posY = sceneGraph[IDs[i]].posY;
+			object.posZ = sceneGraph[IDs[i]].posZ + 5.f;
+			object.rotX = sceneGraph[IDs[i]].rotX;
+			object.rotY = sceneGraph[IDs[i]].rotY;
+			object.rotZ = sceneGraph[IDs[i]].rotZ;
+			object.scaX = sceneGraph[IDs[i]].scaX;
+			object.scaY = sceneGraph[IDs[i]].scaY;
+			object.scaZ = sceneGraph[IDs[i]].scaZ;
+			object.render = sceneGraph[IDs[i]].render;
+			object.collectable = sceneGraph[IDs[i]].collectable;
+			object.collision_mesh = sceneGraph[IDs[i]].collision_mesh;
+			object.destructable = sceneGraph[IDs[i]].destructable;
+			object.health_amount = sceneGraph[IDs[i]].health_amount;
+			object.editor_render = sceneGraph[IDs[i]].editor_render;
+			object.editor_texture_vis = sceneGraph[IDs[i]].editor_texture_vis;
+			object.editor_normals_vis = sceneGraph[IDs[i]].editor_normals_vis;
+			object.editor_collision_vis = sceneGraph[IDs[i]].editor_collision_vis;
+			object.editor_pivot_vis = sceneGraph[IDs[i]].editor_pivot_vis;
+			object.pivotX = sceneGraph[IDs[i]].pivotX;
+			object.pivotY = sceneGraph[IDs[i]].pivotY;
+			object.pivotZ = sceneGraph[IDs[i]].pivotZ;
+			object.snapToGround = sceneGraph[IDs[i]].snapToGround;
+			object.AINode = sceneGraph[IDs[i]].AINode;
+			object.audio_path = sceneGraph[IDs[i]].audio_path;
+			object.volume = sceneGraph[IDs[i]].volume;
+			object.pitch = sceneGraph[IDs[i]].pitch;
+			object.pan = sceneGraph[IDs[i]].pan;
+			object.one_shot = sceneGraph[IDs[i]].one_shot;
+			object.play_on_init = sceneGraph[IDs[i]].play_on_init;
+			object.play_in_editor = sceneGraph[IDs[i]].play_in_editor;
+			object.min_dist = sceneGraph[IDs[i]].min_dist;
+			object.max_dist = sceneGraph[IDs[i]].max_dist;
+			object.camera = sceneGraph[IDs[i]].camera;
+			object.path_node = sceneGraph[IDs[i]].path_node;
+			object.path_node_start = sceneGraph[IDs[i]].path_node_start;
+			object.path_node_end = sceneGraph[IDs[i]].path_node_end;
+			object.parent_id = sceneGraph[IDs[i]].parent_id;
+			object.editor_wireframe = sceneGraph[IDs[i]].editor_wireframe;
+			object.light_type = sceneGraph[IDs[i]].light_type;
+			object.light_diffuse_r = sceneGraph[IDs[i]].light_diffuse_r;
+			object.light_diffuse_g = sceneGraph[IDs[i]].light_diffuse_g;
+			object.light_diffuse_b = sceneGraph[IDs[i]].light_diffuse_b;
+			object.light_specular_r = sceneGraph[IDs[i]].light_specular_r;
+			object.light_specular_g = sceneGraph[IDs[i]].light_specular_g;
+			object.light_specular_b = sceneGraph[IDs[i]].light_specular_b;
+			object.light_spot_cutoff = sceneGraph[IDs[i]].light_spot_cutoff;
+			object.light_constant = sceneGraph[IDs[i]].light_constant;
+			object.light_linear = sceneGraph[IDs[i]].light_linear;
+			object.light_quadratic = sceneGraph[IDs[i]].light_quadratic;
+
+			object.m_type = sceneGraph[IDs[i]].m_type;
+			object.model_path = sceneGraph[IDs[i]].model_path;
+			object.tex_diffuse_path = sceneGraph[IDs[i]].tex_diffuse_path;
+		}
+
+		// Add object to storage
+		m_objectsToCopy.push_back(object);		
+	}
+}
+
+// Create new objects from copied
+void ObjectManager::Paste(std::vector<SceneObject> & sceneGraph)
+{
+	// Loop through objects to copy
+	for (int i = 0; i < m_objectsToCopy.size(); ++i)
+	{
+		// Add new object to database
+		SQLManager::AddObject(m_objectsToCopy[i]);
+
+		// Add new object to scene graph
+		sceneGraph.push_back(m_objectsToCopy[i]);
+
+		// Rebuild display list
+		m_game->BuildDisplayList(&sceneGraph);
 	}
 }
 

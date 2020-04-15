@@ -29,8 +29,9 @@ OBJECT
 		- Scale has minimum scale value of 0.1f to avoid the object scaling
 			inside itself
 - Tried updating ToolMain scene graph & building game display list from it each frame
-	Far too laggy, changed to update game display list as well as ToolMain scene
+	- Far too laggy, changed to update game display list as well as ToolMain scene
 	graph and build display list from ToolMain scene graph when button is released
+	- Bounding box updated here too.
 
 SQL Controller
 - Static class for all SQL functionality
