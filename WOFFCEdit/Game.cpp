@@ -209,6 +209,7 @@ void Game::UpdateWaves()
 		else { m_switch = true; }
 	}	
 }
+
 #pragma endregion
 
 #pragma region Frame Render
@@ -318,10 +319,8 @@ void Game::Render()
 			// If selected object ID is valid
 			if (m_selectedObjectIDs[i] != -1)
 			{
-				// Draw local axes
-				///DrawAxis(m_displayList[m_selectedObjectIDs[i]], m_selectedObjectIDs[i]);
-				///m_displayList[m_selectedObjectIDs[i]].m_model->meshes[0]->boundingBox.Extents
-				DrawBounds(m_displayList[m_selectedObjectIDs[i]]);
+				// Draw bounding box & local axes
+				DrawDebug(m_selectedObjectIDs[i]);
 			}
 		}
 	}
@@ -396,69 +395,19 @@ void XM_CALLCONV Game::DrawGrid(FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR orig
 
     m_deviceResources->PIXEndEvent();
 }
-void Game::DrawAxis(DisplayObject object, int ID)
+void Game::DrawDebug(int i)
 {
 	// Setup vectors
-	DirectX::FXMVECTOR origin = object.m_position;
 	DirectX::FXMVECTOR x = { 1.f, 0.f, 0.f };
 	DirectX::FXMVECTOR y = { 0.f, 1.f, 0.f };
-	DirectX::FXMVECTOR z = { 0.f, 0.f, 1.5f };	
+	DirectX::FXMVECTOR z = { 0.f, 0.f, 1.5f };
 	DirectX::GXMVECTOR red = { 255.f, 0.f, 0.f };
 	DirectX::GXMVECTOR green = { 0.f, 255.f, 0.f };
 	DirectX::GXMVECTOR blue = { 0.f, 0.f, 255.f };
-	XMVECTOR scaleX = XMVectorScale(x, 1); scaleX = XMVectorAdd(scaleX, origin);
-	XMVECTOR scaleY = XMVectorScale(y, 1); scaleY = XMVectorAdd(scaleY, origin);
-	XMVECTOR scaleZ = XMVectorScale(z, 1); scaleZ = XMVectorAdd(scaleZ, origin);
-
-	// Setup context
-	auto context = m_deviceResources->GetD3DDeviceContext();
-	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
-	context->OMSetDepthStencilState(m_states->DepthNone(), 0);
-	context->RSSetState(m_states->CullCounterClockwise());
-
-	m_batchEffect->Apply(context);
-
-	context->IASetInputLayout(m_batchInputLayout.Get());
-
-	m_batch->Begin();
-
-	// X axis
-	{
-		VertexPositionColor v1(XMVectorSubtract(scaleX, x), red);
-		VertexPositionColor v2(XMVectorAdd(scaleX, x), red);
-		m_batch->DrawLine(v1, v2);
-
-		///m_xRays[ID] = Ray(v1.position, { 1.f, 0.f, 0.f });
-		m_xAxes[ID] = v1.position - v2.position;
-	}
-
-	// Y axis
-	{
-		VertexPositionColor v1(XMVectorSubtract(scaleY, y), green);
-		VertexPositionColor v2(XMVectorAdd(scaleY, y), green);
-		m_batch->DrawLine(v1, v2);
-
-		///m_yRays[ID] = Ray(v1.position, { 0.f, 1.f, 0.f });
-		m_yAxes[ID] = v1.position - v2.position;
-	}
-
-	// Z axis
-	{
-		VertexPositionColor v1(XMVectorSubtract(scaleZ, z), blue);
-		VertexPositionColor v2(XMVectorAdd(scaleZ, z), blue);
-		m_batch->DrawLine(v1, v2);
-
-		///m_zRays[ID] = Ray(v1.position, { 0.f, 0.f, 1.f });
-		m_zAxes[ID] = v1.position - v2.position;
-	}
-
-	m_batch->End();
-
-	m_deviceResources->PIXEndEvent();
-}
-
-void Game::DrawBounds(DisplayObject object)
-{
+	XMVECTOR scaleX = XMVectorScale(x, 1); scaleX = XMVectorAdd(scaleX, m_displayList[i].m_position);
+	XMVECTOR scaleY = XMVectorScale(y, 1); scaleY = XMVectorAdd(scaleY, m_displayList[i].m_position);
+	XMVECTOR scaleZ = XMVectorScale(z, 1); scaleZ = XMVectorAdd(scaleZ, m_displayList[i].m_position);
+	
 	// Setup context
 	auto context = m_deviceResources->GetD3DDeviceContext();
 	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
@@ -471,132 +420,33 @@ void Game::DrawBounds(DisplayObject object)
 
 	m_batch->Begin();
 
-	for (int i = 0; i < object.m_model->meshes.size(); ++i) { Draw(m_batch.get(), object.m_model->meshes[i]->boundingBox, Colors::Orange); }		
+	// Bounding box
+	for (int j = 0; j < m_displayList[i].m_model->meshes.size(); ++j)
+	{ 
+		Draw(m_batch.get(), m_displayList[i].m_model->meshes[j]->boundingBox, Colors::Orange);
+	}		
 	///Draw(m_batch.get(), object.m_model->meshes[0]->boundingSphere, Colors::Red);
+
+	// X axis
+	VertexPositionColor x1(XMVectorSubtract(scaleX, x), red);
+	VertexPositionColor x2(XMVectorAdd(scaleX, x), red);
+	m_batch->DrawLine(x1, x2);
+
+	// Y axis
+	VertexPositionColor y1(XMVectorSubtract(scaleY, y), green);
+	VertexPositionColor y2(XMVectorAdd(scaleY, y), green);
+	m_batch->DrawLine(y1, y2);
+
+	// Z axis
+	VertexPositionColor z1(XMVectorSubtract(scaleZ, z), blue);
+	VertexPositionColor z2(XMVectorAdd(scaleZ, z), blue);
+	m_batch->DrawLine(z1, z2);
 	
 	m_batch->End();
 
 	m_deviceResources->PIXEndEvent();
 }
 
-// Get scale for object manipulation via mouse drag
-DirectX::SimpleMath::Vector3 Game::GetScale(int ID)
-{
-	// Temp storage 
-	Vector2 previous = m_inputCommands.mousePosPrevious;
-	Vector2 current = m_inputCommands.mousePos;
-	Vector3 object = m_displayList[m_selectedObjectIDs[ID]].m_position;
-
-	// Setup previous & current ray traces
-	Ray pre = RayTrace(previous);
-	Ray cur = RayTrace(current);
-
-	// Distance between previous & object
-	float distP = sqrt(
-		(pre.position.x - object.x) * (pre.position.x - object.x) +
-		(pre.position.y - object.y) * (pre.position.y - object.y) +
-		(pre.position.z - object.z) * (pre.position.z - object.z));
-
-	// Distance between current & object
-	float distC = sqrt(
-		(cur.position.x - object.x) * (cur.position.x - object.x) +
-		(cur.position.y - object.y) * (cur.position.y - object.y) +
-		(cur.position.z - object.z) * (cur.position.z - object.z));
-
-	// Setup temp picking points
-	Vector3 pickingP = pre.position + (pre.direction * distP);
-	Vector3 pickingC = cur.position + (cur.direction * distC);
-
-	// Setup temp scale
-	Vector3 scale;
-	scale.x = m_storedObjectScales[ID].x + (pickingC.x - pickingP.x);
-	scale.y = m_storedObjectScales[ID].y + (pickingC.y - pickingP.y);
-	scale.z = m_storedObjectScales[ID].z + (pickingC.z - pickingP.z);
-
-	// If scale is below minimum scale
-	if (scale.x < .1f) { scale.x = .1f; }
-	if (scale.y < .1f) { scale.y = .1f; }
-	if (scale.z < .1f) { scale.z = .1f; }
-
-	// Return manipulated scale
-	return scale;
-}
-
-// Get transform for object manipulation via mouse drag
-DirectX::SimpleMath::Vector3 Game::GetTranslation(int ID)
-{
-	// Temp storage 
-	Vector2 previous = m_inputCommands.mousePosPrevious;
-	Vector2 current = m_inputCommands.mousePos;
-	Vector3 object = m_displayList[m_selectedObjectIDs[ID]].m_position;
-
-	// Setup previous & current ray traces
-	Ray pre = RayTrace(previous);
-	Ray cur = RayTrace(current);
-
-	// Distance between previous & object
-	float distP = sqrt(
-		(pre.position.x - object.x) * (pre.position.x - object.x) +
-		(pre.position.y - object.y) * (pre.position.y - object.y) +
-		(pre.position.z - object.z) * (pre.position.z - object.z));
-
-	// Distance between current & object
-	float distC = sqrt(
-		(cur.position.x - object.x) * (cur.position.x - object.x) +
-		(cur.position.y - object.y) * (cur.position.y - object.y) +
-		(cur.position.z - object.z) * (cur.position.z - object.z));
-
-	// Setup temp picking points
-	Vector3 pickingP = pre.position + (pre.direction * distP);
-	Vector3 pickingC = cur.position + (cur.direction * distC);
-
-	// Setup temp translation
-	Vector3 position;
-	position.x = m_storedObjectTranslations[ID].x + (pickingC.x - pickingP.x);
-	position.y = m_storedObjectTranslations[ID].y + (pickingC.y - pickingP.y);
-	position.z = m_storedObjectTranslations[ID].z + (pickingC.z - pickingP.z);
-
-	// Return manipulated translation
-	return position;
-}
-
-// Get rotation for object manipulation via mouse drag
-DirectX::SimpleMath::Vector3 Game::GetRotation(int ID)
-{
-	// Temp storage 
-	Vector2 previous = m_inputCommands.mousePosPrevious;
-	Vector2 current = m_inputCommands.mousePos;
-	Vector3 object = m_displayList[m_selectedObjectIDs[ID]].m_position;
-
-	// Setup previous & current ray traces
-	Ray pre = RayTrace(previous);
-	Ray cur = RayTrace(current);
-
-	// Distance between previous & object
-	float distP = sqrt(
-		(pre.position.x - object.x) * (pre.position.x - object.x) +
-		(pre.position.y - object.y) * (pre.position.y - object.y) +
-		(pre.position.z - object.z) * (pre.position.z - object.z));
-
-	// Distance between current & object
-	float distC = sqrt(
-		(cur.position.x - object.x) * (cur.position.x - object.x) +
-		(cur.position.y - object.y) * (cur.position.y - object.y) +
-		(cur.position.z - object.z) * (cur.position.z - object.z));
-
-	// Setup temp picking points
-	Vector3 pickingP = pre.position + (pre.direction * distP);
-	Vector3 pickingC = cur.position + (cur.direction * distC);
-
-	// Setup temp rotation
-	Vector3 rotate;
-	rotate.x = m_storedObjectRotations[ID].x + (pickingC.x - pickingP.x) * 50.f;
-	rotate.y = m_storedObjectRotations[ID].y + (pickingC.y - pickingP.y) * 50.f;
-	rotate.z = m_storedObjectRotations[ID].z + (pickingC.z - pickingP.z) * 50.f;
-
-	// Return manipulated rotation
-	return rotate;
-}
 #pragma endregion
 
 #pragma region Message Handlers
@@ -701,6 +551,7 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 		newDisplayObject.m_render		= sceneGraph->at(i).editor_render;
 		newDisplayObject.m_wireframe	= sceneGraph->at(i).editor_wireframe;
 
+		//set lights
 		newDisplayObject.m_light_type		= sceneGraph->at(i).light_type;
 		newDisplayObject.m_light_diffuse_r	= sceneGraph->at(i).light_diffuse_r;
 		newDisplayObject.m_light_diffuse_g	= sceneGraph->at(i).light_diffuse_g;
@@ -714,21 +565,17 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 		newDisplayObject.m_light_quadratic	= sceneGraph->at(i).light_quadratic;
 
 		// Set bounding box		
-		newDisplayObject.m_model->meshes[0]->boundingBox.Extents.x *= newDisplayObject.m_scale.x;
-		newDisplayObject.m_model->meshes[0]->boundingBox.Extents.y *= newDisplayObject.m_scale.y;
-		newDisplayObject.m_model->meshes[0]->boundingBox.Extents.z *= newDisplayObject.m_scale.z;
-		newDisplayObject.m_model->meshes[0]->boundingBox.Center = newDisplayObject.m_position;
-		newDisplayObject.m_model->meshes[0]->boundingBox.Center.y += newDisplayObject.m_model->meshes[0]->boundingBox.Extents.y;
+		for (int j = 0; j < newDisplayObject.m_model->meshes.size(); ++j)
+		{
+			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.x *= newDisplayObject.m_scale.x;
+			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y *= newDisplayObject.m_scale.y;
+			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.z *= newDisplayObject.m_scale.z;
+			newDisplayObject.m_model->meshes[j]->boundingBox.Center = newDisplayObject.m_position;
+			newDisplayObject.m_model->meshes[j]->boundingBox.Center.y += newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y;
+		}
 		
+		// Add object to list
 		m_displayList.push_back(newDisplayObject);	
-
-		// Setup rays for axes
-		///m_xRays.push_back(Ray());
-		///m_yRays.push_back(Ray());
-		///m_zRays.push_back(Ray());
-		m_xAxes.push_back(DirectX::SimpleMath::Vector3());
-		m_yAxes.push_back(DirectX::SimpleMath::Vector3());
-		m_zAxes.push_back(DirectX::SimpleMath::Vector3());
 	}	
 }
 
@@ -825,22 +672,6 @@ void Game::SaveDisplayChunk()
 	m_displayChunk.SaveHeightMap();			//save heightmap to file.
 }
 
-void Game::DeleteSelectedObjects()
-{
-	// Loop through selected objects
-	for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
-	{
-		// Remove objects from database
-		SQLManager::RemoveObject(m_sceneGraph[m_selectedObjectIDs[i]]);
-		m_selectedObjectIDs.erase(m_selectedObjectIDs.begin() + i);
-		///m_sceneGraph.erase(m_sceneGraph.begin() + i);
-		///SQL::RemoveObject(m_displayList[m_selectedObjectIDs[i]]);
-	}
-		
-	// Build display list from updated scene graph
-	///BuildDisplayList(&m_sceneGraph);
-}
-
 void Game::SaveDisplayList()
 {
 	// Loop through display list
@@ -863,526 +694,40 @@ void Game::SaveDisplayList()
 	}
 }
 
-// Setup a ray trace from given position
-DirectX::SimpleMath::Ray Game::RayTrace(DirectX::SimpleMath::Vector2 position)
+void Game::SetTransform(int i, OBJECT_FUNCTION function, DirectX::SimpleMath::Vector3 vector)
 {
-	// Setup ray trace origin
-	Vector3 origin = XMVector3Unproject(DirectX::SimpleMath::Vector3(position.x, position.y, 0.f),
-		0,
-		0,
-		m_deviceResources->GetScreenViewport().Width,
-		m_deviceResources->GetScreenViewport().Height,
-		0,
-		1,
-		m_projection,
-		m_view,
-		m_world);
-
-	// Setup ray trace destination
-	Vector3 destination = XMVector3Unproject(Vector3(position.x, position.y, 1.f),
-		0,
-		0,
-		m_deviceResources->GetScreenViewport().Width,
-		m_deviceResources->GetScreenViewport().Height,
-		0,
-		1,
-		m_projection,
-		m_view,
-		m_world);
-
-	// Setup ray trace direction
-	Vector3 direction = destination - origin;
-	direction.Normalize();
-
-	// Return ray trace
-	return DirectX::SimpleMath::Ray(origin, direction);
-}
-
-// Setup mouse picking point
-void Game::MousePicking(int i)
-{
-	// Setup ray trace
-	Ray ray = RayTrace(m_inputCommands.mousePos);
-
-	// Setup temp mouse position
-	DirectX::SimpleMath::Vector3 mouse = ray.position;
-
-	// If an object has been specified
-	if (i != -1)
-	{		
-		// Setup temp object position
-		DirectX::SimpleMath::Vector3 object = m_displayList[m_selectedObjectIDs[i]].m_position;
-
-		// Distance between the two
-		float distance = sqrt(
-			(mouse.x - object.x) * (mouse.x - object.x) +
-			(mouse.y - object.y) * (mouse.y - object.y) +
-			(mouse.z - object.z) * (mouse.z - object.z));
-
-		// Setup picking point
-		m_pickingPoint = ray.position + (ray.direction * distance);
-
-		/// Setup camera arcball here... ??
-	}
-	
-	// Else, if no object has been specified
-	else
+	// Switch between functions
+	switch (function)
 	{
-		// Setup default distance
-		float distance = 10.f;
+	case OBJECT_FUNCTION::SCALE: 
+	{
+		// Update object scale
+		m_displayList[i].m_scale = vector;
 		
-		// Setup temp terrain object
-		TERRAIN temp = TerrainIntersection(ray);
-
-		// If terrain has been intersected
-		if (temp.intersect)
-		{
-			// Calculate distance between mouse and terrain
-			distance = sqrt(
-				(mouse.x - temp.position.x) * (mouse.x - temp.position.x) +
-				(mouse.y - temp.position.y) * (mouse.y - temp.position.y) +
-				(mouse.z - temp.position.z) * (mouse.z - temp.position.z));
-		}
-
-		// Setup picking point
-		m_pickingPoint = ray.position + (ray.direction * distance);
-
-		if (temp.intersect) { m_pickingPoint.y += 1.f; }
 	}
-
-	// Setup camera arcball 
-	///m_camera->SetLookAt(m_pickingPoint);
-	/*DirectX::SimpleMath::Vector2 centre;
-	centre.x = m_deviceResources->GetScreenViewport().Width / 2;
-	centre.y = m_deviceResources->GetScreenViewport().Height / 2;	
-	m_camera->TrackObject(centre.x, centre.y, m_displayList[m_selectedObjectIDs[i]].m_position, m_deltaTime);*/
-}
-
-// Pick a single object
-int Game::PickObject(DirectX::SimpleMath::Vector2 position)
-{
-	// Controllers
-	int selectedID = -1;
-	float pickedDistance = 0.f, storedDistance = 1.f;
-	bool firstPick = true;
-
-	// Setup near & far planes of frustrum with mouse x,y passed from ToolMain
-	const XMVECTOR nearSource = XMVectorSet(position.x, position.y, 0.f, 1.f);
-	const XMVECTOR farSource = XMVectorSet(position.x, position.y, 1.f, 1.f);
-
-	// Loop through entire object display list & pick em
-	for (int i = 0; i < m_displayList.size(); i++)
+	break;
+	case OBJECT_FUNCTION::ROTATE: 
 	{
-		// Get object scale factor & translation
-		const XMVECTORF32 scale = { m_displayList[i].m_scale.x, m_displayList[i].m_scale.y, m_displayList[i].m_scale.z };
-		const XMVECTORF32 translate = { m_displayList[i].m_position.x, m_displayList[i].m_position.y, m_displayList[i].m_position.z };
-
-		// Convert euler angles into a quaternion for object rotation
-		XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_displayList[i].m_orientation.y * PI / 180,
-			m_displayList[i].m_orientation.x * PI / 180, m_displayList[i].m_orientation.z * PI / 180);
-
-		// Set selected object matrix in the world based on scale, rotation & translation
-		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
-
-		// UNPROJECT the points on the near & far plane, respecting the previously created matrix
-		XMVECTOR nearPoint = XMVector3Unproject(nearSource, 0.f, 0.f, m_screenDimensions.right, m_screenDimensions.bottom,
-			m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
-
-		XMVECTOR farPoint = XMVector3Unproject(farSource, 0.f, 0.f, m_screenDimensions.right, m_screenDimensions.bottom,
-			m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
-
-		// Turn transformed points into picking vector
-		XMVECTOR pickingVector = farPoint - nearPoint;
-		pickingVector = XMVector3Normalize(pickingVector);
-
-		// Loop through mesh list for object
-		for (int j = 0; j < m_displayList[i].m_model.get()->meshes.size(); j++)
-		{
-			// Check for intersection
-			if (m_displayList[i].m_model.get()->meshes[j]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance))
-			{
-				// Update ID with the first intersected object
-				if (firstPick)
-				{
-					firstPick = false;
-					storedDistance = pickedDistance;
-					selectedID = i;
-				}
-				// Update ID if a closer object has been intersected
-				else if (pickedDistance < storedDistance)
-				{
-					storedDistance = pickedDistance;
-					selectedID = i;
-				}
-			}
-		}
+		// Update object rotation
+		m_displayList[i].m_orientation = vector;
 	}
-
-	return selectedID;
-}
-
-// Pick multiple objects
-std::vector<int> Game::PickObjects(bool select)
-{
-	// Controllers
-	int selectedID = -1;
-	float pickedDistance = 0.f, storedDistance = 1.f;
-	bool firstPick = true;
-
-	// Setup near & far planes of frustrum with mouse x,y passed from ToolMain
-	const XMVECTOR nearSource = XMVectorSet(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 0.f, 1.f);
-	const XMVECTOR farSource = XMVectorSet(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 1.f, 1.f);
-
-	// Loop through entire object display list & pick em
-	for (int i = 0; i < m_displayList.size(); i++)
+	break;
+	case OBJECT_FUNCTION::TRANSLATE: 
 	{
-		// Get object scale factor & translation
-		const XMVECTORF32 scale = { m_displayList[i].m_scale.x, m_displayList[i].m_scale.y, m_displayList[i].m_scale.z };
-		const XMVECTORF32 translate = { m_displayList[i].m_position.x, m_displayList[i].m_position.y, m_displayList[i].m_position.z };
-
-		// Convert euler angles into a quaternion for object rotation
-		XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_displayList[i].m_orientation.y * PI / 180, 
-			m_displayList[i].m_orientation.x * PI / 180, m_displayList[i].m_orientation.z * PI / 180);
-
-		// Set selected object matrix in the world based on scale, rotation & translation
-		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
-
-		// UNPROJECT the points on the near & far plane, respecting the previously created matrix
-		XMVECTOR nearPoint = XMVector3Unproject(nearSource, 0.f, 0.f, m_screenDimensions.right, m_screenDimensions.bottom,
-			m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
-
-		XMVECTOR farPoint = XMVector3Unproject(farSource, 0.f, 0.f, m_screenDimensions.right, m_screenDimensions.bottom,
-			m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
-
-		// Turn transformed points into picking vector
-		XMVECTOR pickingVector = farPoint - nearPoint;
-		pickingVector = XMVector3Normalize(pickingVector);
-
-		// Loop through mesh list for object
-		for (int j = 0; j < m_displayList[i].m_model.get()->meshes.size(); j++)
-		{
-			// Check for intersection
-			if (m_displayList[i].m_model.get()->meshes[j]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance))
-			{				
-				// Update ID with the first intersected object
-				if (firstPick)
-				{
-					firstPick = false;
-					storedDistance = pickedDistance;
-					selectedID = i;
-				}
-				// Update ID if a closer object has been intersected
-				else if (pickedDistance < storedDistance)
-				{
-					storedDistance = pickedDistance;
-					selectedID = i;
-				}
-			}
-		}
+		// Update object translation
+		m_displayList[i].m_position = vector;		
+	}
+	break;
 	}
 
-	// If an object has been selected
-	if (selectedID != -1)
-	{
-		// If current selected ID is already in the vector
-		if (std::count(m_selectedObjectIDs.begin(), m_selectedObjectIDs.end(), selectedID))
-		{
-			// If isn't selecting
-			if (!select)
-			{				
-				// Remove from vector storage
-				m_selectedObjectIDs.erase(std::remove(m_selectedObjectIDs.begin(), m_selectedObjectIDs.end(), selectedID), m_selectedObjectIDs.end());
-			}
-		}
-		// Else, if current selected ID is new
-		else
-		{
-			// If is selecting
-			if (select)
-			{
-				// Add to vector storage
-				m_selectedObjectIDs.push_back(selectedID);
-			}
-		}
+	// Update object bounding box scale
+	m_displayList[i].m_model->meshes[0]->boundingBox.Extents.x = m_displayList[i].m_scale.x * 2.15f;
+	m_displayList[i].m_model->meshes[0]->boundingBox.Extents.y = m_displayList[i].m_scale.y * 2.625f;
+	m_displayList[i].m_model->meshes[0]->boundingBox.Extents.z = m_displayList[i].m_scale.z * 2.15f;
 
-		// Object has been intersected
-		///return true;
-	}
-	else
-	{
-		// Clear entire selection vector
-		///m_selectedObjectIDs.clear();
-		
-		// Object hasn't been intersected
-		///return false;
-	}
-
-	// Return selected object IDs
-	return m_selectedObjectIDs;
-}
-
-bool Game::ObjectIntersection(int i)
-{
-	// Controllers
-	float pickedDistance = 0.f, storedDistance = 1.f;
-
-	// Setup near & far planes of frustrum with mouse x,y passed from ToolMain
-	const XMVECTOR nearSource = XMVectorSet(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 0.f, 1.f);
-	const XMVECTOR farSource = XMVectorSet(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 1.f, 1.f);
-
-	// Get object scale factor & translation
-	const XMVECTORF32 scale = { m_displayList[m_selectedObjectIDs[i]].m_scale.x, m_displayList[m_selectedObjectIDs[i]].m_scale.y, m_displayList[m_selectedObjectIDs[i]].m_scale.z };
-	const XMVECTORF32 translate = { m_displayList[m_selectedObjectIDs[i]].m_position.x, m_displayList[m_selectedObjectIDs[i]].m_position.y, m_displayList[m_selectedObjectIDs[i]].m_position.z };
-
-	// Convert euler angles into a quaternion for object rotation
-	XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_displayList[m_selectedObjectIDs[i]].m_orientation.y * PI / 180,
-		m_displayList[m_selectedObjectIDs[i]].m_orientation.x * PI / 180, m_displayList[m_selectedObjectIDs[i]].m_orientation.z * PI / 180);
-
-	// Set selected object matrix in the world based on scale, rotation & translation
-	XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
-
-	// UNPROJECT the points on the near & far plane, respecting the previously created matrix
-	XMVECTOR nearPoint = XMVector3Unproject(nearSource, 0.f, 0.f, m_screenDimensions.right, m_screenDimensions.bottom,
-		m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
-
-	XMVECTOR farPoint = XMVector3Unproject(farSource, 0.f, 0.f, m_screenDimensions.right, m_screenDimensions.bottom,
-		m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
-
-	// Turn transformed points into picking vector
-	XMVECTOR pickingVector = farPoint - nearPoint;
-	pickingVector = XMVector3Normalize(pickingVector);
-
-	// Loop through mesh list for object
-	for (int j = 0; j < m_displayList[m_selectedObjectIDs[i]].m_model.get()->meshes.size(); j++)
-	{
-		// Check for intersection
-		return (m_displayList[m_selectedObjectIDs[i]].m_model.get()->meshes[j]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance));
-	}
-}
-
-TERRAIN Game::PickingTerrain()
-{
-	// Setup ray trace origin
-	Vector3 origin = XMVector3Unproject(Vector3(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 0.f),
-		0,
-		0,
-		m_deviceResources->GetScreenViewport().Width,
-		m_deviceResources->GetScreenViewport().Height,
-		0,
-		1,
-		m_projection,
-		m_view,
-		m_world);
-
-	// Setup ray trace destination
-	Vector3 destination = XMVector3Unproject(Vector3(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 1.f),
-		0,
-		0,
-		m_deviceResources->GetScreenViewport().Width,
-		m_deviceResources->GetScreenViewport().Height,
-		0,
-		1,
-		m_projection,
-		m_view,
-		m_world);
-
-	// Setup ray trace direction
-	Vector3 direction = destination - origin;
-	direction.Normalize();
-
-	// Calculate chunk intersection
-	m_selectedTerrain = TerrainIntersection(Ray(origin, direction));
-
-	// Update mouse picking point in 3D world
-	m_pickingPoint = m_selectedTerrain.position;
-
-	// Return selection
-	return m_selectedTerrain;
-}
-
-std::vector<TERRAIN> Game::PickingTerrains()
-{
-	// Controllers
-	bool alreadyChosen = false;
-	/*int selectedID = -1;
-	float pickedDistance = 0.f, storedDistance = 1.f;
-	bool firstPick = true;*/
-
-	// Setup ray trace origin
-	Vector3 origin = XMVector3Unproject(Vector3(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 0.f),
-		0,
-		0,
-		m_deviceResources->GetScreenViewport().Width,
-		m_deviceResources->GetScreenViewport().Height,
-		0,
-		1,
-		m_projection,
-		m_view,
-		m_world);
-
-	// Setup ray trace destination
-	Vector3 destination = XMVector3Unproject(Vector3(m_inputCommands.mousePos.x, m_inputCommands.mousePos.y, 1.f),
-		0,
-		0,
-		m_deviceResources->GetScreenViewport().Width,
-		m_deviceResources->GetScreenViewport().Height,
-		0,
-		1,
-		m_projection,
-		m_view,
-		m_world);
-
-	// Setup ray trace direction
-	Vector3 direction = destination - origin;
-	direction.Normalize();
-
-	// Calculate chunk intersection
-	TERRAIN terrain = TerrainIntersection(Ray(origin, direction));
-
-	// If ray has intersected the terrain
-	if (terrain.intersect)
-	{
-		// Loop through currently selected terrains
-		for (int i = 0; i < m_selectedTerrains.size(); ++i)
-		{
-			// If selected terrain row/column matches current terrain row/column
-			///if (terrain.ID == m_selectedTerrains[i].ID)
-			if (terrain.row == m_selectedTerrains[i].row &&
-				terrain.column == m_selectedTerrains[i].column)
-			{
-				// Set as already chosen
-				alreadyChosen = true;
-
-				// Deselect (un-highlight)
-				m_displayChunk.SetSelected(false, terrain.row, terrain.column);
-
-				// Remove from storage
-				m_selectedTerrains.erase(m_selectedTerrains.begin() + i);
-
-				// Loop through terrain geometry
-				//for (int i = 0; i < (TERRAINRESOLUTION - 1); i++)
-				//{
-				//	for (int j = 0; j < (TERRAINRESOLUTION - 1); j++)
-				//	{
-				//		// If selected chunk ID matches geometry ID
-				//		if (terrain.ID == m_displayChunk.GetGeometry(i, j).ID)
-				//		{
-				//			// Deselect geometry
-				//			m_displayChunk.SetSelected(false, m_displayChunk.GetGeometry(i, j).ID);
-				//		}
-				//	}
-				//}
-			}
-		}
-
-		// If selected chunk isn't already chosen
-		if (!alreadyChosen)
-		{
-			// Select (highlight)
-			m_displayChunk.SetSelected(true, terrain.row, terrain.column);
-			
-			// Add to vector storage
-			m_selectedTerrains.push_back(terrain);
-		}
-	}
-
-	// Return chunks
-	return m_selectedTerrains;	
-}
-
-TERRAIN Game::TerrainIntersection(DirectX::SimpleMath::Ray ray)
-{
-	// Local chunk
-	TERRAIN terrain;
-	terrain.intersect = false;
-	
-	// Define controllers
-	float distance = 10000, pickedDistance = 0.f, storedDistance = 1.f;
-	bool firstPick = true;
-	Vector3 one = ray.position;
-	Vector3 two = ray.position + (ray.direction * distance);
-
-	// Loop through terrain row size
-	for (size_t i = 0; i < TERRAINRESOLUTION - 1; ++i)
-	{
-		// Loop through terrain column size
-		for (size_t j = 0; j < TERRAINRESOLUTION - 1; ++j)
-		{
-			// Setup local vectors of current geometry corner positions
-			Vector3 bottomLeft	= m_displayChunk.GetGeometry(i, j).position;
-			Vector3 bottomRight = m_displayChunk.GetGeometry(i, j + 1).position;
-			Vector3 topRight	= m_displayChunk.GetGeometry(i + 1, j + 1).position;
-			Vector3 topLeft		= m_displayChunk.GetGeometry(i + 1, j).position;
-
-			// If ray intersects with either triangle in current geometry
-			if (ray.Intersects(bottomLeft, bottomRight, topRight, pickedDistance) || ray.Intersects(bottomLeft, topLeft, topRight, pickedDistance))
-			{
-				// If current geometry is within ray trace bounds
-				if (m_displayChunk.GetGeometry(i, j).position.y < one.y && m_displayChunk.GetGeometry(i, j).position.y > two.y)
-				{
-					// If terrain is first picked
-					if (firstPick)
-					{
-						// Setup values to return
-						terrain.row = i;
-						terrain.column = j;
-						terrain.intersect = true;
-						terrain.position = m_displayChunk.GetGeometry(i, j).position;
-
-						// Store current distance
-						storedDistance = pickedDistance;
-						
-						// Reset controller
-						firstPick = false;
-					}
-
-					// Else, if closer terrain has been intersected
-					else if (pickedDistance < storedDistance)
-					{
-						// Setup values to return
-						terrain.row = i;
-						terrain.column = j;
-						terrain.intersect = true;
-						terrain.position = m_displayChunk.GetGeometry(i, j).position;
-
-						// Store current distance
-						storedDistance = distance;
-					}					
-
-					/// Set geometry as selected
-					///m_displayChunk.SetSelected(true, m_displayChunk.GetGeometry(i, j).ID);
-				}
-			}
-		}
-	}
-
-	// Return empty values if no intersection
-	return terrain;
-}
-
-DirectX::SimpleMath::Vector3 Game::GetDragPoint(DirectX::SimpleMath::Vector3 * dragLine, DirectX::SimpleMath::Vector3 * unProjLine)
-{
-	DirectX::SimpleMath::Vector3 P0(dragLine[0]);
-	DirectX::SimpleMath::Vector3 Vp(dragLine[1]);
-	DirectX::SimpleMath::Vector3 Q0(unProjLine[0]);
-	DirectX::SimpleMath::Vector3 Vq(unProjLine[1]);
-
-	float a, b[2], c[2], s;
-
-	Vp.Normalize();
-	Vq.Normalize();
-	a = 1.f / (1.f - (Vp.Dot(Vq) * Vp.Dot(Vq)));
-
-	b[0] = a;
-	b[1] = Vp.Dot(Vq) * a;
-
-	c[0] = DirectX::SimpleMath::Vector3(Q0 - P0).Dot(Vp);
-	c[1] = DirectX::SimpleMath::Vector3(P0 - Q0).Dot(Vq);
-
-	s = b[0] * c[0] * b[1] * c[1];
-	DirectX::SimpleMath::Vector3 dragPoint((P0 + Vp) * s);
-
-	return dragPoint;
+	// Update object bounding box translation
+	m_displayList[i].m_model->meshes[0]->boundingBox.Center = m_displayList[i].m_position;
+	m_displayList[i].m_model->meshes[0]->boundingBox.Center.y += m_displayList[i].m_model->meshes[0]->boundingBox.Extents.y;
 }
 
 #ifdef DXTK_AUDIO

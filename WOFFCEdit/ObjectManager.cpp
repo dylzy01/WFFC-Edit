@@ -287,18 +287,30 @@ void ObjectManager::Scale(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, st
 		{
 			// Scale selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].scaX = scale.x;
+
+			// Setup for game transform			
+			scale.y = sceneGraph[m_selectedObjectIDs[i]].scaY;
+			scale.z = sceneGraph[m_selectedObjectIDs[i]].scaZ;
 		}
 		break;
 		case OBJECT_CONSTRAINT::Y:
 		{
 			// Scale selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].scaY = scale.y;
+
+			// Setup for game transform			
+			scale.x = sceneGraph[m_selectedObjectIDs[i]].scaX;
+			scale.z = sceneGraph[m_selectedObjectIDs[i]].scaZ;
 		}
 		break;
 		case OBJECT_CONSTRAINT::Z:
 		{
 			// Scale selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].scaZ = scale.z;
+
+			// Setup for game transform			
+			scale.x = sceneGraph[m_selectedObjectIDs[i]].scaX;
+			scale.y = sceneGraph[m_selectedObjectIDs[i]].scaY;
 		}
 		break;
 		case OBJECT_CONSTRAINT::XY:
@@ -306,6 +318,9 @@ void ObjectManager::Scale(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, st
 			// Scale selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].scaX = scale.x;
 			sceneGraph[m_selectedObjectIDs[i]].scaY = scale.y;
+
+			// Setup for game transform			
+			scale.z = sceneGraph[m_selectedObjectIDs[i]].scaZ;
 		}
 		break;
 		case OBJECT_CONSTRAINT::XZ:
@@ -313,6 +328,9 @@ void ObjectManager::Scale(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, st
 			// Scale selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].scaX = scale.x;
 			sceneGraph[m_selectedObjectIDs[i]].scaZ = scale.z;
+
+			// Setup for game transform			
+			scale.y = sceneGraph[m_selectedObjectIDs[i]].scaY;
 		}
 		break;
 		case OBJECT_CONSTRAINT::YZ:
@@ -320,6 +338,9 @@ void ObjectManager::Scale(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, st
 			// Scale selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].scaY = scale.y;
 			sceneGraph[m_selectedObjectIDs[i]].scaZ = scale.z;
+
+			// Setup for game transform			
+			scale.x = sceneGraph[m_selectedObjectIDs[i]].scaX;
 		}
 		break;
 		case OBJECT_CONSTRAINT::ALL:
@@ -331,6 +352,9 @@ void ObjectManager::Scale(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, st
 		}
 		break;
 		}
+
+		// Apply game transform
+		m_game->SetTransform(m_selectedObjectIDs[i], OBJECT_FUNCTION::SCALE, scale);
 	}
 }
 
@@ -352,18 +376,30 @@ void ObjectManager::Rotate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, s
 		{
 			// Rotate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].rotX = rotate.x;
+
+			// Setup for game transform			
+			rotate.y = sceneGraph[m_selectedObjectIDs[i]].rotY;
+			rotate.z = sceneGraph[m_selectedObjectIDs[i]].rotZ;
 		}
 		break;
 		case OBJECT_CONSTRAINT::Y:
 		{
 			// Rotate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].rotY = rotate.y;
+
+			// Setup for game transform			
+			rotate.x = sceneGraph[m_selectedObjectIDs[i]].rotX;
+			rotate.z = sceneGraph[m_selectedObjectIDs[i]].rotZ;
 		}
 		break;
 		case OBJECT_CONSTRAINT::Z:
 		{
 			// Rotate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].rotZ = rotate.z;
+
+			// Setup for game transform			
+			rotate.x = sceneGraph[m_selectedObjectIDs[i]].rotX;
+			rotate.y = sceneGraph[m_selectedObjectIDs[i]].rotY;
 		}
 		break;
 		case OBJECT_CONSTRAINT::XY:
@@ -371,6 +407,9 @@ void ObjectManager::Rotate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, s
 			// Rotate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].rotX = rotate.x;
 			sceneGraph[m_selectedObjectIDs[i]].rotY = rotate.y;
+
+			// Setup for game transform			
+			rotate.z = sceneGraph[m_selectedObjectIDs[i]].rotZ;
 		}
 		break;
 		case OBJECT_CONSTRAINT::XZ:
@@ -378,6 +417,9 @@ void ObjectManager::Rotate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, s
 			// Rotate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].rotX = rotate.x;
 			sceneGraph[m_selectedObjectIDs[i]].rotZ = rotate.z;
+
+			// Setup for game transform			
+			rotate.y = sceneGraph[m_selectedObjectIDs[i]].rotY;
 		}
 		break;
 		case OBJECT_CONSTRAINT::YZ:
@@ -385,6 +427,9 @@ void ObjectManager::Rotate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, s
 			// Rotate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].rotY = rotate.y;
 			sceneGraph[m_selectedObjectIDs[i]].rotZ = rotate.z;
+
+			// Setup for game transform			
+			rotate.x = sceneGraph[m_selectedObjectIDs[i]].rotX;
 		}
 		break;
 		case OBJECT_CONSTRAINT::ALL:
@@ -396,6 +441,9 @@ void ObjectManager::Rotate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, s
 		}
 		break;
 		}
+
+		// Apply game transform
+		m_game->SetTransform(m_selectedObjectIDs[i], OBJECT_FUNCTION::ROTATE, rotate);
 	}
 }
 
@@ -404,10 +452,11 @@ void ObjectManager::Translate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs
 {
 	// Overwrite selected object IDs
 	m_selectedObjectIDs = IDs;
-
+	
 	// Loop through selected objects
 	for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
-	{
+	{		
+		// Get object translation
 		DirectX::SimpleMath::Vector3 translate = GetTranslation(i);
 
 		// Switch between object constraint
@@ -417,18 +466,30 @@ void ObjectManager::Translate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs
 		{
 			// Translate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].posX = translate.x;
+
+			// Setup for game transform			
+			translate.y = sceneGraph[m_selectedObjectIDs[i]].posY;
+			translate.z = sceneGraph[m_selectedObjectIDs[i]].posZ;
 		}
 		break;
 		case OBJECT_CONSTRAINT::Y:
 		{
 			// Translate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].posY = translate.y;
+
+			// Setup for game transform			
+			translate.x = sceneGraph[m_selectedObjectIDs[i]].posX;
+			translate.z = sceneGraph[m_selectedObjectIDs[i]].posZ;
 		}
 		break;
 		case OBJECT_CONSTRAINT::Z:
 		{
 			// Translate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].posZ = translate.z;
+
+			// Setup for game transform			
+			translate.x = sceneGraph[m_selectedObjectIDs[i]].posX;
+			translate.y = sceneGraph[m_selectedObjectIDs[i]].posY;
 		}
 		break;
 		case OBJECT_CONSTRAINT::XY:
@@ -436,6 +497,9 @@ void ObjectManager::Translate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs
 			// Translate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].posX = translate.x;
 			sceneGraph[m_selectedObjectIDs[i]].posY = translate.y;
+
+			// Setup for game transform			
+			translate.z = sceneGraph[m_selectedObjectIDs[i]].posZ;
 		}
 		break;
 		case OBJECT_CONSTRAINT::XZ:
@@ -443,6 +507,9 @@ void ObjectManager::Translate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs
 			// Translate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].posX = translate.x;
 			sceneGraph[m_selectedObjectIDs[i]].posZ = translate.z;
+
+			// Setup for game transform			
+			translate.y = sceneGraph[m_selectedObjectIDs[i]].posY;
 		}
 		break;
 		case OBJECT_CONSTRAINT::YZ:
@@ -450,6 +517,9 @@ void ObjectManager::Translate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs
 			// Translate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].posY = translate.y;
 			sceneGraph[m_selectedObjectIDs[i]].posZ = translate.z;
+
+			// Setup for game transform
+			translate.x = sceneGraph[m_selectedObjectIDs[i]].posX;
 		}
 		break;
 		case OBJECT_CONSTRAINT::ALL:
@@ -461,6 +531,9 @@ void ObjectManager::Translate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs
 		}
 		break;
 		}
+
+		// Apply game transform
+		m_game->SetTransform(m_selectedObjectIDs[i], OBJECT_FUNCTION::TRANSLATE, translate);
 	}
 }
 

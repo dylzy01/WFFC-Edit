@@ -125,6 +125,8 @@ public:	//variables
 
 private:	//methods
 	void	onContentAdded();
+
+	void	SaveDisplayList(std::vector<DisplayObject> displayList);
 		
 private:	//variables
 	HWND	m_toolHandle;					//Handle to the  window

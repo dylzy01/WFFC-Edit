@@ -51,6 +51,6 @@ private:
 	static Game * m_game;
 	static InputCommands * m_input;
 	static std::vector<int> m_selectedObjectIDs;
-	static std::vector<DirectX::SimpleMath::Vector3> m_storedObjectScales, m_storedObjectTranslations, m_storedObjectRotations;
+	static std::vector<DirectX::SimpleMath::Vector3> m_storedObjectScales, m_storedObjectTranslations, m_storedObjectRotations;	
 };
 

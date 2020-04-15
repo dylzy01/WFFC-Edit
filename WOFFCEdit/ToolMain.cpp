@@ -444,9 +444,9 @@ void ToolMain::Tick(MSG *msg)
 				{
 					// Scale selected objects
 					ObjectManager::Transform(m_objectFunction, m_objectConstraint, m_selectedObjectIDs, m_sceneGraph);
-
+					
 					// Update scene graph
-					m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+					///m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
 
 					// REPLACE OBJECTS RATHER THAN REBUILDING ENTIRE DISPLAY LIST
 					///m_d3dRenderer.ReplaceObjects(m_selectedObjectIDs, &m_sceneGraph);
@@ -538,6 +538,8 @@ void ToolMain::UpdateInput(MSG * msg)
 		m_rDown = m_toolInputCommands.mouseRight = m_toolInputCommands.mouseDrag = false;
 		LandscapeManager::StorePosition(true);
 		SceneManager::SetSceneGraph(&m_sceneGraph);
+		///SaveDisplayList(m_d3dRenderer.GetDisplayList());
+		m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
 		break;
 
 	case WM_MBUTTONDOWN:
@@ -582,4 +584,29 @@ void ToolMain::UpdateInput(MSG * msg)
 	// CTRL key to delete objects rather than spawning
 	if (m_keyArray[(int)VK_CONTROL]) { m_toolInputCommands.CTRL = true; }
 	else { m_toolInputCommands.CTRL = false; }
+}
+
+void ToolMain::SaveDisplayList(std::vector<DisplayObject> displayList)
+{
+	// Loop through display list
+	for (int i = 0; i < displayList.size(); ++i)
+	{
+		// Update scene graph positions
+		m_sceneGraph[i].posX = displayList[i].m_position.x;
+		m_sceneGraph[i].posY = displayList[i].m_position.y;
+		m_sceneGraph[i].posZ = displayList[i].m_position.z;
+
+		// Update scene graph rotations
+		m_sceneGraph[i].rotX = displayList[i].m_orientation.x;
+		m_sceneGraph[i].rotY = displayList[i].m_orientation.y;
+		m_sceneGraph[i].rotZ = displayList[i].m_orientation.z;
+
+		// Update scene graph scales
+		m_sceneGraph[i].scaX = displayList[i].m_scale.x;
+		m_sceneGraph[i].scaY = displayList[i].m_scale.y;
+		m_sceneGraph[i].scaZ = displayList[i].m_scale.z;
+	}
+
+	// Build new display list
+	m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
 }

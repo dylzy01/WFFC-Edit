@@ -60,20 +60,7 @@ public:
 	void ReplaceObjects(std::vector<int> IDs, std::vector<SceneObject> * sceneGraph);
 	void SaveDisplayChunk();	//saves geometry et al
 	void ClearDisplayList();
-	void DeleteSelectedObjects();
-	void SaveDisplayList();
-
-	// Mouse picking
-	DirectX::SimpleMath::Ray RayTrace(DirectX::SimpleMath::Vector2 position);
-	void MousePicking(int i = -1);
-	int PickObject(DirectX::SimpleMath::Vector2 position);
-	std::vector<int> PickObjects(bool select);
-	bool ObjectIntersection(int i);
-	TERRAIN PickingTerrain();
-	std::vector<TERRAIN> PickingTerrains();
-	TERRAIN TerrainIntersection(DirectX::SimpleMath::Ray ray);	
-
-	void DrawBounds(DisplayObject object);
+	void SaveDisplayList();	
 
 	// Getters
 	std::shared_ptr<DX::DeviceResources> GetDeviceResources() { return m_deviceResources; }
@@ -83,12 +70,13 @@ public:
 	DisplayChunk* GetDisplayChunk() { return &m_displayChunk; }	
 	EDITOR GetEditor() { return m_editor; }
 	OBJECT_FUNCTION GetObjectFunction() { return m_objectFunction; }
-	DirectX::SimpleMath::Vector3 GetDragPoint(DirectX::SimpleMath::Vector3* dragLine, DirectX::SimpleMath::Vector3* unProjLine);
 	RECT GetScreenDimensions() { return m_screenDimensions; }
 
 	// Setters
 	void SetWireframe(bool wireframe) { m_wireframe = wireframe; }
 	void SetSelectedObjectIDs(std::vector<int> selectedObjectIDs) { m_selectedObjectIDs = selectedObjectIDs; }
+	void SetDisplayList(DisplayObject object, int i) { m_displayList[i] = object; }
+	void SetTransform(int i, OBJECT_FUNCTION function, DirectX::SimpleMath::Vector3 vector);
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
@@ -104,12 +92,7 @@ private:
 	void CreateWindowSizeDependentResources();
 
 	void XM_CALLCONV DrawGrid(DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
-	void DrawAxis(DisplayObject object, int ID);	
-
-	// Getters for object manipulation
-	DirectX::SimpleMath::Vector3 GetScale(int ID);
-	DirectX::SimpleMath::Vector3 GetTranslation(int ID);
-	DirectX::SimpleMath::Vector3 GetRotation(int ID);
+	void DrawDebug(int i);
 
 	// frame time
 	float								m_deltaTime;
@@ -186,10 +169,6 @@ private:
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>>  m_batch;
     std::unique_ptr<DirectX::SpriteBatch>                                   m_sprites;
     std::unique_ptr<DirectX::SpriteFont>                                    m_font;
-
-	// Axes
-	///std::vector<Ray> m_xRays, m_yRays, m_zRays;
-	std::vector<DirectX::SimpleMath::Vector3> m_xAxes, m_yAxes, m_zAxes;
 
 	// Window
 	HWND m_window;
