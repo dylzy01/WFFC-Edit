@@ -185,7 +185,7 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 
 // Remove an object from scene graph & database
 void ObjectManager::Remove(std::vector<int> & IDs, std::vector<SceneObject> & sceneGraph, int ID)
-{
+{	
 	// If ID has been specified
 	if (ID != -1)
 	{
@@ -201,9 +201,11 @@ void ObjectManager::Remove(std::vector<int> & IDs, std::vector<SceneObject> & sc
 		for (int i = 0; i < IDs.size(); ++i)
 		{
 			// Remove objects from database
-			SQLManager::RemoveObject(sceneGraph[IDs[i]]);
-			IDs.erase(IDs.begin() + i);
-		}
+			SQLManager::RemoveObject(sceneGraph[IDs[i]]);		
+		}	
+
+		// Clear all selected object IDs
+		IDs.clear();
 	}
 
 	// Clear old scene graph
@@ -241,15 +243,16 @@ void ObjectManager::Store(std::vector<int> IDs)
 	m_storedObjectScales.clear();
 	m_storedObjectRotations.clear();
 	m_storedObjectTranslations.clear();
-	m_selectedObjectIDs.clear();
+
+	// Overwrite selected object IDs
+	m_selectedObjectIDs = IDs;
 
 	// Loop through selected objects
-	for (int i = 0; i < IDs.size(); ++i)
+	for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
 	{
 		// If selected ID isn't -1
-		if (IDs[i] != -1)
+		if (m_selectedObjectIDs[i] != -1)
 		{
-			m_selectedObjectIDs.push_back(IDs[i]);
 			// Add selected object details to storage
 			m_storedObjectScales.push_back(m_game->GetDisplayList()[m_selectedObjectIDs[i]].m_scale);
 			m_storedObjectRotations.push_back(m_game->GetDisplayList()[m_selectedObjectIDs[i]].m_orientation);

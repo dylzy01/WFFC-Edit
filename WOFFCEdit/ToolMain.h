@@ -34,6 +34,9 @@ public: //methods
 	void	Tick(MSG *msg);
 	void	UpdateInput(MSG *msg);
 
+	// Helpers
+	void ClearSelected() { m_selectedObjectIDs.clear(); m_d3dRenderer.SetSelectedObjectIDs(m_selectedObjectIDs); }
+
 	// Getters
 	EDITOR GetEditor() { return m_d3dRenderer.GetEditor(); } //return current editor
 

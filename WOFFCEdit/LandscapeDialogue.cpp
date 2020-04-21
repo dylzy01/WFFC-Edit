@@ -139,6 +139,7 @@ END_MESSAGE_MAP()
 void LandscapeDialogue::End()
 {
 	m_active = false;
+	OnBnClickedOk();
 	DestroyWindow();
 }
 

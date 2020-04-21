@@ -101,13 +101,15 @@ END_MESSAGE_MAP()
 // Kill the dialogue
 void TerrainSculptDialogue::End()
 {
+	OnBnClickedOk();
 	DestroyWindow();
 }
 
 // Set sculpt to none & de-activate
 void TerrainSculptDialogue::OnBnClickedOk() 
 { 
-	m_active = m_x = m_y = m_z = false;
+	m_active = false;
+	ResetConstraints();
 	UpdateButtons(true);
 	CDialogEx::OnOK();
 }

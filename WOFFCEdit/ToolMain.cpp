@@ -438,7 +438,7 @@ void ToolMain::Tick(MSG *msg)
 					else if (m_toolInputCommands.CTRL)
 					{
 						// Deselect multiple objects
-						MouseManager::PickMultipleObjects(m_selectedObjectIDs, false);						
+						MouseManager::PickMultipleObjects(m_selectedObjectIDs, false);			
 					}
 
 					// Else, if not

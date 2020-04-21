@@ -264,6 +264,9 @@ void MFCMain::CheckDialogues()
 		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
 		m_toolSystem.SetLandscapeSculpt(LANDSCAPE_FUNCTION::NA);
 		m_toolSystem.SetLandscapePaint(LANDSCAPE_PAINT::NA);
+
+		// Deselect all objects
+		m_toolSystem.ClearSelected();
 	}
 }
 

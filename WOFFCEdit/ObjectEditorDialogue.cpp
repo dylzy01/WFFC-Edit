@@ -163,14 +163,16 @@ END_MESSAGE_MAP()
 // Kill the dialogue
 void ObjectEditorDialogue::End()
 {
+	OnBnClickedOk();
 	DestroyWindow();
 }
 
 // Set function to none & de-activate
 void ObjectEditorDialogue::OnBnClickedOk()
 {
-	m_active = m_x = m_y = m_z = false;
+	m_active = false;
 	m_function = OBJECT_FUNCTION::NA;
+	ResetConstraints();
 	UpdateButtons(false);
 	CDialogEx::OnOK();
 }

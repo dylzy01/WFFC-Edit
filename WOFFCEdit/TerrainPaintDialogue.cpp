@@ -171,6 +171,7 @@ END_MESSAGE_MAP()
 // Kill the dialogue
 void TerrainPaintDialogue::End()
 {
+	OnBnClickedOk();
 	DestroyWindow();
 }
 

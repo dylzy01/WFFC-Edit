@@ -497,6 +497,7 @@ END_MESSAGE_MAP()
 // Kill the dialogue
 void ObjectSpawnDialogue::End()
 {
+	OnBnClickedOk();
 	DestroyWindow();
 }
 

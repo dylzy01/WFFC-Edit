@@ -320,7 +320,7 @@ void Game::Render()
 			if (m_selectedObjectIDs[i] != -1)
 			{
 				// Draw bounding box & local axes
-				///DrawDebug(m_selectedObjectIDs[i]);
+				DrawDebug(m_selectedObjectIDs[i]);
 			}
 		}
 	}

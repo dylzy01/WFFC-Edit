@@ -10,6 +10,7 @@ MOUSE PICKING
 - Can deselect objects
 - Can delete objects
 - DebugDraw bounding box
+- Can cut, copy and paste
 
 TERRAIN
 - Can increase x,y,z positions
@@ -46,4 +47,4 @@ SAVE
 - Can undo/redo
 
 Tools
-- Get ProjViewWorld returns all camera matrices??
+- Get ProjViewWorld returns all camera matrices
