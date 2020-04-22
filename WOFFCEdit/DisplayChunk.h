@@ -18,7 +18,7 @@ public:
 	void SaveHeightMap();			//saves the heightmap back to file.
 	void UpdateTerrain();			//updates the geometry based on the heightmap
 	void GenerateHeightmap();		//creates or alters the heightmap
-	std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionNormalTexture>>  m_batch;
+	std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionNormalTexture>>  m_batchBasic;
 	std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionDualTexture>>  m_batchBlend;
 	std::unique_ptr<DirectX::BasicEffect>		m_effectBasic;
 	std::unique_ptr<DirectX::DualTextureEffect>	m_effectBlend;
@@ -29,33 +29,49 @@ public:
 	ID3D11ShaderResourceView *					m_texture_splat_3;				//sand texture
 	ID3D11ShaderResourceView *					m_texture_splat_4;				//stone texture
 	ID3D11ShaderResourceView *					m_texture_splat_5;				//snow texture
+
+	ID3D11ShaderResourceView *					m_texture_blend_1;				//grass/dirt texture
+	ID3D11ShaderResourceView *					m_texture_blend_2;				//grass/sand texture
+	ID3D11ShaderResourceView *					m_texture_blend_3;				//grass/stone texture
+	ID3D11ShaderResourceView *					m_texture_blend_4;				//grass/snow texture
+	ID3D11ShaderResourceView *					m_texture_blend_5;				//dirt/sand texture
+	ID3D11ShaderResourceView *					m_texture_blend_6;				//dirt/stone texture
+	ID3D11ShaderResourceView *					m_texture_blend_7;				//dirt/snow texture
+	ID3D11ShaderResourceView *					m_texture_blend_8;				//sand/stone texture
+	ID3D11ShaderResourceView *					m_texture_blend_9;				//sand/snow texture
+	ID3D11ShaderResourceView *					m_texture_blend_10;				//stone/snow texture
+
 	ID3D11ShaderResourceView *					m_texture_highlight;			//highlight texture
 	ID3D11ShaderResourceView *					m_normalMap;					//normal map texture
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>   m_terrainInputLayout;
 
-	DirectX::VertexPositionNormalTexture GetGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
-	///DirectX::VertexPositionDualTexture GetGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
+	DirectX::VertexPositionNormalTexture GetGeometryBasic(int row, int column) { return m_terrainGeometryBasic[row][column]; }
+	DirectX::VertexPositionDualTexture GetGeometryBlend(int row, int column) { return m_terrainGeometryBlend[row][column]; }
 	void PaintTerrain(int row, int column, LANDSCAPE_PAINT paint, bool checkSurroundings = false);
 	void SculptTerrain(int row, int column, LANDSCAPE_FUNCTION function, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position = { { 0,0,0 } });
 	
 	void SetSelected(bool selected, int row, int column);
-	void DrawTerrain(std::vector<std::pair<int, int>> terrain);
+	void DrawTerrainBasic(std::vector<std::pair<int, int>> terrain);
+	void DrawTerrainBlend(std::vector<std::pair<int, int>> terrain);
 
 	ChunkObject GetChunk();
 
 private:
-	DirectX::VertexPositionNormalTexture m_terrainGeometry[TERRAINRESOLUTION][TERRAINRESOLUTION];
-	///DirectX::VertexPositionDualTexture m_terrainGeometry[TERRAINRESOLUTION][TERRAINRESOLUTION];
+	DirectX::VertexPositionNormalTexture m_terrainGeometryBasic[TERRAINRESOLUTION][TERRAINRESOLUTION];
+	DirectX::VertexPositionDualTexture m_terrainGeometryBlend[TERRAINRESOLUTION][TERRAINRESOLUTION];
 	BYTE m_heightMap[TERRAINRESOLUTION*TERRAINRESOLUTION];
 	void CalculateTerrainNormals();
 	bool Search(int &index, std::vector<std::pair<int, int>> &vector, std::pair<int, int> terrain);
 	bool FindInVector(int &index, std::vector<std::pair<int, int>> vector, std::pair<int, int> terrain);
-	void CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint = LANDSCAPE_PAINT::NA);
+	LANDSCAPE_PAINT CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint = LANDSCAPE_PAINT::NA);
 	void CheckSurroundings(int row, int column, LANDSCAPE_PAINT paint);
 	LANDSCAPE_PAINT CheckPaint(int row, int column);
-	void SavePaints(std::string path, std::vector<std::pair<int, int>> vector);
+	void SavePaint(std::string path, std::vector<std::pair<int, int>> vector);
 	void ReadPaints(std::string path, std::vector<std::pair<int, int>> &vector);
 	void ReadAllPaints();
+	void SaveAllPaints();
+
+	void DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResources);
 
 	float	m_terrainHeightScale;
 	int		m_terrainSize;				//size of terrain in metres

@@ -179,8 +179,8 @@ void Game::UpdateCamera()
 	m_batchEffect->SetWorld(Matrix::Identity);
 	m_displayChunk.m_effectBasic->SetView(m_view);
 	m_displayChunk.m_effectBasic->SetWorld(Matrix::Identity);
-	m_displayChunk.m_effectBlend->SetView(m_view);
-	m_displayChunk.m_effectBlend->SetWorld(Matrix::Identity);
+	///m_displayChunk.m_effectBlend->SetView(m_view);
+	///m_displayChunk.m_effectBlend->SetWorld(Matrix::Identity);
 }
 
 // Updates the waves of all water objects
@@ -595,7 +595,7 @@ void Game::BuildDisplayChunk(ChunkObject * SceneChunk, std::vector<DirectX::Simp
 	m_displayChunk.PopulateChunkData(SceneChunk);		//migrate chunk data
 	m_displayChunk.LoadHeightMap(m_deviceResources);
 	m_displayChunk.m_effectBasic->SetProjection(m_projection);
-	m_displayChunk.m_effectBlend->SetProjection(m_projection);
+	///m_displayChunk.m_effectBlend->SetProjection(m_projection);
 	m_displayChunk.InitialiseBatch();
 }
 

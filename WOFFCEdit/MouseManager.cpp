@@ -201,16 +201,16 @@ TERRAIN MouseManager::TerrainIntersection(DirectX::SimpleMath::Ray ray)
 		for (int j = 0; j < TERRAINRESOLUTION - 1; ++j)
 		{
 			// Setup local vectors of current geometry corner positions
-			DirectX::SimpleMath::Vector3 bottomLeft = m_game->GetDisplayChunk()->GetGeometry(i, j).position;
-			DirectX::SimpleMath::Vector3 bottomRight = m_game->GetDisplayChunk()->GetGeometry(i, j + 1).position;
-			DirectX::SimpleMath::Vector3 topRight = m_game->GetDisplayChunk()->GetGeometry(i + 1, j + 1).position;
-			DirectX::SimpleMath::Vector3 topLeft = m_game->GetDisplayChunk()->GetGeometry(i + 1, j).position;
+			DirectX::SimpleMath::Vector3 bottomLeft = m_game->GetDisplayChunk()->GetGeometryBasic(i, j).position;
+			DirectX::SimpleMath::Vector3 bottomRight = m_game->GetDisplayChunk()->GetGeometryBasic(i, j + 1).position;
+			DirectX::SimpleMath::Vector3 topRight = m_game->GetDisplayChunk()->GetGeometryBasic(i + 1, j + 1).position;
+			DirectX::SimpleMath::Vector3 topLeft = m_game->GetDisplayChunk()->GetGeometryBasic(i + 1, j).position;
 
 			// If ray intersects with either triangle in current geometry
 			if (ray.Intersects(bottomLeft, bottomRight, topRight, distance) || ray.Intersects(bottomLeft, topLeft, topRight, distance))
 			{
 				// If current geometry is within ray trace bounds
-				if (m_game->GetDisplayChunk()->GetGeometry(i, j).position.y < one.y && m_game->GetDisplayChunk()->GetGeometry(i, j).position.y > two.y)
+				if (m_game->GetDisplayChunk()->GetGeometryBasic(i, j).position.y < one.y && m_game->GetDisplayChunk()->GetGeometryBasic(i, j).position.y > two.y)
 				///if (chunk->GetGeometry(i, j).position.y < one.y && chunk->GetGeometry(i, j).position.y > two.y)
 				{
 					// If terrain is first picked
@@ -220,7 +220,7 @@ TERRAIN MouseManager::TerrainIntersection(DirectX::SimpleMath::Ray ray)
 						terrain.row = i;
 						terrain.column = j;
 						terrain.intersect = true;
-						terrain.position = m_game->GetDisplayChunk()->GetGeometry(i, j).position;
+						terrain.position = m_game->GetDisplayChunk()->GetGeometryBasic(i, j).position;
 
 						// Store current distance
 						storedDistance = pickedDistance;
@@ -236,7 +236,7 @@ TERRAIN MouseManager::TerrainIntersection(DirectX::SimpleMath::Ray ray)
 						terrain.row = i;
 						terrain.column = j;
 						terrain.intersect = true;
-						terrain.position = m_game->GetDisplayChunk()->GetGeometry(i, j).position;
+						terrain.position = m_game->GetDisplayChunk()->GetGeometryBasic(i, j).position;
 
 						// Store current distance
 						storedDistance = distance;

@@ -48,69 +48,81 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 
 	// Draw all grass geometry
 	if (m_grass.size() != 0) {
-		m_batch->Begin();
+		m_batchBasic->Begin();
 		m_effectBasic->SetTexture(m_texture_splat_1);
 		m_effectBasic->Apply(context);
 		/*m_effectBlend->SetTexture(m_texture_splat_1);
 		m_effectBlend->SetTexture2(m_texture_splat_2);
 		m_effectBlend->Apply(context);*/
-		DrawTerrain(m_grass);
-		m_batch->End();
+		DrawTerrainBasic(m_grass);
+		m_batchBasic->End();
 	}
 
 	// Draw all dirt geometry
 	if (m_dirt.size() != 0) {
-		m_batch->Begin();
+		m_batchBasic->Begin();
 		m_effectBasic->SetTexture(m_texture_splat_2);
 		m_effectBasic->Apply(context);
-		DrawTerrain(m_dirt);
-		m_batch->End();
+		DrawTerrainBasic(m_dirt);
+		m_batchBasic->End();
 	}
 
 	// Draw all sand geometry
 	if (m_sand.size() != 0)	{
-		m_batch->Begin();
+		m_batchBasic->Begin();
 		m_effectBasic->SetTexture(m_texture_splat_3);
 		m_effectBasic->Apply(context);
-		DrawTerrain(m_sand);
-		m_batch->End();
+		DrawTerrainBasic(m_sand);
+		m_batchBasic->End();
 	}
 
 	// Draw all stone geometry
 	if (m_stone.size() != 0) {
-		m_batch->Begin();
+		m_batchBasic->Begin();
 		m_effectBasic->SetTexture(m_texture_splat_4);
 		m_effectBasic->Apply(context);
-		DrawTerrain(m_stone);
-		m_batch->End();
+		DrawTerrainBasic(m_stone);
+		m_batchBasic->End();
 	}
 
 	// Draw all snow geometry
 	if (m_snow.size() != 0) {
-		m_batch->Begin();
+		m_batchBasic->Begin();
 		m_effectBasic->SetTexture(m_texture_splat_5);
 		m_effectBasic->Apply(context);
-		DrawTerrain(m_snow);
-		m_batch->End();
+		DrawTerrainBasic(m_snow);
+		m_batchBasic->End();
+	}
+
+	// Draw all grass/dirt geometry
+	if (m_grassDirt.size() != 0) {
+		m_batchBasic->Begin();
+		m_effectBasic->SetTexture(m_texture_blend_1);
+		m_effectBasic->Apply(context);
+		DrawTerrainBasic(m_grassDirt);
+		m_batchBasic->End();
 	}
 	
 	// Draw all highlighted geometry
 	if (m_highlight.size() != 0) {
-		m_batch->Begin();
+		m_batchBasic->Begin();
 		m_effectBasic->SetTexture(m_texture_highlight);
 		m_effectBasic->Apply(context);
-		DrawTerrain(m_highlight);
-		m_batch->End();
+		DrawTerrainBasic(m_highlight);
+		m_batchBasic->End();
 	}
 
 	// Draw all default geometry
 	if (m_default.size() != 0) {
-		m_batch->Begin();
+		m_batchBasic->Begin();
 		m_effectBasic->SetTexture(m_texture_default);
 		m_effectBasic->Apply(context);
-		DrawTerrain(m_default);	
-		m_batch->End();
+		DrawTerrainBasic(m_default);	
+		m_batchBasic->End();
 	}
+
+	// Draw all blended geometry
+	///DrawBlends(deviceResources);
 }
 
 void DisplayChunk::InitialiseBatch()
@@ -124,9 +136,9 @@ void DisplayChunk::InitialiseBatch()
 		for (size_t j = 0; j < TERRAINRESOLUTION; j++)
 		{
 			index = (TERRAINRESOLUTION * i) + j;
-			m_terrainGeometry[i][j].position =			Vector3(j*m_terrainPositionScalingFactor-(0.5*m_terrainSize), (float)(m_heightMap[index])*m_terrainHeightScale, i*m_terrainPositionScalingFactor-(0.5*m_terrainSize));	//This will create a terrain going from -64->64.  rather than 0->128.  So the center of the terrain is on the origin
-			m_terrainGeometry[i][j].normal =			Vector3(0.0f, 1.0f, 0.0f);						//standard y =up
-			m_terrainGeometry[i][j].textureCoordinate =	Vector2(((float)m_textureCoordStep*j)*m_tex_diffuse_tiling, ((float)m_textureCoordStep*i)*m_tex_diffuse_tiling);				//Spread tex coords so that its distributed evenly across the terrain from 0-1	
+			m_terrainGeometryBasic[i][j].position =			Vector3(j*m_terrainPositionScalingFactor-(0.5*m_terrainSize), (float)(m_heightMap[index])*m_terrainHeightScale, i*m_terrainPositionScalingFactor-(0.5*m_terrainSize));	//This will create a terrain going from -64->64.  rather than 0->128.  So the center of the terrain is on the origin
+			m_terrainGeometryBasic[i][j].normal =			Vector3(0.0f, 1.0f, 0.0f);						//standard y =up
+			m_terrainGeometryBasic[i][j].textureCoordinate =	Vector2(((float)m_textureCoordStep*j)*m_tex_diffuse_tiling, ((float)m_textureCoordStep*i)*m_tex_diffuse_tiling);				//Spread tex coords so that its distributed evenly across the terrain from 0-1	
 			///m_terrainGeometry[i][j].textureCoordinate1 =	Vector2(((float)m_textureCoordStep*j)*m_tex_diffuse_tiling, ((float)m_textureCoordStep*i)*m_tex_diffuse_tiling);				//Spread tex coords so that its distributed evenly across the terrain from 0-1	
 		}
 	}
@@ -134,7 +146,7 @@ void DisplayChunk::InitialiseBatch()
 }
 
 void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResources)
-{
+{	
 	auto device = DevResources->GetD3DDevice();
 	auto deviceContext = DevResources->GetD3DDeviceContext();
 
@@ -195,6 +207,13 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 
+	// Load first blend texture (grass/dirt)
+	std::wstring blend_1 = StringToWCHART("database/data/grassDirt.dds");
+	HRESULT rsb1;
+	rsb1 = CreateDDSTextureFromFile(device, blend_1.c_str(), NULL, &m_texture_blend_1);
+
+	//////////////////////////////////////////////////////////////////////////////////////////
+
 	// Load highlight texture
 	std::wstring highlight = StringToWCHART("database/data/highlight.dds");
 	HRESULT rsH;
@@ -227,26 +246,6 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 
-	// Setup dual texture effect
-	m_effectBlend = std::make_unique<DualTextureEffect>(device);
-	m_effectBlend->SetTexture(m_texture_splat_1);
-	m_effectBlend->SetTexture2(m_texture_splat_2);
-	///m_dualEffect->SetVertexColorEnabled(true);
-
-	/*void const* shaderByteCodeDual;
-	size_t byteCodeLengthDual;
-	m_dualEffect->GetVertexShaderBytecode(&shaderByteCodeDual, &byteCodeLengthDual);
-	DX::ThrowIfFailed(
-		device->CreateInputLayout(VertexPositionNormalTexture::InputElements,
-			VertexPositionNormalTexture::InputElementCount,
-			shaderByteCodeDual,
-			byteCodeLengthDual,
-			m_terrainInputLayout.GetAddressOf())
-	);
-	m_batchDual = std::make_unique<PrimitiveBatch<VertexPositionNormalDualTexture>>(deviceContext);*/
-
-	//////////////////////////////////////////////////////////////////////////////////////////
-
 	// Setup basic terrain effect
 	m_effectBasic = std::make_unique<BasicEffect>(device);
 	m_effectBasic->EnableDefaultLighting();
@@ -254,32 +253,45 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 	m_effectBasic->SetTextureEnabled(true);
 	m_effectBasic->SetTexture(m_texture_default);
 
-	//////////////////////////////////////////////////////////////////////////////////////////
+	void const* shaderByteCodeBasic;
+	size_t byteCodeLengthBasic;
 
-	void const* shaderByteCode;
-	size_t byteCodeLength;
+	m_effectBasic->GetVertexShaderBytecode(&shaderByteCodeBasic, &byteCodeLengthBasic);
 
-	m_effectBasic->GetVertexShaderBytecode(&shaderByteCode, &byteCodeLength);
-	///m_effectBlend->GetVertexShaderBytecode(&shaderByteCode, &byteCodeLength);
-
-	//setup batch
+	//setup basic batch
 	DX::ThrowIfFailed(
 		device->CreateInputLayout(VertexPositionNormalTexture::InputElements,
 			VertexPositionNormalTexture::InputElementCount,
-			shaderByteCode,
-			byteCodeLength,
+			shaderByteCodeBasic,
+			byteCodeLengthBasic,
 			m_terrainInputLayout.GetAddressOf())
 		);
-	/*DX::ThrowIfFailed(
-		device->CreateInputLayout(VertexPositionDualTexture::InputElements,
-			VertexPositionDualTexture::InputElementCount,
-			shaderByteCode,
-			byteCodeLength,
-			m_terrainInputLayout.GetAddressOf())
-	);*/
 
-	m_batch = std::make_unique<PrimitiveBatch<VertexPositionNormalTexture>>(deviceContext);	
-	///m_batch = std::make_unique<PrimitiveBatch<VertexPositionDualTexture>>(deviceContext);	
+	m_batchBasic = std::make_unique<PrimitiveBatch<VertexPositionNormalTexture>>(deviceContext);	
+
+	//////////////////////////////////////////////////////////////////////////////////////////
+
+	// Setup blend terrain effect
+	//m_effectBlend = std::make_unique<DualTextureEffect>(device);
+	//m_effectBlend->SetTexture(m_texture_splat_1);
+	//m_effectBlend->SetTexture2(m_texture_splat_2);
+
+	//// setup blend batch
+	//void const* shaderByteCodeBlend;
+	//size_t byteCodeLengthBlend;
+
+	//m_effectBlend->GetVertexShaderBytecode(&shaderByteCodeBlend, &byteCodeLengthBlend);
+
+	//// setup blend batch
+	//DX::ThrowIfFailed(
+	//	device->CreateInputLayout(VertexPositionDualTexture::InputElements,
+	//		VertexPositionDualTexture::InputElementCount,
+	//		shaderByteCodeBlend,
+	//		byteCodeLengthBlend,
+	//		m_terrainInputLayout.GetAddressOf())
+	//);
+
+	//m_batchBlend = std::make_unique<PrimitiveBatch<VertexPositionDualTexture>>(deviceContext);
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 
@@ -313,22 +325,7 @@ void DisplayChunk::SaveHeightMap()
 	}
 
 	// Paints
-	{
-		// Grass
-		SavePaints("database/grass.csv", m_grass);
-
-		// Dirt
-		SavePaints("database/dirt.csv", m_dirt);
-
-		// Sand
-		SavePaints("database/sand.csv", m_sand);
-
-		// Stone
-		SavePaints("database/stone.csv", m_stone);
-
-		// Snow
-		SavePaints("database/snow.csv", m_snow);
-	}
+	SaveAllPaints();
 }
 
 void DisplayChunk::UpdateTerrain()
@@ -340,7 +337,7 @@ void DisplayChunk::UpdateTerrain()
 		for (size_t j = 0; j < TERRAINRESOLUTION; j++)
 		{
 			index = (TERRAINRESOLUTION * i) + j;
-			m_terrainGeometry[i][j].position.y = (float)(m_heightMap[index])*m_terrainHeightScale;	
+			m_terrainGeometryBasic[i][j].position.y = (float)(m_heightMap[index])*m_terrainHeightScale;	
 		}
 	}
 	CalculateTerrainNormals();
@@ -355,7 +352,7 @@ void DisplayChunk::GenerateHeightmap()
 		for (size_t j = 0; j < TERRAINRESOLUTION; ++j)
 		{
 			index = (TERRAINRESOLUTION * i) + j;
-			m_heightMap[index] = m_terrainGeometry[i][j].position.y / m_terrainHeightScale;
+			m_heightMap[index] = m_terrainGeometryBasic[i][j].position.y / m_terrainHeightScale;
 		}
 	}
 }
@@ -363,7 +360,7 @@ void DisplayChunk::GenerateHeightmap()
 void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint, bool checkSurroundings)
 {	
 	// Check if selected geometry is within other containers & remove
-	CheckForDuplicates(i, j, paint);
+	LANDSCAPE_PAINT current = CheckForDuplicates(i, j, paint);
 
 	// Blend surrounding geometry paints
 	///if (checkSurroundings) { CheckSurroundings(i, j, paint); }
@@ -373,10 +370,26 @@ void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint, bool checkS
 	{
 	case LANDSCAPE_PAINT::NA: m_default.push_back(std::pair<int, int>(i, j)); break;
 	case LANDSCAPE_PAINT::GRASS: m_grass.push_back(std::pair<int, int>(i, j)); break;
-	case LANDSCAPE_PAINT::DIRT: m_dirt.push_back(std::pair<int, int>(i, j)); break;
+	case LANDSCAPE_PAINT::DIRT: 
+	{
+		///m_dirt.push_back(std::pair<int, int>(i, j));
+		// Switch between current paint
+		switch (current)
+		{
+		case LANDSCAPE_PAINT::GRASS: m_grassDirt.push_back(std::pair<int, int>(i, j)); break;
+		case LANDSCAPE_PAINT::DIRT: m_dirt.push_back(std::pair<int, int>(i, j)); break;
+		case LANDSCAPE_PAINT::SAND: m_dirtSand.push_back(std::pair<int, int>(i, j)); break;
+		case LANDSCAPE_PAINT::STONE: m_dirtStone.push_back(std::pair<int, int>(i, j)); break;
+		case LANDSCAPE_PAINT::SNOW: m_dirtSnow.push_back(std::pair<int, int>(i, j)); break;
+		case LANDSCAPE_PAINT::GRASS_DIRT: m_dirt.push_back(std::pair<int, int>(i, j)); break;
+		}
+	}
+	break;
 	case LANDSCAPE_PAINT::SAND: m_sand.push_back(std::pair<int, int>(i, j)); break;
 	case LANDSCAPE_PAINT::STONE: m_stone.push_back(std::pair<int, int>(i, j)); break;
 	case LANDSCAPE_PAINT::SNOW: m_snow.push_back(std::pair<int, int>(i, j)); break;
+
+
 	case LANDSCAPE_PAINT::GRASS_DIRT: m_grassDirt.push_back(std::pair<int, int>(i, j)); break;
 	case LANDSCAPE_PAINT::GRASS_SAND: m_grassSand.push_back(std::pair<int, int>(i, j)); break;
 	case LANDSCAPE_PAINT::GRASS_STONE: m_grassStone.push_back(std::pair<int, int>(i, j)); break;
@@ -393,13 +406,13 @@ void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint, bool checkS
 void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_FUNCTION sculpt, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position)
 {
 	// Store starting vertex
-	Vector3 start = m_terrainGeometry[row][column].position; 
+	Vector3 start = m_terrainGeometryBasic[row][column].position; 
 
 	// Store other vertices of quad
 	std::vector<Vector3> others;
-	others.push_back(m_terrainGeometry[row][column + 1].position);
-	others.push_back(m_terrainGeometry[row + 1][column + 1].position);
-	others.push_back(m_terrainGeometry[row + 1][column].position);
+	others.push_back(m_terrainGeometryBasic[row][column + 1].position);
+	others.push_back(m_terrainGeometryBasic[row + 1][column + 1].position);
+	others.push_back(m_terrainGeometryBasic[row + 1][column].position);
 
 	// Store distances between start and other vertices
 	std::vector<float> distances;
@@ -432,10 +445,10 @@ void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_FUNCTION sculpt,
 		case LANDSCAPE_CONSTRAINT::Y:
 		{
 			// Increase position
-			m_terrainGeometry[row][column].position.y += 1.f;
-			m_terrainGeometry[row][column + 1].position.y += distances[0];
-			m_terrainGeometry[row + 1][column + 1].position.y += distances[1];
-			m_terrainGeometry[row + 1][column].position.y += distances[2];
+			m_terrainGeometryBasic[row][column].position.y += 1.f;
+			m_terrainGeometryBasic[row][column + 1].position.y += distances[0];
+			m_terrainGeometryBasic[row + 1][column + 1].position.y += distances[1];
+			m_terrainGeometryBasic[row + 1][column].position.y += distances[2];
 		}
 		break;
 		}
@@ -935,10 +948,10 @@ void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_FUNCTION sculpt,
 	//}		
 
 	// Ensure terrain height can't go below 0
-	if (m_terrainGeometry[row][column].position.y < 0.f)			{ m_terrainGeometry[row][column].position.y = 0.f; }
-	if (m_terrainGeometry[row][column + 1].position.y < 0.f)		{ m_terrainGeometry[row][column + 1].position.y = 0.f; }
-	if (m_terrainGeometry[row + 1][column + 1].position.y < 0.f)	{ m_terrainGeometry[row + 1][column + 1].position.y = 0.f; }
-	if (m_terrainGeometry[row + 1][column].position.y < 0.f)		{ m_terrainGeometry[row + 1][column].position.y = 0.f; }
+	if (m_terrainGeometryBasic[row][column].position.y < 0.f)			{ m_terrainGeometryBasic[row][column].position.y = 0.f; }
+	if (m_terrainGeometryBasic[row][column + 1].position.y < 0.f)		{ m_terrainGeometryBasic[row][column + 1].position.y = 0.f; }
+	if (m_terrainGeometryBasic[row + 1][column + 1].position.y < 0.f)	{ m_terrainGeometryBasic[row + 1][column + 1].position.y = 0.f; }
+	if (m_terrainGeometryBasic[row + 1][column].position.y < 0.f)		{ m_terrainGeometryBasic[row + 1][column].position.y = 0.f; }
 }
 
 void DisplayChunk::SetSelected(bool selected, int row, int column)
@@ -991,15 +1004,28 @@ void DisplayChunk::SetSelected(bool selected, int row, int column)
 	}
 }
 
-void DisplayChunk::DrawTerrain(std::vector<std::pair<int, int>> terrain)
+void DisplayChunk::DrawTerrainBasic(std::vector<std::pair<int, int>> terrain)
 {
 	for (int i = 0; i < terrain.size(); ++i)
 	{
-		m_batch->DrawQuad(
-			m_terrainGeometry[terrain[i].first][terrain[i].second],
-			m_terrainGeometry[terrain[i].first][terrain[i].second + 1],
-			m_terrainGeometry[terrain[i].first + 1][terrain[i].second + 1],
-			m_terrainGeometry[terrain[i].first + 1][terrain[i].second]
+		m_batchBasic->DrawQuad(
+			m_terrainGeometryBasic[terrain[i].first][terrain[i].second],
+			m_terrainGeometryBasic[terrain[i].first][terrain[i].second + 1],
+			m_terrainGeometryBasic[terrain[i].first + 1][terrain[i].second + 1],
+			m_terrainGeometryBasic[terrain[i].first + 1][terrain[i].second]
+		);
+	}
+}
+
+void DisplayChunk::DrawTerrainBlend(std::vector<std::pair<int, int>> terrain)
+{
+	for (int i = 0; i < terrain.size(); ++i)
+	{
+		m_batchBlend->DrawQuad(
+			m_terrainGeometryBlend[terrain[i].first][terrain[i].second],
+			m_terrainGeometryBlend[terrain[i].first][terrain[i].second + 1],
+			m_terrainGeometryBlend[terrain[i].first + 1][terrain[i].second + 1],
+			m_terrainGeometryBlend[terrain[i].first + 1][terrain[i].second]
 		);
 	}
 }
@@ -1054,9 +1080,10 @@ bool DisplayChunk::FindInVector(int & index, std::vector<std::pair<int, int>> ve
 	return false;
 }
 
-void DisplayChunk::CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint)
+LANDSCAPE_PAINT DisplayChunk::CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint)
 {
 	// Temp 
+	LANDSCAPE_PAINT current = LANDSCAPE_PAINT::NA;
 	int index = -1;
 	std::pair<int, int> terrain;
 	terrain.first = row;
@@ -1068,278 +1095,366 @@ void DisplayChunk::CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint
 	{
 	case LANDSCAPE_PAINT::GRASS:
 	{
-		// Search through dirt vector
+		// Else, search through dirt vector
 		check = Search(index, m_dirt, terrain);
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
 
 		// Else, search through sand vector
 		if (!check) { check = Search(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
 
 		// Else, search through stone vector
 		if (!check) { check = Search(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
 
 		// Else, search through snow vector
 		if (!check) { check = Search(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
 
 		// Else, search through grass/dirt blend vector
 		if (!check) { check = Search(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
 
 		// Else, search through grass/sand blend vector
 		if (!check) { check = Search(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
 
 		// Else, search through grass/stone blend vector
 		if (!check) { check = Search(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
 
 		// Else, search through grass/snow blend vector
 		if (!check) { check = Search(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
 
 		// Else, search through dirt/sand blend vector
 		if (!check) { check = Search(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
 
 		// Else, search through dirt/stone blend vector
 		if (!check) { check = Search(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
 
 		// Else, search through dirt/snow blend vector
 		if (!check) { check = Search(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
 
 		// Else, search through sand/stone blend vector
 		if (!check) { check = Search(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
 
 		// Else, search through sand/snow blend vector
 		if (!check) { check = Search(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
 
 		// Else, search through stone/snow blend vector
 		if (!check) { check = Search(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
 	}
 	break;
 	case LANDSCAPE_PAINT::DIRT:
 	{
 		// Search through grass vector
 		check = Search(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
 
 		// Else, search through sand vector
 		if (!check) { check = Search(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
 
 		// Else, search through stone vector
 		if (!check) { check = Search(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
 
 		// Else, search through snow vector
 		if (!check) { check = Search(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
 
 		// Else, search through grass/dirt blend vector
 		if (!check) { check = Search(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
 
 		// Else, search through grass/sand blend vector
 		if (!check) { check = Search(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
 
 		// Else, search through grass/stone blend vector
 		if (!check) { check = Search(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
 
 		// Else, search through grass/snow blend vector
 		if (!check) { check = Search(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
 
 		// Else, search through dirt/sand blend vector
 		if (!check) { check = Search(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
 
 		// Else, search through dirt/stone blend vector
 		if (!check) { check = Search(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
 
 		// Else, search through dirt/snow blend vector
 		if (!check) { check = Search(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
 
 		// Else, search through sand/stone blend vector
 		if (!check) { check = Search(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
 
 		// Else, search through sand/snow blend vector
 		if (!check) { check = Search(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
 
 		// Else, search through stone/snow blend vector
 		if (!check) { check = Search(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
 	}
 	break;
 	case LANDSCAPE_PAINT::SAND:
 	{
 		// Search through grass vector
 		check = Search(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
 
 		// Else, search through dirt vector
 		if (!check) { check = Search(index, m_dirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
 
 		// Else, search through stone vector
 		if (!check) { check = Search(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
 
 		// Else, search through snow vector
 		if (!check) { check = Search(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
 
 		// Else, search through grass/dirt blend vector
 		if (!check) { check = Search(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
 
 		// Else, search through grass/sand blend vector
 		if (!check) { check = Search(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
 
 		// Else, search through grass/stone blend vector
 		if (!check) { check = Search(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
 
 		// Else, search through grass/snow blend vector
 		if (!check) { check = Search(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
 
 		// Else, search through dirt/sand blend vector
 		if (!check) { check = Search(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
 
 		// Else, search through dirt/stone blend vector
 		if (!check) { check = Search(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
 
 		// Else, search through dirt/snow blend vector
 		if (!check) { check = Search(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
 
 		// Else, search through sand/stone blend vector
 		if (!check) { check = Search(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
 
 		// Else, search through sand/snow blend vector
 		if (!check) { check = Search(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
 
 		// Else, search through stone/snow blend vector
 		if (!check) { check = Search(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
 	}
 	break;
 	case LANDSCAPE_PAINT::STONE:
 	{
 		// Search through grass vector
 		check = Search(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
 
 		// Else, search through dirt vector
 		if (!check) { check = Search(index, m_dirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
 
 		// Else, search through sand vector
 		if (!check) { check = Search(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
 
 		// Else, search through snow vector
 		if (!check) { check = Search(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
 
 		// Else, search through grass/dirt blend vector
 		if (!check) { check = Search(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
 
 		// Else, search through grass/sand blend vector
 		if (!check) { check = Search(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
 
 		// Else, search through grass/stone blend vector
 		if (!check) { check = Search(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
 
 		// Else, search through grass/snow blend vector
 		if (!check) { check = Search(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
 
 		// Else, search through dirt/sand blend vector
 		if (!check) { check = Search(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
 
 		// Else, search through dirt/stone blend vector
 		if (!check) { check = Search(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
 
 		// Else, search through dirt/snow blend vector
 		if (!check) { check = Search(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
 
 		// Else, search through sand/stone blend vector
 		if (!check) { check = Search(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
 
 		// Else, search through sand/snow blend vector
 		if (!check) { check = Search(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
 
 		// Else, search through stone/snow blend vector
 		if (!check) { check = Search(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
 	}
 	break;
 	case LANDSCAPE_PAINT::SNOW:
 	{
 		// Search through grass vector
 		check = Search(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
 
 		// Else, search through dirt vector
 		if (!check) { check = Search(index, m_dirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
 
 		// Else, search through sand vector
 		if (!check) { check = Search(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
 
 		// Else, search through stone vector
 		if (!check) { check = Search(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
 
 		// Else, search through grass/dirt blend vector
 		if (!check) { check = Search(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
 
 		// Else, search through grass/sand blend vector
 		if (!check) { check = Search(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
 
 		// Else, search through grass/stone blend vector
 		if (!check) { check = Search(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
 
 		// Else, search through grass/snow blend vector
 		if (!check) { check = Search(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
 
 		// Else, search through dirt/sand blend vector
 		if (!check) { check = Search(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
 
 		// Else, search through dirt/stone blend vector
 		if (!check) { check = Search(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
 
 		// Else, search through dirt/snow blend vector
 		if (!check) { check = Search(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
 
 		// Else, search through sand/stone blend vector
 		if (!check) { check = Search(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
 
 		// Else, search through sand/snow blend vector
 		if (!check) { check = Search(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
 
 		// Else, search through stone/snow blend vector
 		if (!check) { check = Search(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
 	}
 	break;
 	case LANDSCAPE_PAINT::NA:
 	{		
 		// Search through grass vector
 		check = Search(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
 
 		// Else, search through dirt vector
 		if (!check) { check = Search(index, m_dirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
 		
 		// Else, search through sand vector
 		if (!check) { check = Search(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
 
 		// Else, search through stone vector
 		if (!check) { check = Search(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
 
 		// Else, search through snow vector
 		if (!check) { check = Search(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
 
 		// Else, search through grass/dirt blend vector
 		if (!check) { check = Search(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
 
 		// Else, search through grass/sand blend vector
 		if (!check) { check = Search(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
 
 		// Else, search through grass/stone blend vector
 		if (!check) { check = Search(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
 
 		// Else, search through grass/snow blend vector
 		if (!check) { check = Search(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
 
 		// Else, search through dirt/sand blend vector
 		if (!check) { check = Search(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
 
 		// Else, search through dirt/stone blend vector
 		if (!check) { check = Search(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
 
 		// Else, search through dirt/snow blend vector
 		if (!check) { check = Search(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
 		
 		// Else, search through sand/stone blend vector
 		if (!check) { check = Search(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
 
 		// Else, search through sand/snow blend vector
 		if (!check) { check = Search(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
 
 		// Else, search through stone/snow blend vector
 		if (!check) { check = Search(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
 	}
 	break;
 	}
+
+	// Return current terrain paint
+	return current;
 }
 
 void DisplayChunk::CheckSurroundings(int row, int column, LANDSCAPE_PAINT paint)
@@ -1488,7 +1603,7 @@ LANDSCAPE_PAINT DisplayChunk::CheckPaint(int row, int column)
 	return LANDSCAPE_PAINT::NA;
 }
 
-void DisplayChunk::SavePaints(std::string path, std::vector<std::pair<int, int>> vector)
+void DisplayChunk::SavePaint(std::string path, std::vector<std::pair<int, int>> vector)
 {
 	// Create output filestream object
 	std::ofstream file(path);
@@ -1599,7 +1714,7 @@ void DisplayChunk::ReadAllPaints()
 
 	// Blend paints
 	ReadPaints("database/grassDirt.csv", m_grassDirt);
-	ReadPaints("database/grassSand.csv", m_grassSand);
+	/*ReadPaints("database/grassSand.csv", m_grassSand);
 	ReadPaints("database/grassStone.csv", m_grassStone);
 	ReadPaints("database/grassSnow.csv", m_grassSnow);
 	ReadPaints("database/dirtSand.csv", m_dirtSand);
@@ -1607,7 +1722,72 @@ void DisplayChunk::ReadAllPaints()
 	ReadPaints("database/dirtSnow.csv", m_dirtSnow);
 	ReadPaints("database/sandStone.csv", m_sandStone);
 	ReadPaints("database/sandSnow.csv", m_sandSnow);
-	ReadPaints("database/stoneSnow.csv", m_stoneSnow);
+	ReadPaints("database/stoneSnow.csv", m_stoneSnow);*/
+}
+
+void DisplayChunk::SaveAllPaints()
+{
+	// Grass
+	SavePaint("database/grass.csv", m_grass);
+
+	// Dirt
+	SavePaint("database/dirt.csv", m_dirt);
+
+	// Sand
+	SavePaint("database/sand.csv", m_sand);
+
+	// Stone
+	SavePaint("database/stone.csv", m_stone);
+
+	// Snow
+	SavePaint("database/snow.csv", m_snow);
+
+	// Grass / Dirt
+	SavePaint("database/grassDirt.csv", m_grassDirt);
+
+	// Grass / Sand
+	SavePaint("database/grassSand.csv", m_grassSand);
+
+	// Grass / Stone
+	SavePaint("database/grassStone.csv", m_grassStone);
+
+	// Grass / Snow
+	SavePaint("database/grassSnow.csv", m_grassSnow);
+
+	// Dirt / Sand
+	SavePaint("database/dirtSand.csv", m_dirtSand);
+
+	// Dirt / Stone
+	SavePaint("database/dirtStone.csv", m_dirtStone);
+
+	// Dirt / Snow
+	SavePaint("database/dirtSnow.csv", m_dirtSnow);
+
+	// Sand / Stone
+	SavePaint("database/sandStone.csv", m_sandStone);
+
+	// Sand / Snow
+	SavePaint("database/sandSnow.csv", m_sandSnow);
+
+	// Stone / Snow
+	SavePaint("database/stoneSnow.csv", m_stoneSnow);
+}
+
+void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResources)
+{
+	// Setup device context
+	auto context = deviceResources->GetD3DDeviceContext();
+	context->IASetInputLayout(m_terrainInputLayout.Get());
+
+	// Draw all grass/dirt geometry
+	if (m_grassDirt.size() != 0) {
+		m_batchBlend->Begin();
+		m_effectBlend->SetTexture(m_texture_splat_1);
+		m_effectBlend->SetTexture(m_texture_splat_2);
+		m_effectBlend->Apply(context);
+		DrawTerrainBlend(m_grassDirt);
+		m_batchBlend->End();
+	}
 }
 
 void DisplayChunk::CalculateTerrainNormals()
@@ -1619,18 +1799,18 @@ void DisplayChunk::CalculateTerrainNormals()
 	{
 		for (int j = 0; j<(TERRAINRESOLUTION - 1); j++)
 		{
-			upDownVector.x = (m_terrainGeometry[i + 1][j].position.x - m_terrainGeometry[i - 1][j].position.x);
-			upDownVector.y = (m_terrainGeometry[i + 1][j].position.y - m_terrainGeometry[i - 1][j].position.y);
-			upDownVector.z = (m_terrainGeometry[i + 1][j].position.z - m_terrainGeometry[i - 1][j].position.z);
+			upDownVector.x = (m_terrainGeometryBasic[i + 1][j].position.x - m_terrainGeometryBasic[i - 1][j].position.x);
+			upDownVector.y = (m_terrainGeometryBasic[i + 1][j].position.y - m_terrainGeometryBasic[i - 1][j].position.y);
+			upDownVector.z = (m_terrainGeometryBasic[i + 1][j].position.z - m_terrainGeometryBasic[i - 1][j].position.z);
 
-			leftRightVector.x = (m_terrainGeometry[i][j - 1].position.x - m_terrainGeometry[i][j + 1].position.x);
-			leftRightVector.y = (m_terrainGeometry[i][j - 1].position.y - m_terrainGeometry[i][j + 1].position.y);
-			leftRightVector.z = (m_terrainGeometry[i][j - 1].position.z - m_terrainGeometry[i][j + 1].position.z);
+			leftRightVector.x = (m_terrainGeometryBasic[i][j - 1].position.x - m_terrainGeometryBasic[i][j + 1].position.x);
+			leftRightVector.y = (m_terrainGeometryBasic[i][j - 1].position.y - m_terrainGeometryBasic[i][j + 1].position.y);
+			leftRightVector.z = (m_terrainGeometryBasic[i][j - 1].position.z - m_terrainGeometryBasic[i][j + 1].position.z);
 			
 			leftRightVector.Cross(upDownVector, normalVector);	//get cross product
 			normalVector.Normalize();			//normalise it.
 
-			m_terrainGeometry[i][j].normal = normalVector;	//set the normal for this point based on our result
+			m_terrainGeometryBasic[i][j].normal = normalVector;	//set the normal for this point based on our result
 		}
 	}
 }
