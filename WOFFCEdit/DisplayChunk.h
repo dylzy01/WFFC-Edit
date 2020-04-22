@@ -11,8 +11,6 @@ class DisplayChunk
 public:
 	DisplayChunk();
 	~DisplayChunk();
-	void Wave(float deltaTime, DirectX::SimpleMath::Matrix world,
-		DirectX::SimpleMath::Matrix view, DirectX::SimpleMath::Matrix projection);
 	void PopulateChunkData(ChunkObject * SceneChunk);
 	void RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResources);
 	void InitialiseBatch();	//initial setup, base coordinates etc based on scale
@@ -21,12 +19,9 @@ public:
 	void UpdateTerrain();			//updates the geometry based on the heightmap
 	void GenerateHeightmap();		//creates or alters the heightmap
 	std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionNormalTexture>>  m_batch;
-	///std::unique_ptr<DirectX::CommonStates>		m_states;
-	std::unique_ptr<DirectX::BasicEffect>		m_terrainEffect;
-	std::unique_ptr<DirectX::DualTextureEffect>	m_dualEffect;
-	/*std::unique_ptr<DirectX::NormalMapEffect>	m_normalMapEffect;
-	std::unique_ptr<DirectX::BasicEffect>     m_terrainBlendOne;
-	std::unique_ptr<DirectX::BasicEffect>       m_terrainBlendTwo;*/
+	std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionDualTexture>>  m_batchBlend;
+	std::unique_ptr<DirectX::BasicEffect>		m_effectBasic;
+	std::unique_ptr<DirectX::DualTextureEffect>	m_effectBlend;
 
 	ID3D11ShaderResourceView *					m_texture_default;				//diffuse texture
 	ID3D11ShaderResourceView *					m_texture_splat_1;				//grass texture
@@ -37,9 +32,9 @@ public:
 	ID3D11ShaderResourceView *					m_texture_highlight;			//highlight texture
 	ID3D11ShaderResourceView *					m_normalMap;					//normal map texture
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>   m_terrainInputLayout;
-	///Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_normalMap;
 
 	DirectX::VertexPositionNormalTexture GetGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
+	///DirectX::VertexPositionDualTexture GetGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
 	void PaintTerrain(int row, int column, LANDSCAPE_PAINT paint, bool checkSurroundings = false);
 	void SculptTerrain(int row, int column, LANDSCAPE_FUNCTION function, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position = { { 0,0,0 } });
 	
@@ -50,17 +45,17 @@ public:
 
 private:
 	DirectX::VertexPositionNormalTexture m_terrainGeometry[TERRAINRESOLUTION][TERRAINRESOLUTION];
+	///DirectX::VertexPositionDualTexture m_terrainGeometry[TERRAINRESOLUTION][TERRAINRESOLUTION];
 	BYTE m_heightMap[TERRAINRESOLUTION*TERRAINRESOLUTION];
 	void CalculateTerrainNormals();
+	bool Search(int &index, std::vector<std::pair<int, int>> &vector, std::pair<int, int> terrain);
 	bool FindInVector(int &index, std::vector<std::pair<int, int>> vector, std::pair<int, int> terrain);
 	void CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint = LANDSCAPE_PAINT::NA);
 	void CheckSurroundings(int row, int column, LANDSCAPE_PAINT paint);
 	LANDSCAPE_PAINT CheckPaint(int row, int column);
 	void SavePaints(std::string path, std::vector<std::pair<int, int>> vector);
 	void ReadPaints(std::string path, std::vector<std::pair<int, int>> &vector);
-
-	///Vector3 Mul(Vector3 vector, DirectX::SimpleMath::Matrix matrix);
-	///Vector3 Mul(Vector3 vector, Matrix matrix);
+	void ReadAllPaints();
 
 	float	m_terrainHeightScale;
 	int		m_terrainSize;				//size of terrain in metres
@@ -89,34 +84,12 @@ private:
 	// Geometry containers
 	std::vector<std::pair<int, int>> m_default;
 	std::vector<std::pair<int, int>> m_grass, m_dirt, m_sand, m_stone, m_snow;
+
+	std::vector<std::pair<int, int>> m_grassDirt, m_grassSand, m_grassStone, m_grassSnow;
+	std::vector<std::pair<int, int>> m_dirtSand, m_dirtStone, m_dirtSnow;
+	std::vector<std::pair<int, int>> m_sandStone, m_sandSnow;
+	std::vector<std::pair<int, int>> m_stoneSnow;
+
 	std::vector<std::pair<int, int>> m_grassTemp, m_dirtTemp, m_sandTemp, m_stoneTemp, m_snowTemp;
 	std::vector<std::pair<int, int>> m_highlight;
-	/*std::vector<DirectX::VertexPositionNormalTexture> m_defaultGeometry,
-		m_grassGeometry, m_dirtGeometry, m_sandGeometry;
-	std::vector<int> m_defaultIDs, m_grassIDs, m_dirtIDs, m_sandIDs;*/
 };
-
-//template <typename T>
-//int FindInVector(const std::vector<std::pair<T, int>> & vector, const std::pair<T, int> &element)
-//{
-//	// Temp
-//	int index = -1;
-//	
-//	// Loop through vector
-//	for (int i = 0; i < vector.size(); ++i)
-//	{
-//		if (vector[i].second == element.second)
-//		{
-//			index = i;
-//		}
-//	}
-//
-//	// Find given element in vector
-//	auto it = std::find(vector.begin(), vector.end(), element);
-//
-//	// If element has been found
-//	if (it != vector.end()) { return std::distance(vector.begin(), it); }
-//		
-//	// Else, if element hasn't been found
-//	else { return -1; }
-//}

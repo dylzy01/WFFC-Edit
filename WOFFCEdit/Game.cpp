@@ -28,6 +28,7 @@ Game::Game()
 
 Game::~Game()
 {
+	///TextureShader::Shutdown();
 
 #ifdef DXTK_AUDIO
     if (m_audEngine)
@@ -60,6 +61,9 @@ void Game::Initialize(HWND window, int width, int height)
     CreateWindowSizeDependentResources();
 
 	GetClientRect(m_window, &m_screenDimensions);
+
+	// Setup texture shader
+	///TextureShader::Initialise(m_deviceResources->GetD3DDevice(), m_window);
 
 #ifdef DXTK_AUDIO
     // Create DirectXTK for Audio objects
@@ -173,8 +177,10 @@ void Game::UpdateCamera()
 
 	m_batchEffect->SetView(m_view);
 	m_batchEffect->SetWorld(Matrix::Identity);
-	m_displayChunk.m_terrainEffect->SetView(m_view);
-	m_displayChunk.m_terrainEffect->SetWorld(Matrix::Identity);
+	m_displayChunk.m_effectBasic->SetView(m_view);
+	m_displayChunk.m_effectBasic->SetWorld(Matrix::Identity);
+	m_displayChunk.m_effectBlend->SetView(m_view);
+	m_displayChunk.m_effectBlend->SetWorld(Matrix::Identity);
 }
 
 // Updates the waves of all water objects
@@ -311,19 +317,22 @@ void Game::Render()
 	m_sprites->End();
 	
 	// Coordinate system	
-	if (m_displayList.size() != 0)
-	{
-		// Loop through selected objects
-		for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
-		{
-			// If selected object ID is valid
-			if (m_selectedObjectIDs[i] != -1)
-			{
-				// Draw bounding box & local axes
-				DrawDebug(m_selectedObjectIDs[i]);
-			}
-		}
-	}
+	//if (m_displayList.size() != 0)
+	//{
+	//	// Loop through selected objects
+	//	for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+	//	{
+	//		// If selected object ID is valid
+	//		///if (m_selectedObjectIDs[i] != -1)
+	//		if (m_selectedObjectIDs[i] >= 0 && m_selectedObjectIDs[i] <= 100);
+	//		{
+	//			// Draw bounding box & local axes
+	//			///DrawDebug(m_selectedObjectIDs[i]);
+	//		}
+	//	}
+	//}
+
+	///TextureShader::Render(m_deviceResources->GetD3DDeviceContext(), TERRAINRESOLUTION, m_world, m_view, m_projection, &m_texture1);
 
     m_deviceResources->Present();
 }
@@ -580,12 +589,13 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 }
 
 void Game::BuildDisplayChunk(ChunkObject * SceneChunk, std::vector<DirectX::SimpleMath::Vector2> location)
-{
+{	
 	//populate our local DISPLAYCHUNK with all the chunk info we need from the object stored in toolmain
 	//which, to be honest, is almost all of it. Its mostly rendering related info so...
 	m_displayChunk.PopulateChunkData(SceneChunk);		//migrate chunk data
 	m_displayChunk.LoadHeightMap(m_deviceResources);
-	m_displayChunk.m_terrainEffect->SetProjection(m_projection);
+	m_displayChunk.m_effectBasic->SetProjection(m_projection);
+	m_displayChunk.m_effectBlend->SetProjection(m_projection);
 	m_displayChunk.InitialiseBatch();
 }
 
@@ -835,7 +845,6 @@ void Game::OnDeviceLost()
     m_batchEffect.reset();
     m_font.reset();
     m_shape.reset();
-	for (int i = 0; i < m_shapes.size(); ++i) { m_shapes[i].reset(); }
     m_model.reset();
     m_texture1.Reset();
     m_texture2.Reset();

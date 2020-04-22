@@ -35,6 +35,9 @@
     <Filter Include="Custom\Managers">
       <UniqueIdentifier>{b2d82c3f-a97e-4926-be10-cb415bafb097}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{c1b5adda-fb38-4f8e-8ee2-f966b34c895f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -118,6 +121,9 @@
     </ClCompile>
     <ClCompile Include="DebugDraw.cpp">
       <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureShader.cpp">
+      <Filter>Shaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -213,9 +219,18 @@
     <ClInclude Include="DebugDraw.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
+    <ClInclude Include="TextureShader.h">
+      <Filter>Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="multitexture.ps">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="multitexture.vs">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Win32SimpleSample.rc">

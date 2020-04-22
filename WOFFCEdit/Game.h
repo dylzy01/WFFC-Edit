@@ -16,7 +16,8 @@
 #include "DebugDraw.h"
 
 #include "SQLManager.h"
-///#include "MouseManager.h"
+
+///#include "TextureShader.h"
 
 #include <vector>
 #include <algorithm>
@@ -164,7 +165,6 @@ private:
     std::unique_ptr<DirectX::BasicEffect>                                   m_batchEffect;
     std::unique_ptr<DirectX::EffectFactory>                                 m_fxFactory;
     std::unique_ptr<DirectX::GeometricPrimitive>                            m_shape;
-    std::vector<std::unique_ptr<DirectX::GeometricPrimitive>>               m_shapes;
 	std::unique_ptr<DirectX::Model>                                         m_model;
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>>  m_batch;
     std::unique_ptr<DirectX::SpriteBatch>                                   m_sprites;

@@ -18,51 +18,6 @@ DisplayChunk::~DisplayChunk()
 {
 }
 
-void DisplayChunk::Wave(float deltaTime, DirectX::SimpleMath::Matrix world,
-	DirectX::SimpleMath::Matrix view, DirectX::SimpleMath::Matrix projection)
-{
-	for (int i = 0; i < TERRAINRESOLUTION; ++i)
-	{
-		for (int j = 0; j < TERRAINRESOLUTION; ++j)
-		{			
-			// Store temp position & normal
-			Vector3 position = m_terrainGeometry[i][j].position;
-			Vector3 normal = m_terrainGeometry[i][j].normal;
-			
-			// Offset position based on sine wave
-			position.y = sin(position.x + deltaTime) * 2.5f;
-			///position.y = (100.f * (sin(2 * PI * 1.f * deltaTime + 5)));
-			///position.y = 0.5 * (1 + sin(2 * PI * 10.f * deltaTime));
-			///position.y = sin((((5.0f)*140.f) / 360.f)*PI*200.f);
-			
-			// Modify normals
-			normal.x = 1 - cos(position.x + deltaTime);
-			normal.y = abs(cos(position.x + deltaTime));
-			///normal.Normalize();
-			
-			// Calculate position of the vertex against the world, view and projection matrices
-			m_terrainGeometry[i][j].position = (Vector3)XMVector3Transform(position, world);
-			m_terrainGeometry[i][j].position = (Vector3)XMVector3Transform((Vector3)m_terrainGeometry[i][j].position, view);
-			m_terrainGeometry[i][j].position = (Vector3)XMVector3Transform((Vector3)m_terrainGeometry[i][j].position, projection);
-			m_terrainGeometry[i][j].normal = normal;
-			
-			///m_terrainGeometry[i][j].position.y = sin(m_terrainGeometry[i][j].position.x + (deltaTime * 100.f));
-			///m_terrainGeometry[i][j].normal.x = 1 - cos(m_terrainGeometry[i][j].position.x + (deltaTime * 100.f));
-			///m_terrainGeometry[i][j].normal.y = abs(cos(m_terrainGeometry[i][j].position.x + (deltaTime * 100.f)));
-			///m_terrainGeometry[i][j].position = DirectX::
-
-			///m_terrainGeometry[i][j].position.y = sin(3.f * deltaTime) * 10.f;
-			///m_terrainGeometry[i][j].normal.y = abs(cos(3.f * deltaTime) * 10.f);
-
-			
-		}
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Read #1 and #2 of the Lab >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-}
-
 void DisplayChunk::PopulateChunkData(ChunkObject * SceneChunk)
 {
 	m_name = SceneChunk->name;
@@ -89,20 +44,16 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 {	
 	// Setup device context
 	auto context = deviceResources->GetD3DDeviceContext();
-	///auto sampler = m_states->LinearClamp();
-	///context->PSSetSamplers(0, 1, &sampler);		
 	context->IASetInputLayout(m_terrainInputLayout.Get());
-	/*ID3D11ShaderResourceView * textures[2];
-	textures[1] = m_texture_splat_1;
-	textures[2] = m_texture_splat_2;
-	context->PSSetShaderResources(0, 2, textures);*/
 
 	// Draw all grass geometry
 	if (m_grass.size() != 0) {
 		m_batch->Begin();
-		m_terrainEffect->SetTexture(m_texture_splat_1);
-		m_terrainEffect->Apply(context);
-		///m_dualEffect->Apply(context);
+		m_effectBasic->SetTexture(m_texture_splat_1);
+		m_effectBasic->Apply(context);
+		/*m_effectBlend->SetTexture(m_texture_splat_1);
+		m_effectBlend->SetTexture2(m_texture_splat_2);
+		m_effectBlend->Apply(context);*/
 		DrawTerrain(m_grass);
 		m_batch->End();
 	}
@@ -110,8 +61,8 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all dirt geometry
 	if (m_dirt.size() != 0) {
 		m_batch->Begin();
-		m_terrainEffect->SetTexture(m_texture_splat_2);
-		m_terrainEffect->Apply(context);
+		m_effectBasic->SetTexture(m_texture_splat_2);
+		m_effectBasic->Apply(context);
 		DrawTerrain(m_dirt);
 		m_batch->End();
 	}
@@ -119,8 +70,8 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all sand geometry
 	if (m_sand.size() != 0)	{
 		m_batch->Begin();
-		m_terrainEffect->SetTexture(m_texture_splat_3);
-		m_terrainEffect->Apply(context);
+		m_effectBasic->SetTexture(m_texture_splat_3);
+		m_effectBasic->Apply(context);
 		DrawTerrain(m_sand);
 		m_batch->End();
 	}
@@ -128,8 +79,8 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all stone geometry
 	if (m_stone.size() != 0) {
 		m_batch->Begin();
-		m_terrainEffect->SetTexture(m_texture_splat_4);
-		m_terrainEffect->Apply(context);
+		m_effectBasic->SetTexture(m_texture_splat_4);
+		m_effectBasic->Apply(context);
 		DrawTerrain(m_stone);
 		m_batch->End();
 	}
@@ -137,8 +88,8 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all snow geometry
 	if (m_snow.size() != 0) {
 		m_batch->Begin();
-		m_terrainEffect->SetTexture(m_texture_splat_5);
-		m_terrainEffect->Apply(context);
+		m_effectBasic->SetTexture(m_texture_splat_5);
+		m_effectBasic->Apply(context);
 		DrawTerrain(m_snow);
 		m_batch->End();
 	}
@@ -146,8 +97,8 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all highlighted geometry
 	if (m_highlight.size() != 0) {
 		m_batch->Begin();
-		m_terrainEffect->SetTexture(m_texture_highlight);
-		m_terrainEffect->Apply(context);
+		m_effectBasic->SetTexture(m_texture_highlight);
+		m_effectBasic->Apply(context);
 		DrawTerrain(m_highlight);
 		m_batch->End();
 	}
@@ -155,8 +106,8 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all default geometry
 	if (m_default.size() != 0) {
 		m_batch->Begin();
-		m_terrainEffect->SetTexture(m_texture_default);
-		m_terrainEffect->Apply(context);
+		m_effectBasic->SetTexture(m_texture_default);
+		m_effectBasic->Apply(context);
 		DrawTerrain(m_default);	
 		m_batch->End();
 	}
@@ -176,6 +127,7 @@ void DisplayChunk::InitialiseBatch()
 			m_terrainGeometry[i][j].position =			Vector3(j*m_terrainPositionScalingFactor-(0.5*m_terrainSize), (float)(m_heightMap[index])*m_terrainHeightScale, i*m_terrainPositionScalingFactor-(0.5*m_terrainSize));	//This will create a terrain going from -64->64.  rather than 0->128.  So the center of the terrain is on the origin
 			m_terrainGeometry[i][j].normal =			Vector3(0.0f, 1.0f, 0.0f);						//standard y =up
 			m_terrainGeometry[i][j].textureCoordinate =	Vector2(((float)m_textureCoordStep*j)*m_tex_diffuse_tiling, ((float)m_textureCoordStep*i)*m_tex_diffuse_tiling);				//Spread tex coords so that its distributed evenly across the terrain from 0-1	
+			///m_terrainGeometry[i][j].textureCoordinate1 =	Vector2(((float)m_textureCoordStep*j)*m_tex_diffuse_tiling, ((float)m_textureCoordStep*i)*m_tex_diffuse_tiling);				//Spread tex coords so that its distributed evenly across the terrain from 0-1	
 		}
 	}
 	CalculateTerrainNormals();
@@ -276,28 +228,39 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 	//////////////////////////////////////////////////////////////////////////////////////////
 
 	// Setup dual texture effect
-	/*m_dualEffect = std::make_unique<DualTextureEffect>(device);
-	m_dualEffect->SetTexture(m_texture_splat_1);
-	m_dualEffect->SetTexture2(m_texture_splat_2);*/
+	m_effectBlend = std::make_unique<DualTextureEffect>(device);
+	m_effectBlend->SetTexture(m_texture_splat_1);
+	m_effectBlend->SetTexture2(m_texture_splat_2);
+	///m_dualEffect->SetVertexColorEnabled(true);
+
+	/*void const* shaderByteCodeDual;
+	size_t byteCodeLengthDual;
+	m_dualEffect->GetVertexShaderBytecode(&shaderByteCodeDual, &byteCodeLengthDual);
+	DX::ThrowIfFailed(
+		device->CreateInputLayout(VertexPositionNormalTexture::InputElements,
+			VertexPositionNormalTexture::InputElementCount,
+			shaderByteCodeDual,
+			byteCodeLengthDual,
+			m_terrainInputLayout.GetAddressOf())
+	);
+	m_batchDual = std::make_unique<PrimitiveBatch<VertexPositionNormalDualTexture>>(deviceContext);*/
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 
-	// Setup terrain effect
-	///m_terrainEffect = std::make_unique<NormalMapEffect>(device);
-	m_terrainEffect = std::make_unique<BasicEffect>(device);
-	m_terrainEffect->EnableDefaultLighting();
-	///m_terrainEffect->SetLightDiffuseColor(0, Colors::Gray);
-	m_terrainEffect->SetLightingEnabled(true);
-	m_terrainEffect->SetTextureEnabled(true);
-	m_terrainEffect->SetTexture(m_texture_default);
-	///m_terrainEffect->SetNormalTexture(m_normalMap);
+	// Setup basic terrain effect
+	m_effectBasic = std::make_unique<BasicEffect>(device);
+	m_effectBasic->EnableDefaultLighting();
+	m_effectBasic->SetLightingEnabled(true);
+	m_effectBasic->SetTextureEnabled(true);
+	m_effectBasic->SetTexture(m_texture_default);
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 
 	void const* shaderByteCode;
 	size_t byteCodeLength;
 
-	m_terrainEffect->GetVertexShaderBytecode(&shaderByteCode, &byteCodeLength);
+	m_effectBasic->GetVertexShaderBytecode(&shaderByteCode, &byteCodeLength);
+	///m_effectBlend->GetVertexShaderBytecode(&shaderByteCode, &byteCodeLength);
 
 	//setup batch
 	DX::ThrowIfFailed(
@@ -307,30 +270,21 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 			byteCodeLength,
 			m_terrainInputLayout.GetAddressOf())
 		);
+	/*DX::ThrowIfFailed(
+		device->CreateInputLayout(VertexPositionDualTexture::InputElements,
+			VertexPositionDualTexture::InputElementCount,
+			shaderByteCode,
+			byteCodeLength,
+			m_terrainInputLayout.GetAddressOf())
+	);*/
 
 	m_batch = std::make_unique<PrimitiveBatch<VertexPositionNormalTexture>>(deviceContext);	
+	///m_batch = std::make_unique<PrimitiveBatch<VertexPositionDualTexture>>(deviceContext);	
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 
-	// Setup terrain blends
-	/*m_terrainBlendOne = std::make_unique<BasicEffect>(device);
-	m_terrainBlendOne->EnableDefaultLighting();
-	m_terrainBlendOne->SetLightingEnabled(true);
-	m_terrainBlendOne->SetTextureEnabled(true);
-	m_terrainBlendOne->SetAlpha(.5f);
-
-	m_terrainBlendTwo = std::make_unique<BasicEffect>(device);
-	m_terrainBlendTwo->EnableDefaultLighting();
-	m_terrainBlendTwo->SetLightingEnabled(true);
-	m_terrainBlendTwo->SetTextureEnabled(true);
-	m_terrainBlendTwo->SetAlpha(.5f);*/
-
 	// Load all paints
-	ReadPaints("database/grass.csv", m_grass);
-	ReadPaints("database/dirt.csv", m_dirt);
-	ReadPaints("database/sand.csv", m_sand);
-	ReadPaints("database/stone.csv", m_stone);
-	ReadPaints("database/snow.csv", m_snow);
+	ReadAllPaints();
 }
 
 void DisplayChunk::SaveHeightMap()
@@ -417,558 +371,568 @@ void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint, bool checkS
 	// Switch between paints
 	switch (paint)
 	{
+	case LANDSCAPE_PAINT::NA: m_default.push_back(std::pair<int, int>(i, j)); break;
 	case LANDSCAPE_PAINT::GRASS: m_grass.push_back(std::pair<int, int>(i, j)); break;
 	case LANDSCAPE_PAINT::DIRT: m_dirt.push_back(std::pair<int, int>(i, j)); break;
 	case LANDSCAPE_PAINT::SAND: m_sand.push_back(std::pair<int, int>(i, j)); break;
 	case LANDSCAPE_PAINT::STONE: m_stone.push_back(std::pair<int, int>(i, j)); break;
 	case LANDSCAPE_PAINT::SNOW: m_snow.push_back(std::pair<int, int>(i, j)); break;
-	case LANDSCAPE_PAINT::NA: m_default.push_back(std::pair<int, int>(i, j)); break;
+	case LANDSCAPE_PAINT::GRASS_DIRT: m_grassDirt.push_back(std::pair<int, int>(i, j)); break;
+	case LANDSCAPE_PAINT::GRASS_SAND: m_grassSand.push_back(std::pair<int, int>(i, j)); break;
+	case LANDSCAPE_PAINT::GRASS_STONE: m_grassStone.push_back(std::pair<int, int>(i, j)); break;
+	case LANDSCAPE_PAINT::GRASS_SNOW: m_grassSnow.push_back(std::pair<int, int>(i, j)); break;
+	case LANDSCAPE_PAINT::DIRT_SAND: m_dirtSand.push_back(std::pair<int, int>(i, j)); break;
+	case LANDSCAPE_PAINT::DIRT_STONE: m_dirtStone.push_back(std::pair<int, int>(i, j)); break;
+	case LANDSCAPE_PAINT::DIRT_SNOW: m_dirtSnow.push_back(std::pair<int, int>(i, j)); break;
+	case LANDSCAPE_PAINT::SAND_STONE: m_sandStone.push_back(std::pair<int, int>(i, j)); break;
+	case LANDSCAPE_PAINT::SAND_SNOW: m_sandSnow.push_back(std::pair<int, int>(i, j)); break;
+	case LANDSCAPE_PAINT::STONE_SNOW: m_stoneSnow.push_back(std::pair<int, int>(i, j)); break;
 	}
 }
 
 void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_FUNCTION sculpt, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position)
 {
 	// Store starting vertex
-	//Vector3 start = m_terrainGeometry[row][column].position; 
+	Vector3 start = m_terrainGeometry[row][column].position; 
 
-	//// Store other vertices of quad
-	//std::vector<Vector3> others;
-	//others.push_back(m_terrainGeometry[row][column + 1].position);
-	//others.push_back(m_terrainGeometry[row + 1][column + 1].position);
-	//others.push_back(m_terrainGeometry[row + 1][column].position);
+	// Store other vertices of quad
+	std::vector<Vector3> others;
+	others.push_back(m_terrainGeometry[row][column + 1].position);
+	others.push_back(m_terrainGeometry[row + 1][column + 1].position);
+	others.push_back(m_terrainGeometry[row + 1][column].position);
 
-	//// Store distances between start and other vertices
-	//std::vector<float> distances;
-	//for (int i = 0; i < others.size(); ++i)
+	// Store distances between start and other vertices
+	std::vector<float> distances;
+	for (int i = 0; i < others.size(); ++i)
+	{
+		float dist = sqrt(
+			(start.x - others[i].x) * (start.x - others[i].x) +
+			(start.y - others[i].y) * (start.y - others[i].y) +
+			(start.z - others[i].z) * (start.z - others[i].z));
+		distances.push_back(dist);
+	}
+		
+	// Loop through distances
+	for (int i = 0; i < distances.size(); ++i)
+	{
+		// Divide each distance to put in 0,1 interval
+		distances[i] = (distances[i] * 2.f) - 1.f;
+
+		// Plug into cosine
+		distances[i] = sin(distances[i]);
+
+		///cos(m_terrainGeometry[i][j].position.x + (deltaTime * 100.f))
+	}
+
+	// Test
+	if (sculpt == LANDSCAPE_FUNCTION::INCREASE)
+	{
+		switch (constraint)
+		{
+		case LANDSCAPE_CONSTRAINT::Y:
+		{
+			// Increase position
+			m_terrainGeometry[row][column].position.y += 1.f;
+			m_terrainGeometry[row][column + 1].position.y += distances[0];
+			m_terrainGeometry[row + 1][column + 1].position.y += distances[1];
+			m_terrainGeometry[row + 1][column].position.y += distances[2];
+		}
+		break;
+		}
+	}
+	
+	// Switch between sculpt parameter
+	//switch (sculpt)
 	//{
-	//	float dist = sqrt(
-	//		(start.x - others[i].x) * (start.x - others[i].x) +
-	//		(start.y - others[i].y) * (start.y - others[i].y) +
-	//		(start.z - others[i].z) * (start.z - others[i].z));
-	//	distances.push_back(dist);
-	//}
-	//	
-	//// Loop through distances
-	//for (int i = 0; i < distances.size(); ++i)
+	//case LANDSCAPE_FUNCTION::INCREASE:
 	//{
-	//	// Divide each distance to put in 0,1 interval
-	//	distances[i] = (distances[i] * 2.f) - 1.f;
-
-	//	// Plug into cosine
-	//	distances[i] = sin(distances[i]);
-
-	//	///cos(m_terrainGeometry[i][j].position.x + (deltaTime * 100.f))
-	//}
-
-	//// Test
-	//if (sculpt == LANDSCAPE_SCULPT::INCREASE)
-	//{
+	//	// Switch between constraint
 	//	switch (constraint)
 	//	{
+	//	case LANDSCAPE_CONSTRAINT::XY:
+	//	{			
+	//		// Increase position
+	//		m_terrainGeometry[row][column].position.x += 1.f;
+	//		m_terrainGeometry[row][column + 1].position.x += 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.x += 1.f;
+	//		m_terrainGeometry[row + 1][column].position.x += 1.f;
+
+	//		m_terrainGeometry[row][column].position.y += 1.f;
+	//		m_terrainGeometry[row][column + 1].position.y += 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.y += 1.f;
+	//		m_terrainGeometry[row + 1][column].position.y += 1.f;
+	//	}
+	//	break;
+	//	case LANDSCAPE_CONSTRAINT::XZ:
+	//	{
+	//		// Increase position
+	//		m_terrainGeometry[row][column].position.x += 1.f;
+	//		m_terrainGeometry[row][column + 1].position.x += 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.x += 1.f;
+	//		m_terrainGeometry[row + 1][column].position.x += 1.f;
+
+	//		m_terrainGeometry[row][column].position.z += 1.f;
+	//		m_terrainGeometry[row][column + 1].position.y += 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.y += 1.f;
+	//		m_terrainGeometry[row + 1][column].position.y += 1.f;
+	//	}
+	//	break;
+	//	case LANDSCAPE_CONSTRAINT::YZ:
+	//	{
+	//		// Increase position
+	//		m_terrainGeometry[row][column].position.y += 1.f;
+	//		m_terrainGeometry[row][column + 1].position.y += 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.y += 1.f;
+	//		m_terrainGeometry[row + 1][column].position.y += 1.f;
+
+	//		m_terrainGeometry[row][column].position.z += 1.f;
+	//		m_terrainGeometry[row][column + 1].position.z += 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.z += 1.f;
+	//		m_terrainGeometry[row + 1][column].position.z += 1.f;
+	//	}
+	//	break;
+	//	case LANDSCAPE_CONSTRAINT::X:
+	//	{
+	//		// Increase position
+	//		m_terrainGeometry[row][column].position.x += 1.f;
+	//		m_terrainGeometry[row][column + 1].position.x += 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.x += 1.f;
+	//		m_terrainGeometry[row + 1][column].position.x += 1.f;
+	//	}
+	//	break;
 	//	case LANDSCAPE_CONSTRAINT::Y:
 	//	{
 	//		// Increase position
 	//		m_terrainGeometry[row][column].position.y += 1.f;
-	//		m_terrainGeometry[row][column + 1].position.y += distances[0];
-	//		m_terrainGeometry[row + 1][column + 1].position.y += distances[1];
-	//		m_terrainGeometry[row + 1][column].position.y += distances[2];
+	//		m_terrainGeometry[row][column + 1].position.y += 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.y += 1.f;
+	//		m_terrainGeometry[row + 1][column].position.y += 1.f;
+	//	}
+	//	break;
+	//	case LANDSCAPE_CONSTRAINT::Z:
+	//	{
+	//		// Increase position
+	//		m_terrainGeometry[row][column].position.z += 1.f;
+	//		m_terrainGeometry[row][column + 1].position.z += 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.z += 1.f;
+	//		m_terrainGeometry[row + 1][column].position.z += 1.f;
+	//	}
+	//	break;
+	//	case LANDSCAPE_CONSTRAINT::ALL:
+	//	{
+	//		// Increase position
+	//		m_terrainGeometry[row][column].position.x += 1.f;
+	//		m_terrainGeometry[row][column + 1].position.x += 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.x += 1.f;
+	//		m_terrainGeometry[row + 1][column].position.x += 1.f;
+
+	//		m_terrainGeometry[row][column].position.y += 1.f;
+	//		m_terrainGeometry[row][column + 1].position.y += 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.y += 1.f;
+	//		m_terrainGeometry[row + 1][column].position.y += 1.f;
+
+	//		m_terrainGeometry[row][column].position.z += 1.f;
+	//		m_terrainGeometry[row][column + 1].position.z += 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.z += 1.f;
+	//		m_terrainGeometry[row + 1][column].position.z += 1.f;
 	//	}
 	//	break;
 	//	}
 	//}
-	
-	// Switch between sculpt parameter
-	switch (sculpt)
-	{
-	case LANDSCAPE_FUNCTION::INCREASE:
-	{
-		// Switch between constraint
-		switch (constraint)
-		{
-		case LANDSCAPE_CONSTRAINT::XY:
-		{			
-			// Increase position
-			m_terrainGeometry[row][column].position.x += 1.f;
-			m_terrainGeometry[row][column + 1].position.x += 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.x += 1.f;
-			m_terrainGeometry[row + 1][column].position.x += 1.f;
+	//break;
+	//case LANDSCAPE_FUNCTION::DECREASE:
+	//{
+	//	// Switch between constraint
+	//	switch (constraint)
+	//	{
+	//	case LANDSCAPE_CONSTRAINT::XY:
+	//	{
+	//		// Decrease position
+	//		m_terrainGeometry[row][column].position.x -= 1.f;
+	//		m_terrainGeometry[row][column + 1].position.x -= 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.x -= 1.f;
+	//		m_terrainGeometry[row + 1][column].position.x -= 1.f;
 
-			m_terrainGeometry[row][column].position.y += 1.f;
-			m_terrainGeometry[row][column + 1].position.y += 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.y += 1.f;
-			m_terrainGeometry[row + 1][column].position.y += 1.f;
-		}
-		break;
-		case LANDSCAPE_CONSTRAINT::XZ:
-		{
-			// Increase position
-			m_terrainGeometry[row][column].position.x += 1.f;
-			m_terrainGeometry[row][column + 1].position.x += 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.x += 1.f;
-			m_terrainGeometry[row + 1][column].position.x += 1.f;
+	//		m_terrainGeometry[row][column].position.y -= 1.f;
+	//		m_terrainGeometry[row][column + 1].position.y -= 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.y -= 1.f;
+	//		m_terrainGeometry[row + 1][column].position.y -= 1.f;
+	//	}
+	//	break;
+	//	case LANDSCAPE_CONSTRAINT::XZ:
+	//	{
+	//		// Decrease position
+	//		m_terrainGeometry[row][column].position.x -= 1.f;
+	//		m_terrainGeometry[row][column + 1].position.x -= 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.x -= 1.f;
+	//		m_terrainGeometry[row + 1][column].position.x -= 1.f;
 
-			m_terrainGeometry[row][column].position.z += 1.f;
-			m_terrainGeometry[row][column + 1].position.y += 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.y += 1.f;
-			m_terrainGeometry[row + 1][column].position.y += 1.f;
-		}
-		break;
-		case LANDSCAPE_CONSTRAINT::YZ:
-		{
-			// Increase position
-			m_terrainGeometry[row][column].position.y += 1.f;
-			m_terrainGeometry[row][column + 1].position.y += 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.y += 1.f;
-			m_terrainGeometry[row + 1][column].position.y += 1.f;
+	//		m_terrainGeometry[row][column].position.z -= 1.f;
+	//		m_terrainGeometry[row][column + 1].position.z -= 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.z -= 1.f;
+	//		m_terrainGeometry[row + 1][column].position.z -= 1.f;
+	//	}
+	//	break;
+	//	case LANDSCAPE_CONSTRAINT::YZ:
+	//	{
+	//		// Decrease position
+	//		m_terrainGeometry[row][column].position.y -= 1.f;
+	//		m_terrainGeometry[row][column + 1].position.y -= 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.y -= 1.f;
+	//		m_terrainGeometry[row + 1][column].position.y -= 1.f;
 
-			m_terrainGeometry[row][column].position.z += 1.f;
-			m_terrainGeometry[row][column + 1].position.z += 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.z += 1.f;
-			m_terrainGeometry[row + 1][column].position.z += 1.f;
-		}
-		break;
-		case LANDSCAPE_CONSTRAINT::X:
-		{
-			// Increase position
-			m_terrainGeometry[row][column].position.x += 1.f;
-			m_terrainGeometry[row][column + 1].position.x += 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.x += 1.f;
-			m_terrainGeometry[row + 1][column].position.x += 1.f;
-		}
-		break;
-		case LANDSCAPE_CONSTRAINT::Y:
-		{
-			// Increase position
-			m_terrainGeometry[row][column].position.y += 1.f;
-			m_terrainGeometry[row][column + 1].position.y += 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.y += 1.f;
-			m_terrainGeometry[row + 1][column].position.y += 1.f;
-		}
-		break;
-		case LANDSCAPE_CONSTRAINT::Z:
-		{
-			// Increase position
-			m_terrainGeometry[row][column].position.z += 1.f;
-			m_terrainGeometry[row][column + 1].position.z += 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.z += 1.f;
-			m_terrainGeometry[row + 1][column].position.z += 1.f;
-		}
-		break;
-		case LANDSCAPE_CONSTRAINT::ALL:
-		{
-			// Increase position
-			m_terrainGeometry[row][column].position.x += 1.f;
-			m_terrainGeometry[row][column + 1].position.x += 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.x += 1.f;
-			m_terrainGeometry[row + 1][column].position.x += 1.f;
+	//		m_terrainGeometry[row][column].position.z -= 1.f;
+	//		m_terrainGeometry[row][column + 1].position.z -= 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.z -= 1.f;
+	//		m_terrainGeometry[row + 1][column].position.z -= 1.f;
+	//	}
+	//	break;
+	//	case LANDSCAPE_CONSTRAINT::X:
+	//	{
+	//		// Decrease position
+	//		m_terrainGeometry[row][column].position.x -= 1.f;
+	//		m_terrainGeometry[row][column + 1].position.x -= 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.x -= 1.f;
+	//		m_terrainGeometry[row + 1][column].position.x -= 1.f;
+	//	}
+	//	break;
+	//	case LANDSCAPE_CONSTRAINT::Y:
+	//	{
+	//		// Decrease position
+	//		m_terrainGeometry[row][column].position.y -= 1.f;
+	//		m_terrainGeometry[row][column + 1].position.y -= 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.y -= 1.f;
+	//		m_terrainGeometry[row + 1][column].position.y -= 1.f;
+	//	}
+	//	break;
+	//	case LANDSCAPE_CONSTRAINT::Z:
+	//	{
+	//		// Decrease position
+	//		m_terrainGeometry[row][column].position.z -= 1.f;
+	//		m_terrainGeometry[row][column + 1].position.z -= 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.z -= 1.f;
+	//		m_terrainGeometry[row + 1][column].position.z -= 1.f;
+	//	}
+	//	break;
+	//	case LANDSCAPE_CONSTRAINT::ALL:
+	//	{
+	//		// Decrease position
+	//		m_terrainGeometry[row][column].position.x -= 1.f;
+	//		m_terrainGeometry[row][column + 1].position.x -= 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.x -= 1.f;
+	//		m_terrainGeometry[row + 1][column].position.x -= 1.f;
 
-			m_terrainGeometry[row][column].position.y += 1.f;
-			m_terrainGeometry[row][column + 1].position.y += 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.y += 1.f;
-			m_terrainGeometry[row + 1][column].position.y += 1.f;
+	//		m_terrainGeometry[row][column].position.y -= 1.f;
+	//		m_terrainGeometry[row][column + 1].position.y -= 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.y -= 1.f;
+	//		m_terrainGeometry[row + 1][column].position.y -= 1.f;
 
-			m_terrainGeometry[row][column].position.z += 1.f;
-			m_terrainGeometry[row][column + 1].position.z += 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.z += 1.f;
-			m_terrainGeometry[row + 1][column].position.z += 1.f;
-		}
-		break;
-		}
-	}
-	break;
-	case LANDSCAPE_FUNCTION::DECREASE:
-	{
-		// Switch between constraint
-		switch (constraint)
-		{
-		case LANDSCAPE_CONSTRAINT::XY:
-		{
-			// Decrease position
-			m_terrainGeometry[row][column].position.x -= 1.f;
-			m_terrainGeometry[row][column + 1].position.x -= 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.x -= 1.f;
-			m_terrainGeometry[row + 1][column].position.x -= 1.f;
+	//		m_terrainGeometry[row][column].position.z -= 1.f;
+	//		m_terrainGeometry[row][column + 1].position.z -= 1.f;
+	//		m_terrainGeometry[row + 1][column + 1].position.z -= 1.f;
+	//		m_terrainGeometry[row + 1][column].position.z -= 1.f;
+	//	}
+	//	break;
+	//	}
+	//}
+	//break;
+	//case LANDSCAPE_FUNCTION::FLATTEN:
+	//{
+	//	// Switch between constraint
+	//	switch (constraint)
+	//	{
+	//	case LANDSCAPE_CONSTRAINT::XY:
+	//	{
+	//		// X
+	//		{
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row][column].position.x > position[0].x + 1.f) { m_terrainGeometry[row][column].position.x -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row][column].position.x < position[0].x - 1.f) { m_terrainGeometry[row][column].position.x += 1.f; }
+	//			
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row][column + 1].position.x > position[1].x + 1.f) { m_terrainGeometry[row][column + 1].position.x -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row][column + 1].position.x < position[1].x - 1.f) { m_terrainGeometry[row][column + 1].position.x += 1.f; }
+	//			
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row + 1][column + 1].position.x > position[2].x + 1.f) { m_terrainGeometry[row + 1][column + 1].position.x -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row + 1][column + 1].position.x < position[2].x - 1.f) { m_terrainGeometry[row + 1][column + 1].position.x += 1.f; }
 
-			m_terrainGeometry[row][column].position.y -= 1.f;
-			m_terrainGeometry[row][column + 1].position.y -= 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.y -= 1.f;
-			m_terrainGeometry[row + 1][column].position.y -= 1.f;
-		}
-		break;
-		case LANDSCAPE_CONSTRAINT::XZ:
-		{
-			// Decrease position
-			m_terrainGeometry[row][column].position.x -= 1.f;
-			m_terrainGeometry[row][column + 1].position.x -= 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.x -= 1.f;
-			m_terrainGeometry[row + 1][column].position.x -= 1.f;
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row + 1][column].position.x > position[3].x + 1.f) { m_terrainGeometry[row + 1][column].position.x -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row + 1][column].position.x < position[3].x - 1.f) { m_terrainGeometry[row + 1][column].position.x += 1.f; }
+	//		}
 
-			m_terrainGeometry[row][column].position.z -= 1.f;
-			m_terrainGeometry[row][column + 1].position.z -= 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.z -= 1.f;
-			m_terrainGeometry[row + 1][column].position.z -= 1.f;
-		}
-		break;
-		case LANDSCAPE_CONSTRAINT::YZ:
-		{
-			// Decrease position
-			m_terrainGeometry[row][column].position.y -= 1.f;
-			m_terrainGeometry[row][column + 1].position.y -= 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.y -= 1.f;
-			m_terrainGeometry[row + 1][column].position.y -= 1.f;
+	//		// Y
+	//		{
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row][column].position.y > position[0].y + 1.f) { m_terrainGeometry[row][column].position.y -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row][column].position.y < position[0].y - 1.f) { m_terrainGeometry[row][column].position.y += 1.f; }
 
-			m_terrainGeometry[row][column].position.z -= 1.f;
-			m_terrainGeometry[row][column + 1].position.z -= 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.z -= 1.f;
-			m_terrainGeometry[row + 1][column].position.z -= 1.f;
-		}
-		break;
-		case LANDSCAPE_CONSTRAINT::X:
-		{
-			// Decrease position
-			m_terrainGeometry[row][column].position.x -= 1.f;
-			m_terrainGeometry[row][column + 1].position.x -= 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.x -= 1.f;
-			m_terrainGeometry[row + 1][column].position.x -= 1.f;
-		}
-		break;
-		case LANDSCAPE_CONSTRAINT::Y:
-		{
-			// Decrease position
-			m_terrainGeometry[row][column].position.y -= 1.f;
-			m_terrainGeometry[row][column + 1].position.y -= 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.y -= 1.f;
-			m_terrainGeometry[row + 1][column].position.y -= 1.f;
-		}
-		break;
-		case LANDSCAPE_CONSTRAINT::Z:
-		{
-			// Decrease position
-			m_terrainGeometry[row][column].position.z -= 1.f;
-			m_terrainGeometry[row][column + 1].position.z -= 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.z -= 1.f;
-			m_terrainGeometry[row + 1][column].position.z -= 1.f;
-		}
-		break;
-		case LANDSCAPE_CONSTRAINT::ALL:
-		{
-			// Decrease position
-			m_terrainGeometry[row][column].position.x -= 1.f;
-			m_terrainGeometry[row][column + 1].position.x -= 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.x -= 1.f;
-			m_terrainGeometry[row + 1][column].position.x -= 1.f;
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row][column + 1].position.y > position[1].y + 1.f) { m_terrainGeometry[row][column + 1].position.y -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row][column + 1].position.y < position[1].y - 1.f) { m_terrainGeometry[row][column + 1].position.y += 1.f; }
 
-			m_terrainGeometry[row][column].position.y -= 1.f;
-			m_terrainGeometry[row][column + 1].position.y -= 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.y -= 1.f;
-			m_terrainGeometry[row + 1][column].position.y -= 1.f;
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row + 1][column + 1].position.y > position[2].y + 1.f) { m_terrainGeometry[row + 1][column + 1].position.y -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row + 1][column + 1].position.y < position[2].y - 1.f) { m_terrainGeometry[row + 1][column + 1].position.y += 1.f; }
 
-			m_terrainGeometry[row][column].position.z -= 1.f;
-			m_terrainGeometry[row][column + 1].position.z -= 1.f;
-			m_terrainGeometry[row + 1][column + 1].position.z -= 1.f;
-			m_terrainGeometry[row + 1][column].position.z -= 1.f;
-		}
-		break;
-		}
-	}
-	break;
-	case LANDSCAPE_FUNCTION::FLATTEN:
-	{
-		// Switch between constraint
-		switch (constraint)
-		{
-		case LANDSCAPE_CONSTRAINT::XY:
-		{
-			// X
-			{
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column].position.x > position[0].x + 1.f) { m_terrainGeometry[row][column].position.x -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column].position.x < position[0].x - 1.f) { m_terrainGeometry[row][column].position.x += 1.f; }
-				
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column + 1].position.x > position[1].x + 1.f) { m_terrainGeometry[row][column + 1].position.x -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column + 1].position.x < position[1].x - 1.f) { m_terrainGeometry[row][column + 1].position.x += 1.f; }
-				
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column + 1].position.x > position[2].x + 1.f) { m_terrainGeometry[row + 1][column + 1].position.x -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column + 1].position.x < position[2].x - 1.f) { m_terrainGeometry[row + 1][column + 1].position.x += 1.f; }
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row + 1][column].position.y > position[3].y + 1.f) { m_terrainGeometry[row + 1][column].position.y -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row + 1][column].position.y < position[3].y - 1.f) { m_terrainGeometry[row + 1][column].position.y += 1.f; }
+	//		}
+	//	}
+	//	break;
+	//	case LANDSCAPE_CONSTRAINT::XZ:
+	//	{
+	//		// X
+	//		{
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row][column].position.x > position[0].x + 1.f) { m_terrainGeometry[row][column].position.x -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row][column].position.x < position[0].x - 1.f) { m_terrainGeometry[row][column].position.x += 1.f; }
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column].position.x > position[3].x + 1.f) { m_terrainGeometry[row + 1][column].position.x -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column].position.x < position[3].x - 1.f) { m_terrainGeometry[row + 1][column].position.x += 1.f; }
-			}
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row][column + 1].position.x > position[1].x + 1.f) { m_terrainGeometry[row][column + 1].position.x -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row][column + 1].position.x < position[1].x - 1.f) { m_terrainGeometry[row][column + 1].position.x += 1.f; }
 
-			// Y
-			{
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column].position.y > position[0].y + 1.f) { m_terrainGeometry[row][column].position.y -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column].position.y < position[0].y - 1.f) { m_terrainGeometry[row][column].position.y += 1.f; }
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row + 1][column + 1].position.x > position[2].x + 1.f) { m_terrainGeometry[row + 1][column + 1].position.x -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row + 1][column + 1].position.x < position[2].x - 1.f) { m_terrainGeometry[row + 1][column + 1].position.x += 1.f; }
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column + 1].position.y > position[1].y + 1.f) { m_terrainGeometry[row][column + 1].position.y -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column + 1].position.y < position[1].y - 1.f) { m_terrainGeometry[row][column + 1].position.y += 1.f; }
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row + 1][column].position.x > position[3].x + 1.f) { m_terrainGeometry[row + 1][column].position.x -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row + 1][column].position.x < position[3].x - 1.f) { m_terrainGeometry[row + 1][column].position.x += 1.f; }
+	//		}
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column + 1].position.y > position[2].y + 1.f) { m_terrainGeometry[row + 1][column + 1].position.y -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column + 1].position.y < position[2].y - 1.f) { m_terrainGeometry[row + 1][column + 1].position.y += 1.f; }
+	//		// Z
+	//		{
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row][column].position.z > position[0].z + 1.f) { m_terrainGeometry[row][column].position.z -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row][column].position.z < position[0].z - 1.f) { m_terrainGeometry[row][column].position.z += 1.f; }
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column].position.y > position[3].y + 1.f) { m_terrainGeometry[row + 1][column].position.y -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column].position.y < position[3].y - 1.f) { m_terrainGeometry[row + 1][column].position.y += 1.f; }
-			}
-		}
-		break;
-		case LANDSCAPE_CONSTRAINT::XZ:
-		{
-			// X
-			{
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column].position.x > position[0].x + 1.f) { m_terrainGeometry[row][column].position.x -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column].position.x < position[0].x - 1.f) { m_terrainGeometry[row][column].position.x += 1.f; }
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row][column + 1].position.z > position[1].z + 1.f) { m_terrainGeometry[row][column + 1].position.z -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row][column + 1].position.z < position[1].z - 1.f) { m_terrainGeometry[row][column + 1].position.z += 1.f; }
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column + 1].position.x > position[1].x + 1.f) { m_terrainGeometry[row][column + 1].position.x -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column + 1].position.x < position[1].x - 1.f) { m_terrainGeometry[row][column + 1].position.x += 1.f; }
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row + 1][column + 1].position.z > position[2].z + 1.f) { m_terrainGeometry[row + 1][column + 1].position.z -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row + 1][column + 1].position.z < position[2].z - 1.f) { m_terrainGeometry[row + 1][column + 1].position.z += 1.f; }
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column + 1].position.x > position[2].x + 1.f) { m_terrainGeometry[row + 1][column + 1].position.x -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column + 1].position.x < position[2].x - 1.f) { m_terrainGeometry[row + 1][column + 1].position.x += 1.f; }
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row + 1][column].position.z > position[3].z + 1.f) { m_terrainGeometry[row + 1][column].position.z -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row + 1][column].position.z < position[3].z - 1.f) { m_terrainGeometry[row + 1][column].position.z += 1.f; }
+	//		}
+	//	}
+	//	break;
+	//	case LANDSCAPE_CONSTRAINT::YZ:
+	//	{
+	//		// Y
+	//		{
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row][column].position.y > position[0].y + 1.f) { m_terrainGeometry[row][column].position.y -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row][column].position.y < position[0].y - 1.f) { m_terrainGeometry[row][column].position.y += 1.f; }
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column].position.x > position[3].x + 1.f) { m_terrainGeometry[row + 1][column].position.x -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column].position.x < position[3].x - 1.f) { m_terrainGeometry[row + 1][column].position.x += 1.f; }
-			}
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row][column + 1].position.y > position[1].y + 1.f) { m_terrainGeometry[row][column + 1].position.y -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row][column + 1].position.y < position[1].y - 1.f) { m_terrainGeometry[row][column + 1].position.y += 1.f; }
 
-			// Z
-			{
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column].position.z > position[0].z + 1.f) { m_terrainGeometry[row][column].position.z -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column].position.z < position[0].z - 1.f) { m_terrainGeometry[row][column].position.z += 1.f; }
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row + 1][column + 1].position.y > position[2].y + 1.f) { m_terrainGeometry[row + 1][column + 1].position.y -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row + 1][column + 1].position.y < position[2].y - 1.f) { m_terrainGeometry[row + 1][column + 1].position.y += 1.f; }
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column + 1].position.z > position[1].z + 1.f) { m_terrainGeometry[row][column + 1].position.z -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column + 1].position.z < position[1].z - 1.f) { m_terrainGeometry[row][column + 1].position.z += 1.f; }
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row + 1][column].position.y > position[3].y + 1.f) { m_terrainGeometry[row + 1][column].position.y -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row + 1][column].position.y < position[3].y - 1.f) { m_terrainGeometry[row + 1][column].position.y += 1.f; }
+	//		}
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column + 1].position.z > position[2].z + 1.f) { m_terrainGeometry[row + 1][column + 1].position.z -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column + 1].position.z < position[2].z - 1.f) { m_terrainGeometry[row + 1][column + 1].position.z += 1.f; }
+	//		// Z
+	//		{
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row][column].position.z > position[0].z + 1.f) { m_terrainGeometry[row][column].position.z -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row][column].position.z < position[0].z - 1.f) { m_terrainGeometry[row][column].position.z += 1.f; }
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column].position.z > position[3].z + 1.f) { m_terrainGeometry[row + 1][column].position.z -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column].position.z < position[3].z - 1.f) { m_terrainGeometry[row + 1][column].position.z += 1.f; }
-			}
-		}
-		break;
-		case LANDSCAPE_CONSTRAINT::YZ:
-		{
-			// Y
-			{
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column].position.y > position[0].y + 1.f) { m_terrainGeometry[row][column].position.y -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column].position.y < position[0].y - 1.f) { m_terrainGeometry[row][column].position.y += 1.f; }
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row][column + 1].position.z > position[1].z + 1.f) { m_terrainGeometry[row][column + 1].position.z -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row][column + 1].position.z < position[1].z - 1.f) { m_terrainGeometry[row][column + 1].position.z += 1.f; }
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column + 1].position.y > position[1].y + 1.f) { m_terrainGeometry[row][column + 1].position.y -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column + 1].position.y < position[1].y - 1.f) { m_terrainGeometry[row][column + 1].position.y += 1.f; }
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row + 1][column + 1].position.z > position[2].z + 1.f) { m_terrainGeometry[row + 1][column + 1].position.z -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row + 1][column + 1].position.z < position[2].z - 1.f) { m_terrainGeometry[row + 1][column + 1].position.z += 1.f; }
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column + 1].position.y > position[2].y + 1.f) { m_terrainGeometry[row + 1][column + 1].position.y -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column + 1].position.y < position[2].y - 1.f) { m_terrainGeometry[row + 1][column + 1].position.y += 1.f; }
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row + 1][column].position.z > position[3].z + 1.f) { m_terrainGeometry[row + 1][column].position.z -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row + 1][column].position.z < position[3].z - 1.f) { m_terrainGeometry[row + 1][column].position.z += 1.f; }
+	//		}
+	//	}
+	//	break;
+	//	case LANDSCAPE_CONSTRAINT::X:
+	//	{
+	//		// If selected geometry is above ground level, decrease position
+	//		if (m_terrainGeometry[row][column].position.x > position[0].x + 1.f) { m_terrainGeometry[row][column].position.x -= 1.f; }
+	//		// Else, if selected geometry is below ground level, increase position
+	//		else if (m_terrainGeometry[row][column].position.x < position[0].x - 1.f) { m_terrainGeometry[row][column].position.x += 1.f; }
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column].position.y > position[3].y + 1.f) { m_terrainGeometry[row + 1][column].position.y -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column].position.y < position[3].y - 1.f) { m_terrainGeometry[row + 1][column].position.y += 1.f; }
-			}
+	//		// If selected geometry is above ground level, decrease position
+	//		if (m_terrainGeometry[row][column + 1].position.x > position[1].x + 1.f) { m_terrainGeometry[row][column + 1].position.x -= 1.f; }
+	//		// Else, if selected geometry is below ground level, increase position
+	//		else if (m_terrainGeometry[row][column + 1].position.x < position[1].x - 1.f) { m_terrainGeometry[row][column + 1].position.x += 1.f; }
 
-			// Z
-			{
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column].position.z > position[0].z + 1.f) { m_terrainGeometry[row][column].position.z -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column].position.z < position[0].z - 1.f) { m_terrainGeometry[row][column].position.z += 1.f; }
+	//		// If selected geometry is above ground level, decrease position
+	//		if (m_terrainGeometry[row + 1][column + 1].position.x > position[2].x + 1.f) { m_terrainGeometry[row + 1][column + 1].position.x -= 1.f; }
+	//		// Else, if selected geometry is below ground level, increase position
+	//		else if (m_terrainGeometry[row + 1][column + 1].position.x < position[2].x - 1.f) { m_terrainGeometry[row + 1][column + 1].position.x += 1.f; }
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column + 1].position.z > position[1].z + 1.f) { m_terrainGeometry[row][column + 1].position.z -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column + 1].position.z < position[1].z - 1.f) { m_terrainGeometry[row][column + 1].position.z += 1.f; }
+	//		// If selected geometry is above ground level, decrease position
+	//		if (m_terrainGeometry[row + 1][column].position.x > position[3].x + 1.f) { m_terrainGeometry[row + 1][column].position.x -= 1.f; }
+	//		// Else, if selected geometry is below ground level, increase position
+	//		else if (m_terrainGeometry[row + 1][column].position.x < position[3].x - 1.f) { m_terrainGeometry[row + 1][column].position.x += 1.f; }
+	//	}
+	//	break;
+	//	case LANDSCAPE_CONSTRAINT::Y:
+	//	{
+	//		// If selected geometry is above ground level, decrease position
+	//		if (m_terrainGeometry[row][column].position.y > position[0].y + 1.f) { m_terrainGeometry[row][column].position.y -= 1.f; }
+	//		// Else, if selected geometry is below ground level, increase position
+	//		else if (m_terrainGeometry[row][column].position.y < position[0].y - 1.f) { m_terrainGeometry[row][column].position.y += 1.f; }
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column + 1].position.z > position[2].z + 1.f) { m_terrainGeometry[row + 1][column + 1].position.z -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column + 1].position.z < position[2].z - 1.f) { m_terrainGeometry[row + 1][column + 1].position.z += 1.f; }
+	//		// If selected geometry is above ground level, decrease position
+	//		if (m_terrainGeometry[row][column + 1].position.y > position[1].y + 1.f) { m_terrainGeometry[row][column + 1].position.y -= 1.f; }
+	//		// Else, if selected geometry is below ground level, increase position
+	//		else if (m_terrainGeometry[row][column + 1].position.y < position[1].y - 1.f) { m_terrainGeometry[row][column + 1].position.y += 1.f; }
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column].position.z > position[3].z + 1.f) { m_terrainGeometry[row + 1][column].position.z -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column].position.z < position[3].z - 1.f) { m_terrainGeometry[row + 1][column].position.z += 1.f; }
-			}
-		}
-		break;
-		case LANDSCAPE_CONSTRAINT::X:
-		{
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row][column].position.x > position[0].x + 1.f) { m_terrainGeometry[row][column].position.x -= 1.f; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row][column].position.x < position[0].x - 1.f) { m_terrainGeometry[row][column].position.x += 1.f; }
+	//		// If selected geometry is above ground level, decrease position
+	//		if (m_terrainGeometry[row + 1][column + 1].position.y > position[2].y + 1.f) { m_terrainGeometry[row + 1][column + 1].position.y -= 1.f; }
+	//		// Else, if selected geometry is below ground level, increase position
+	//		else if (m_terrainGeometry[row + 1][column + 1].position.y < position[2].y - 1.f) { m_terrainGeometry[row + 1][column + 1].position.y += 1.f; }
 
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row][column + 1].position.x > position[1].x + 1.f) { m_terrainGeometry[row][column + 1].position.x -= 1.f; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row][column + 1].position.x < position[1].x - 1.f) { m_terrainGeometry[row][column + 1].position.x += 1.f; }
+	//		// If selected geometry is above ground level, decrease position
+	//		if (m_terrainGeometry[row + 1][column].position.y > position[3].y + 1.f) { m_terrainGeometry[row + 1][column].position.y -= 1.f; }
+	//		// Else, if selected geometry is below ground level, increase position
+	//		else if (m_terrainGeometry[row + 1][column].position.y < position[3].y - 1.f) { m_terrainGeometry[row + 1][column].position.y += 1.f; }
+	//	}
+	//	break;
+	//	case LANDSCAPE_CONSTRAINT::Z:
+	//	{
+	//		// If selected geometry is above ground level, decrease position
+	//		if (m_terrainGeometry[row][column].position.z > position[0].z + 1.f) { m_terrainGeometry[row][column].position.z -= 1.f; }
+	//		// Else, if selected geometry is below ground level, increase position
+	//		else if (m_terrainGeometry[row][column].position.z < position[0].z - 1.f) { m_terrainGeometry[row][column].position.z += 1.f; }
 
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row + 1][column + 1].position.x > position[2].x + 1.f) { m_terrainGeometry[row + 1][column + 1].position.x -= 1.f; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row + 1][column + 1].position.x < position[2].x - 1.f) { m_terrainGeometry[row + 1][column + 1].position.x += 1.f; }
+	//		// If selected geometry is above ground level, decrease position
+	//		if (m_terrainGeometry[row][column + 1].position.z > position[1].z + 1.f) { m_terrainGeometry[row][column + 1].position.z -= 1.f; }
+	//		// Else, if selected geometry is below ground level, increase position
+	//		else if (m_terrainGeometry[row][column + 1].position.z < position[1].z - 1.f) { m_terrainGeometry[row][column + 1].position.z += 1.f; }
 
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row + 1][column].position.x > position[3].x + 1.f) { m_terrainGeometry[row + 1][column].position.x -= 1.f; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row + 1][column].position.x < position[3].x - 1.f) { m_terrainGeometry[row + 1][column].position.x += 1.f; }
-		}
-		break;
-		case LANDSCAPE_CONSTRAINT::Y:
-		{
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row][column].position.y > position[0].y + 1.f) { m_terrainGeometry[row][column].position.y -= 1.f; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row][column].position.y < position[0].y - 1.f) { m_terrainGeometry[row][column].position.y += 1.f; }
+	//		// If selected geometry is above ground level, decrease position
+	//		if (m_terrainGeometry[row + 1][column + 1].position.z > position[2].z + 1.f) { m_terrainGeometry[row + 1][column + 1].position.z -= 1.f; }
+	//		// Else, if selected geometry is below ground level, increase position
+	//		else if (m_terrainGeometry[row + 1][column + 1].position.z < position[2].z - 1.f) { m_terrainGeometry[row + 1][column + 1].position.z += 1.f; }
 
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row][column + 1].position.y > position[1].y + 1.f) { m_terrainGeometry[row][column + 1].position.y -= 1.f; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row][column + 1].position.y < position[1].y - 1.f) { m_terrainGeometry[row][column + 1].position.y += 1.f; }
+	//		// If selected geometry is above ground level, decrease position
+	//		if (m_terrainGeometry[row + 1][column].position.z > position[3].z + 1.f) { m_terrainGeometry[row + 1][column].position.z -= 1.f; }
+	//		// Else, if selected geometry is below ground level, increase position
+	//		else if (m_terrainGeometry[row + 1][column].position.z < position[3].z - 1.f) { m_terrainGeometry[row + 1][column].position.z += 1.f; }
+	//	}
+	//	break;
+	//	case LANDSCAPE_CONSTRAINT::ALL:
+	//	{
+	//		// X
+	//		{
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row][column].position.x > position[0].x + 1.f) { m_terrainGeometry[row][column].position.x -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row][column].position.x < position[0].x - 1.f) { m_terrainGeometry[row][column].position.x += 1.f; }
 
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row + 1][column + 1].position.y > position[2].y + 1.f) { m_terrainGeometry[row + 1][column + 1].position.y -= 1.f; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row + 1][column + 1].position.y < position[2].y - 1.f) { m_terrainGeometry[row + 1][column + 1].position.y += 1.f; }
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row][column + 1].position.x > position[1].x + 1.f) { m_terrainGeometry[row][column + 1].position.x -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row][column + 1].position.x < position[1].x - 1.f) { m_terrainGeometry[row][column + 1].position.x += 1.f; }
 
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row + 1][column].position.y > position[3].y + 1.f) { m_terrainGeometry[row + 1][column].position.y -= 1.f; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row + 1][column].position.y < position[3].y - 1.f) { m_terrainGeometry[row + 1][column].position.y += 1.f; }
-		}
-		break;
-		case LANDSCAPE_CONSTRAINT::Z:
-		{
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row][column].position.z > position[0].z + 1.f) { m_terrainGeometry[row][column].position.z -= 1.f; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row][column].position.z < position[0].z - 1.f) { m_terrainGeometry[row][column].position.z += 1.f; }
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row + 1][column + 1].position.x > position[2].x + 1.f) { m_terrainGeometry[row + 1][column + 1].position.x -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row + 1][column + 1].position.x < position[2].x - 1.f) { m_terrainGeometry[row + 1][column + 1].position.x += 1.f; }
 
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row][column + 1].position.z > position[1].z + 1.f) { m_terrainGeometry[row][column + 1].position.z -= 1.f; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row][column + 1].position.z < position[1].z - 1.f) { m_terrainGeometry[row][column + 1].position.z += 1.f; }
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row + 1][column].position.x > position[3].x + 1.f) { m_terrainGeometry[row + 1][column].position.x -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row + 1][column].position.x < position[3].x - 1.f) { m_terrainGeometry[row + 1][column].position.x += 1.f; }
+	//		}
+	//		
+	//		// Y
+	//		{
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row][column].position.y > position[0].y + 1.f) { m_terrainGeometry[row][column].position.y -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row][column].position.y < position[0].y - 1.f) { m_terrainGeometry[row][column].position.y += 1.f; }
 
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row + 1][column + 1].position.z > position[2].z + 1.f) { m_terrainGeometry[row + 1][column + 1].position.z -= 1.f; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row + 1][column + 1].position.z < position[2].z - 1.f) { m_terrainGeometry[row + 1][column + 1].position.z += 1.f; }
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row][column + 1].position.y > position[1].y + 1.f) { m_terrainGeometry[row][column + 1].position.y -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row][column + 1].position.y < position[1].y - 1.f) { m_terrainGeometry[row][column + 1].position.y += 1.f; }
 
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row + 1][column].position.z > position[3].z + 1.f) { m_terrainGeometry[row + 1][column].position.z -= 1.f; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row + 1][column].position.z < position[3].z - 1.f) { m_terrainGeometry[row + 1][column].position.z += 1.f; }
-		}
-		break;
-		case LANDSCAPE_CONSTRAINT::ALL:
-		{
-			// X
-			{
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column].position.x > position[0].x + 1.f) { m_terrainGeometry[row][column].position.x -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column].position.x < position[0].x - 1.f) { m_terrainGeometry[row][column].position.x += 1.f; }
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row + 1][column + 1].position.y > position[2].y + 1.f) { m_terrainGeometry[row + 1][column + 1].position.y -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row + 1][column + 1].position.y < position[2].y - 1.f) { m_terrainGeometry[row + 1][column + 1].position.y += 1.f; }
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column + 1].position.x > position[1].x + 1.f) { m_terrainGeometry[row][column + 1].position.x -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column + 1].position.x < position[1].x - 1.f) { m_terrainGeometry[row][column + 1].position.x += 1.f; }
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row + 1][column].position.y > position[3].y + 1.f) { m_terrainGeometry[row + 1][column].position.y -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row + 1][column].position.y < position[3].y - 1.f) { m_terrainGeometry[row + 1][column].position.y += 1.f; }
+	//		}
+	//		
+	//		// Z
+	//		{
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row][column].position.z > position[0].z + 1.f) { m_terrainGeometry[row][column].position.z -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row][column].position.z < position[0].z - 1.f) { m_terrainGeometry[row][column].position.z += 1.f; }
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column + 1].position.x > position[2].x + 1.f) { m_terrainGeometry[row + 1][column + 1].position.x -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column + 1].position.x < position[2].x - 1.f) { m_terrainGeometry[row + 1][column + 1].position.x += 1.f; }
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row][column + 1].position.z > position[1].z + 1.f) { m_terrainGeometry[row][column + 1].position.z -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row][column + 1].position.z < position[1].z - 1.f) { m_terrainGeometry[row][column + 1].position.z += 1.f; }
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column].position.x > position[3].x + 1.f) { m_terrainGeometry[row + 1][column].position.x -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column].position.x < position[3].x - 1.f) { m_terrainGeometry[row + 1][column].position.x += 1.f; }
-			}
-			
-			// Y
-			{
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column].position.y > position[0].y + 1.f) { m_terrainGeometry[row][column].position.y -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column].position.y < position[0].y - 1.f) { m_terrainGeometry[row][column].position.y += 1.f; }
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row + 1][column + 1].position.z > position[2].z + 1.f) { m_terrainGeometry[row + 1][column + 1].position.z -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row + 1][column + 1].position.z < position[2].z - 1.f) { m_terrainGeometry[row + 1][column + 1].position.z += 1.f; }
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column + 1].position.y > position[1].y + 1.f) { m_terrainGeometry[row][column + 1].position.y -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column + 1].position.y < position[1].y - 1.f) { m_terrainGeometry[row][column + 1].position.y += 1.f; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column + 1].position.y > position[2].y + 1.f) { m_terrainGeometry[row + 1][column + 1].position.y -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column + 1].position.y < position[2].y - 1.f) { m_terrainGeometry[row + 1][column + 1].position.y += 1.f; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column].position.y > position[3].y + 1.f) { m_terrainGeometry[row + 1][column].position.y -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column].position.y < position[3].y - 1.f) { m_terrainGeometry[row + 1][column].position.y += 1.f; }
-			}
-			
-			// Z
-			{
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column].position.z > position[0].z + 1.f) { m_terrainGeometry[row][column].position.z -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column].position.z < position[0].z - 1.f) { m_terrainGeometry[row][column].position.z += 1.f; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column + 1].position.z > position[1].z + 1.f) { m_terrainGeometry[row][column + 1].position.z -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column + 1].position.z < position[1].z - 1.f) { m_terrainGeometry[row][column + 1].position.z += 1.f; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column + 1].position.z > position[2].z + 1.f) { m_terrainGeometry[row + 1][column + 1].position.z -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column + 1].position.z < position[2].z - 1.f) { m_terrainGeometry[row + 1][column + 1].position.z += 1.f; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column].position.z > position[3].z + 1.f) { m_terrainGeometry[row + 1][column].position.z -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column].position.z < position[3].z - 1.f) { m_terrainGeometry[row + 1][column].position.z += 1.f; }
-			}			
-		}
-		break;
-		}
-	}
-	break;
-	}		
+	//			// If selected geometry is above ground level, decrease position
+	//			if (m_terrainGeometry[row + 1][column].position.z > position[3].z + 1.f) { m_terrainGeometry[row + 1][column].position.z -= 1.f; }
+	//			// Else, if selected geometry is below ground level, increase position
+	//			else if (m_terrainGeometry[row + 1][column].position.z < position[3].z - 1.f) { m_terrainGeometry[row + 1][column].position.z += 1.f; }
+	//		}			
+	//	}
+	//	break;
+	//	}
+	//}
+	//break;
+	//}		
 
 	// Ensure terrain height can't go below 0
 	if (m_terrainGeometry[row][column].position.y < 0.f)			{ m_terrainGeometry[row][column].position.y = 0.f; }
@@ -1097,151 +1061,282 @@ void DisplayChunk::CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint
 	std::pair<int, int> terrain;
 	terrain.first = row;
 	terrain.second = column;
+	bool check = false;
 
 	// Switch between paints
 	switch (paint)
 	{
 	case LANDSCAPE_PAINT::GRASS:
 	{
-		// Loop through dirt vector & remove from storage
-		if (FindInVector(index, m_dirt, terrain)) { m_dirt.erase(m_dirt.begin() + index); }
+		// Search through dirt vector
+		check = Search(index, m_dirt, terrain);
 
-		// Else, loop through sand vector & remove from storage
-		else if (FindInVector(index, m_sand, terrain)) { m_sand.erase(m_sand.begin() + index); }
+		// Else, search through sand vector
+		if (!check) { check = Search(index, m_sand, terrain); }
 
-		// Else, loop through stone vector & remove from storage
-		else if (FindInVector(index, m_stone, terrain)) { m_stone.erase(m_stone.begin() + index); }
+		// Else, search through stone vector
+		if (!check) { check = Search(index, m_stone, terrain); }
 
-		// Else, loop through snow vector & remove from storage
-		else if (FindInVector(index, m_snow, terrain)) { m_snow.erase(m_snow.begin() + index); }
+		// Else, search through snow vector
+		if (!check) { check = Search(index, m_snow, terrain); }
 
-		// Else, loop through default vector & remove from storage
-		else if (FindInVector(index, m_default, terrain)) { m_default.erase(m_default.begin() + index); }
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = Search(index, m_grassDirt, terrain); }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = Search(index, m_grassSand, terrain); }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = Search(index, m_grassStone, terrain); }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = Search(index, m_grassSnow, terrain); }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = Search(index, m_dirtSand, terrain); }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = Search(index, m_dirtStone, terrain); }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = Search(index, m_dirtSnow, terrain); }
+
+		// Else, search through sand/stone blend vector
+		if (!check) { check = Search(index, m_sandStone, terrain); }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = Search(index, m_sandSnow, terrain); }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = Search(index, m_stoneSnow, terrain); }
 	}
 	break;
 	case LANDSCAPE_PAINT::DIRT:
 	{
-		// Loop through grass vector & remove from storage
-		if (FindInVector(index, m_grass, terrain)) { m_grass.erase(m_grass.begin() + index); }
+		// Search through grass vector
+		check = Search(index, m_grass, terrain);
 
-		// Else, loop through sand vector & remove from storage
-		else if (FindInVector(index, m_sand, terrain)) { m_sand.erase(m_sand.begin() + index); }
+		// Else, search through sand vector
+		if (!check) { check = Search(index, m_sand, terrain); }
 
-		// Else, loop through stone vector & remove from storage
-		else if (FindInVector(index, m_stone, terrain)) { m_stone.erase(m_stone.begin() + index); }
+		// Else, search through stone vector
+		if (!check) { check = Search(index, m_stone, terrain); }
 
-		// Else, loop through snow vector & remove from storage
-		else if (FindInVector(index, m_snow, terrain)) { m_snow.erase(m_snow.begin() + index); }
+		// Else, search through snow vector
+		if (!check) { check = Search(index, m_snow, terrain); }
 
-		// Else, loop through default vector & remove from storage
-		else if (FindInVector(index, m_default, terrain)) { m_default.erase(m_default.begin() + index); }
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = Search(index, m_grassDirt, terrain); }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = Search(index, m_grassSand, terrain); }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = Search(index, m_grassStone, terrain); }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = Search(index, m_grassSnow, terrain); }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = Search(index, m_dirtSand, terrain); }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = Search(index, m_dirtStone, terrain); }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = Search(index, m_dirtSnow, terrain); }
+
+		// Else, search through sand/stone blend vector
+		if (!check) { check = Search(index, m_sandStone, terrain); }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = Search(index, m_sandSnow, terrain); }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = Search(index, m_stoneSnow, terrain); }
 	}
 	break;
 	case LANDSCAPE_PAINT::SAND:
 	{
-		// Loop through grass vector & remove from storage
-		if (FindInVector(index, m_grass, terrain)) { m_grass.erase(m_grass.begin() + index); }
+		// Search through grass vector
+		check = Search(index, m_grass, terrain);
 
-		// Else, loop through dirt vector & remove from storage
-		else if (FindInVector(index, m_dirt, terrain)) { m_dirt.erase(m_dirt.begin() + index); }
+		// Else, search through dirt vector
+		if (!check) { check = Search(index, m_dirt, terrain); }
 
-		// Else, loop through stone vector & remove from storage
-		else if (FindInVector(index, m_stone, terrain)) { m_stone.erase(m_stone.begin() + index); }
+		// Else, search through stone vector
+		if (!check) { check = Search(index, m_stone, terrain); }
 
-		// Else, loop through snow vector & remove from storage
-		else if (FindInVector(index, m_snow, terrain)) { m_snow.erase(m_snow.begin() + index); }
+		// Else, search through snow vector
+		if (!check) { check = Search(index, m_snow, terrain); }
 
-		// Else, loop through default vector & remove from storage
-		else if (FindInVector(index, m_default, terrain)) { m_default.erase(m_default.begin() + index); }
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = Search(index, m_grassDirt, terrain); }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = Search(index, m_grassSand, terrain); }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = Search(index, m_grassStone, terrain); }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = Search(index, m_grassSnow, terrain); }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = Search(index, m_dirtSand, terrain); }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = Search(index, m_dirtStone, terrain); }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = Search(index, m_dirtSnow, terrain); }
+
+		// Else, search through sand/stone blend vector
+		if (!check) { check = Search(index, m_sandStone, terrain); }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = Search(index, m_sandSnow, terrain); }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = Search(index, m_stoneSnow, terrain); }
 	}
 	break;
 	case LANDSCAPE_PAINT::STONE:
 	{
-		// Loop through grass vector & remove from storage
-		if (FindInVector(index, m_grass, terrain)) { m_grass.erase(m_grass.begin() + index); }
+		// Search through grass vector
+		check = Search(index, m_grass, terrain);
 
-		// Else, loop through dirt vector & remove from storage
-		else if (FindInVector(index, m_dirt, terrain)) { m_dirt.erase(m_dirt.begin() + index); }
+		// Else, search through dirt vector
+		if (!check) { check = Search(index, m_dirt, terrain); }
 
-		// Else, loop through sand vector & remove from storage
-		else if (FindInVector(index, m_sand, terrain)) { m_sand.erase(m_sand.begin() + index); }
+		// Else, search through sand vector
+		if (!check) { check = Search(index, m_sand, terrain); }
 
-		// Else, loop through snow vector & remove from storage
-		else if (FindInVector(index, m_snow, terrain)) { m_snow.erase(m_snow.begin() + index); }
+		// Else, search through snow vector
+		if (!check) { check = Search(index, m_snow, terrain); }
 
-		// Else, loop through default vector & remove from storage
-		else if (FindInVector(index, m_default, terrain)) { m_default.erase(m_default.begin() + index); }
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = Search(index, m_grassDirt, terrain); }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = Search(index, m_grassSand, terrain); }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = Search(index, m_grassStone, terrain); }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = Search(index, m_grassSnow, terrain); }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = Search(index, m_dirtSand, terrain); }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = Search(index, m_dirtStone, terrain); }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = Search(index, m_dirtSnow, terrain); }
+
+		// Else, search through sand/stone blend vector
+		if (!check) { check = Search(index, m_sandStone, terrain); }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = Search(index, m_sandSnow, terrain); }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = Search(index, m_stoneSnow, terrain); }
 	}
 	break;
 	case LANDSCAPE_PAINT::SNOW:
 	{
-		// Loop through grass vector & remove from storage
-		if (FindInVector(index, m_grass, terrain)) { m_grass.erase(m_grass.begin() + index); }
+		// Search through grass vector
+		check = Search(index, m_grass, terrain);
 
-		// Else, loop through dirt vector & remove from storage
-		else if (FindInVector(index, m_dirt, terrain)) { m_dirt.erase(m_dirt.begin() + index); }
+		// Else, search through dirt vector
+		if (!check) { check = Search(index, m_dirt, terrain); }
 
-		// Else, loop through sand vector & remove from storage
-		else if (FindInVector(index, m_sand, terrain)) { m_sand.erase(m_sand.begin() + index); }
+		// Else, search through sand vector
+		if (!check) { check = Search(index, m_sand, terrain); }
 
-		// Else, loop through stone vector & remove from storage
-		else if (FindInVector(index, m_stone, terrain)) { m_stone.erase(m_stone.begin() + index); }
+		// Else, search through stone vector
+		if (!check) { check = Search(index, m_stone, terrain); }
 
-		// Else, loop through default vector & remove from storage
-		else if (FindInVector(index, m_default, terrain)) { m_default.erase(m_default.begin() + index); }
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = Search(index, m_grassDirt, terrain); }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = Search(index, m_grassSand, terrain); }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = Search(index, m_grassStone, terrain); }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = Search(index, m_grassSnow, terrain); }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = Search(index, m_dirtSand, terrain); }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = Search(index, m_dirtStone, terrain); }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = Search(index, m_dirtSnow, terrain); }
+
+		// Else, search through sand/stone blend vector
+		if (!check) { check = Search(index, m_sandStone, terrain); }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = Search(index, m_sandSnow, terrain); }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = Search(index, m_stoneSnow, terrain); }
 	}
 	break;
 	case LANDSCAPE_PAINT::NA:
 	{		
 		// Search through grass vector
-		if (FindInVector(index, m_grass, terrain)) 
-		{ 
-			// Store temporarily
-			m_grassTemp.push_back(terrain);
-
-			// Remove from main storage
-			m_grass.erase(m_grass.begin() + index); 
-		}
+		check = Search(index, m_grass, terrain);
 
 		// Else, search through dirt vector
-		else if (FindInVector(index, m_dirt, terrain)) 
-		{ 
-			// Store temporarily
-			m_dirtTemp.push_back(terrain);
-
-			// Remove from main storage
-			m_dirt.erase(m_dirt.begin() + index); 
-		}
-
+		if (!check) { check = Search(index, m_dirt, terrain); }
+		
 		// Else, search through sand vector
-		else if (FindInVector(index, m_sand, terrain)) 
-		{ 
-			// Store temporarily 
-			m_sandTemp.push_back(terrain);
-
-			// Remove from main storage
-			m_sand.erase(m_sand.begin() + index); 
-		}	
+		if (!check) { check = Search(index, m_sand, terrain); }
 
 		// Else, search through stone vector
-		else if (FindInVector(index, m_stone, terrain))
-		{
-			// Store temporarily 
-			m_stoneTemp.push_back(terrain);
-
-			// Remove from main storage
-			m_stone.erase(m_stone.begin() + index);
-		}
+		if (!check) { check = Search(index, m_stone, terrain); }
 
 		// Else, search through snow vector
-		else if (FindInVector(index, m_snow, terrain))
-		{
-			// Store temporarily 
-			m_snowTemp.push_back(terrain);
+		if (!check) { check = Search(index, m_snow, terrain); }
 
-			// Remove from main storage
-			m_snow.erase(m_snow.begin() + index);
-		}
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = Search(index, m_grassDirt, terrain); }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = Search(index, m_grassSand, terrain); }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = Search(index, m_grassStone, terrain); }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = Search(index, m_grassSnow, terrain); }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = Search(index, m_dirtSand, terrain); }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = Search(index, m_dirtStone, terrain); }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = Search(index, m_dirtSnow, terrain); }
+		
+		// Else, search through sand/stone blend vector
+		if (!check) { check = Search(index, m_sandStone, terrain); }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = Search(index, m_sandSnow, terrain); }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = Search(index, m_stoneSnow, terrain); }
 	}
 	break;
 	}
@@ -1493,6 +1588,28 @@ void DisplayChunk::ReadPaints(std::string path, std::vector<std::pair<int, int>>
 	}
 }
 
+void DisplayChunk::ReadAllPaints()
+{
+	// Basic paints
+	ReadPaints("database/grass.csv", m_grass);
+	ReadPaints("database/dirt.csv", m_dirt);
+	ReadPaints("database/sand.csv", m_sand);
+	ReadPaints("database/stone.csv", m_stone);
+	ReadPaints("database/snow.csv", m_snow);
+
+	// Blend paints
+	ReadPaints("database/grassDirt.csv", m_grassDirt);
+	ReadPaints("database/grassSand.csv", m_grassSand);
+	ReadPaints("database/grassStone.csv", m_grassStone);
+	ReadPaints("database/grassSnow.csv", m_grassSnow);
+	ReadPaints("database/dirtSand.csv", m_dirtSand);
+	ReadPaints("database/dirtStone.csv", m_dirtStone);
+	ReadPaints("database/dirtSnow.csv", m_dirtSnow);
+	ReadPaints("database/sandStone.csv", m_sandStone);
+	ReadPaints("database/sandSnow.csv", m_sandSnow);
+	ReadPaints("database/stoneSnow.csv", m_stoneSnow);
+}
+
 void DisplayChunk::CalculateTerrainNormals()
 {
 	int index1, index2, index3, index4;
@@ -1516,4 +1633,17 @@ void DisplayChunk::CalculateTerrainNormals()
 			m_terrainGeometry[i][j].normal = normalVector;	//set the normal for this point based on our result
 		}
 	}
+}
+
+bool DisplayChunk::Search(int & index, std::vector<std::pair<int, int>> &vector, std::pair<int, int> terrain)
+{
+	// Search through vector
+	if (FindInVector(index, vector, terrain))
+	{
+		// Remove from storage
+		vector.erase(vector.begin() + index);
+
+		return true;
+	}
+	else { return false; }
 }

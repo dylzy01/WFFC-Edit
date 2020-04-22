@@ -37,48 +37,48 @@ void TerrainSculptDialogue::UpdateButtons(bool enable)
 	{
 		// Enable/disable flatten button
 		if (!enable) { CheckDlgButton(IDC_CHECK2, enable); }
-		GetDlgItem(IDC_CHECK2)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK2)->EnableWindow(enable);
 
 		// Enable/disable decrease button
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
-		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
 	}
 	break;
 	case LANDSCAPE_FUNCTION::FLATTEN:
 	{
 		// Enable/disable increase button
 		if (!enable) { CheckDlgButton(IDC_CHECK1, enable); }
-		GetDlgItem(IDC_CHECK1)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK1)->EnableWindow(enable);
 		
 		// Enable/disable decrease button
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
-		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
 	}
 	break;
 	case LANDSCAPE_FUNCTION::DECREASE:
 	{
 		// Enable/disable increase button
 		if (!enable) { CheckDlgButton(IDC_CHECK1, enable); }
-		GetDlgItem(IDC_CHECK1)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK1)->EnableWindow(enable);
 
 		// Enable/disable flatten button
 		if (!enable) { CheckDlgButton(IDC_CHECK2, enable); }
-		GetDlgItem(IDC_CHECK2)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK2)->EnableWindow(enable);
 	}
 	break;
 	case LANDSCAPE_FUNCTION::NA:
 	{
 		// Enable/disable increase button
 		if (!enable) { CheckDlgButton(IDC_CHECK1, enable); }
-		GetDlgItem(IDC_CHECK1)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK1)->EnableWindow(enable);
 
 		// Enable/disable flatten button
 		if (!enable) { CheckDlgButton(IDC_CHECK2, enable); }
-		GetDlgItem(IDC_CHECK2)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK2)->EnableWindow(enable);
 
 		// Enable/disable decrease button
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
-		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
 	}
 	break;
 	}	

@@ -191,6 +191,7 @@
     <ClCompile Include="sqlite3.c" />
     <ClCompile Include="TerrainPaintDialogue.cpp" />
     <ClCompile Include="TerrainSculptDialogue.cpp" />
+    <ClCompile Include="TextureShader.cpp" />
     <ClCompile Include="ToolMain.cpp" />
     <ClCompile Include="Water.cpp" />
   </ItemGroup>
@@ -224,6 +225,7 @@
     <ClInclude Include="MFCMain.h" />
     <ClInclude Include="TerrainPaintDialogue.h" />
     <ClInclude Include="TerrainSculptDialogue.h" />
+    <ClInclude Include="TextureShader.h" />
     <ClInclude Include="ToolMain.h" />
     <ClInclude Include="Tools.h" />
     <ClInclude Include="Water.h" />
@@ -233,6 +235,8 @@
       <DeploymentContent>true</DeploymentContent>
       <FileType>Document</FileType>
     </Media>
+    <None Include="multitexture.ps" />
+    <None Include="multitexture.vs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
