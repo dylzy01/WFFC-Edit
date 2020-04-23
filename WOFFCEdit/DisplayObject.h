@@ -29,6 +29,6 @@ public:
 	float	m_light_linear;
 	float	m_light_quadratic;
 
-	bool m_blend_textures;
+	bool	m_blend_textures;
 };
 

@@ -17,7 +17,7 @@
 
 #include "SQLManager.h"
 
-///#include "TextureShader.h"
+#include "TextureShader.h"
 
 #include <vector>
 #include <algorithm>

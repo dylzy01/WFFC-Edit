@@ -38,6 +38,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{c1b5adda-fb38-4f8e-8ee2-f966b34c895f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Texture">
+      <UniqueIdentifier>{b0ec188f-9c61-49ff-b9bd-9568169232e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -222,6 +225,7 @@
     <ClInclude Include="TextureShader.h">
       <Filter>Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="ReadData.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -250,5 +254,19 @@
   </ItemGroup>
   <ItemGroup>
     <Media Include="database\data\Scene1.fbx" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="texture_ps.hlsl">
+      <Filter>Shaders\Texture</Filter>
+    </FxCompile>
+    <FxCompile Include="texture_vs.hlsl">
+      <Filter>Shaders\Texture</Filter>
+    </FxCompile>
+    <FxCompile Include="blend_ps.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="blend_vs.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

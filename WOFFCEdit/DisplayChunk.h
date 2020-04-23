@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "DeviceResources.h"
 #include "ChunkObject.h"
+#include "TextureShader.h"
 
 //geometric resoltuion - note,  hard coded.
 #define TERRAINRESOLUTION 128
@@ -108,4 +109,7 @@ private:
 
 	std::vector<std::pair<int, int>> m_grassTemp, m_dirtTemp, m_sandTemp, m_stoneTemp, m_snowTemp;
 	std::vector<std::pair<int, int>> m_highlight;
+
+	// Shaders
+	///TextureShader m_shader;
 };

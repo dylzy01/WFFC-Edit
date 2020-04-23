@@ -268,6 +268,11 @@ void Game::Render()
 	context->RSSetState(m_states->CullNone());
 	if (m_wireframe) { context->RSSetState(m_states->Wireframe()); }
 
+	// Set shader parameters
+	TextureShader::SetWorld(&m_world);
+	TextureShader::SetView(&m_view);
+	TextureShader::SetProjection(&m_projection);
+
 	//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
 	m_displayChunk.RenderBatch(m_deviceResources);
 
@@ -276,43 +281,9 @@ void Game::Render()
 
 	WCHAR   Buffer[256];
 
-	// Camera
-	/*std::wstring pos = L"Pos X: " + std::to_wstring(m_camera->GetPosition().x)
-		+ L" Pos Y: " + std::to_wstring(m_camera->GetPosition().y)
-		+ L" Pos Z: " + std::to_wstring(m_camera->GetPosition().z);
-	std::wstring rot = L"Rot X: " + std::to_wstring(m_camera->GetLookAt().x)
-		+ L" Rot Y: " + std::to_wstring(m_camera->GetLookAt().y)
-		+ L" Rot Z: " + std::to_wstring(m_camera->GetLookAt().z);
-	m_font->DrawString(m_sprites.get(), pos.c_str(), XMFLOAT2(100, 10), Colors::Yellow);
-	m_font->DrawString(m_sprites.get(), rot.c_str(), XMFLOAT2(100, 40), Colors::Yellow);*/
-
-	// Mouse
-	/*POINT mousePos;
-	GetCursorPos(&mousePos);
-	ScreenToClient(m_window, &mousePos);
-	std::wstring mouse = L"Mouse X: " + std::to_wstring(mousePos.x)
-		+ L" Mouse Y: " + std::to_wstring(mousePos.y);
-	m_font->DrawString(m_sprites.get(), mouse.c_str(), XMFLOAT2(100, 70), Colors::Yellow);*/
-
-	// Picking point
-	/*std::wstring point = L"Point X: " + std::to_wstring(m_pickingPoint.x) +
-		L"Point Y: " + std::to_wstring(m_pickingPoint.y) +
-		L"Point Z: " + std::to_wstring(m_pickingPoint.z);
-	m_font->DrawString(m_sprites.get(), point.c_str(), XMFLOAT2(100, 70), Colors::Yellow);*/
-
 	// Frames Per Second
 	std::wstring fps = L"FPS: " + std::to_wstring(int(1 / m_deltaTime));
 	m_font->DrawString(m_sprites.get(), fps.c_str(), XMFLOAT2(800, 10), Colors::Red);
-
-	// Current mode
-	//std::wstring mode;
-	//// Switch between modes
-	//switch (m_editor)
-	//{
-	//case EDITOR::OBJECT_TRANSFORM: mode = L"MODE: OBJECT"; break;
-	//case EDITOR::LANDSCAPE_SCULPT: mode = L"MODE: SCULPT"; break;
-	//}
-	//m_font->DrawString(m_sprites.get(), mode.c_str(), XMFLOAT2(100, 120), Colors::Yellow);
 
 	m_sprites->End();
 	
@@ -796,6 +767,9 @@ void Game::CreateDeviceDependentResources()
     // SDKMESH has to use clockwise winding with right-handed coordinates, so textures are flipped in U
     m_model = Model::CreateFromSDKMESH(device, L"tiny.sdkmesh", *m_fxFactory);
 	
+	// Load and setup vertex/pixel shaders
+	///TextureShader::Initialise(device, L"light_vs.cso", L"light_ps.cso");
+	TextureShader::Initialise(device, L"texture_vs.cso", L"texture_ps.cso");
 
     // Load textures
     DX::ThrowIfFailed(
