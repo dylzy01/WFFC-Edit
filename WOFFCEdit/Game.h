@@ -16,8 +16,7 @@
 #include "DebugDraw.h"
 
 #include "SQLManager.h"
-
-#include "TextureShader.h"
+#include "ShaderManager.h"
 
 #include <vector>
 #include <algorithm>

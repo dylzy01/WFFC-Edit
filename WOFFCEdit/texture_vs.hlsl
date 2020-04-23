@@ -33,13 +33,14 @@ OutputType main(InputType input)
     // Calculate position of vertex against world, view and projection matrices
     output.position = mul(input.position, worldMatrix);
     output.position = mul(output.position, viewMatrix);
-    output.position = mul(output.position, projectionMatrix);
+    output.position = mul(output.position, projectionMatrix);    
+    
+    // Calculate normal vector against world matrix only & normalize
+    output.normal = mul(input.normal, (float3x3) worldMatrix);
+    output.normal = normalize(output.normal);
     
     // Store texture coordinates for pixel shader
     output.tex = input.tex;
-    
-    // Store normal coordinates for pixel shader
-    output.normal = input.normal;
     
     // Calculate the world position of the vertex, for the point light
     output.position3D = (float3) mul(input.position, worldMatrix);

@@ -165,6 +165,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BlendShader.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ChunkObject.cpp" />
     <ClCompile Include="DebugDraw.cpp" />
@@ -187,6 +188,7 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="SelectDialogue.cpp" />
+    <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="SQLManager.cpp" />
     <ClCompile Include="sqlite3.c" />
     <ClCompile Include="TerrainPaintDialogue.cpp" />
@@ -196,6 +198,7 @@
     <ClCompile Include="Water.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BlendShader.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ChunkObject.h" />
     <ClInclude Include="DebugDraw.h" />
@@ -219,6 +222,7 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="SelectDialogue.h" />
+    <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="SQLManager.h" />
     <ClInclude Include="sqlite3.h" />
     <ClInclude Include="stdafx.h" />

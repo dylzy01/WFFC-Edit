@@ -2,7 +2,7 @@
 #include "pch.h"
 #include "DeviceResources.h"
 #include "ChunkObject.h"
-#include "TextureShader.h"
+#include "ShaderManager.h"
 
 //geometric resoltuion - note,  hard coded.
 #define TERRAINRESOLUTION 128

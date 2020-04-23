@@ -121,6 +121,11 @@ enum class LANDSCAPE_CONSTRAINT {
 	ALL
 };
 
+enum class SHADER_TYPE {
+	TEXTURE,
+	BLEND
+};
+
 class Tools
 {
 public:

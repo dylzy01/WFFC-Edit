@@ -46,18 +46,10 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	auto context = deviceResources->GetD3DDeviceContext();
 	context->IASetInputLayout(m_terrainInputLayout.Get());
 
-	// Setup texture shader		
-	TextureShader::Enable(context);
-	///TextureShader::SetShaderParameters(context, m_texture_splat_1, m_texture_splat_2);	
-	///m_effectBasic->Apply(context);
-	///TextureShader::SetShaderParameters(context, m_texture_splat_1, m_texture_splat_1);
-
 	// Draw all grass geometry
 	if (m_grass.size() != 0) {
 		m_batchBasic->Begin();
-		///m_effectBasic->SetTexture(m_texture_splat_1);
-		///m_effectBasic->Apply(context);
-		TextureShader::SetShaderParameters(context, m_texture_splat_1, m_texture_default);
+		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, m_texture_splat_1);
 		/*m_effectBlend->SetTexture(m_texture_splat_1);
 		m_effectBlend->SetTexture2(m_texture_splat_2);
 		m_effectBlend->Apply(context);*/
@@ -68,9 +60,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all dirt geometry
 	if (m_dirt.size() != 0) {
 		m_batchBasic->Begin();
-		///m_effectBasic->SetTexture(m_texture_splat_2);
-		///m_effectBasic->Apply(context);
-		TextureShader::SetShaderParameters(context, m_texture_splat_2, m_texture_default);
+		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, m_texture_splat_2);
 		DrawTerrainBasic(m_dirt);
 		m_batchBasic->End();
 	}
@@ -78,9 +68,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all sand geometry
 	if (m_sand.size() != 0)	{
 		m_batchBasic->Begin();
-		///m_effectBasic->SetTexture(m_texture_splat_3);
-		///m_effectBasic->Apply(context);
-		TextureShader::SetShaderParameters(context, m_texture_splat_3, m_texture_default);
+		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, m_texture_splat_3);
 		DrawTerrainBasic(m_sand);
 		m_batchBasic->End();
 	}
@@ -88,9 +76,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all stone geometry
 	if (m_stone.size() != 0) {
 		m_batchBasic->Begin();
-		///m_effectBasic->SetTexture(m_texture_splat_4);
-		///m_effectBasic->Apply(context);
-		TextureShader::SetShaderParameters(context, m_texture_splat_4, m_texture_default);
+		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, m_texture_splat_4);
 		DrawTerrainBasic(m_stone);
 		m_batchBasic->End();
 	}
@@ -98,9 +84,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all snow geometry
 	if (m_snow.size() != 0) {
 		m_batchBasic->Begin();
-		///m_effectBasic->SetTexture(m_texture_splat_5);
-		///m_effectBasic->Apply(context);
-		TextureShader::SetShaderParameters(context, m_texture_splat_5, m_texture_default);
+		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, m_texture_splat_5);
 		DrawTerrainBasic(m_snow);
 		m_batchBasic->End();
 	}
@@ -108,8 +92,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all grass/dirt geometry
 	if (m_grassDirt.size() != 0) {
 		m_batchBasic->Begin();
-		///m_effectBasic->SetTexture(m_texture_blend_1);
-		///m_effectBasic->Apply(context);
+		ShaderManager::Shader(SHADER_TYPE::BLEND, context, m_texture_splat_1, m_texture_splat_2);
 		DrawTerrainBasic(m_grassDirt);
 		m_batchBasic->End();
 	}

@@ -41,6 +41,9 @@
     <Filter Include="Shaders\Texture">
       <UniqueIdentifier>{b0ec188f-9c61-49ff-b9bd-9568169232e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Blend">
+      <UniqueIdentifier>{b78f625e-3568-4e8b-9824-831d69c7497d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -125,8 +128,14 @@
     <ClCompile Include="DebugDraw.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="ShaderManager.cpp">
+      <Filter>Custom\Managers</Filter>
+    </ClCompile>
     <ClCompile Include="TextureShader.cpp">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="BlendShader.cpp">
+      <Filter>Shaders\Blend</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -222,10 +231,16 @@
     <ClInclude Include="DebugDraw.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="TextureShader.h">
-      <Filter>Shaders</Filter>
-    </ClInclude>
     <ClInclude Include="ReadData.h" />
+    <ClInclude Include="ShaderManager.h">
+      <Filter>Custom\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureShader.h">
+      <Filter>Shaders\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="BlendShader.h">
+      <Filter>Shaders\Blend</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -263,10 +278,10 @@
       <Filter>Shaders\Texture</Filter>
     </FxCompile>
     <FxCompile Include="blend_ps.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\Blend</Filter>
     </FxCompile>
     <FxCompile Include="blend_vs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\Blend</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

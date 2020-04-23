@@ -269,9 +269,9 @@ void Game::Render()
 	if (m_wireframe) { context->RSSetState(m_states->Wireframe()); }
 
 	// Set shader parameters
-	TextureShader::SetWorld(&m_world);
-	TextureShader::SetView(&m_view);
-	TextureShader::SetProjection(&m_projection);
+	ShaderManager::SetWorld(&m_world);
+	ShaderManager::SetView(&m_view);
+	ShaderManager::SetProjection(&m_projection);
 
 	//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
 	m_displayChunk.RenderBatch(m_deviceResources);
@@ -768,8 +768,7 @@ void Game::CreateDeviceDependentResources()
     m_model = Model::CreateFromSDKMESH(device, L"tiny.sdkmesh", *m_fxFactory);
 	
 	// Load and setup vertex/pixel shaders
-	///TextureShader::Initialise(device, L"light_vs.cso", L"light_ps.cso");
-	TextureShader::Initialise(device, L"texture_vs.cso", L"texture_ps.cso");
+	ShaderManager::Initialise(device);
 
     // Load textures
     DX::ThrowIfFailed(
