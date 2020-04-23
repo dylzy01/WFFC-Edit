@@ -177,8 +177,8 @@ void Game::UpdateCamera()
 
 	m_batchEffect->SetView(m_view);
 	m_batchEffect->SetWorld(Matrix::Identity);
-	m_displayChunk.m_effectBasic->SetView(m_view);
-	m_displayChunk.m_effectBasic->SetWorld(Matrix::Identity);
+	m_displayChunk.m_effect->SetView(m_view);
+	m_displayChunk.m_effect->SetWorld(Matrix::Identity);
 	///m_displayChunk.m_effectBlend->SetView(m_view);
 	///m_displayChunk.m_effectBlend->SetWorld(Matrix::Identity);
 }
@@ -565,7 +565,7 @@ void Game::BuildDisplayChunk(ChunkObject * SceneChunk, std::vector<DirectX::Simp
 	//which, to be honest, is almost all of it. Its mostly rendering related info so...
 	m_displayChunk.PopulateChunkData(SceneChunk);		//migrate chunk data
 	m_displayChunk.LoadHeightMap(m_deviceResources);
-	m_displayChunk.m_effectBasic->SetProjection(m_projection);
+	m_displayChunk.m_effect->SetProjection(m_projection);
 	///m_displayChunk.m_effectBlend->SetProjection(m_projection);
 	m_displayChunk.InitialiseBatch();
 }

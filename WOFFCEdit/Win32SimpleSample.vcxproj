@@ -240,8 +240,6 @@
       <DeploymentContent>true</DeploymentContent>
       <FileType>Document</FileType>
     </Media>
-    <None Include="multitexture.ps" />
-    <None Include="multitexture.vs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

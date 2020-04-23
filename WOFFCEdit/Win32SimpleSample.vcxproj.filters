@@ -244,12 +244,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="multitexture.ps">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="multitexture.vs">
-      <Filter>Shaders</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Win32SimpleSample.rc">

@@ -124,9 +124,6 @@ bool TextureShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11Sha
 	// Pass textures to pixel shader
 	context->PSSetShaderResources(0, 1, &texture);
 
-	// Set shader texture array resource in pixel shader
-	///context->PSSetShaderResources(0, 2, textureArray);
-
 	return true;
 }
 
