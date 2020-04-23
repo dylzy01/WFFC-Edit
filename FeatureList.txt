@@ -17,6 +17,7 @@ TERRAIN
 - Can decrease x,y,z positions
 - Can flatten x,y,z positions
 - Can paint texture
+	- Can blend textures (write in report about loading in pre-blended textures as a first attempt, shader as optimized solution)
 - Can save paint
 
 OBJECT
