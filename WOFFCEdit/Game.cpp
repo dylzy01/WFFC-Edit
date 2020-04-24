@@ -62,9 +62,6 @@ void Game::Initialize(HWND window, int width, int height)
 
 	GetClientRect(m_window, &m_screenDimensions);
 
-	// Setup texture shader
-	///TextureShader::Initialise(m_deviceResources->GetD3DDevice(), m_window);
-
 #ifdef DXTK_AUDIO
     // Create DirectXTK for Audio objects
     AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;
@@ -240,7 +237,7 @@ void Game::Render()
 		const XMVECTORF32 xaxis = { 512.f, 0.f, 0.f };
 		const XMVECTORF32 yaxis = { 0.f, 0.f, 512.f };
 		DrawGrid(xaxis, yaxis, g_XMZero, 512, 512, Colors::Gray);
-	}
+	}	
 
 	// Set shader parameters
 	ShaderManager::SetWorld(&m_world);
@@ -263,7 +260,7 @@ void Game::Render()
 		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
 
 		// Shader		
-		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, m_displayList[i].m_texture_diffuse);		
+		ShaderManager::Shader(SHADER_TYPE::TOON, context, m_displayList[i].m_texture_diffuse);		
 		
 		m_displayList[i].m_model->Draw(context, *m_states, local, m_view, m_projection, false);	//last variable in draw,  make TRUE for wireframe
 

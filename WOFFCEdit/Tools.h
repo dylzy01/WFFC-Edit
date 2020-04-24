@@ -126,7 +126,9 @@ enum class LANDSCAPE_CONSTRAINT {
 
 enum class SHADER_TYPE {
 	TEXTURE,
-	BLEND
+	BLEND,
+	TOON,
+	OUTLINE
 };
 
 enum class LIGHT_TYPE {

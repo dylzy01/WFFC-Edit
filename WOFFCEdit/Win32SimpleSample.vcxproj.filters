@@ -44,6 +44,12 @@
     <Filter Include="Shaders\Blend">
       <UniqueIdentifier>{b78f625e-3568-4e8b-9824-831d69c7497d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Toon">
+      <UniqueIdentifier>{4723fded-8e66-4149-a900-ab9a9628c780}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Outline">
+      <UniqueIdentifier>{fa604f57-a6e6-48e5-9db5-518c0aff79ee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -136,6 +142,12 @@
     </ClCompile>
     <ClCompile Include="BlendShader.cpp">
       <Filter>Shaders\Blend</Filter>
+    </ClCompile>
+    <ClCompile Include="ToonShader.cpp">
+      <Filter>Shaders\Toon</Filter>
+    </ClCompile>
+    <ClCompile Include="OutlineShader.cpp">
+      <Filter>Shaders\Outline</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -244,6 +256,15 @@
     <ClInclude Include="Light.h">
       <Filter>Custom</Filter>
     </ClInclude>
+    <ClInclude Include="ToonShader.h">
+      <Filter>Shaders\Toon</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="OutlineShader.h">
+      <Filter>Shaders\Outline</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -279,6 +300,18 @@
     </FxCompile>
     <FxCompile Include="blend_vs.hlsl">
       <Filter>Shaders\Blend</Filter>
+    </FxCompile>
+    <FxCompile Include="toon_vs.hlsl">
+      <Filter>Shaders\Toon</Filter>
+    </FxCompile>
+    <FxCompile Include="toon_ps.hlsl">
+      <Filter>Shaders\Toon</Filter>
+    </FxCompile>
+    <FxCompile Include="outline_vs.hlsl">
+      <Filter>Shaders\Outline</Filter>
+    </FxCompile>
+    <FxCompile Include="outline_ps.hlsl">
+      <Filter>Shaders\Outline</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

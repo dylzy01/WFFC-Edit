@@ -46,12 +46,17 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	auto context = deviceResources->GetD3DDeviceContext();
 	///context->IASetInputLayout(m_terrainInputLayout.Get());
 
+	XMFLOAT2 size;
+	size.x = deviceResources->GetOutputSize().right;
+	size.y = deviceResources->GetOutputSize().bottom;
+
 	m_effect->Apply(context);
 
 	// Draw all grass geometry
 	if (m_grass.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, m_texture_splat_1);
+		ShaderManager::Shader(SHADER_TYPE::TOON, context, m_texture_splat_1, m_texture_splat_1, true);
+		///ShaderManager::Shader(SHADER_TYPE::OUTLINE, context, m_texture_splat_1, NULL, size);
 		DrawTerrain(m_grass);
 		m_batch->End();
 	}
@@ -59,7 +64,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all dirt geometry
 	if (m_dirt.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, m_texture_splat_2);
+		ShaderManager::Shader(SHADER_TYPE::TOON, context, m_texture_splat_2, m_texture_splat_2, false);
 		DrawTerrain(m_dirt);
 		m_batch->End();
 	}
@@ -67,7 +72,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all sand geometry
 	if (m_sand.size() != 0)	{
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, m_texture_splat_3);
+		ShaderManager::Shader(SHADER_TYPE::TOON, context, m_texture_splat_3, m_texture_splat_3, false);
 		DrawTerrain(m_sand);
 		m_batch->End();
 	}
@@ -75,7 +80,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all stone geometry
 	if (m_stone.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, m_texture_splat_4);
+		ShaderManager::Shader(SHADER_TYPE::TOON, context, m_texture_splat_4, m_texture_splat_4, false);
 		DrawTerrain(m_stone);
 		m_batch->End();
 	}
@@ -83,7 +88,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all snow geometry
 	if (m_snow.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, m_texture_splat_5);
+		ShaderManager::Shader(SHADER_TYPE::TOON, context, m_texture_splat_5, m_texture_splat_5, false);
 		DrawTerrain(m_snow);
 		m_batch->End();
 	}	

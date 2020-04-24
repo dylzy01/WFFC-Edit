@@ -4,6 +4,8 @@
 
 #include "TextureShader.h"
 #include "BlendShader.h"
+#include "ToonShader.h"
+#include "OutlineShader.h"
 
 class ShaderManager
 {
@@ -15,7 +17,7 @@ public:
 	static void Initialise(ID3D11Device * device);
 
 	// Setup specific shader parameters
-	static void Shader(SHADER_TYPE type, ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture1, ID3D11ShaderResourceView* texture2 = NULL);
+	static void Shader(SHADER_TYPE type, ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture1, ID3D11ShaderResourceView* texture2 = NULL, bool dual = false, DirectX::XMFLOAT2 screen = { NULL, NULL });
 
 	// Setters
 	static void SetWorld(DirectX::SimpleMath::Matrix * world);

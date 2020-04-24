@@ -2,8 +2,9 @@
 #include "pch.h"
 #include "Tools.h"
 #include <d3dcompiler.h>
+#include "Shader.h"
 
-class TextureShader
+class TextureShader : public Shader
 {
 public:
 	TextureShader() {}
@@ -24,13 +25,6 @@ public:
 	static void SetProjection(DirectX::SimpleMath::Matrix * projection) { m_projection = projection; }
 
 private:
-	// Standard matrix buffer for all shaders
-	struct MatrixBufferType
-	{
-		DirectX::XMMATRIX world;
-		DirectX::XMMATRIX view;
-		DirectX::XMMATRIX projection;
-	};
 
 	// Buffer for single light information
 	struct LightBufferType
@@ -41,16 +35,14 @@ private:
 		float padding;
 	};
 
-	// Shaders
+	// Buffer
+	static ID3D11Buffer*								m_bufferLight;
 	static Microsoft::WRL::ComPtr<ID3D11VertexShader>	m_shaderVertex;
 	static Microsoft::WRL::ComPtr<ID3D11PixelShader>	m_shaderPixel;
-	static ID3D11InputLayout*							m_inputLayout;
-	static ID3D11Buffer*								m_bufferMatrix;
-	static ID3D11SamplerState*							m_samplerState;
-	static ID3D11Buffer*								m_bufferLight;
-
-	// Control variables
-	static DirectX::SimpleMath::Matrix * m_world;
-	static DirectX::SimpleMath::Matrix * m_view;
-	static DirectX::SimpleMath::Matrix * m_projection;
+	static ID3D11InputLayout *							m_inputLayout;
+	static ID3D11Buffer *								m_bufferMatrix;
+	static ID3D11SamplerState *							m_samplerState;
+	static DirectX::SimpleMath::Matrix *				m_world;
+	static DirectX::SimpleMath::Matrix *				m_view;
+	static DirectX::SimpleMath::Matrix *				m_projection;
 };
