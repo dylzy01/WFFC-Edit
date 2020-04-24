@@ -330,47 +330,269 @@ void DisplayChunk::GenerateHeightmap()
 
 void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint, bool checkSurroundings)
 {	
-	// Check if selected geometry is within other containers & remove
+	// Store row & column
+	std::pair<int, int> index(i, j);
+
+	// Check for duplicates and return current paint
 	LANDSCAPE_PAINT current = CheckForDuplicates(i, j, paint);
+
+	// If current paint is grass
+	if (current == LANDSCAPE_PAINT::GRASS)
+	{
+		// If selected paint is grass, do nothing
+		if (paint == LANDSCAPE_PAINT::GRASS) {}
+
+		// Else, apply selected paint
+		else
+		{
+			// Switch between selected paint
+			switch (paint)
+			{
+			case LANDSCAPE_PAINT::DIRT:		m_grassDirt.push_back(index); break;
+			case LANDSCAPE_PAINT::SAND:		m_grassSand.push_back(index); break;
+			case LANDSCAPE_PAINT::STONE:	m_grassStone.push_back(index); break;
+			case LANDSCAPE_PAINT::SNOW:		m_grassSnow.push_back(index); break;
+			}
+		}
+	}
+
+	// Else, if current paint is dirt
+	else if (current == LANDSCAPE_PAINT::DIRT)
+	{
+		// If selected paint is dirt, do nothing
+		if (paint == LANDSCAPE_PAINT::DIRT) {}
+
+		// Else, apply selected paint
+		else
+		{
+			// Switch between selected paint
+			switch (paint)
+			{
+			case LANDSCAPE_PAINT::GRASS:	m_grassDirt.push_back(index); break;
+			case LANDSCAPE_PAINT::SAND:		m_dirtSand.push_back(index); break;
+			case LANDSCAPE_PAINT::STONE:	m_dirtStone.push_back(index); break;
+			case LANDSCAPE_PAINT::SNOW:		m_dirtSnow.push_back(index); break;
+			}
+		}
+	}
+
+	// Else, if current paint is sand
+	else if (current == LANDSCAPE_PAINT::SAND)
+	{
+		// If selected paint is sand, do nothing
+		if (paint == LANDSCAPE_PAINT::SAND) {}
+
+		// Else, apply selected paint
+		else
+		{
+			// Switch between selected paint
+			switch (paint)
+			{
+			case LANDSCAPE_PAINT::GRASS: m_grassSand.push_back(index); break;
+			case LANDSCAPE_PAINT::DIRT: m_dirtSand.push_back(index); break;
+			case LANDSCAPE_PAINT::STONE: m_sandStone.push_back(index); break;
+			case LANDSCAPE_PAINT::SNOW: m_sandSnow.push_back(index); break;
+			}
+		}
+	}
+
+	// Else, if current paint is stone
+	else if (current == LANDSCAPE_PAINT::STONE)
+	{
+		// If selected paint is stone, do nothing
+		if (paint == LANDSCAPE_PAINT::STONE) {}
+
+		// Else, apply selected paint
+		else
+		{
+			// Switch between selected paint
+			switch (paint)
+			{
+			case LANDSCAPE_PAINT::GRASS: m_grassStone.push_back(index); break;
+			case LANDSCAPE_PAINT::DIRT: m_dirtStone.push_back(index); break;
+			case LANDSCAPE_PAINT::SAND: m_sandStone.push_back(index); break;
+			case LANDSCAPE_PAINT::SNOW: m_stoneSnow.push_back(index); break;
+			}
+		}
+	}
+
+	// Else, if current paint is snow
+	else if (current == LANDSCAPE_PAINT::SNOW)
+	{
+		// If selected paint is snow, do nothing
+		if (paint == LANDSCAPE_PAINT::SNOW) {}
+
+		// Else, apply selected paint
+		else
+		{
+			// Switch between selected paint
+			switch (paint)
+			{
+			case LANDSCAPE_PAINT::GRASS: m_grassSnow.push_back(index); break;
+			case LANDSCAPE_PAINT::DIRT: m_dirtSnow.push_back(index); break;
+			case LANDSCAPE_PAINT::SAND: m_sandSnow.push_back(index); break;
+			case LANDSCAPE_PAINT::STONE: m_stoneSnow.push_back(index); break;
+			}
+		}
+	}
+	
+	// Else, current paint must be blended
+	else { PaintOverBlended(paint, index); }
+	
+	// Switch between current paint
+	//switch (CheckForDuplicates(i, j, paint))
+	//{
+	//case LANDSCAPE_PAINT::GRASS:
+	//{
+	//	// If selected paint is grass, do nothing
+	//	if (paint == LANDSCAPE_PAINT::GRASS) {}
+
+	//	// Else, apply selected paint
+	//	else 
+	//	{
+	//		// Switch between selected paint
+	//		switch (paint)
+	//		{
+	//		case LANDSCAPE_PAINT::DIRT:		m_grassDirt.push_back(index); break;
+	//		case LANDSCAPE_PAINT::SAND:		m_grassSand.push_back(index); break;
+	//		case LANDSCAPE_PAINT::STONE:	m_grassStone.push_back(index); break;
+	//		case LANDSCAPE_PAINT::SNOW:		m_grassSnow.push_back(index); break;
+	//		}
+	//	}
+	//}
+	//break;
+	//case LANDSCAPE_PAINT::DIRT:
+	//{
+	//	// If selected paint is dirt, do nothing
+	//	if (paint == LANDSCAPE_PAINT::DIRT) {}
+
+	//	// Else, apply selected paint
+	//	else
+	//	{
+	//		// Switch between selected paint
+	//		switch (paint)
+	//		{
+	//		case LANDSCAPE_PAINT::GRASS:	m_grassDirt.push_back(index); break;
+	//		case LANDSCAPE_PAINT::SAND:		m_dirtSand.push_back(index); break;
+	//		case LANDSCAPE_PAINT::STONE:	m_dirtStone.push_back(index); break;
+	//		case LANDSCAPE_PAINT::SNOW:		m_dirtSnow.push_back(index); break;
+	//		}
+	//	}
+	//}
+	//break;
+	//case LANDSCAPE_PAINT::SAND:
+	//{
+	//	// If selected paint is sand, do nothing
+	//	if (paint == LANDSCAPE_PAINT::SAND) {}
+
+	//	// Else, apply selected paint
+	//	else
+	//	{
+	//		// Switch between selected paint
+	//		switch (paint)
+	//		{
+	//		case LANDSCAPE_PAINT::GRASS: m_grassSand.push_back(index); break;
+	//		case LANDSCAPE_PAINT::DIRT: m_dirtSand.push_back(index); break;
+	//		case LANDSCAPE_PAINT::STONE: m_sandStone.push_back(index); break;
+	//		case LANDSCAPE_PAINT::SNOW: m_sandSnow.push_back(index); break;
+	//		}
+	//	}
+	//}
+	//break;
+	//case LANDSCAPE_PAINT::STONE:
+	//{
+	//	// If selected paint is stone, do nothing
+	//	if (paint == LANDSCAPE_PAINT::STONE) {}
+
+	//	// Else, apply selected paint
+	//	else
+	//	{
+	//		// Switch between selected paint
+	//		switch (paint)
+	//		{
+	//		case LANDSCAPE_PAINT::GRASS: m_grassStone.push_back(index); break;
+	//		case LANDSCAPE_PAINT::DIRT: m_dirtStone.push_back(index); break;
+	//		case LANDSCAPE_PAINT::SAND: m_sandStone.push_back(index); break;
+	//		case LANDSCAPE_PAINT::SNOW: m_stoneSnow.push_back(index); break;
+	//		}
+	//	}
+	//}
+	//break;
+	//case LANDSCAPE_PAINT::SNOW:
+	//{
+	//	// If selected paint is snow, do nothing
+	//	if (paint == LANDSCAPE_PAINT::SNOW) {}
+
+	//	// Else, apply selected paint
+	//	else
+	//	{
+	//		// Switch between selected paint
+	//		switch (paint)
+	//		{
+	//		case LANDSCAPE_PAINT::GRASS: m_grassSnow.push_back(index); break;
+	//		case LANDSCAPE_PAINT::DIRT: m_dirtSnow.push_back(index); break;
+	//		case LANDSCAPE_PAINT::SAND: m_sandSnow.push_back(index); break;
+	//		case LANDSCAPE_PAINT::STONE: m_stoneSnow.push_back(index); break;
+	//		}
+	//	}
+	//}
+	//break;
+	//}
+	
+	// Check if selected geometry is within other containers & remove
+	///LANDSCAPE_PAINT current = CheckForDuplicates(i, j, paint);
 
 	// Blend surrounding geometry paints
 	///if (checkSurroundings) { CheckSurroundings(i, j, paint); }
 
 	// Switch between paints
+	//switch (paint)
+	//{
+	//case LANDSCAPE_PAINT::NA: m_default.push_back(std::pair<int, int>(i, j)); break;
+	//case LANDSCAPE_PAINT::GRASS: m_grass.push_back(std::pair<int, int>(i, j)); break;
+	//case LANDSCAPE_PAINT::DIRT: 
+	//{
+	//	///m_dirt.push_back(std::pair<int, int>(i, j));
+	//	// Switch between current paint
+	//	switch (current)
+	//	{
+	//	case LANDSCAPE_PAINT::GRASS: m_grassDirt.push_back(std::pair<int, int>(i, j)); break;
+	//	case LANDSCAPE_PAINT::DIRT: m_dirt.push_back(std::pair<int, int>(i, j)); break;
+	//	case LANDSCAPE_PAINT::SAND: m_dirtSand.push_back(std::pair<int, int>(i, j)); break;
+	//	case LANDSCAPE_PAINT::STONE: m_dirtStone.push_back(std::pair<int, int>(i, j)); break;
+	//	case LANDSCAPE_PAINT::SNOW: m_dirtSnow.push_back(std::pair<int, int>(i, j)); break;
+	//	case LANDSCAPE_PAINT::GRASS_DIRT: m_dirt.push_back(std::pair<int, int>(i, j)); break;
+	//	}
+	//}
+	//break;
+	//case LANDSCAPE_PAINT::SAND: m_sand.push_back(std::pair<int, int>(i, j)); break;
+	//case LANDSCAPE_PAINT::STONE: m_stone.push_back(std::pair<int, int>(i, j)); break;
+	//case LANDSCAPE_PAINT::SNOW: m_snow.push_back(std::pair<int, int>(i, j)); break;
+
+
+	//case LANDSCAPE_PAINT::GRASS_DIRT: m_grassDirt.push_back(std::pair<int, int>(i, j)); break;
+	//case LANDSCAPE_PAINT::GRASS_SAND: m_grassSand.push_back(std::pair<int, int>(i, j)); break;
+	//case LANDSCAPE_PAINT::GRASS_STONE: m_grassStone.push_back(std::pair<int, int>(i, j)); break;
+	//case LANDSCAPE_PAINT::GRASS_SNOW: m_grassSnow.push_back(std::pair<int, int>(i, j)); break;
+	//case LANDSCAPE_PAINT::DIRT_SAND: m_dirtSand.push_back(std::pair<int, int>(i, j)); break;
+	//case LANDSCAPE_PAINT::DIRT_STONE: m_dirtStone.push_back(std::pair<int, int>(i, j)); break;
+	//case LANDSCAPE_PAINT::DIRT_SNOW: m_dirtSnow.push_back(std::pair<int, int>(i, j)); break;
+	//case LANDSCAPE_PAINT::SAND_STONE: m_sandStone.push_back(std::pair<int, int>(i, j)); break;
+	//case LANDSCAPE_PAINT::SAND_SNOW: m_sandSnow.push_back(std::pair<int, int>(i, j)); break;
+	//case LANDSCAPE_PAINT::STONE_SNOW: m_stoneSnow.push_back(std::pair<int, int>(i, j)); break;
+	//}
+}
+
+void DisplayChunk::PaintOverBlended(LANDSCAPE_PAINT paint, std::pair<int, int> index)
+{
+	// Switch between selected paint
 	switch (paint)
 	{
-	case LANDSCAPE_PAINT::NA: m_default.push_back(std::pair<int, int>(i, j)); break;
-	case LANDSCAPE_PAINT::GRASS: m_grass.push_back(std::pair<int, int>(i, j)); break;
-	case LANDSCAPE_PAINT::DIRT: 
-	{
-		///m_dirt.push_back(std::pair<int, int>(i, j));
-		// Switch between current paint
-		switch (current)
-		{
-		case LANDSCAPE_PAINT::GRASS: m_grassDirt.push_back(std::pair<int, int>(i, j)); break;
-		case LANDSCAPE_PAINT::DIRT: m_dirt.push_back(std::pair<int, int>(i, j)); break;
-		case LANDSCAPE_PAINT::SAND: m_dirtSand.push_back(std::pair<int, int>(i, j)); break;
-		case LANDSCAPE_PAINT::STONE: m_dirtStone.push_back(std::pair<int, int>(i, j)); break;
-		case LANDSCAPE_PAINT::SNOW: m_dirtSnow.push_back(std::pair<int, int>(i, j)); break;
-		case LANDSCAPE_PAINT::GRASS_DIRT: m_dirt.push_back(std::pair<int, int>(i, j)); break;
-		}
-	}
-	break;
-	case LANDSCAPE_PAINT::SAND: m_sand.push_back(std::pair<int, int>(i, j)); break;
-	case LANDSCAPE_PAINT::STONE: m_stone.push_back(std::pair<int, int>(i, j)); break;
-	case LANDSCAPE_PAINT::SNOW: m_snow.push_back(std::pair<int, int>(i, j)); break;
-
-
-	case LANDSCAPE_PAINT::GRASS_DIRT: m_grassDirt.push_back(std::pair<int, int>(i, j)); break;
-	case LANDSCAPE_PAINT::GRASS_SAND: m_grassSand.push_back(std::pair<int, int>(i, j)); break;
-	case LANDSCAPE_PAINT::GRASS_STONE: m_grassStone.push_back(std::pair<int, int>(i, j)); break;
-	case LANDSCAPE_PAINT::GRASS_SNOW: m_grassSnow.push_back(std::pair<int, int>(i, j)); break;
-	case LANDSCAPE_PAINT::DIRT_SAND: m_dirtSand.push_back(std::pair<int, int>(i, j)); break;
-	case LANDSCAPE_PAINT::DIRT_STONE: m_dirtStone.push_back(std::pair<int, int>(i, j)); break;
-	case LANDSCAPE_PAINT::DIRT_SNOW: m_dirtSnow.push_back(std::pair<int, int>(i, j)); break;
-	case LANDSCAPE_PAINT::SAND_STONE: m_sandStone.push_back(std::pair<int, int>(i, j)); break;
-	case LANDSCAPE_PAINT::SAND_SNOW: m_sandSnow.push_back(std::pair<int, int>(i, j)); break;
-	case LANDSCAPE_PAINT::STONE_SNOW: m_stoneSnow.push_back(std::pair<int, int>(i, j)); break;
+	case LANDSCAPE_PAINT::GRASS: m_grass.push_back(index); break;
+	case LANDSCAPE_PAINT::DIRT: m_dirt.push_back(index); break;
+	case LANDSCAPE_PAINT::SAND: m_sand.push_back(index); break;
+	case LANDSCAPE_PAINT::STONE: m_stone.push_back(index); break;
+	case LANDSCAPE_PAINT::SNOW: m_snow.push_back(index); break;
 	}
 }
 
@@ -1664,71 +1886,43 @@ void DisplayChunk::ReadPaints(std::string path, std::vector<std::pair<int, int>>
 void DisplayChunk::ReadAllPaints()
 {
 	// Basic paints
-	ReadPaints("database/grass.csv", m_grass);
-	ReadPaints("database/dirt.csv", m_dirt);
-	ReadPaints("database/sand.csv", m_sand);
-	ReadPaints("database/stone.csv", m_stone);
-	ReadPaints("database/snow.csv", m_snow);
+	ReadPaints("database/CSV/grass.csv", m_grass);
+	ReadPaints("database/CSV/dirt.csv", m_dirt);
+	ReadPaints("database/CSV/sand.csv", m_sand);
+	ReadPaints("database/CSV/stone.csv", m_stone);
+	ReadPaints("database/CSV/snow.csv", m_snow);
 
 	// Blend paints
-	ReadPaints("database/grassDirt.csv", m_grassDirt);
-	/*ReadPaints("database/grassSand.csv", m_grassSand);
-	ReadPaints("database/grassStone.csv", m_grassStone);
-	ReadPaints("database/grassSnow.csv", m_grassSnow);
-	ReadPaints("database/dirtSand.csv", m_dirtSand);
-	ReadPaints("database/dirtStone.csv", m_dirtStone);
-	ReadPaints("database/dirtSnow.csv", m_dirtSnow);
-	ReadPaints("database/sandStone.csv", m_sandStone);
-	ReadPaints("database/sandSnow.csv", m_sandSnow);
-	ReadPaints("database/stoneSnow.csv", m_stoneSnow);*/
+	ReadPaints("database/CSV/grassDirt.csv", m_grassDirt);
+	ReadPaints("database/CSV/grassSand.csv", m_grassSand);
+	ReadPaints("database/CSV/grassStone.csv", m_grassStone);
+	ReadPaints("database/CSV/grassSnow.csv", m_grassSnow);
+	ReadPaints("database/CSV/dirtSand.csv", m_dirtSand);
+	ReadPaints("database/CSV/dirtStone.csv", m_dirtStone);
+	ReadPaints("database/CSV/dirtSnow.csv", m_dirtSnow);
+	ReadPaints("database/CSV/sandStone.csv", m_sandStone);
+	ReadPaints("database/CSV/sandSnow.csv", m_sandSnow);
+	ReadPaints("database/CSV/stoneSnow.csv", m_stoneSnow);
 }
 
 void DisplayChunk::SaveAllPaints()
 {
-	// Grass
-	SavePaint("database/grass.csv", m_grass);
-
-	// Dirt
-	SavePaint("database/dirt.csv", m_dirt);
-
-	// Sand
-	SavePaint("database/sand.csv", m_sand);
-
-	// Stone
-	SavePaint("database/stone.csv", m_stone);
-
-	// Snow
-	SavePaint("database/snow.csv", m_snow);
-
-	// Grass / Dirt
-	SavePaint("database/grassDirt.csv", m_grassDirt);
-
-	// Grass / Sand
-	SavePaint("database/grassSand.csv", m_grassSand);
-
-	// Grass / Stone
-	SavePaint("database/grassStone.csv", m_grassStone);
-
-	// Grass / Snow
-	SavePaint("database/grassSnow.csv", m_grassSnow);
-
-	// Dirt / Sand
-	SavePaint("database/dirtSand.csv", m_dirtSand);
-
-	// Dirt / Stone
-	SavePaint("database/dirtStone.csv", m_dirtStone);
-
-	// Dirt / Snow
-	SavePaint("database/dirtSnow.csv", m_dirtSnow);
-
-	// Sand / Stone
-	SavePaint("database/sandStone.csv", m_sandStone);
-
-	// Sand / Snow
-	SavePaint("database/sandSnow.csv", m_sandSnow);
-
-	// Stone / Snow
-	SavePaint("database/stoneSnow.csv", m_stoneSnow);
+	SavePaint("database/CSV/grass.csv", m_grass);
+	SavePaint("database/CSV/dirt.csv", m_dirt);
+	SavePaint("database/CSV/sand.csv", m_sand);
+	SavePaint("database/CSV/stone.csv", m_stone);
+	SavePaint("database/CSV/snow.csv", m_snow);
+						
+	SavePaint("database/CSV/grassDirt.csv", m_grassDirt);
+	SavePaint("database/CSV/grassSand.csv", m_grassSand);
+	SavePaint("database/CSV/grassStone.csv", m_grassStone);
+	SavePaint("database/CSV/grassSnow.csv", m_grassSnow);
+	SavePaint("database/CSV/dirtSand.csv", m_dirtSand);
+	SavePaint("database/CSV/dirtStone.csv", m_dirtStone);
+	SavePaint("database/CSV/dirtSnow.csv", m_dirtSnow);
+	SavePaint("database/CSV/sandStone.csv", m_sandStone);
+	SavePaint("database/CSV/sandSnow.csv", m_sandSnow);
+	SavePaint("database/CSV/stoneSnow.csv", m_stoneSnow);
 }
 
 void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResources)

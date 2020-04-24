@@ -35,6 +35,7 @@ public:
 
 	DirectX::VertexPositionNormalTexture GetGeometryBasic(int row, int column) { return m_terrainGeometryBasic[row][column]; }
 	void PaintTerrain(int row, int column, LANDSCAPE_PAINT paint, bool checkSurroundings = false);
+	void PaintOverBlended(LANDSCAPE_PAINT paint, std::pair<int, int> index);
 	void SculptTerrain(int row, int column, LANDSCAPE_FUNCTION function, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position = { { 0,0,0 } });
 	
 	void SetSelected(bool selected, int row, int column);

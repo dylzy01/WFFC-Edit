@@ -1,6 +1,5 @@
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\vc141.pdb
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\vc141.idb
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\scenemanager.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\mfcmain.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\pch.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\objectspawndialogue.obj
@@ -15,11 +14,11 @@ c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\lands
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\landscapedialogue.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\game.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\displayobject.obj
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\displaychunk.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\deviceresources.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\debugdraw.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\chunkobject.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\camera.obj
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\blendshader.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\water.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\toolmain.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\textureshader.obj
@@ -28,10 +27,13 @@ c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\terra
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\sqlmanager.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\selectdialogue.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\sceneobject.obj
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\scenemanager.obj
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\displaychunk.obj
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\shadermanager.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\sqlite3.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\blend_ps.cso
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\texture_ps.cso
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\blend_vs.cso
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\texture_ps.cso
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\texture_vs.cso
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\wofedit.exe
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\wofedit.ilk
