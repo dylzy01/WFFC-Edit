@@ -30,8 +30,7 @@ float4 main(InputType input) : SV_TARGET
     lightDir = normalize(input.position3D - lightPosition);
 
 	// Calculate the amount of light on this pixel.
-	///lightIntensity = saturate(dot(input.normal, -lightDir));
-    lightIntensity = 1.f;
+	lightIntensity = saturate(dot(input.normal, -lightDir));
 
 	// Determine the final amount of diffuse color based on the diffuse color combined with the light intensity.
     color = ambientColor + (diffuseColor * lightIntensity); //adding ambient

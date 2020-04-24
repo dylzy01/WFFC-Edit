@@ -116,7 +116,8 @@ bool TextureShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11Sha
 	lightPtr->position = sceneLight1->getPosition();*/
 	lightPtr->ambient = DirectX::SimpleMath::Vector4(0.3f, 0.3f, 0.3f, 1.f);
 	lightPtr->diffuse = DirectX::SimpleMath::Vector4(1.f, 1.f, 1.f, 1.f);
-	lightPtr->position = DirectX::SimpleMath::Vector3(2.f, 1.f, 1.f);
+	///lightPtr->position = DirectX::SimpleMath::Vector3(2.f, 1.f, 1.f);
+	lightPtr->position = DirectX::SimpleMath::Vector3(1.f, 50.f, 1.f);
 	lightPtr->padding = 0.0f;
 	context->Unmap(m_bufferLight, 0);
 	context->PSSetConstantBuffers(0, 1, &m_bufferLight);

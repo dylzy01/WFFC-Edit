@@ -172,9 +172,10 @@ void Game::UpdateCamera()
 	m_camera->HandleInput(&m_inputCommands, m_deltaTime, centre.x, centre.y, cursorPos);
 	m_camera->Update();
 
-	//apply camera vectors
+	// Setup view matrix
 	m_view = Matrix::CreateLookAt(m_camera->GetPosition(), m_camera->GetLookAt(), Vector3::UnitY);
 
+	// Apply camera matrices
 	m_batchEffect->SetView(m_view);
 	m_batchEffect->SetWorld(Matrix::Identity);
 	m_displayChunk.m_effect->SetView(m_view);
@@ -240,6 +241,11 @@ void Game::Render()
 		const XMVECTORF32 yaxis = { 0.f, 0.f, 512.f };
 		DrawGrid(xaxis, yaxis, g_XMZero, 512, 512, Colors::Gray);
 	}
+
+	// Set shader parameters
+	ShaderManager::SetWorld(&m_world);
+	ShaderManager::SetView(&m_view);
+	ShaderManager::SetProjection(&m_projection);
 	
 	//RENDER OBJECTS FROM SCENEGRAPH
 	int numRenderObjects = m_displayList.size();
@@ -256,6 +262,9 @@ void Game::Render()
 
 		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
 
+		// Shader		
+		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, m_displayList[i].m_texture_diffuse);		
+		
 		m_displayList[i].m_model->Draw(context, *m_states, local, m_view, m_projection, false);	//last variable in draw,  make TRUE for wireframe
 
 		m_deviceResources->PIXEndEvent();
@@ -266,12 +275,7 @@ void Game::Render()
 	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
 	context->OMSetDepthStencilState(m_states->DepthDefault(),0);
 	context->RSSetState(m_states->CullNone());
-	if (m_wireframe) { context->RSSetState(m_states->Wireframe()); }
-
-	// Set shader parameters
-	ShaderManager::SetWorld(&m_world);
-	ShaderManager::SetView(&m_view);
-	ShaderManager::SetProjection(&m_projection);
+	if (m_wireframe) { context->RSSetState(m_states->Wireframe()); }	
 
 	//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
 	m_displayChunk.RenderBatch(m_deviceResources);
@@ -302,8 +306,6 @@ void Game::Render()
 	//		}
 	//	}
 	//}
-
-	///TextureShader::Render(m_deviceResources->GetD3DDeviceContext(), TERRAINRESOLUTION, m_world, m_view, m_projection, &m_texture1);
 
     m_deviceResources->Present();
 }
@@ -375,6 +377,8 @@ void XM_CALLCONV Game::DrawGrid(FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR orig
 
     m_deviceResources->PIXEndEvent();
 }
+
+// Draw local axes and bounding boxes
 void Game::DrawDebug(int i)
 {
 	// Setup vectors
@@ -479,79 +483,109 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 	//for every item in the scenegraph
 	int numObjects = sceneGraph->size();
 	for (int i = 0; i < numObjects; i++)
-	{		
+	{
 		//create a temp display object that we will populate then append to the display list.
 		DisplayObject newDisplayObject;
 
-		// Check & set model type
-		if (sceneGraph->at(i).model_path == "database/data/water.cmo") { newDisplayObject.m_type = MODEL_TYPE::WATER; }
-		else { newDisplayObject.m_type = MODEL_TYPE::NOT_WATER; }
-		
-		//load model
-		std::wstring modelwstr = StringToWCHART(sceneGraph->at(i).model_path);							//convect string to Wchar
-		newDisplayObject.m_model = Model::CreateFromCMO(device, modelwstr.c_str(), *m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
-
-		//Load Texture
-		std::wstring texturewstr = StringToWCHART(sceneGraph->at(i).tex_diffuse_path);								//convect string to Wchar
-		HRESULT rs;
-		rs = CreateDDSTextureFromFile(device, texturewstr.c_str(), nullptr, &newDisplayObject.m_texture_diffuse);	//load tex into Shader resource
-
-		//if texture fails.  load error default
-		if (rs)
+		// If object is a light
+		///if (sceneGraph->at(i).light_type != 0)
 		{
-			CreateDDSTextureFromFile(device, L"database/data/Error.dds", nullptr, &newDisplayObject.m_texture_diffuse);	//load tex into Shader resource
+			/*XMFLOAT4 diffuse = { sceneGraph->at(i).light_diffuse_r, sceneGraph->at(i).light_diffuse_g, sceneGraph->at(i).light_diffuse_b, 1.f };
+			XMFLOAT4 ambient = { 0.2f, 0.2f, 0.2f, 1.f };
+			///XMFLOAT3 position = { 50.f, 10.f, 10.f };
+			XMFLOAT3 position = { sceneGraph->at(i).posX, sceneGraph->at(i).posY, sceneGraph->at(i).posZ };
+			XMFLOAT3 direction = { 0.f, 1.f, 0.f };
+			float constantAttenuation = sceneGraph->at(i).light_constant;
+			float linearAttenuation = sceneGraph->at(i).light_linear;
+			float quadraticAttenuation = sceneGraph->at(i).light_quadratic;
+			LIGHT_TYPE type = (LIGHT_TYPE)sceneGraph->at(i).light_type;
+			bool enabled = true;
+			m_lights.push_back(MyLight(diffuse, ambient, position, direction, constantAttenuation, linearAttenuation, quadraticAttenuation, type, enabled));*/
 		}
 
-		//apply new texture to models effect
-		newDisplayObject.m_model->UpdateEffects([&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
-		{	
-			auto lights = dynamic_cast<BasicEffect*>(effect);
-			if (lights)
-			{
-				lights->SetTexture(newDisplayObject.m_texture_diffuse);			
-			}
-		});
-
-		//set position
-		newDisplayObject.m_position.x = sceneGraph->at(i).posX;
-		newDisplayObject.m_position.y = sceneGraph->at(i).posY;
-		newDisplayObject.m_position.z = sceneGraph->at(i).posZ;
-		
-		//setorientation
-		newDisplayObject.m_orientation.x = sceneGraph->at(i).rotX;
-		newDisplayObject.m_orientation.y = sceneGraph->at(i).rotY;
-		newDisplayObject.m_orientation.z = sceneGraph->at(i).rotZ;
-
-		//set scale
-		newDisplayObject.m_scale.x = sceneGraph->at(i).scaX;
-		newDisplayObject.m_scale.y = sceneGraph->at(i).scaY;
-		newDisplayObject.m_scale.z = sceneGraph->at(i).scaZ;
-
-		//set wireframe / render flags
-		newDisplayObject.m_render		= sceneGraph->at(i).editor_render;
-		newDisplayObject.m_wireframe	= sceneGraph->at(i).editor_wireframe;
-
-		//set lights
-		newDisplayObject.m_light_type		= sceneGraph->at(i).light_type;
-		newDisplayObject.m_light_diffuse_r	= sceneGraph->at(i).light_diffuse_r;
-		newDisplayObject.m_light_diffuse_g	= sceneGraph->at(i).light_diffuse_g;
-		newDisplayObject.m_light_diffuse_b	= sceneGraph->at(i).light_diffuse_b;
-		newDisplayObject.m_light_specular_r = sceneGraph->at(i).light_specular_r;
-		newDisplayObject.m_light_specular_g = sceneGraph->at(i).light_specular_g;
-		newDisplayObject.m_light_specular_b = sceneGraph->at(i).light_specular_b;
-		newDisplayObject.m_light_spot_cutoff = sceneGraph->at(i).light_spot_cutoff;
-		newDisplayObject.m_light_constant	= sceneGraph->at(i).light_constant;
-		newDisplayObject.m_light_linear		= sceneGraph->at(i).light_linear;
-		newDisplayObject.m_light_quadratic	= sceneGraph->at(i).light_quadratic;
-
-		// Set bounding box		
-		for (int j = 0; j < newDisplayObject.m_model->meshes.size(); ++j)
+		// Else, if object isn't a light
+		///else
 		{
-			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.x *= newDisplayObject.m_scale.x;
-			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y *= newDisplayObject.m_scale.y;
-			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.z *= newDisplayObject.m_scale.z;
-			newDisplayObject.m_model->meshes[j]->boundingBox.Center = newDisplayObject.m_position;
-			newDisplayObject.m_model->meshes[j]->boundingBox.Center.y += newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y;
+			// Check & set model type
+			if (sceneGraph->at(i).model_path == "database/data/water.cmo") { newDisplayObject.m_type = MODEL_TYPE::WATER; }
+			else { newDisplayObject.m_type = MODEL_TYPE::NOT_WATER; }
+
+			//load model
+			std::wstring modelwstr = StringToWCHART(sceneGraph->at(i).model_path);							//convect string to Wchar
+			newDisplayObject.m_model = Model::CreateFromCMO(device, modelwstr.c_str(), *m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+
+			//Load Texture
+			std::wstring texturewstr = StringToWCHART(sceneGraph->at(i).tex_diffuse_path);								//convect string to Wchar
+			HRESULT rs;
+			rs = CreateDDSTextureFromFile(device, texturewstr.c_str(), nullptr, &newDisplayObject.m_texture_diffuse);	//load tex into Shader resource
+
+			//if texture fails.  load error default
+			if (rs) { CreateDDSTextureFromFile(device, L"database/data/Error.dds", nullptr, &newDisplayObject.m_texture_diffuse); }	//load tex into Shader resource
+
+			//apply new texture to models effect
+			//newDisplayObject.m_model->UpdateEffects([&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+			//{
+			//	auto lights = dynamic_cast<BasicEffect*>(effect);
+			//	if (lights)
+			//	{
+			//		lights->SetTexture(newDisplayObject.m_texture_diffuse);
+			//	}
+			//});
+
+			//set position
+			newDisplayObject.m_position.x = sceneGraph->at(i).posX;
+			newDisplayObject.m_position.y = sceneGraph->at(i).posY;
+			newDisplayObject.m_position.z = sceneGraph->at(i).posZ;
+
+			//setorientation
+			newDisplayObject.m_orientation.x = sceneGraph->at(i).rotX;
+			newDisplayObject.m_orientation.y = sceneGraph->at(i).rotY;
+			newDisplayObject.m_orientation.z = sceneGraph->at(i).rotZ;
+
+			//set scale
+			newDisplayObject.m_scale.x = sceneGraph->at(i).scaX;
+			newDisplayObject.m_scale.y = sceneGraph->at(i).scaY;
+			newDisplayObject.m_scale.z = sceneGraph->at(i).scaZ;
+
+			//set wireframe / render flags
+			newDisplayObject.m_render = sceneGraph->at(i).editor_render;
+			newDisplayObject.m_wireframe = sceneGraph->at(i).editor_wireframe;
+
+			//set lights
+			newDisplayObject.m_light_type = sceneGraph->at(i).light_type;
+			newDisplayObject.m_light_diffuse_r = sceneGraph->at(i).light_diffuse_r;
+			newDisplayObject.m_light_diffuse_g = sceneGraph->at(i).light_diffuse_g;
+			newDisplayObject.m_light_diffuse_b = sceneGraph->at(i).light_diffuse_b;
+			newDisplayObject.m_light_specular_r = sceneGraph->at(i).light_specular_r;
+			newDisplayObject.m_light_specular_g = sceneGraph->at(i).light_specular_g;
+			newDisplayObject.m_light_specular_b = sceneGraph->at(i).light_specular_b;
+			newDisplayObject.m_light_spot_cutoff = sceneGraph->at(i).light_spot_cutoff;
+			newDisplayObject.m_light_constant = sceneGraph->at(i).light_constant;
+			newDisplayObject.m_light_linear = sceneGraph->at(i).light_linear;
+			newDisplayObject.m_light_quadratic = sceneGraph->at(i).light_quadratic;
+			
+			// Custom lights
+			XMFLOAT4 diffuse = { sceneGraph->at(i).light_diffuse_r, sceneGraph->at(i).light_diffuse_g, sceneGraph->at(i).light_diffuse_b, 1.f };
+			XMFLOAT4 ambient = { 0.2f, 0.2f, 0.2f, 1.f };
+			///XMFLOAT3 position = { 50.f, 10.f, 10.f };
+			XMFLOAT3 position = { sceneGraph->at(i).posX, sceneGraph->at(i).posY, sceneGraph->at(i).posZ };
+			XMFLOAT3 direction = { 0.f, 1.f, 0.f };
+			float constantAttenuation = sceneGraph->at(i).light_constant;
+			float linearAttenuation = sceneGraph->at(i).light_linear;
+			float quadraticAttenuation = sceneGraph->at(i).light_quadratic;
+			LIGHT_TYPE type = (LIGHT_TYPE)sceneGraph->at(i).light_type;
+			bool enabled = true;
+			m_lights.push_back(Light(diffuse, ambient, position, direction, constantAttenuation, linearAttenuation, quadraticAttenuation, type, enabled));
+
+			// Set bounding box		
+			for (int j = 0; j < newDisplayObject.m_model->meshes.size(); ++j)
+			{
+				newDisplayObject.m_model->meshes[j]->boundingBox.Extents.x *= newDisplayObject.m_scale.x;
+				newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y *= newDisplayObject.m_scale.y;
+				newDisplayObject.m_model->meshes[j]->boundingBox.Extents.z *= newDisplayObject.m_scale.z;
+				newDisplayObject.m_model->meshes[j]->boundingBox.Center = newDisplayObject.m_position;
+				newDisplayObject.m_model->meshes[j]->boundingBox.Center.y += newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y;
+			}
 		}
 		
 		// Add object to list

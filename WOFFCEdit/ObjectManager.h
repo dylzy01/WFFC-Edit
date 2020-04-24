@@ -16,7 +16,8 @@ public:
 
 	// Spawn an object at a location & add to database
 	static void Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 position,
-		std::vector<SceneObject> & sceneGraph);	
+		std::vector<SceneObject> & sceneGraph, 
+		LIGHT_TYPE type = (LIGHT_TYPE)NULL, XMFLOAT3 diffuse = { NULL, NULL, NULL }, float constA = NULL, float linA = NULL, float quadA = NULL);
 
 	// Remove an object from scene graph & database
 	static void Remove(std::vector<int> & IDs, std::vector<SceneObject> & sceneGraph, int ID = -1);

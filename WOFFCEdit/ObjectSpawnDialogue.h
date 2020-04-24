@@ -59,7 +59,9 @@ private:
 	afx_msg void OnBnClickedGrass();
 	afx_msg void OnBnClickedTreeOne();
 	afx_msg void OnBnClickedTreeTwo();
-	afx_msg void OnBnClickedWater();	
+	afx_msg void OnBnClickedWater();
+
+	afx_msg void OnBnClickedLight();
 
 	/*afx_msg void OnBnClickedResidential();
 	afx_msg void OnBnClickedNature();

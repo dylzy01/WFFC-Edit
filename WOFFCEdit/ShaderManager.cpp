@@ -37,37 +37,21 @@ void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, ID3D
 	}
 }
 
-// Handler for shaders
-void ShaderManager::Enable(SHADER_TYPE type, ID3D11DeviceContext * context)
-{
-	// Switch between shader type
-	switch (type)
-	{
-	case SHADER_TYPE::TEXTURE:
-	{
-		
-	}
-	break;
-	case SHADER_TYPE::BLEND:
-	{
-		
-	}
-	break;
-	}
-}
-
+// Set shader world matrices
 void ShaderManager::SetWorld(DirectX::SimpleMath::Matrix * world)
 {
 	TextureShader::SetWorld(world);
 	BlendShader::SetWorld(world);
 }
 
+// Set shader view matrices
 void ShaderManager::SetView(DirectX::SimpleMath::Matrix * view)
 {
 	TextureShader::SetView(view);
 	BlendShader::SetView(view);
 }
 
+// Set shader projection matrices
 void ShaderManager::SetProjection(DirectX::SimpleMath::Matrix * projection)
 {
 	TextureShader::SetProjection(projection);

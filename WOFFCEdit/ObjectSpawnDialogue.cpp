@@ -38,117 +38,126 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 	{
 		// Enable/disable house #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK13, enable); }
-		GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
 
 		// Enable/disable cave button
 		if (!enable) { CheckDlgButton(IDC_CHECK16, enable); }
-		GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
 
 		// Enable/disable bridge button
 		if (!enable) { CheckDlgButton(IDC_CHECK14, enable); }
-		GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
 
 		// Enable/disable fence button
 		if (!enable) { CheckDlgButton(IDC_CHECK17, enable); }
-		GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
 
 		// Enable/disable boat button
 		if (!enable) { CheckDlgButton(IDC_CHECK18, enable); }
-		GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
 
 		// Enable/disable grass button
 		if (!enable) { CheckDlgButton(IDC_CHECK5, enable); }
-		GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
 
 		// Enable/disable tree #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
-		GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
 
 		// Enable/disable tree #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK15, enable); }
-		GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
 
 		// Enable/disable water button
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
-		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+
+		// Enable/disable light button
+		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
 	}
 	break;
 	case OBJECT_SPAWN::HOUSE_TWO:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
-		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 
 		// Enable/disable cave button
 		if (!enable) { CheckDlgButton(IDC_CHECK16, enable); }
-		GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
 
 		// Enable/disable bridge button
 		if (!enable) { CheckDlgButton(IDC_CHECK14, enable); }
-		GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
 
 		// Enable/disable fence button
 		if (!enable) { CheckDlgButton(IDC_CHECK17, enable); }
-		GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
 
 		// Enable/disable boat button
 		if (!enable) { CheckDlgButton(IDC_CHECK18, enable); }
-		GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
 
 		// Enable/disable grass button
 		if (!enable) { CheckDlgButton(IDC_CHECK5, enable); }
-		GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
 
 		// Enable/disable tree #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
-		GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
 
 		// Enable/disable tree #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK15, enable); }
-		GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
 
 		// Enable/disable water button
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
-		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+
+		// Enable/disable light button
+		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
 	}
 	break;
 	case OBJECT_SPAWN::CAVE:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
-		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 
 		// Enable/disable house #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK13, enable); }
-		GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
 
 		// Enable/disable bridge button
 		if (!enable) { CheckDlgButton(IDC_CHECK14, enable); }
-		GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
 
 		// Enable/disable fence button
 		if (!enable) { CheckDlgButton(IDC_CHECK17, enable); }
-		GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
 
 		// Enable/disable boat button
 		if (!enable) { CheckDlgButton(IDC_CHECK18, enable); }
-		GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
 
 		// Enable/disable grass button
 		if (!enable) { CheckDlgButton(IDC_CHECK5, enable); }
-		GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
 
 		// Enable/disable tree #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
-		GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
 
 		// Enable/disable tree #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK15, enable); }
-		GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
 
 		// Enable/disable water button
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
-		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+
+		// Enable/disable light button
+		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
 	}
 	break;
 	// Props ///////////////////////////////////////////////////////////////////
@@ -156,117 +165,126 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
-		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 
 		// Enable/disable house #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK13, enable); }
-		GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
 
 		// Enable/disable cave button
 		if (!enable) { CheckDlgButton(IDC_CHECK16, enable); }
-		GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
 
 		// Enable/disable fence button
 		if (!enable) { CheckDlgButton(IDC_CHECK17, enable); }
-		GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
 
 		// Enable/disable boat button
 		if (!enable) { CheckDlgButton(IDC_CHECK18, enable); }
-		GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
 
 		// Enable/disable grass button
 		if (!enable) { CheckDlgButton(IDC_CHECK5, enable); }
-		GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
 
 		// Enable/disable tree #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
-		GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
 
 		// Enable/disable tree #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK15, enable); }
-		GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
 
 		// Enable/disable water button
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
-		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+
+		// Enable/disable light button
+		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
 	}
 	break;
 	case OBJECT_SPAWN::FENCE:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
-		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 
 		// Enable/disable house #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK13, enable); }
-		GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
 
 		// Enable/disable cave button
 		if (!enable) { CheckDlgButton(IDC_CHECK16, enable); }
-		GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
 
 		// Enable/disable bridge button
 		if (!enable) { CheckDlgButton(IDC_CHECK14, enable); }
-		GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
 
 		// Enable/disable boat button
 		if (!enable) { CheckDlgButton(IDC_CHECK18, enable); }
-		GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
 
 		// Enable/disable grass button
 		if (!enable) { CheckDlgButton(IDC_CHECK5, enable); }
-		GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
 
 		// Enable/disable tree #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
-		GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
 
 		// Enable/disable tree #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK15, enable); }
-		GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
 
 		// Enable/disable water button
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
-		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+
+		// Enable/disable light button
+		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
 	}
 	break;
 	case OBJECT_SPAWN::BOAT:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
-		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 
 		// Enable/disable house #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK13, enable); }
-		GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
 
 		// Enable/disable cave button
 		if (!enable) { CheckDlgButton(IDC_CHECK16, enable); }
-		GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
 
 		// Enable/disable bridge button
 		if (!enable) { CheckDlgButton(IDC_CHECK14, enable); }
-		GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
 
 		// Enable/disable fence button
 		if (!enable) { CheckDlgButton(IDC_CHECK17, enable); }
-		GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
 
 		// Enable/disable grass button
 		if (!enable) { CheckDlgButton(IDC_CHECK5, enable); }
-		GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
 
 		// Enable/disable tree #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
-		GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
 
 		// Enable/disable tree #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK15, enable); }
-		GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
 
 		// Enable/disable water button
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
-		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+
+		// Enable/disable light button
+		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
 	}
 	break;
 	// Nature //////////////////////////////////////////////////////////////////
@@ -274,199 +292,257 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
-		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 
 		// Enable/disable house #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK13, enable); }
-		GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
 
 		// Enable/disable cave button
 		if (!enable) { CheckDlgButton(IDC_CHECK16, enable); }
-		GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
 
 		// Enable/disable bridge button
 		if (!enable) { CheckDlgButton(IDC_CHECK14, enable); }
-		GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
 
 		// Enable/disable fence button
 		if (!enable) { CheckDlgButton(IDC_CHECK17, enable); }
-		GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
 
 		// Enable/disable boat button
 		if (!enable) { CheckDlgButton(IDC_CHECK18, enable); }
-		GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
 
 		// Enable/disable tree #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
-		GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
 
 		// Enable/disable tree #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK15, enable); }
-		GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
 
 		// Enable/disable water button
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
-		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+
+		// Enable/disable light button
+		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
 	}
 	break;
 	case OBJECT_SPAWN::TREE_ONE:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
-		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 
 		// Enable/disable house #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK13, enable); }
-		GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
 
 		// Enable/disable cave button
 		if (!enable) { CheckDlgButton(IDC_CHECK16, enable); }
-		GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
 
 		// Enable/disable bridge button
 		if (!enable) { CheckDlgButton(IDC_CHECK14, enable); }
-		GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
 
 		// Enable/disable fence button
 		if (!enable) { CheckDlgButton(IDC_CHECK17, enable); }
-		GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
 
 		// Enable/disable boat button
 		if (!enable) { CheckDlgButton(IDC_CHECK18, enable); }
-		GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
 
 		// Enable/disable grass button
 		if (!enable) { CheckDlgButton(IDC_CHECK5, enable); }
-		GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
 
 		// Enable/disable tree #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK15, enable); }
-		GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
 
 		// Enable/disable water button
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
-		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+
+		// Enable/disable light button
+		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
 	}
 	break;
 	case OBJECT_SPAWN::TREE_TWO:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
-		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 
 		// Enable/disable house #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK13, enable); }
-		GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
 
 		// Enable/disable cave button
 		if (!enable) { CheckDlgButton(IDC_CHECK16, enable); }
-		GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
 
 		// Enable/disable bridge button
 		if (!enable) { CheckDlgButton(IDC_CHECK14, enable); }
-		GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
 
 		// Enable/disable fence button
 		if (!enable) { CheckDlgButton(IDC_CHECK17, enable); }
-		GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
 
 		// Enable/disable boat button
 		if (!enable) { CheckDlgButton(IDC_CHECK18, enable); }
-		GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
 
 		// Enable/disable grass button
 		if (!enable) { CheckDlgButton(IDC_CHECK5, enable); }
-		GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
 
 		// Enable/disable tree #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
-		GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
 
 		// Enable/disable water button
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
-		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+
+		// Enable/disable light button
+		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
 	}
 	break;
 	case OBJECT_SPAWN::WATER:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
-		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 
 		// Enable/disable house #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK13, enable); }
-		GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
 
 		// Enable/disable cave button
 		if (!enable) { CheckDlgButton(IDC_CHECK16, enable); }
-		GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
 
 		// Enable/disable bridge button
 		if (!enable) { CheckDlgButton(IDC_CHECK14, enable); }
-		GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
 
 		// Enable/disable fence button
 		if (!enable) { CheckDlgButton(IDC_CHECK17, enable); }
-		GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
 
 		// Enable/disable boat button
 		if (!enable) { CheckDlgButton(IDC_CHECK18, enable); }
-		GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
 
 		// Enable/disable grass button
 		if (!enable) { CheckDlgButton(IDC_CHECK5, enable); }
-		GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
 
 		// Enable/disable tree #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
-		GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
 
 		// Enable/disable tree #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK15, enable); }
-		GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
+
+		// Enable/disable light button
+		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
 	}
 	break;	
+	case OBJECT_SPAWN::LIGHT:
+	{
+		// Enable/disable house #1 button
+		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
+		///GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
+
+		// Enable/disable house #2 button
+		if (!enable) { CheckDlgButton(IDC_CHECK13, enable); }
+		///GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
+
+		// Enable/disable cave button
+		if (!enable) { CheckDlgButton(IDC_CHECK16, enable); }
+		///GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
+
+		// Enable/disable bridge button
+		if (!enable) { CheckDlgButton(IDC_CHECK14, enable); }
+		///GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
+
+		// Enable/disable fence button
+		if (!enable) { CheckDlgButton(IDC_CHECK17, enable); }
+		///GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
+
+		// Enable/disable boat button
+		if (!enable) { CheckDlgButton(IDC_CHECK18, enable); }
+		///GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
+
+		// Enable/disable grass button
+		if (!enable) { CheckDlgButton(IDC_CHECK5, enable); }
+		///GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
+
+		// Enable/disable tree #1 button
+		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
+		///GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
+
+		// Enable/disable tree #2 button
+		if (!enable) { CheckDlgButton(IDC_CHECK15, enable); }
+		///GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
+
+		// Enable/disable water button
+		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
+		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);	
+	}
+	break;
 	case OBJECT_SPAWN::NA:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
-		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 
 		// Enable/disable house #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK13, enable); }
-		GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
 
 		// Enable/disable cave button
 		if (!enable) { CheckDlgButton(IDC_CHECK16, enable); }
-		GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
 
 		// Enable/disable bridge button
 		if (!enable) { CheckDlgButton(IDC_CHECK14, enable); }
-		GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
 
 		// Enable/disable fence button
 		if (!enable) { CheckDlgButton(IDC_CHECK17, enable); }
-		GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
 
 		// Enable/disable boat button
 		if (!enable) { CheckDlgButton(IDC_CHECK18, enable); }
-		GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
 		
 		// Enable/disable grass button
 		if (!enable) { CheckDlgButton(IDC_CHECK5, enable); }
-		GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
 
 		// Enable/disable tree #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
-		GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
 
 		// Enable/disable tree #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK15, enable); }
-		GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
+		///GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
 
 		// Enable/disable water button
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
-		GetDlgItem(IDC_CHECK7)->EnableWindow(enable);		
+		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);	
+
+		// Enable/disable light button
+		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
 	}
 	break;
 	}
@@ -489,6 +565,9 @@ BEGIN_MESSAGE_MAP(ObjectSpawnDialogue, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK6, &ObjectSpawnDialogue::OnBnClickedTreeOne)
 	ON_BN_CLICKED(IDC_CHECK15, &ObjectSpawnDialogue::OnBnClickedTreeTwo)
 	ON_BN_CLICKED(IDC_CHECK7, &ObjectSpawnDialogue::OnBnClickedWater)
+
+
+	ON_BN_CLICKED(IDC_CHECK19, &ObjectSpawnDialogue::OnBnClickedLight)
 END_MESSAGE_MAP()
 
 
@@ -657,6 +736,21 @@ void ObjectSpawnDialogue::OnBnClickedWater()
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK7))
+	{
+		// Uncheck & disable other buttons
+	case true: UpdateButtons(false); break;
+		// Enable other buttons
+	case false: UpdateButtons(true); break;
+	}
+}
+
+// Set spawn to light
+void ObjectSpawnDialogue::OnBnClickedLight()
+{
+	m_spawn = OBJECT_SPAWN::LIGHT;
+
+	// Switch between button checked/unchecked
+	switch (IsDlgButtonChecked(IDC_CHECK19))
 	{
 		// Uncheck & disable other buttons
 	case true: UpdateButtons(false); break;

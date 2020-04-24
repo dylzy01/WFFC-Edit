@@ -17,9 +17,6 @@ public:
 	// Setup specific shader parameters
 	static void Shader(SHADER_TYPE type, ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture1, ID3D11ShaderResourceView* texture2 = NULL);
 
-	// Handler for shaders
-	static void Enable(SHADER_TYPE type, ID3D11DeviceContext * context);
-
 	// Setters
 	static void SetWorld(DirectX::SimpleMath::Matrix * world);
 	static void SetView(DirectX::SimpleMath::Matrix * view);

@@ -10,7 +10,7 @@ std::vector<DirectX::SimpleMath::Vector3> ObjectManager::m_storedObjectTranslati
 
 // Spawn an object at a location
 void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 position, 
-	std::vector<SceneObject> & sceneGraph)
+	std::vector<SceneObject> & sceneGraph, LIGHT_TYPE type, XMFLOAT3 diffuse, float constA, float linA, float quadA)
 {
 	// Setup temp object
 	SceneObject object;
@@ -59,17 +59,31 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 		object.path_node_end = false;
 		object.parent_id = 0;
 		object.editor_wireframe = false;
-		object.light_type = 1;
-		object.light_diffuse_r = 2.f;
-		object.light_diffuse_g = 3.f;
-		object.light_diffuse_b = 4.f;
-		object.light_specular_r = 5.f;
-		object.light_specular_g = 6.f;
-		object.light_specular_b = 7.f;
+
+		if (spawn == OBJECT_SPAWN::LIGHT)
+		{
+			object.light_type = (int)type;
+			object.light_diffuse_r = diffuse.x;
+			object.light_diffuse_g = diffuse.y;
+			object.light_diffuse_b = diffuse.z;
+			object.light_constant = constA;
+			object.light_linear = linA;
+			object.light_quadratic = quadA;
+		}
+		else
+		{
+			object.light_type = 0;
+			object.light_diffuse_r = 2.f;
+			object.light_diffuse_g = 3.f;
+			object.light_diffuse_b = 4.f;				
+			object.light_constant = 9.f;
+			object.light_linear = 0.f;
+			object.light_quadratic = 1.f;
+		}
+		object.light_specular_r = 4.f;
+		object.light_specular_g = 5.f;
+		object.light_specular_b = 6.f;
 		object.light_spot_cutoff = 8.f;
-		object.light_constant = 9.f;
-		object.light_linear = 0.f;
-		object.light_quadratic = 1.f;
 	}
 
 	// Switch between spawn
@@ -169,6 +183,16 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 		object.model_path = "database/data/water.cmo";
 		object.tex_diffuse_path = "database/data/water.dds";
 		object.name = "Water #" + object.ID;
+	}
+	break;
+	// Misc /////////////////////////////////////////////////////////////////////////////////
+	case OBJECT_SPAWN::LIGHT:
+	{
+		// Set object to light
+		object.m_type = MODEL_TYPE::NOT_WATER;
+		object.model_path = "database/data/boat.cmo";
+		object.tex_diffuse_path = "database/data/sand.dds";
+		object.name = "Light #" + object.ID;
 	}
 	break;
 	}

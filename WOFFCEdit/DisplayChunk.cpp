@@ -46,6 +46,8 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	auto context = deviceResources->GetD3DDeviceContext();
 	///context->IASetInputLayout(m_terrainInputLayout.Get());
 
+	m_effect->Apply(context);
+
 	// Draw all grass geometry
 	if (m_grass.size() != 0) {
 		m_batch->Begin();
@@ -221,8 +223,8 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 	m_effect = std::make_unique<BasicEffect>(device);
 	m_effect->EnableDefaultLighting();
 	m_effect->SetLightingEnabled(true);
-	///m_effectBasic->SetTextureEnabled(true);
-	///m_effectBasic->SetTexture(m_texture_default);
+	///m_effect->SetTextureEnabled(true);
+	///m_effect->SetTexture(m_texture_default);
 
 	void const* shaderByteCodeBasic;
 	size_t byteCodeLengthBasic;

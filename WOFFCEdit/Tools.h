@@ -45,7 +45,10 @@ enum class OBJECT_SPAWN {
 	GRASS,
 	TREE_ONE,
 	TREE_TWO,
-	WATER
+	WATER,
+
+	// Misc,
+	LIGHT
 };
 
 enum class RESIDENTIAL_SPAWN {
@@ -124,6 +127,13 @@ enum class LANDSCAPE_CONSTRAINT {
 enum class SHADER_TYPE {
 	TEXTURE,
 	BLEND
+};
+
+enum class LIGHT_TYPE {
+	NA = 0,
+	DIRECTIONAL = 1,
+	POINT = 2,
+	SPOT = 3
 };
 
 class Tools

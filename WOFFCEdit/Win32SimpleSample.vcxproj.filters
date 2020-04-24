@@ -241,6 +241,9 @@
     <ClInclude Include="BlendShader.h">
       <Filter>Shaders\Blend</Filter>
     </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Custom</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

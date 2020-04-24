@@ -18,6 +18,49 @@ struct InputType
     float3 position3D : TEXCOORD2;
 };
 
+float4 GetSlopeTexture(float2 tex, float3 normal, float3 worldPosition)
+{
+    float4 texture0, texture1;
+    float4 slopeTexture;
+    float4 textureColour;
+    float slope;
+    float blendAmount;
+    
+    // Sample first texture colour
+    texture0 = shaderTexture0.Sample(sampleType, tex);
+
+    // Sample second texture colour
+    texture1 = shaderTexture1.Sample(sampleType, tex);
+    
+    // Set slope colour = second texture for blending
+    slopeTexture = texture1;
+    slopeTexture = saturate(slopeTexture);
+    
+    // Calculate slope
+    slope = 1.f - normal.y;
+    
+    // Determine which texture to use based on steepness of slope
+    if (slope < 0.05f)
+    {
+        blendAmount = slope / 0.05f;
+        textureColour = lerp(texture0, slopeTexture, blendAmount);
+    }
+    else if ((slope < 0.6f) && (slope >= 0.05f))
+    {
+        blendAmount = (slope - 0.05f) * (1.f / (0.6f - 0.05f));
+        textureColour = lerp(slopeTexture, texture1, blendAmount);
+    }
+    else if (slope >= 0.6f)
+    {
+        textureColour = texture1;
+    }
+    
+   // Setup lighting
+    textureColour *= ambientColor + diffuseColor;
+    
+    return textureColour;
+}
+
 float4 main(InputType input) : SV_TARGET
 {
     float4 textureColor0, textureColor1;
@@ -42,4 +85,8 @@ float4 main(InputType input) : SV_TARGET
     color *= (textureColor0 * textureColor1);
     
     return color;
+    
+    //float4 colour = GetSlopeTexture(input.tex, input.normal, input.position);
+    //colour = saturate(colour);
+    //return colour;
 }

@@ -96,6 +96,8 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
       <ShowIncludes>false</ShowIncludes>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -212,6 +214,7 @@
     <ClInclude Include="MFCFrame.h" />
     <ClInclude Include="MFCRenderFrame.h" />
     <ClInclude Include="MouseManager.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="ObjectDialogue.h" />
     <ClInclude Include="ObjectEditorDialogue.h" />
     <ClInclude Include="ObjectManager.h" />
