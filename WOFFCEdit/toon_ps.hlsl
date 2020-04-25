@@ -39,7 +39,7 @@ float4 main(InputType input) : SV_TARGET
     
     // Sample the pixel color from the textures using the sampler at the texture coordinate location
     textureColour = shaderTexture.Sample(sampleType, input.tex);
-    ///if (dual) { textureColour *= shaderTexture1.Sample(sampleType, input.tex); }
+///    if (dual == true) { textureColour *= shaderTexture1.Sample(sampleType, input.tex); }
     
     // Calculate toon shading threshold based on light
     if (lightDot > 0.9f)

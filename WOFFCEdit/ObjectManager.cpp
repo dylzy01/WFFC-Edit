@@ -60,19 +60,19 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 		object.parent_id = 0;
 		object.editor_wireframe = false;
 
-		if (spawn == OBJECT_SPAWN::LIGHT)
+		///if (spawn == OBJECT_SPAWN::LIGHT)
 		{
-			object.light_type = (int)type;
+			/*object.light_type = (int)type;
 			object.light_diffuse_r = diffuse.x;
 			object.light_diffuse_g = diffuse.y;
 			object.light_diffuse_b = diffuse.z;
 			object.light_constant = constA;
 			object.light_linear = linA;
-			object.light_quadratic = quadA;
+			object.light_quadratic = quadA;*/
 		}
-		else
+		///else
 		{
-			object.light_type = 0;
+			object.light_type = 2;
 			object.light_diffuse_r = 2.f;
 			object.light_diffuse_g = 3.f;
 			object.light_diffuse_b = 4.f;				
@@ -190,8 +190,8 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 	{
 		// Set object to light
 		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/boat.cmo";
-		object.tex_diffuse_path = "database/data/sand.dds";
+		object.model_path = "database/data/light.cmo";
+		object.tex_diffuse_path = "database/data/light.dds";
 		object.name = "Light #" + object.ID;
 	}
 	break;

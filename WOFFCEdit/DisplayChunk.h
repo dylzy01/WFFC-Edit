@@ -3,6 +3,7 @@
 #include "DeviceResources.h"
 #include "ChunkObject.h"
 #include "ShaderManager.h"
+#include "Light.h"
 
 //geometric resoltuion - note,  hard coded.
 #define TERRAINRESOLUTION 128
@@ -13,7 +14,7 @@ public:
 	DisplayChunk();
 	~DisplayChunk();
 	void PopulateChunkData(ChunkObject * SceneChunk);
-	void RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResources);
+	void RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResources, std::vector<Light*> lights);
 	void InitialiseBatch();	//initial setup, base coordinates etc based on scale
 	void LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResources);
 	void SaveHeightMap();			//saves the heightmap back to file.
@@ -33,7 +34,7 @@ public:
 	ID3D11ShaderResourceView *					m_normalMap;					//normal map texture
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>   m_terrainInputLayout;
 
-	DirectX::VertexPositionNormalTexture GetGeometryBasic(int row, int column) { return m_terrainGeometryBasic[row][column]; }
+	DirectX::VertexPositionNormalTexture GetGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
 	void PaintTerrain(int row, int column, LANDSCAPE_PAINT paint, bool checkSurroundings = false);
 	void PaintOverBlended(LANDSCAPE_PAINT paint, std::pair<int, int> index);
 	void SculptTerrain(int row, int column, LANDSCAPE_FUNCTION function, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position = { { 0,0,0 } });
@@ -44,7 +45,7 @@ public:
 	ChunkObject GetChunk();
 
 private:
-	DirectX::VertexPositionNormalTexture m_terrainGeometryBasic[TERRAINRESOLUTION][TERRAINRESOLUTION];
+	DirectX::VertexPositionNormalTexture m_terrainGeometry[TERRAINRESOLUTION][TERRAINRESOLUTION];
 	BYTE m_heightMap[TERRAINRESOLUTION*TERRAINRESOLUTION];
 	void CalculateTerrainNormals();
 	bool Search(int &index, std::vector<std::pair<int, int>> &vector, std::pair<int, int> terrain);
@@ -57,7 +58,7 @@ private:
 	void ReadAllPaints();
 	void SaveAllPaints();
 
-	void DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResources);
+	void DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResources, std::vector<Light*> lights);
 
 	float	m_terrainHeightScale;
 	int		m_terrainSize;				//size of terrain in metres

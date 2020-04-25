@@ -22,6 +22,10 @@ public:
 	~Light() {}	
 	
 	// Getters
+	XMFLOAT4 GetDiffuseColour() { return m_diffuseColour; }
+	XMFLOAT4 GetAmbientColour() { return m_ambientColour; }
+	XMFLOAT3 GetPosition() { return m_position; }
+	XMFLOAT3 GetDirection() { return m_direction; }
 	float GetConstantAttenuation() { return m_constantAttenuation; }
 	float GetLinearAttenuation() { return m_linearAttenuation; }
 	float GetQuadraticAttenuation() { return m_quadraticAttenuation; }
@@ -29,6 +33,10 @@ public:
 	bool GetEnabled() { return m_enabled; }
 
 	// Setters
+	void SetDiffuseColour(XMFLOAT4 diffuse) { m_diffuseColour = diffuse; }
+	void SetAmbientColour(XMFLOAT4 ambient) { m_ambientColour = ambient; }
+	void SetPosition(XMFLOAT3 position) { m_position = position; }
+	void SetDirection(XMFLOAT3 direction) { m_direction = direction; }
 	void SetConstantAttenuation(float attenuation) { m_constantAttenuation = attenuation; }
 	void SetLinearAttenuation(float attenuation) { m_linearAttenuation = attenuation; }
 	void SetQuadraticAttenuation(float attenuation) { m_quadraticAttenuation = attenuation; }

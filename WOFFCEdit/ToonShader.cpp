@@ -139,7 +139,7 @@ bool ToonShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11Shader
 
 	context->Map(m_bufferDual, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	dualPtr = (DualBufferType*)mappedResource.pData;
-	dualPtr->dual = dual;
+	dualPtr->dual = false;
 	dualPtr->padding = { 0.f, 0.f, 0.f };
 	context->Unmap(m_bufferDual, 0);
 	context->PSSetConstantBuffers(1, 1, &m_bufferDual);

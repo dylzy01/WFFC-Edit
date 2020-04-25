@@ -90,7 +90,7 @@ bool TextureShader::Initialise(ID3D11Device * device)
 }
 
 // Setup shader 
-bool TextureShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture)
+bool TextureShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture, std::vector<Light*> light)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
@@ -114,11 +114,25 @@ bool TextureShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11Sha
 	/*lightPtr->ambient = sceneLight1->getAmbientColour();
 	lightPtr->diffuse = sceneLight1->getDiffuseColour();
 	lightPtr->position = sceneLight1->getPosition();*/
-	lightPtr->ambient = DirectX::SimpleMath::Vector4(0.3f, 0.3f, 0.3f, 1.f);
-	lightPtr->diffuse = DirectX::SimpleMath::Vector4(1.f, 1.f, 1.f, 1.f);
+	///lightPtr->ambient = DirectX::SimpleMath::Vector4(0.3f, 0.3f, 0.3f, 1.f);
+	///lightPtr->diffuse = DirectX::SimpleMath::Vector4(1.f, 1.f, 1.f, 1.f);
 	///lightPtr->position = DirectX::SimpleMath::Vector3(2.f, 1.f, 1.f);
-	lightPtr->position = DirectX::SimpleMath::Vector3(1.f, 50.f, 1.f);
-	lightPtr->padding = 0.0f;
+	///lightPtr->position = DirectX::SimpleMath::Vector3(1.f, 50.f, 1.f);
+	///lightPtr->padding = 0.0f;
+	for (int i = 0; i < light.size(); ++i)
+	{
+		lightPtr->lights[i].diffuseColour = light[i]->GetDiffuseColour();
+		lightPtr->lights[i].ambientColour = light[i]->GetAmbientColour();
+		lightPtr->lights[i].position = light[i]->GetPosition();
+		lightPtr->lights[i].angle = 45.f;
+
+		lightPtr->lights[i].direction = light[i]->GetDirection();
+		lightPtr->lights[i].constA = light[i]->GetConstantAttenuation();
+		lightPtr->lights[i].linA = light[i]->GetLinearAttenuation();
+		lightPtr->lights[i].quadA = light[i]->GetQuadraticAttenuation();
+		lightPtr->lights[i].type = (int)light[i]->GetType();
+		lightPtr->lights[i].enabled = light[i]->GetEnabled();
+	}
 	context->Unmap(m_bufferLight, 0);
 	context->PSSetConstantBuffers(0, 1, &m_bufferLight);
 

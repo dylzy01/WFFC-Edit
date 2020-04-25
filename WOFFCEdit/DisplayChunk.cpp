@@ -40,7 +40,7 @@ void DisplayChunk::PopulateChunkData(ChunkObject * SceneChunk)
 	m_tex_splat_4_tiling = SceneChunk->tex_splat_4_tiling;
 }
 
-void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResources)
+void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResources, std::vector<Light*> lights)
 {	
 	// Setup device context
 	auto context = deviceResources->GetD3DDeviceContext();
@@ -55,7 +55,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all grass geometry
 	if (m_grass.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TOON, context, m_texture_splat_1, m_texture_splat_1, true);
+		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, lights, m_texture_splat_1, m_texture_splat_1);
 		///ShaderManager::Shader(SHADER_TYPE::OUTLINE, context, m_texture_splat_1, NULL, size);
 		DrawTerrain(m_grass);
 		m_batch->End();
@@ -64,7 +64,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all dirt geometry
 	if (m_dirt.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TOON, context, m_texture_splat_2, m_texture_splat_2, false);
+		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, lights, m_texture_splat_2, m_texture_splat_2);
 		DrawTerrain(m_dirt);
 		m_batch->End();
 	}
@@ -72,7 +72,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all sand geometry
 	if (m_sand.size() != 0)	{
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TOON, context, m_texture_splat_3, m_texture_splat_3, false);
+		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, lights, m_texture_splat_3, m_texture_splat_3);
 		DrawTerrain(m_sand);
 		m_batch->End();
 	}
@@ -80,7 +80,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all stone geometry
 	if (m_stone.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TOON, context, m_texture_splat_4, m_texture_splat_4, false);
+		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, lights, m_texture_splat_4, m_texture_splat_4);
 		DrawTerrain(m_stone);
 		m_batch->End();
 	}
@@ -88,7 +88,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all snow geometry
 	if (m_snow.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TOON, context, m_texture_splat_5, m_texture_splat_5, false);
+		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, lights, m_texture_splat_5, m_texture_splat_5);
 		DrawTerrain(m_snow);
 		m_batch->End();
 	}	
@@ -108,7 +108,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	}
 
 	// Draw all blended geometry
-	DrawBlends(deviceResources);
+	DrawBlends(deviceResources, lights);
 }
 
 void DisplayChunk::InitialiseBatch()
@@ -122,9 +122,9 @@ void DisplayChunk::InitialiseBatch()
 		for (size_t j = 0; j < TERRAINRESOLUTION; j++)
 		{
 			index = (TERRAINRESOLUTION * i) + j;
-			m_terrainGeometryBasic[i][j].position =			Vector3(j*m_terrainPositionScalingFactor-(0.5*m_terrainSize), (float)(m_heightMap[index])*m_terrainHeightScale, i*m_terrainPositionScalingFactor-(0.5*m_terrainSize));	//This will create a terrain going from -64->64.  rather than 0->128.  So the center of the terrain is on the origin
-			m_terrainGeometryBasic[i][j].normal =			Vector3(0.0f, 1.0f, 0.0f);						//standard y =up
-			m_terrainGeometryBasic[i][j].textureCoordinate =	Vector2(((float)m_textureCoordStep*j)*m_tex_diffuse_tiling, ((float)m_textureCoordStep*i)*m_tex_diffuse_tiling);				//Spread tex coords so that its distributed evenly across the terrain from 0-1	
+			m_terrainGeometry[i][j].position =			Vector3(j*m_terrainPositionScalingFactor-(0.5*m_terrainSize), (float)(m_heightMap[index])*m_terrainHeightScale, i*m_terrainPositionScalingFactor-(0.5*m_terrainSize));	//This will create a terrain going from -64->64.  rather than 0->128.  So the center of the terrain is on the origin
+			m_terrainGeometry[i][j].normal =			Vector3(0.0f, 1.0f, 0.0f);						//standard y =up
+			m_terrainGeometry[i][j].textureCoordinate =	Vector2(((float)m_textureCoordStep*j)*m_tex_diffuse_tiling, ((float)m_textureCoordStep*i)*m_tex_diffuse_tiling);				//Spread tex coords so that its distributed evenly across the terrain from 0-1	
 		}
 	}
 	CalculateTerrainNormals();
@@ -315,7 +315,7 @@ void DisplayChunk::UpdateTerrain()
 		for (size_t j = 0; j < TERRAINRESOLUTION; j++)
 		{
 			index = (TERRAINRESOLUTION * i) + j;
-			m_terrainGeometryBasic[i][j].position.y = (float)(m_heightMap[index])*m_terrainHeightScale;	
+			m_terrainGeometry[i][j].position.y = (float)(m_heightMap[index])*m_terrainHeightScale;	
 		}
 	}
 	CalculateTerrainNormals();
@@ -330,7 +330,7 @@ void DisplayChunk::GenerateHeightmap()
 		for (size_t j = 0; j < TERRAINRESOLUTION; ++j)
 		{
 			index = (TERRAINRESOLUTION * i) + j;
-			m_heightMap[index] = m_terrainGeometryBasic[i][j].position.y / m_terrainHeightScale;
+			m_heightMap[index] = m_terrainGeometry[i][j].position.y / m_terrainHeightScale;
 		}
 	}
 }
@@ -606,13 +606,13 @@ void DisplayChunk::PaintOverBlended(LANDSCAPE_PAINT paint, std::pair<int, int> i
 void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_FUNCTION sculpt, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position)
 {
 	// Store starting vertex
-	Vector3 start = m_terrainGeometryBasic[row][column].position; 
+	Vector3 start = m_terrainGeometry[row][column].position; 
 
 	// Store other vertices of quad
 	std::vector<Vector3> others;
-	others.push_back(m_terrainGeometryBasic[row][column + 1].position);
-	others.push_back(m_terrainGeometryBasic[row + 1][column + 1].position);
-	others.push_back(m_terrainGeometryBasic[row + 1][column].position);
+	others.push_back(m_terrainGeometry[row][column + 1].position);
+	others.push_back(m_terrainGeometry[row + 1][column + 1].position);
+	others.push_back(m_terrainGeometry[row + 1][column].position);
 
 	// Store distances between start and other vertices
 	std::vector<float> distances;
@@ -645,10 +645,10 @@ void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_FUNCTION sculpt,
 		case LANDSCAPE_CONSTRAINT::Y:
 		{
 			// Increase position
-			m_terrainGeometryBasic[row][column].position.y += 1.f;
-			m_terrainGeometryBasic[row][column + 1].position.y += distances[0];
-			m_terrainGeometryBasic[row + 1][column + 1].position.y += distances[1];
-			m_terrainGeometryBasic[row + 1][column].position.y += distances[2];
+			m_terrainGeometry[row][column].position.y += 1.f;
+			m_terrainGeometry[row][column + 1].position.y += distances[0];
+			m_terrainGeometry[row + 1][column + 1].position.y += distances[1];
+			m_terrainGeometry[row + 1][column].position.y += distances[2];
 		}
 		break;
 		}
@@ -1148,10 +1148,10 @@ void DisplayChunk::SculptTerrain(int row, int column, LANDSCAPE_FUNCTION sculpt,
 	//}		
 
 	// Ensure terrain height can't go below 0
-	if (m_terrainGeometryBasic[row][column].position.y < 0.f)			{ m_terrainGeometryBasic[row][column].position.y = 0.f; }
-	if (m_terrainGeometryBasic[row][column + 1].position.y < 0.f)		{ m_terrainGeometryBasic[row][column + 1].position.y = 0.f; }
-	if (m_terrainGeometryBasic[row + 1][column + 1].position.y < 0.f)	{ m_terrainGeometryBasic[row + 1][column + 1].position.y = 0.f; }
-	if (m_terrainGeometryBasic[row + 1][column].position.y < 0.f)		{ m_terrainGeometryBasic[row + 1][column].position.y = 0.f; }
+	if (m_terrainGeometry[row][column].position.y < 0.f)			{ m_terrainGeometry[row][column].position.y = 0.f; }
+	if (m_terrainGeometry[row][column + 1].position.y < 0.f)		{ m_terrainGeometry[row][column + 1].position.y = 0.f; }
+	if (m_terrainGeometry[row + 1][column + 1].position.y < 0.f)	{ m_terrainGeometry[row + 1][column + 1].position.y = 0.f; }
+	if (m_terrainGeometry[row + 1][column].position.y < 0.f)		{ m_terrainGeometry[row + 1][column].position.y = 0.f; }
 }
 
 void DisplayChunk::SetSelected(bool selected, int row, int column)
@@ -1209,10 +1209,10 @@ void DisplayChunk::DrawTerrain(std::vector<std::pair<int, int>> terrain)
 	for (int i = 0; i < terrain.size(); ++i)
 	{
 		m_batch->DrawQuad(
-			m_terrainGeometryBasic[terrain[i].first][terrain[i].second],
-			m_terrainGeometryBasic[terrain[i].first][terrain[i].second + 1],
-			m_terrainGeometryBasic[terrain[i].first + 1][terrain[i].second + 1],
-			m_terrainGeometryBasic[terrain[i].first + 1][terrain[i].second]
+			m_terrainGeometry[terrain[i].first][terrain[i].second],
+			m_terrainGeometry[terrain[i].first][terrain[i].second + 1],
+			m_terrainGeometry[terrain[i].first + 1][terrain[i].second + 1],
+			m_terrainGeometry[terrain[i].first + 1][terrain[i].second]
 		);
 	}
 }
@@ -1932,7 +1932,7 @@ void DisplayChunk::SaveAllPaints()
 	SavePaint("database/CSV/stoneSnow.csv", m_stoneSnow);
 }
 
-void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResources)
+void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResources, std::vector<Light*> lights)
 {
 	// Setup device context
 	auto context = deviceResources->GetD3DDeviceContext();
@@ -1941,7 +1941,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all grass/dirt geometry
 	if (m_grassDirt.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::BLEND, context, m_texture_splat_1, m_texture_splat_2);
+		ShaderManager::Shader(SHADER_TYPE::BLEND, context, lights, m_texture_splat_1, m_texture_splat_2);
 		DrawTerrain(m_grassDirt);
 		m_batch->End();
 	}
@@ -1949,7 +1949,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all grass/sand geometry
 	if (m_grassSand.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::BLEND, context, m_texture_splat_1, m_texture_splat_3);
+		ShaderManager::Shader(SHADER_TYPE::BLEND, context, lights, m_texture_splat_1, m_texture_splat_3);
 		DrawTerrain(m_grassSand);
 		m_batch->End();
 	}
@@ -1957,7 +1957,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all grass/stone geometry
 	if (m_grassStone.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::BLEND, context, m_texture_splat_1, m_texture_splat_4);
+		ShaderManager::Shader(SHADER_TYPE::BLEND, context, lights, m_texture_splat_1, m_texture_splat_4);
 		DrawTerrain(m_grassStone);
 		m_batch->End();
 	}
@@ -1965,7 +1965,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all grass/snow geometry
 	if (m_grassSnow.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::BLEND, context, m_texture_splat_1, m_texture_splat_5);
+		ShaderManager::Shader(SHADER_TYPE::BLEND, context, lights, m_texture_splat_1, m_texture_splat_5);
 		DrawTerrain(m_grassSnow);
 		m_batch->End();
 	}
@@ -1973,7 +1973,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all dirt/sand geometry
 	if (m_dirtSand.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::BLEND, context, m_texture_splat_2, m_texture_splat_3);
+		ShaderManager::Shader(SHADER_TYPE::BLEND, context, lights, m_texture_splat_2, m_texture_splat_3);
 		DrawTerrain(m_dirtSand);
 		m_batch->End();
 	}
@@ -1981,7 +1981,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all dirt/stone geometry
 	if (m_dirtStone.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::BLEND, context, m_texture_splat_2, m_texture_splat_4);
+		ShaderManager::Shader(SHADER_TYPE::BLEND, context, lights, m_texture_splat_2, m_texture_splat_4);
 		DrawTerrain(m_dirtStone);
 		m_batch->End();
 	}
@@ -1989,7 +1989,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all dirt/snow geometry
 	if (m_dirtSnow.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::BLEND, context, m_texture_splat_2, m_texture_splat_5);
+		ShaderManager::Shader(SHADER_TYPE::BLEND, context, lights, m_texture_splat_2, m_texture_splat_5);
 		DrawTerrain(m_dirtSnow);
 		m_batch->End();
 	}
@@ -1997,7 +1997,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all sand/stone geometry
 	if (m_sandStone.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::BLEND, context, m_texture_splat_3, m_texture_splat_4);
+		ShaderManager::Shader(SHADER_TYPE::BLEND, context, lights, m_texture_splat_3, m_texture_splat_4);
 		DrawTerrain(m_sandStone);
 		m_batch->End();
 	}
@@ -2005,7 +2005,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all sand/snow geometry
 	if (m_sandSnow.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::BLEND, context, m_texture_splat_3, m_texture_splat_5);
+		ShaderManager::Shader(SHADER_TYPE::BLEND, context, lights, m_texture_splat_3, m_texture_splat_5);
 		DrawTerrain(m_sandSnow);
 		m_batch->End();
 	}
@@ -2013,7 +2013,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all stone/snow geometry
 	if (m_stoneSnow.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::BLEND, context, m_texture_splat_4, m_texture_splat_5);
+		ShaderManager::Shader(SHADER_TYPE::BLEND, context, lights, m_texture_splat_4, m_texture_splat_5);
 		DrawTerrain(m_stoneSnow);
 		m_batch->End();
 	}
@@ -2028,18 +2028,18 @@ void DisplayChunk::CalculateTerrainNormals()
 	{
 		for (int j = 0; j<(TERRAINRESOLUTION - 1); j++)
 		{
-			upDownVector.x = (m_terrainGeometryBasic[i + 1][j].position.x - m_terrainGeometryBasic[i - 1][j].position.x);
-			upDownVector.y = (m_terrainGeometryBasic[i + 1][j].position.y - m_terrainGeometryBasic[i - 1][j].position.y);
-			upDownVector.z = (m_terrainGeometryBasic[i + 1][j].position.z - m_terrainGeometryBasic[i - 1][j].position.z);
+			upDownVector.x = (m_terrainGeometry[i + 1][j].position.x - m_terrainGeometry[i - 1][j].position.x);
+			upDownVector.y = (m_terrainGeometry[i + 1][j].position.y - m_terrainGeometry[i - 1][j].position.y);
+			upDownVector.z = (m_terrainGeometry[i + 1][j].position.z - m_terrainGeometry[i - 1][j].position.z);
 
-			leftRightVector.x = (m_terrainGeometryBasic[i][j - 1].position.x - m_terrainGeometryBasic[i][j + 1].position.x);
-			leftRightVector.y = (m_terrainGeometryBasic[i][j - 1].position.y - m_terrainGeometryBasic[i][j + 1].position.y);
-			leftRightVector.z = (m_terrainGeometryBasic[i][j - 1].position.z - m_terrainGeometryBasic[i][j + 1].position.z);
+			leftRightVector.x = (m_terrainGeometry[i][j - 1].position.x - m_terrainGeometry[i][j + 1].position.x);
+			leftRightVector.y = (m_terrainGeometry[i][j - 1].position.y - m_terrainGeometry[i][j + 1].position.y);
+			leftRightVector.z = (m_terrainGeometry[i][j - 1].position.z - m_terrainGeometry[i][j + 1].position.z);
 			
 			leftRightVector.Cross(upDownVector, normalVector);	//get cross product
 			normalVector.Normalize();			//normalise it.
 
-			m_terrainGeometryBasic[i][j].normal = normalVector;	//set the normal for this point based on our result
+			m_terrainGeometry[i][j].normal = normalVector;	//set the normal for this point based on our result
 		}
 	}
 }

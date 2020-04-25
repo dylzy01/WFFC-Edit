@@ -3,6 +3,7 @@
 #include "Tools.h"
 #include <d3dcompiler.h>
 #include "Shader.h"
+#include "Light.h"
 
 class TextureShader : public Shader
 {
@@ -14,7 +15,7 @@ public:
 	static bool Initialise(ID3D11Device * device);
 
 	// Setup shader 
-	static bool SetShaderParameters(ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture);
+	static bool SetShaderParameters(ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture, std::vector<Light*> light);
 
 	// Handler
 	static void Enable(ID3D11DeviceContext * context);
@@ -27,12 +28,34 @@ public:
 private:
 
 	// Buffer for single light information
-	struct LightBufferType
+	/*struct LightBufferType
 	{
 		DirectX::SimpleMath::Vector4 ambient;
 		DirectX::SimpleMath::Vector4 diffuse;
 		DirectX::SimpleMath::Vector3 position;
 		float padding;
+	};*/
+
+	// Container for light data
+	struct LightInfo
+	{
+		DirectX::XMFLOAT4 diffuseColour;
+		DirectX::XMFLOAT4 ambientColour;		
+		DirectX::XMFLOAT3 position;
+		float angle;
+
+		DirectX::XMFLOAT3 direction;
+		float constA;
+		float linA;
+		float quadA;
+		int type;
+		float enabled;
+	};
+
+	// Buffer for multiple lights information
+	struct LightBufferType
+	{
+		LightInfo lights[3];
 	};
 
 	// Buffer

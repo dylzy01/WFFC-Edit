@@ -17,8 +17,8 @@ void ShaderManager::Initialise(ID3D11Device * device)
 }
 
 // Setup specific shader parameters
-void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, ID3D11ShaderResourceView * texture1, ID3D11ShaderResourceView * texture2, bool dual, DirectX::XMFLOAT2 screen)
-{
+void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, std::vector<Light*> light, ID3D11ShaderResourceView * texture1, ID3D11ShaderResourceView * texture2, DirectX::XMFLOAT2 screen)
+{	
 	// Switch between shader type
 	switch (type)
 	{
@@ -28,7 +28,7 @@ void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, ID3D
 		TextureShader::Enable(context);
 		
 		// Setup texture parameters
-		TextureShader::SetShaderParameters(context, texture1);
+		TextureShader::SetShaderParameters(context, texture1, light);
 	}
 	break;
 	case SHADER_TYPE::BLEND:
@@ -46,7 +46,7 @@ void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, ID3D
 		ToonShader::Enable(context);
 
 		// Setup blend parameters
-		ToonShader::SetShaderParameters(context, texture1, texture2, dual);
+		ToonShader::SetShaderParameters(context, texture1, texture2);
 	}
 	break;
 	case SHADER_TYPE::OUTLINE:

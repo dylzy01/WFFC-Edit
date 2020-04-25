@@ -47,10 +47,10 @@ void LandscapeManager::Sculpt(TERRAIN & terrain, LANDSCAPE_FUNCTION function, LA
 			{
 				m_store = false;
 				m_storedPositions.clear();
-				m_storedPositions.push_back(m_displayChunk->GetGeometryBasic(terrain.row, terrain.column).position);
-				m_storedPositions.push_back(m_displayChunk->GetGeometryBasic(terrain.row, terrain.column + 1).position);
-				m_storedPositions.push_back(m_displayChunk->GetGeometryBasic(terrain.row + 1, terrain.column + 1).position);
-				m_storedPositions.push_back(m_displayChunk->GetGeometryBasic(terrain.row + 1, terrain.column).position);
+				m_storedPositions.push_back(m_displayChunk->GetGeometry(terrain.row, terrain.column).position);
+				m_storedPositions.push_back(m_displayChunk->GetGeometry(terrain.row, terrain.column + 1).position);
+				m_storedPositions.push_back(m_displayChunk->GetGeometry(terrain.row + 1, terrain.column + 1).position);
+				m_storedPositions.push_back(m_displayChunk->GetGeometry(terrain.row + 1, terrain.column).position);
 			}
 
 			// Flatten height of selected terrain
