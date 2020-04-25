@@ -214,11 +214,11 @@ void ObjectManager::Remove(std::vector<int> & IDs, std::vector<SceneObject> & sc
 	if (ID != -1)
 	{
 		// If object is a light
-		//if (sceneGraph[ID].light_type != 0)
-		//{
-		//	// Erase from renderer storage
-		//	m_game->RemoveLight(ID);
-		//}
+		if (sceneGraph[ID].light_type != 0)
+		{
+			// Erase from renderer storage
+			m_game->RemoveLight(ID);
+		}
 		
 		// Remove object from database
 		SQLManager::RemoveObject(sceneGraph[ID]);
@@ -232,11 +232,11 @@ void ObjectManager::Remove(std::vector<int> & IDs, std::vector<SceneObject> & sc
 		for (int i = 0; i < IDs.size(); ++i)
 		{
 			// If object is a light
-			//if (sceneGraph[IDs[i]].light_type != 0)
-			//{
-			//	// Erase from renderer storage
-			//	m_game->RemoveLight(ID);
-			//}
+			if (sceneGraph[IDs[i]].light_type != 0)
+			{
+				// Erase from renderer storage
+				m_game->RemoveLight(ID);
+			}
 			
 			// Remove objects from database
 			SQLManager::RemoveObject(sceneGraph[IDs[i]]);			

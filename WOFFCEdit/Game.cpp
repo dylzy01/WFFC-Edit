@@ -260,7 +260,7 @@ void Game::Render()
 		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
 
 		// Shader		
-		ShaderManager::Shader(SHADER_TYPE::TOON, context, m_lights.first, m_displayList[i].m_texture_diffuse);		
+		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, m_lights.first, m_displayList[i].m_texture_diffuse);
 		
 		m_displayList[i].m_model->Draw(context, *m_states, local, m_view, m_projection, false);	//last variable in draw,  make TRUE for wireframe
 
@@ -476,7 +476,7 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 	m_sceneGraph = *sceneGraph;
 	
 	auto device = m_deviceResources->GetD3DDevice();
-	auto devicecontext = m_deviceResources->GetD3DDeviceContext();
+	auto context = m_deviceResources->GetD3DDeviceContext();
 
 	if (!m_displayList.empty())		//is the vector empty
 	{
@@ -723,10 +723,7 @@ void Game::RemoveLight(int ID)
 	{
 		// If light ID matches parameter ID
 		if (m_lights.second[i] == ID)
-		{
-			// Disable light
-			///m_lights.first[i]->SetEnabled(false);
-			
+		{			
 			// Erase light from vector
 			m_lights.first.erase(m_lights.first.begin() + i);
 			m_lights.second.erase(m_lights.second.begin() + i);

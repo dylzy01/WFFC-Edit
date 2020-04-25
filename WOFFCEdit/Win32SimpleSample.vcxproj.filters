@@ -50,6 +50,9 @@
     <Filter Include="Shaders\Outline">
       <UniqueIdentifier>{fa604f57-a6e6-48e5-9db5-518c0aff79ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Water">
+      <UniqueIdentifier>{3fbb59d8-4e36-4ee2-b35b-c60fadf9dfb7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -148,6 +151,9 @@
     </ClCompile>
     <ClCompile Include="OutlineShader.cpp">
       <Filter>Shaders\Outline</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterShader.cpp">
+      <Filter>Shaders\Water</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -265,6 +271,9 @@
     <ClInclude Include="OutlineShader.h">
       <Filter>Shaders\Outline</Filter>
     </ClInclude>
+    <ClInclude Include="WaterShader.h">
+      <Filter>Shaders\Water</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -312,6 +321,12 @@
     </FxCompile>
     <FxCompile Include="outline_ps.hlsl">
       <Filter>Shaders\Outline</Filter>
+    </FxCompile>
+    <FxCompile Include="water_vs.hlsl">
+      <Filter>Shaders\Water</Filter>
+    </FxCompile>
+    <FxCompile Include="water_ps.hlsl">
+      <Filter>Shaders\Water</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

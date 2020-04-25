@@ -128,7 +128,8 @@ enum class SHADER_TYPE {
 	TEXTURE,
 	BLEND,
 	TOON,
-	OUTLINE
+	OUTLINE,
+	WATER
 };
 
 enum class LIGHT_TYPE {

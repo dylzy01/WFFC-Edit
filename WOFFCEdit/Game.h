@@ -177,6 +177,7 @@ private:
     std::unique_ptr<DirectX::GeometricPrimitive>                            m_shape;
 	std::unique_ptr<DirectX::Model>                                         m_model;
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>>  m_batch;
+	///std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionNormalTexture>>  m_batch;
     std::unique_ptr<DirectX::SpriteBatch>                                   m_sprites;
     std::unique_ptr<DirectX::SpriteFont>                                    m_font;
 
