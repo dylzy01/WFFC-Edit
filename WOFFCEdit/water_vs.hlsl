@@ -53,11 +53,11 @@ OutputType main(InputType input)
     output.reflectPosition = mul(output.position, viewMatrix);
     output.reflectPosition = mul(output.position, projectionMatrix);
     
-    // Calculate the world position of the vertex
-    float4 position3D = (float3) mul(input.position, worldMatrix);
+    // Calculate world position of the vertex
+    float3 position3D = (float3) mul(input.position, worldMatrix);
     
-    // Calculate the view vector
-    output.direction = cameraPosition - position3D.xyz;
+    // Calculate direction
+    output.direction = cameraPosition - position3D;
     output.direction = normalize(output.direction);
     
     // Calculate tex coords for water simulation

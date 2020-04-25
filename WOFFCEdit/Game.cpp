@@ -62,6 +62,8 @@ void Game::Initialize(HWND window, int width, int height)
 
 	GetClientRect(m_window, &m_screenDimensions);
 
+	CreateObjects();
+
 #ifdef DXTK_AUDIO
     // Create DirectXTK for Audio objects
     AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;
@@ -231,6 +233,8 @@ void Game::Render()
     m_deviceResources->PIXBeginEvent(L"Render");
     auto context = m_deviceResources->GetD3DDeviceContext();
 
+	DirectX::SimpleMath::Plane p(0, 1, 0, 0);
+
 	if (m_grid)
 	{
 		// Draw procedurally generated dynamic grid
@@ -260,7 +264,7 @@ void Game::Render()
 		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
 
 		// Shader		
-		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, m_lights.first, m_displayList[i].m_texture_diffuse);
+		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, m_lights.first, m_displayList[i].m_texture_diffuse);		
 		
 		m_displayList[i].m_model->Draw(context, *m_states, local, m_view, m_projection, false);	//last variable in draw,  make TRUE for wireframe
 
@@ -863,6 +867,10 @@ void Game::CreateWindowSizeDependentResources()
 	
 	/*m_screenCentre.x = (float)size.right / 2;
 	m_screenCentre.y = (float)size.bottom / 2;*/
+}
+
+void Game::CreateObjects()
+{
 }
 
 void Game::OnDeviceLost()

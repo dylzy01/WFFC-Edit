@@ -59,27 +59,16 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 		object.path_node_end = false;
 		object.parent_id = 0;
 		object.editor_wireframe = false;
-
-		///if (spawn == OBJECT_SPAWN::LIGHT)
-		{
-			/*object.light_type = (int)type;
-			object.light_diffuse_r = diffuse.x;
-			object.light_diffuse_g = diffuse.y;
-			object.light_diffuse_b = diffuse.z;
-			object.light_constant = constA;
-			object.light_linear = linA;
-			object.light_quadratic = quadA;*/
-		}
-		///else
-		{
-			object.light_type = 2;
-			object.light_diffuse_r = 2.f;
-			object.light_diffuse_g = 3.f;
-			object.light_diffuse_b = 4.f;				
-			object.light_constant = 9.f;
-			object.light_linear = 0.f;
-			object.light_quadratic = 1.f;
-		}
+			
+		object.light_type = (int)type;
+		///object.light_type = 3;
+		object.light_diffuse_r = 2.f;
+		object.light_diffuse_g = 3.f;
+		object.light_diffuse_b = 4.f;				
+		object.light_constant = 9.f;
+		object.light_linear = 0.f;
+		object.light_quadratic = 1.f;
+		
 		object.light_specular_r = 4.f;
 		object.light_specular_g = 5.f;
 		object.light_specular_b = 6.f;
@@ -96,8 +85,6 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 		object.m_type = MODEL_TYPE::NOT_WATER;
 		object.model_path = "database/data/house0.cmo";
 		object.tex_diffuse_path = "database/data/house0.dds";
-
-		object.name = "House #" + object.ID;
 	}
 	break;
 	case OBJECT_SPAWN::HOUSE_TWO:
@@ -106,8 +93,6 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 		object.m_type = MODEL_TYPE::NOT_WATER;
 		object.model_path = "database/data/house1.cmo";
 		object.tex_diffuse_path = "database/data/house1.dds";
-
-		object.name = "House #" + object.ID;
 	}
 	break;
 	case OBJECT_SPAWN::CAVE:
@@ -116,8 +101,6 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 		object.m_type = MODEL_TYPE::NOT_WATER;
 		object.model_path = "database/data/cave.cmo";
 		object.tex_diffuse_path = "database/data/cave.dds";
-
-		object.name = "Cave #" + object.ID;
 	}
 	break;
 	// Props ////////////////////////////////////////////////////////////////////////////////
@@ -152,8 +135,6 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 		object.m_type = MODEL_TYPE::NOT_WATER;
 		object.model_path = "database/data/grass.cmo";
 		object.tex_diffuse_path = "database/data/grass.dds";
-
-		object.name = "Grass #" + object.ID;
 	}
 	break;
 	case OBJECT_SPAWN::TREE_ONE:
@@ -162,8 +143,6 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 		object.m_type = MODEL_TYPE::NOT_WATER;
 		object.model_path = "database/data/tree0.cmo";
 		object.tex_diffuse_path = "database/data/tree0.dds";
-
-		object.name = "Tree #" + object.ID;
 	}
 	break;
 	case OBJECT_SPAWN::TREE_TWO:
@@ -172,8 +151,6 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 		object.m_type = MODEL_TYPE::NOT_WATER;
 		object.model_path = "database/data/tree1.cmo";
 		object.tex_diffuse_path = "database/data/tree1.dds";
-
-		object.name = "Tree #" + object.ID;
 	}
 	break;
 	case OBJECT_SPAWN::WATER:
@@ -182,7 +159,6 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 		object.m_type = MODEL_TYPE::WATER;
 		object.model_path = "database/data/water.cmo";
 		object.tex_diffuse_path = "database/data/water.dds";
-		object.name = "Water #" + object.ID;
 	}
 	break;
 	// Misc /////////////////////////////////////////////////////////////////////////////////
@@ -192,7 +168,6 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 		object.m_type = MODEL_TYPE::NOT_WATER;
 		object.model_path = "database/data/light.cmo";
 		object.tex_diffuse_path = "database/data/light.dds";
-		object.name = "Light #" + object.ID;
 	}
 	break;
 	}
@@ -221,8 +196,7 @@ void ObjectManager::Remove(std::vector<int> & IDs, std::vector<SceneObject> & sc
 		}
 		
 		// Remove object from database
-		SQLManager::RemoveObject(sceneGraph[ID]);
-		///IDs.erase(IDs.begin() + IDs[ID]);		
+		SQLManager::RemoveObject(sceneGraph[ID]);		
 	}
 
 	// Else, if no ID has been specified (delete all selected objects)
@@ -257,18 +231,6 @@ void ObjectManager::Remove(std::vector<int> & IDs, std::vector<SceneObject> & sc
 
 	// Rebuild display list from new table data
 	m_game->BuildDisplayList(&sceneGraph);
-
-	// Setup temp index
-	///int i = MouseManager::PickSingle();
-
-	// Remove selected object from database
-	///SQLManager::RemoveObject(sceneGraph[IDs[i]]);
-
-	// Remove selected object from scene graph
-	///sceneGraph.erase(sceneGraph.begin() + IDs[i]);
-
-	// Remove selected object from selected objects list
-	///IDs.erase(IDs.begin() + i);
 
 	// Overwrite selected objects list
 	m_selectedObjectIDs = IDs;

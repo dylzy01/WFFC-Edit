@@ -27,7 +27,8 @@ struct InputType
 // Calculate repeating normal
 float3 CalculateNormalRepeat(float2 rX, float2 rY)
 {
-    float4 nX, nY, normal;
+    float4 nX, nY;
+    float3 normal;
     
     // Update position
     rX += translation;

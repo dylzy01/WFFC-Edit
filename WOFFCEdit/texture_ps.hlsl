@@ -100,16 +100,38 @@ float4 GenerateLight(float3 normal, float3 position3D)
     {
         if (Lights[i].enabled < 0.5f) { continue; }
         
-        if (Lights[i].type == 0)
+        // Switch between light type
+        //switch (Lights[i].type)
+        //{
+        //    case 1:
+        //    {
+        //        col += CalculateDirectional(Lights[i], normal);
+        //        break;
+        //    }
+        //    case 2:
+        //    {
+        //        vec = normalize(Lights[i].lightPosition - position3D);
+        //        col += CalculatePoint(Lights[i], vec, normal);
+        //        break;
+        //    }
+        //    case 3:
+        //    {
+        //        vec = normalize(Lights[i].lightPosition - position3D);
+        //        col += CalculateSpot(Lights[i], vec, normal);
+        //        break;
+        //    }
+        //}
+            
+        if (Lights[i].type == 1)
         {
             col += CalculateDirectional(Lights[i], normal);
         }
-        if (Lights[i].type == 1)
+        if (Lights[i].type == 2)
         {
             vec = normalize(Lights[i].lightPosition - position3D);
             col += CalculatePoint(Lights[i], vec, normal);
         }
-        if (Lights[i].type == 2)
+        if (Lights[i].type == 3)
         {
             vec = normalize(Lights[i].lightPosition - position3D);
             col += CalculateSpot(Lights[i], vec, normal);
@@ -120,28 +142,7 @@ float4 GenerateLight(float3 normal, float3 position3D)
 }
 
 float4 main(InputType input) : SV_TARGET
-{    
- //   float4 textureColor;
- //   float3 lightDir;
- //   float lightIntensity;
- //   float4 color;
-
-	//// Invert the light direction for calculations.
- //   lightDir = normalize(input.position3D - lightPosition);
-
-	//// Calculate the amount of light on this pixel.
-	//lightIntensity = saturate(dot(input.normal, -lightDir));
-
-	//// Determine the final amount of diffuse color based on the diffuse color combined with the light intensity.
- //   color = ambientColor + (diffuseColor * lightIntensity); //adding ambient
- //   color = saturate(color);
-
-	//// Sample the pixel color from the textures using the sampler at these texture coordinate location.
- //   textureColor = shaderTexture.Sample(sampleType, input.tex);
- //   color *= textureColor;
-    
- //   return color;
-    
+{     
     // Sample texture
     float4 textureColour = shaderTexture.Sample(sampleType, input.tex);
 

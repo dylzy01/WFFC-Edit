@@ -19,6 +19,9 @@
 #include "SQLManager.h"
 #include "ShaderManager.h"
 
+///#include "DXF.h"
+///#include "Water.h"
+
 #include <vector>
 #include <algorithm>
 
@@ -94,6 +97,7 @@ private:
 
 	void CreateDeviceDependentResources();
 	void CreateWindowSizeDependentResources();
+	void CreateObjects();
 
 	void XM_CALLCONV DrawGrid(DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
 	void DrawDebug(int i);
@@ -145,6 +149,7 @@ private:
 	LANDSCAPE_CONSTRAINT m_landscapeConstraint = LANDSCAPE_CONSTRAINT::NA;
 
 	// Water controllers
+	Water* m_water;
 	std::vector<int> m_waterIDs;
 	bool m_spawnWater = false;
 	std::vector<DirectX::SimpleMath::Vector3> m_waterPositions;
