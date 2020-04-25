@@ -260,7 +260,7 @@ void Game::Render()
 		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
 
 		// Shader		
-		ShaderManager::Shader(SHADER_TYPE::TOON, context, m_lights, m_displayList[i].m_texture_diffuse);		
+		ShaderManager::Shader(SHADER_TYPE::TOON, context, m_lights.first, m_displayList[i].m_texture_diffuse);		
 		
 		m_displayList[i].m_model->Draw(context, *m_states, local, m_view, m_projection, false);	//last variable in draw,  make TRUE for wireframe
 
@@ -275,7 +275,7 @@ void Game::Render()
 	if (m_wireframe) { context->RSSetState(m_states->Wireframe()); }	
 
 	//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
-	m_displayChunk.RenderBatch(m_deviceResources, m_lights);
+	m_displayChunk.RenderBatch(m_deviceResources, m_lights.first);
 
 	//HUD
 	m_sprites->Begin();
@@ -466,8 +466,11 @@ void Game::OnWindowSizeChanged(int width, int height)
 
 void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 {
+	CreateDeviceDependentResources();
+	
 	// Clear current list of lights
-	m_lights.clear();
+	m_lights.first.clear();
+	m_lights.second.clear();
 	
 	// Update local scene graph
 	m_sceneGraph = *sceneGraph;
@@ -577,7 +580,8 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 				float quadraticAttenuation = sceneGraph->at(i).light_quadratic;
 				LIGHT_TYPE type = (LIGHT_TYPE)sceneGraph->at(i).light_type;
 				bool enabled = true;
-				m_lights.push_back(new Light(diffuse, ambient, position, direction, constantAttenuation, linearAttenuation, quadraticAttenuation, type, enabled));
+				m_lights.first.push_back(new Light(diffuse, ambient, position, direction, constantAttenuation, linearAttenuation, quadraticAttenuation, type, enabled));
+				m_lights.second.push_back(sceneGraph->at(i).ID);
 			}
 
 			// Set bounding box		
@@ -709,6 +713,24 @@ void Game::SaveDisplayList()
 		m_sceneGraph[i].scaX = m_displayList[i].m_scale.x;
 		m_sceneGraph[i].scaY = m_displayList[i].m_scale.y;
 		m_sceneGraph[i].scaZ = m_displayList[i].m_scale.z;
+	}
+}
+
+void Game::RemoveLight(int ID)
+{
+	// Loop through lights
+	for (int i = 0; i < m_lights.first.size(); ++i)
+	{
+		// If light ID matches parameter ID
+		if (m_lights.second[i] == ID)
+		{
+			// Disable light
+			///m_lights.first[i]->SetEnabled(false);
+			
+			// Erase light from vector
+			m_lights.first.erase(m_lights.first.begin() + i);
+			m_lights.second.erase(m_lights.second.begin() + i);
+		}
 	}
 }
 

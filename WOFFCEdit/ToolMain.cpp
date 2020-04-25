@@ -344,8 +344,18 @@ void ToolMain::onActionSaveTerrain()
 
 void ToolMain::onActionDeleteObjects()
 {
+	// Loop through selected objects
+	for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+	{
+		// If object is a light
+		if (m_sceneGraph[m_selectedObjectIDs[i]].light_type != 0)
+		{
+			m_d3dRenderer.RemoveLight(m_selectedObjectIDs[i]);
+		}
+	}
+	
 	// Delete all selected objects
-	ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph);
+	ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph);	
 }
 
 void ToolMain::onActionUndo()
@@ -404,8 +414,18 @@ void ToolMain::Tick(MSG *msg)
 			// If control key is pressed
 			if (m_toolInputCommands.CTRL)
 			{
+				// Loop through selected objects
+				//for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+				//{
+				//	// If object is a light
+				//	if (m_sceneGraph[m_selectedObjectIDs[i]].light_type != 0)
+				//	{
+				//		m_d3dRenderer.RemoveLight(m_selectedObjectIDs[i]);
+				//	}
+				//}
+				
 				// Remove an object
-				ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph, MouseManager::PickObject());
+				ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph, MouseManager::PickObject());				
 			}
 
 			// Else, if not

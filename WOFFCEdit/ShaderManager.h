@@ -24,5 +24,9 @@ public:
 	static void SetWorld(DirectX::SimpleMath::Matrix * world);
 	static void SetView(DirectX::SimpleMath::Matrix * view);
 	static void SetProjection(DirectX::SimpleMath::Matrix * projection);
+
+private:
+	// Setup temp, disabled light
+	static Light* GetLight();
 };
 

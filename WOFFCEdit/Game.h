@@ -63,6 +63,9 @@ public:
 	void ClearDisplayList();
 	void SaveDisplayList();	
 
+	// Lights
+	void RemoveLight(int ID);
+
 	// Getters
 	std::shared_ptr<DX::DeviceResources> GetDeviceResources() { return m_deviceResources; }
 	std::vector<DirectX::SimpleMath::Matrix> GetProjViewWorld() { return std::vector<DirectX::SimpleMath::Matrix>{m_projection, m_view, m_world}; }
@@ -150,7 +153,7 @@ private:
 	bool m_switch = true;
 
 	// Lights
-	std::vector<Light*> m_lights;
+	std::pair<std::vector<Light*>, std::vector<int>> m_lights;
 	std::vector<DirectX::SimpleMath::Vector3> m_lightColours{ {1.f, 1.f, 1.f}, {1.f, 1.f, 1.f}, {0.2f, 0.2f, 0.2f} };
 	std::vector<DirectX::SimpleMath::Vector3> m_lightPositions{ {41.f, 11.f, 46.f}, {25.f, 10.f, 50.f} };
 	std::vector<DirectX::SimpleMath::Vector3> m_lightDirections{ {0.f, -1.f, 0.f} };

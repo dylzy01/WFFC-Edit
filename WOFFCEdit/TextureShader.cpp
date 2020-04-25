@@ -118,7 +118,7 @@ bool TextureShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11Sha
 	///lightPtr->diffuse = DirectX::SimpleMath::Vector4(1.f, 1.f, 1.f, 1.f);
 	///lightPtr->position = DirectX::SimpleMath::Vector3(2.f, 1.f, 1.f);
 	///lightPtr->position = DirectX::SimpleMath::Vector3(1.f, 50.f, 1.f);
-	///lightPtr->padding = 0.0f;
+	///lightPtr->padding = 0.0f;	
 	for (int i = 0; i < light.size(); ++i)
 	{
 		lightPtr->lights[i].diffuseColour = light[i]->GetDiffuseColour();
@@ -132,7 +132,7 @@ bool TextureShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11Sha
 		lightPtr->lights[i].quadA = light[i]->GetQuadraticAttenuation();
 		lightPtr->lights[i].type = (int)light[i]->GetType();
 		lightPtr->lights[i].enabled = light[i]->GetEnabled();
-	}
+	}	
 	context->Unmap(m_bufferLight, 0);
 	context->PSSetConstantBuffers(0, 1, &m_bufferLight);
 

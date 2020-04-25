@@ -209,13 +209,20 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 
 // Remove an object from scene graph & database
 void ObjectManager::Remove(std::vector<int> & IDs, std::vector<SceneObject> & sceneGraph, int ID)
-{	
+{			
 	// If ID has been specified
 	if (ID != -1)
 	{
+		// If object is a light
+		//if (sceneGraph[ID].light_type != 0)
+		//{
+		//	// Erase from renderer storage
+		//	m_game->RemoveLight(ID);
+		//}
+		
 		// Remove object from database
 		SQLManager::RemoveObject(sceneGraph[ID]);
-		///IDs.erase(IDs.begin() + IDs[ID]);
+		///IDs.erase(IDs.begin() + IDs[ID]);		
 	}
 
 	// Else, if no ID has been specified (delete all selected objects)
@@ -224,8 +231,15 @@ void ObjectManager::Remove(std::vector<int> & IDs, std::vector<SceneObject> & sc
 		// Loop through selected objects
 		for (int i = 0; i < IDs.size(); ++i)
 		{
+			// If object is a light
+			//if (sceneGraph[IDs[i]].light_type != 0)
+			//{
+			//	// Erase from renderer storage
+			//	m_game->RemoveLight(ID);
+			//}
+			
 			// Remove objects from database
-			SQLManager::RemoveObject(sceneGraph[IDs[i]]);		
+			SQLManager::RemoveObject(sceneGraph[IDs[i]]);			
 		}	
 
 		// Clear all selected object IDs
