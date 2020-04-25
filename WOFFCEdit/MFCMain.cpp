@@ -334,6 +334,7 @@ void MFCMain::ToolBarObjectSpawn()
 
 	// Create & display dialogue window
 	m_objectSpawnDialogue.Create(IDD_DIALOG4);
+	///m_objectSpawnDialogue.Create(IDD_DIALOG8);
 	m_objectSpawnDialogue.ShowWindow(SW_SHOW);
 	m_objectSpawnDialogue.SetActive(true);
 }

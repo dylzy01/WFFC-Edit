@@ -2,9 +2,9 @@
 #include "pch.h"
 #include "DeviceResources.h"
 #include <SimpleMath.h>
-#include "include\DXF.h"
+///#include "include\DXF.h"
 
-class Water : public PlaneMesh
+class Water ///: public PlaneMesh
 {
 public:
 	Water(ID3D11Device* device, ID3D11DeviceContext* deviceContext, int size);

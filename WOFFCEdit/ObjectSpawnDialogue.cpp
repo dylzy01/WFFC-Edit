@@ -74,6 +74,15 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 
 		// Enable/disable light button
 		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
+
+		// Enable/disable cube button
+		if (!enable) { CheckDlgButton(IDC_CHECK20, enable); }
+
+		// Enable/disable cylinder button
+		if (!enable) { CheckDlgButton(IDC_CHECK22, enable); }
+
+		// Enable/disable cone button
+		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
 	case OBJECT_SPAWN::HOUSE_TWO:
@@ -116,6 +125,15 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 
 		// Enable/disable light button
 		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
+
+		// Enable/disable cube button
+		if (!enable) { CheckDlgButton(IDC_CHECK20, enable); }
+
+		// Enable/disable cylinder button
+		if (!enable) { CheckDlgButton(IDC_CHECK22, enable); }
+
+		// Enable/disable cone button
+		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
 	case OBJECT_SPAWN::CAVE:
@@ -158,6 +176,15 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 
 		// Enable/disable light button
 		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
+
+		// Enable/disable cube button
+		if (!enable) { CheckDlgButton(IDC_CHECK20, enable); }
+
+		// Enable/disable cylinder button
+		if (!enable) { CheckDlgButton(IDC_CHECK22, enable); }
+
+		// Enable/disable cone button
+		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
 	// Props ///////////////////////////////////////////////////////////////////
@@ -201,6 +228,15 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 
 		// Enable/disable light button
 		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
+
+		// Enable/disable cube button
+		if (!enable) { CheckDlgButton(IDC_CHECK20, enable); }
+
+		// Enable/disable cylinder button
+		if (!enable) { CheckDlgButton(IDC_CHECK22, enable); }
+
+		// Enable/disable cone button
+		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
 	case OBJECT_SPAWN::FENCE:
@@ -243,6 +279,15 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 
 		// Enable/disable light button
 		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
+
+		// Enable/disable cube button
+		if (!enable) { CheckDlgButton(IDC_CHECK20, enable); }
+
+		// Enable/disable cylinder button
+		if (!enable) { CheckDlgButton(IDC_CHECK22, enable); }
+
+		// Enable/disable cone button
+		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
 	case OBJECT_SPAWN::BOAT:
@@ -285,6 +330,15 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 
 		// Enable/disable light button
 		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
+
+		// Enable/disable cube button
+		if (!enable) { CheckDlgButton(IDC_CHECK20, enable); }
+
+		// Enable/disable cylinder button
+		if (!enable) { CheckDlgButton(IDC_CHECK22, enable); }
+
+		// Enable/disable cone button
+		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
 	// Nature //////////////////////////////////////////////////////////////////
@@ -328,6 +382,15 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 
 		// Enable/disable light button
 		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
+
+		// Enable/disable cube button
+		if (!enable) { CheckDlgButton(IDC_CHECK20, enable); }
+
+		// Enable/disable cylinder button
+		if (!enable) { CheckDlgButton(IDC_CHECK22, enable); }
+
+		// Enable/disable cone button
+		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
 	case OBJECT_SPAWN::TREE_ONE:
@@ -370,6 +433,15 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 
 		// Enable/disable light button
 		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
+
+		// Enable/disable cube button
+		if (!enable) { CheckDlgButton(IDC_CHECK20, enable); }
+
+		// Enable/disable cylinder button
+		if (!enable) { CheckDlgButton(IDC_CHECK22, enable); }
+
+		// Enable/disable cone button
+		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
 	case OBJECT_SPAWN::TREE_TWO:
@@ -412,6 +484,15 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 
 		// Enable/disable light button
 		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
+
+		// Enable/disable cube button
+		if (!enable) { CheckDlgButton(IDC_CHECK20, enable); }
+
+		// Enable/disable cylinder button
+		if (!enable) { CheckDlgButton(IDC_CHECK22, enable); }
+
+		// Enable/disable cone button
+		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
 	case OBJECT_SPAWN::WATER:
@@ -454,8 +535,18 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 
 		// Enable/disable light button
 		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
+
+		// Enable/disable cube button
+		if (!enable) { CheckDlgButton(IDC_CHECK20, enable); }
+
+		// Enable/disable cylinder button
+		if (!enable) { CheckDlgButton(IDC_CHECK22, enable); }
+
+		// Enable/disable cone button
+		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;	
+	// Misc ////////////////////////////////////////////////////////////////////
 	case OBJECT_SPAWN::LIGHT:
 	{
 		// Enable/disable house #1 button
@@ -496,7 +587,172 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 
 		// Enable/disable water button
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
+		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
+
+		// Enable/disable cube button
+		if (!enable) { CheckDlgButton(IDC_CHECK20, enable); }
+
+		// Enable/disable cylinder button
+		if (!enable) { CheckDlgButton(IDC_CHECK22, enable); }
+
+		// Enable/disable cone button
+		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
+	}
+	break;
+	case OBJECT_SPAWN::CUBE:
+	{
+		// Enable/disable house #1 button
+		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
+		///GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
+
+		// Enable/disable house #2 button
+		if (!enable) { CheckDlgButton(IDC_CHECK13, enable); }
+		///GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
+
+		// Enable/disable cave button
+		if (!enable) { CheckDlgButton(IDC_CHECK16, enable); }
+		///GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
+
+		// Enable/disable bridge button
+		if (!enable) { CheckDlgButton(IDC_CHECK14, enable); }
+		///GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
+
+		// Enable/disable fence button
+		if (!enable) { CheckDlgButton(IDC_CHECK17, enable); }
+		///GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
+
+		// Enable/disable boat button
+		if (!enable) { CheckDlgButton(IDC_CHECK18, enable); }
+		///GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
+
+		// Enable/disable grass button
+		if (!enable) { CheckDlgButton(IDC_CHECK5, enable); }
+		///GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
+
+		// Enable/disable tree #1 button
+		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
+		///GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
+
+		// Enable/disable tree #2 button
+		if (!enable) { CheckDlgButton(IDC_CHECK15, enable); }
+		///GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
+
+		// Enable/disable water button
+		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
 		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);	
+
+		// Enable/disable light button
+		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
+
+		// Enable/disable cylinder button
+		if (!enable) { CheckDlgButton(IDC_CHECK22, enable); }
+
+		// Enable/disable cone button
+		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
+	}
+	break;
+	case OBJECT_SPAWN::CYLINDER:
+	{
+		// Enable/disable house #1 button
+		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
+		///GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
+
+		// Enable/disable house #2 button
+		if (!enable) { CheckDlgButton(IDC_CHECK13, enable); }
+		///GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
+
+		// Enable/disable cave button
+		if (!enable) { CheckDlgButton(IDC_CHECK16, enable); }
+		///GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
+
+		// Enable/disable bridge button
+		if (!enable) { CheckDlgButton(IDC_CHECK14, enable); }
+		///GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
+
+		// Enable/disable fence button
+		if (!enable) { CheckDlgButton(IDC_CHECK17, enable); }
+		///GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
+
+		// Enable/disable boat button
+		if (!enable) { CheckDlgButton(IDC_CHECK18, enable); }
+		///GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
+
+		// Enable/disable grass button
+		if (!enable) { CheckDlgButton(IDC_CHECK5, enable); }
+		///GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
+
+		// Enable/disable tree #1 button
+		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
+		///GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
+
+		// Enable/disable tree #2 button
+		if (!enable) { CheckDlgButton(IDC_CHECK15, enable); }
+		///GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
+
+		// Enable/disable water button
+		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
+		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);	
+
+		// Enable/disable light button
+		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
+
+		// Enable/disable cube button
+		if (!enable) { CheckDlgButton(IDC_CHECK20, enable); }
+
+		// Enable/disable cone button
+		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
+	}
+	break;
+	case OBJECT_SPAWN::CONE:
+	{
+		// Enable/disable house #1 button
+		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
+		///GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
+
+		// Enable/disable house #2 button
+		if (!enable) { CheckDlgButton(IDC_CHECK13, enable); }
+		///GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
+
+		// Enable/disable cave button
+		if (!enable) { CheckDlgButton(IDC_CHECK16, enable); }
+		///GetDlgItem(IDC_CHECK16)->EnableWindow(enable);
+
+		// Enable/disable bridge button
+		if (!enable) { CheckDlgButton(IDC_CHECK14, enable); }
+		///GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
+
+		// Enable/disable fence button
+		if (!enable) { CheckDlgButton(IDC_CHECK17, enable); }
+		///GetDlgItem(IDC_CHECK17)->EnableWindow(enable);
+
+		// Enable/disable boat button
+		if (!enable) { CheckDlgButton(IDC_CHECK18, enable); }
+		///GetDlgItem(IDC_CHECK18)->EnableWindow(enable);
+
+		// Enable/disable grass button
+		if (!enable) { CheckDlgButton(IDC_CHECK5, enable); }
+		///GetDlgItem(IDC_CHECK5)->EnableWindow(enable);
+
+		// Enable/disable tree #1 button
+		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
+		///GetDlgItem(IDC_CHECK6)->EnableWindow(enable);
+
+		// Enable/disable tree #2 button
+		if (!enable) { CheckDlgButton(IDC_CHECK15, enable); }
+		///GetDlgItem(IDC_CHECK15)->EnableWindow(enable);
+
+		// Enable/disable water button
+		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
+		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);	
+
+		// Enable/disable light button
+		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
+
+		// Enable/disable cube button
+		if (!enable) { CheckDlgButton(IDC_CHECK20, enable); }
+
+		// Enable/disable cylinder button
+		if (!enable) { CheckDlgButton(IDC_CHECK22, enable); }
 	}
 	break;
 	case OBJECT_SPAWN::NA:
@@ -543,6 +799,15 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 
 		// Enable/disable light button
 		if (!enable) { CheckDlgButton(IDC_CHECK19, enable); }
+
+		// Enable/disable cube button
+		if (!enable) { CheckDlgButton(IDC_CHECK20, enable); }
+
+		// Enable/disable cylinder button
+		if (!enable) { CheckDlgButton(IDC_CHECK22, enable); }
+
+		// Enable/disable cone button
+		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
 	}
@@ -568,6 +833,9 @@ BEGIN_MESSAGE_MAP(ObjectSpawnDialogue, CDialogEx)
 
 
 	ON_BN_CLICKED(IDC_CHECK19, &ObjectSpawnDialogue::OnBnClickedLight)
+	ON_BN_CLICKED(IDC_CHECK20, &ObjectSpawnDialogue::OnBnClickedCube)
+	ON_BN_CLICKED(IDC_CHECK22, &ObjectSpawnDialogue::OnBnClickedCylinder)
+	ON_BN_CLICKED(IDC_CHECK21, &ObjectSpawnDialogue::OnBnClickedCone)
 END_MESSAGE_MAP()
 
 
@@ -751,6 +1019,51 @@ void ObjectSpawnDialogue::OnBnClickedLight()
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK19))
+	{
+		// Uncheck & disable other buttons
+	case true: UpdateButtons(false); break;
+		// Enable other buttons
+	case false: UpdateButtons(true); break;
+	}
+}
+
+// Set spawn to cube
+void ObjectSpawnDialogue::OnBnClickedCube()
+{
+	m_spawn = OBJECT_SPAWN::CUBE;
+
+	// Switch between button checked/unchecked
+	switch (IsDlgButtonChecked(IDC_CHECK20))
+	{
+		// Uncheck & disable other buttons
+	case true: UpdateButtons(false); break;
+		// Enable other buttons
+	case false: UpdateButtons(true); break;
+	}
+}
+
+// Set spawn to cylinder
+void ObjectSpawnDialogue::OnBnClickedCylinder()
+{
+	m_spawn = OBJECT_SPAWN::CYLINDER;
+
+	// Switch between button checked/unchecked
+	switch (IsDlgButtonChecked(IDC_CHECK22))
+	{
+		// Uncheck & disable other buttons
+	case true: UpdateButtons(false); break;
+		// Enable other buttons
+	case false: UpdateButtons(true); break;
+	}
+}
+
+// Set spawn to cone
+void ObjectSpawnDialogue::OnBnClickedCone()
+{
+	m_spawn = OBJECT_SPAWN::CONE;
+
+	// Switch between button checked/unchecked
+	switch (IsDlgButtonChecked(IDC_CHECK21))
 	{
 		// Uncheck & disable other buttons
 	case true: UpdateButtons(false); break;

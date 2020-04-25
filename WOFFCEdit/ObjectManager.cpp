@@ -10,7 +10,7 @@ std::vector<DirectX::SimpleMath::Vector3> ObjectManager::m_storedObjectTranslati
 
 // Spawn an object at a location
 void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 position, 
-	std::vector<SceneObject> & sceneGraph, LIGHT_TYPE type, XMFLOAT3 diffuse, float constA, float linA, float quadA)
+	std::vector<SceneObject> & sceneGraph, int type, XMFLOAT3 diffuse, float constA, float linA, float quadA)
 {
 	// Setup temp object
 	SceneObject object;
@@ -60,7 +60,7 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 		object.parent_id = 0;
 		object.editor_wireframe = false;
 			
-		object.light_type = (int)type;
+		object.light_type = type;
 		///object.light_type = 3;
 		object.light_diffuse_r = 2.f;
 		object.light_diffuse_g = 3.f;
@@ -168,6 +168,27 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 		object.m_type = MODEL_TYPE::NOT_WATER;
 		object.model_path = "database/data/light.cmo";
 		object.tex_diffuse_path = "database/data/light.dds";
+	}
+	break;
+	case OBJECT_SPAWN::CUBE:
+	{
+		// Set object to cube
+		object.m_type = MODEL_TYPE::NOT_WATER;
+		object.model_path = "database/data/cube.cmo";
+	}
+	break;
+	case OBJECT_SPAWN::CYLINDER:
+	{
+		// Set object to cylinder
+		object.m_type = MODEL_TYPE::NOT_WATER;
+		object.model_path = "database/data/cylinder.cmo";
+	}
+	break;
+	case OBJECT_SPAWN::CONE:
+	{
+		// Set object to cone
+		object.m_type = MODEL_TYPE::NOT_WATER;
+		object.model_path = "database/data/cone.cmo";
 	}
 	break;
 	}

@@ -48,7 +48,10 @@ enum class OBJECT_SPAWN {
 	WATER,
 
 	// Misc,
-	LIGHT
+	LIGHT,
+	CUBE,
+	CYLINDER,
+	CONE
 };
 
 enum class RESIDENTIAL_SPAWN {

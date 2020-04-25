@@ -62,8 +62,13 @@ private:
 	afx_msg void OnBnClickedWater();
 
 	afx_msg void OnBnClickedLight();
+	afx_msg void OnBnClickedCube();
+	afx_msg void OnBnClickedCylinder();
+	afx_msg void OnBnClickedCone();
 
 	/*afx_msg void OnBnClickedResidential();
 	afx_msg void OnBnClickedNature();
 	afx_msg void OnBnClickedProps();*/
+public:
+	afx_msg void OnBnClickedCheck20();
 };

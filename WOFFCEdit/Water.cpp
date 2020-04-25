@@ -13,5 +13,5 @@ Water::Water(ID3D11Device * device, ID3D11DeviceContext * deviceContext, int siz
 	// Tint
 	m_tint = { 0.1f, 0.3f, 1.f, 1.f };
 
-	initBuffers(device);
+	///initBuffers(device);
 }
