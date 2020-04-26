@@ -55,6 +55,6 @@ public:
 	MODEL_TYPE m_type;
 	int ID;
 	int enabled;
-	///float dirX, dirY, dirZ;
+	float dirX, dirY, dirZ;
 };
 

@@ -42,7 +42,7 @@ void LightDialogue::SetLightData(std::pair<std::vector<Light*>, std::vector<int>
 	typeBoxEntry = L"Spot";			m_boxType.AddString(typeBoxEntry.c_str());	
 
 	// Display first light
-	Update(0);
+	if (m_lights.first.size() != 0) { Update(0); }	
 }
 
 void LightDialogue::Update(int index)

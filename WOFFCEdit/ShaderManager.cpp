@@ -12,6 +12,9 @@ void ShaderManager::Initialise(ID3D11Device * device)
 	// Initialise toon shader
 	ToonShader::Initialise(device);
 
+	// Initialise toon blend shader
+	ToonBlendShader::Initialise(device);
+
 	// Initialise outline shader
 	OutlineShader::Initialise(device);
 
@@ -57,13 +60,42 @@ void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, std:
 		BlendShader::SetShaderParameters(context, texture1, texture2);
 	}
 	break;
-	case SHADER_TYPE::TOON:
+	case SHADER_TYPE::TOON_SINGLE:
 	{
 		// Handle toon shader
 		ToonShader::Enable(context);
 
-		// Setup toon parameters
-		ToonShader::SetShaderParameters(context, texture1, texture2);
+		// If light vector is empty
+		if (light.size() == 0)
+		{
+			// Setup toon parameters
+			ToonShader::SetShaderParameters(context, texture1, temp);
+		}
+		// Else, if light vector is valid
+		else
+		{
+			// Setup toon parameters
+			ToonShader::SetShaderParameters(context, texture1, light);
+		}
+	}
+	break;
+	case SHADER_TYPE::TOON_BLEND:
+	{
+		// Handle toon shader
+		ToonBlendShader::Enable(context);
+
+		// If light vector is empty
+		if (light.size() == 0)
+		{
+			// Setup toon blend parameters
+			ToonBlendShader::SetShaderParameters(context, texture1, texture2, temp);
+		}
+		// Else, if light vector is valid
+		else
+		{
+			// Setup toon blend parameters
+			ToonBlendShader::SetShaderParameters(context, texture1, texture2, light);
+		}
 	}
 	break;
 	case SHADER_TYPE::OUTLINE:
@@ -93,6 +125,7 @@ void ShaderManager::SetWorld(DirectX::SimpleMath::Matrix * world)
 	TextureShader::SetWorld(world);
 	BlendShader::SetWorld(world);
 	ToonShader::SetWorld(world);
+	ToonBlendShader::SetWorld(world);
 	OutlineShader::SetWorld(world);
 	WaterShader::SetWorld(world);
 }
@@ -103,6 +136,7 @@ void ShaderManager::SetView(DirectX::SimpleMath::Matrix * view)
 	TextureShader::SetView(view);
 	BlendShader::SetView(view);
 	ToonShader::SetView(view);
+	ToonBlendShader::SetView(view);
 	OutlineShader::SetView(view);
 	WaterShader::SetView(view);
 }
@@ -113,6 +147,7 @@ void ShaderManager::SetProjection(DirectX::SimpleMath::Matrix * projection)
 	TextureShader::SetProjection(projection);
 	BlendShader::SetProjection(projection);
 	ToonShader::SetProjection(projection);
+	ToonBlendShader::SetProjection(projection);
 	OutlineShader::SetProjection(projection);
 	WaterShader::SetProjection(projection);
 }

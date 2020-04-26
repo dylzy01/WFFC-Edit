@@ -169,10 +169,9 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 		object.model_path = "database/data/light.cmo";
 		object.tex_diffuse_path = "database/data/light.dds";
 		object.enabled = true;
-		/*object.dirX = 0.f;
+		object.dirX = 0.f;
 		object.dirY = 1.f;
-		object.dirZ = 0.f;*/
-		object.rotY = 1.f;
+		object.dirZ = 0.f;		
 	}
 	break;
 	case OBJECT_SPAWN::CUBE:

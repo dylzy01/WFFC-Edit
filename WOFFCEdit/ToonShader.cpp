@@ -6,7 +6,6 @@ ID3D11InputLayout *							ToonShader::m_inputLayout;
 ID3D11Buffer *								ToonShader::m_bufferMatrix;
 ID3D11SamplerState *						ToonShader::m_samplerState;
 ID3D11Buffer *								ToonShader::m_bufferLight;
-ID3D11Buffer *								ToonShader::m_bufferDual;
 DirectX::SimpleMath::Matrix *				ToonShader::m_world;
 DirectX::SimpleMath::Matrix *				ToonShader::m_view;
 DirectX::SimpleMath::Matrix *				ToonShader::m_projection;
@@ -17,7 +16,6 @@ bool ToonShader::Initialise(ID3D11Device * device)
 	D3D11_BUFFER_DESC	matrixBufferDesc;
 	D3D11_SAMPLER_DESC	samplerDesc;
 	D3D11_BUFFER_DESC	lightBufferDesc;
-	D3D11_BUFFER_DESC	dualBufferDesc;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Load shader : Vertex
@@ -70,18 +68,6 @@ bool ToonShader::Initialise(ID3D11Device * device)
 	device->CreateBuffer(&lightBufferDesc, NULL, &m_bufferLight);
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Setup description of dual buffer
-	dualBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	dualBufferDesc.ByteWidth = sizeof(LightBufferType);
-	dualBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	dualBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	dualBufferDesc.MiscFlags = 0;
-	dualBufferDesc.StructureByteStride = 0;
-
-	// Create constant buffer pointer for access to vertex shader constant buffer
-	device->CreateBuffer(&lightBufferDesc, NULL, &m_bufferDual);
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Create texture sampler state description
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_MIRROR;
@@ -104,18 +90,19 @@ bool ToonShader::Initialise(ID3D11Device * device)
 }
 
 // Setup shader 
-bool ToonShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture1, ID3D11ShaderResourceView* texture2, bool dual)
+bool ToonShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture1, std::vector<Light*> light)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
 	LightBufferType* lightPtr;
-	DualBufferType* dualPtr;
 	DirectX::SimpleMath::Matrix  tworld, tview, tproj;
 
 	// Transpose matrices for shader preperation
 	tworld = m_world->Transpose();
 	tview = m_view->Transpose();
 	tproj = m_projection->Transpose();
+
+	// Send matrix data
 	context->Map(m_bufferMatrix, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	dataPtr = (MatrixBufferType*)mappedResource.pData;
 	dataPtr->world = tworld;
@@ -124,29 +111,28 @@ bool ToonShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11Shader
 	context->Unmap(m_bufferMatrix, 0);
 	context->VSSetConstantBuffers(0, 1, &m_bufferMatrix);
 
+	// Send light data
 	context->Map(m_bufferLight, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	lightPtr = (LightBufferType*)mappedResource.pData;
-	/*lightPtr->ambient = sceneLight1->getAmbientColour();
-	lightPtr->diffuse = sceneLight1->getDiffuseColour();
-	lightPtr->position = sceneLight1->getPosition();*/
-	lightPtr->ambient = DirectX::SimpleMath::Vector4(0.3f, 0.3f, 0.3f, 1.f);
-	lightPtr->diffuse = DirectX::SimpleMath::Vector4(1.f, 1.f, 1.f, 1.f);
-	///lightPtr->position = DirectX::SimpleMath::Vector3(2.f, 1.f, 1.f);
-	lightPtr->position = DirectX::SimpleMath::Vector3(1.f, 50.f, 1.f);
-	lightPtr->padding = 0.0f;
+	for (int i = 0; i < light.size(); ++i)
+	{
+		lightPtr->lights[i].diffuseColour = light[i]->GetDiffuse();
+		lightPtr->lights[i].ambientColour = light[i]->GetAmbient();
+		lightPtr->lights[i].position = light[i]->GetPosition();
+		lightPtr->lights[i].angle = 45.f;
+
+		lightPtr->lights[i].direction = { 0.f, 1.f, 0.f };/// light[i]->GetDirection();
+		lightPtr->lights[i].constA = light[i]->GetConstantAttenuation();
+		lightPtr->lights[i].linA = light[i]->GetLinearAttenuation();
+		lightPtr->lights[i].quadA = light[i]->GetQuadraticAttenuation();
+		lightPtr->lights[i].type = (int)light[i]->GetType();
+		lightPtr->lights[i].enabled = light[i]->GetEnabled();
+	}
 	context->Unmap(m_bufferLight, 0);
 	context->PSSetConstantBuffers(0, 1, &m_bufferLight);
 
-	context->Map(m_bufferDual, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	dualPtr = (DualBufferType*)mappedResource.pData;
-	dualPtr->dual = false;
-	dualPtr->padding = { 0.f, 0.f, 0.f };
-	context->Unmap(m_bufferDual, 0);
-	context->PSSetConstantBuffers(1, 1, &m_bufferDual);
-
 	// Pass textures to pixel shader
 	context->PSSetShaderResources(0, 1, &texture1);
-	context->PSSetShaderResources(1, 1, &texture2);
 
 	return true;
 }

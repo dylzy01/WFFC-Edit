@@ -101,6 +101,8 @@ bool TextureShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11Sha
 	tworld = m_world->Transpose();
 	tview = m_view->Transpose();
 	tproj = m_projection->Transpose();
+
+	// Send matrix data
 	context->Map(m_bufferMatrix, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	dataPtr = (MatrixBufferType*)mappedResource.pData;
 	dataPtr->world = tworld;
@@ -109,16 +111,9 @@ bool TextureShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11Sha
 	context->Unmap(m_bufferMatrix, 0);
 	context->VSSetConstantBuffers(0, 1, &m_bufferMatrix);
 
+	// Send light data
 	context->Map(m_bufferLight, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	lightPtr = (LightBufferType*)mappedResource.pData;
-	/*lightPtr->ambient = sceneLight1->getAmbientColour();
-	lightPtr->diffuse = sceneLight1->getDiffuseColour();
-	lightPtr->position = sceneLight1->getPosition();*/
-	///lightPtr->ambient = DirectX::SimpleMath::Vector4(0.3f, 0.3f, 0.3f, 1.f);
-	///lightPtr->diffuse = DirectX::SimpleMath::Vector4(1.f, 1.f, 1.f, 1.f);
-	///lightPtr->position = DirectX::SimpleMath::Vector3(2.f, 1.f, 1.f);
-	///lightPtr->position = DirectX::SimpleMath::Vector3(1.f, 50.f, 1.f);
-	///lightPtr->padding = 0.0f;	
+	lightPtr = (LightBufferType*)mappedResource.pData;	
 	for (int i = 0; i < light.size(); ++i)
 	{
 		lightPtr->lights[i].diffuseColour = light[i]->GetDiffuse();

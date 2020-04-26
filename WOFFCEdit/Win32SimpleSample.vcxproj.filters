@@ -161,6 +161,9 @@
     <ClCompile Include="LightDialogue.cpp">
       <Filter>MFC\Dialogues\Misc</Filter>
     </ClCompile>
+    <ClCompile Include="ToonBlendShader.cpp">
+      <Filter>Shaders\Toon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -283,6 +286,9 @@
     <ClInclude Include="LightDialogue.h">
       <Filter>MFC\Dialogues\Misc</Filter>
     </ClInclude>
+    <ClInclude Include="ToonBlendShader.h">
+      <Filter>Shaders\Toon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -336,6 +342,12 @@
     </FxCompile>
     <FxCompile Include="water_ps.hlsl">
       <Filter>Shaders\Water</Filter>
+    </FxCompile>
+    <FxCompile Include="toon_blend_ps.hlsl">
+      <Filter>Shaders\Toon</Filter>
+    </FxCompile>
+    <FxCompile Include="toon_blend_vs.hlsl">
+      <Filter>Shaders\Toon</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

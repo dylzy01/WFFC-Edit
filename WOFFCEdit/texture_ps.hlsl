@@ -27,11 +27,7 @@ struct Light
 };
 
 cbuffer LightBuffer : register(b0)
-{
-    //float4 ambientColor;
-    //float4 diffuseColor;
-    //float3 lightPosition;
-    //float padding;
+{   
     Light Lights[MAXLIGHTS];
 };
 
@@ -126,12 +122,12 @@ float4 GenerateLight(float3 normal, float3 position3D)
         {
             col += CalculateDirectional(Lights[i], normal);
         }
-        if (Lights[i].type == 2)
+        else if (Lights[i].type == 2)
         {
             vec = normalize(Lights[i].lightPosition - position3D);
             col += CalculatePoint(Lights[i], vec, normal);
         }
-        if (Lights[i].type == 3)
+        else if (Lights[i].type == 3)
         {
             vec = normalize(Lights[i].lightPosition - position3D);
             col += CalculateSpot(Lights[i], vec, normal);
