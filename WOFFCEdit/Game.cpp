@@ -544,7 +544,7 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 			newDisplayObject.m_position.y = sceneGraph->at(i).posY;
 			newDisplayObject.m_position.z = sceneGraph->at(i).posZ;
 
-			//setorientation
+			//set orientation
 			newDisplayObject.m_orientation.x = sceneGraph->at(i).rotX;
 			newDisplayObject.m_orientation.y = sceneGraph->at(i).rotY;
 			newDisplayObject.m_orientation.z = sceneGraph->at(i).rotZ;
@@ -578,8 +578,9 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 				XMFLOAT4 ambient = { 0.2f, 0.2f, 0.2f, 1.f };
 				///XMFLOAT3 position = { 50.f, 10.f, 10.f };
 				XMFLOAT3 position = { sceneGraph->at(i).posX, sceneGraph->at(i).posY, sceneGraph->at(i).posZ };
+				///DirectX::SimpleMath::Vector3 direction = { sceneGraph->at(i).rotX, sceneGraph->at(i).rotY, sceneGraph->at(i).rotZ };
 				DirectX::SimpleMath::Vector3 direction = { sceneGraph->at(i).rotX, sceneGraph->at(i).rotY, sceneGraph->at(i).rotZ };
-				direction.Normalize();
+				///direction.Normalize();
 				///XMFLOAT3 direction = { 0.f, 1.f, 0.f };
 				float constantAttenuation = sceneGraph->at(i).light_constant;
 				float linearAttenuation = sceneGraph->at(i).light_linear;

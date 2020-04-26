@@ -9,46 +9,46 @@ class Light/// : public Light
 public:
 	Light(XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT3 position, XMFLOAT3 direction, float constA, float linA, float quadA, LIGHT_TYPE type, bool enable)
 	{
-		m_diffuseColour = diffuse;
-		m_ambientColour = ambient;
+		m_diffuse = diffuse;
+		m_ambient = ambient;
 		m_position = position;
 		m_direction = direction;
-		m_constantAttenuation = constA;
-		m_linearAttenuation = linA;
-		m_quadraticAttenuation = quadA;
+		m_constA = constA;
+		m_linA = linA;
+		m_quadA = quadA;
 		m_type = type;
 		m_enabled = enable;
 	}
 	~Light() {}	
 	
 	// Getters
-	XMFLOAT4 GetDiffuseColour() { return m_diffuseColour; }
-	XMFLOAT4 GetAmbientColour() { return m_ambientColour; }
+	XMFLOAT4 GetDiffuse() { return m_diffuse; }
+	XMFLOAT4 GetAmbient() { return m_ambient; }
 	XMFLOAT3 GetPosition() { return m_position; }
 	XMFLOAT3 GetDirection() { return m_direction; }
-	float GetConstantAttenuation() { return m_constantAttenuation; }
-	float GetLinearAttenuation() { return m_linearAttenuation; }
-	float GetQuadraticAttenuation() { return m_quadraticAttenuation; }
+	float GetConstantAttenuation() { return m_constA; }
+	float GetLinearAttenuation() { return m_linA; }
+	float GetQuadraticAttenuation() { return m_quadA; }
 	LIGHT_TYPE GetType() { return m_type; }
 	bool GetEnabled() { return m_enabled; }
 
 	// Setters
-	void SetDiffuseColour(XMFLOAT4 diffuse) { m_diffuseColour = diffuse; }
-	void SetAmbientColour(XMFLOAT4 ambient) { m_ambientColour = ambient; }
+	void SetDiffuse(XMFLOAT4 diffuse) { m_diffuse = diffuse; }
+	void SetAmbient(XMFLOAT4 ambient) { m_ambient = ambient; }
 	void SetPosition(XMFLOAT3 position) { m_position = position; }	
 	void SetDirection(XMFLOAT3 direction) { m_direction = direction; }
-	void SetConstantAttenuation(float attenuation) { m_constantAttenuation = attenuation; }
-	void SetLinearAttenuation(float attenuation) { m_linearAttenuation = attenuation; }
-	void SetQuadraticAttenuation(float attenuation) { m_quadraticAttenuation = attenuation; }
+	void SetConstantAttenuation(float attenuation) { m_constA = attenuation; }
+	void SetLinearAttenuation(float attenuation) { m_linA = attenuation; }
+	void SetQuadraticAttenuation(float attenuation) { m_quadA = attenuation; }
 	void SetType(LIGHT_TYPE type) { m_type = type; }
 	void SetEnabled(bool enable) { m_enabled = enable; }
 
-	void SetDiffuseR(float r) { m_diffuseColour.x = r; }
-	void SetDiffuseG(float g) { m_diffuseColour.y = g; }
-	void SetDiffuseB(float b) { m_diffuseColour.z = b; }
-	void SetAmbientR(float r) { m_ambientColour.x = r; }
-	void SetAmbientG(float g) { m_ambientColour.y = g; }
-	void SetAmbientB(float b) { m_ambientColour.z = b; }
+	void SetDiffuseR(float r) { m_diffuse.x = r; }
+	void SetDiffuseG(float g) { m_diffuse.y = g; }
+	void SetDiffuseB(float b) { m_diffuse.z = b; }
+	void SetAmbientR(float r) { m_ambient.x = r; }
+	void SetAmbientG(float g) { m_ambient.y = g; }
+	void SetAmbientB(float b) { m_ambient.z = b; }
 
 	void SetPositionX(float x) { m_position.x = x; }
 	void SetPositionY(float y) { m_position.y = y; }
@@ -58,11 +58,11 @@ public:
 	void SetDirectionZ(float z) { m_direction.z = z; }
 
 protected:
-	XMFLOAT4 m_ambientColour, m_diffuseColour;
+	XMFLOAT4 m_ambient, m_diffuse;
 	XMFLOAT3 m_position, m_direction;
-	float m_constantAttenuation;
-	float m_linearAttenuation;
-	float m_quadraticAttenuation;
+	float m_constA;
+	float m_linA;
+	float m_quadA;
 	LIGHT_TYPE m_type;
 	bool m_enabled;
 };

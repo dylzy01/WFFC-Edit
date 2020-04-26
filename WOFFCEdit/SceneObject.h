@@ -12,9 +12,6 @@ public:
 	SceneObject();
 	~SceneObject();
 
-	MODEL_TYPE m_type;
-	int ID;
-	int enabled;
 	int chunk_ID;
 	std::string model_path;
 	std::string tex_diffuse_path;
@@ -54,5 +51,10 @@ public:
 	float light_linear;
 	float light_quadratic;
 
+	// Added
+	MODEL_TYPE m_type;
+	int ID;
+	int enabled;
+	///float dirX, dirY, dirZ;
 };
 

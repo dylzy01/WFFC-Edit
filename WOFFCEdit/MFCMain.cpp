@@ -282,9 +282,9 @@ void MFCMain::CheckDialogues()
 						SceneObject object = sceneGraph[i];						
 						
 						// Setup object details from matching light
-						object.light_diffuse_r	= lights.first[j]->GetDiffuseColour().x;
-						object.light_diffuse_g	= lights.first[j]->GetDiffuseColour().y;
-						object.light_diffuse_b	= lights.first[j]->GetDiffuseColour().z;
+						object.light_diffuse_r	= lights.first[j]->GetDiffuse().x;
+						object.light_diffuse_g	= lights.first[j]->GetDiffuse().y;
+						object.light_diffuse_b	= lights.first[j]->GetDiffuse().z;
 						object.posX				= lights.first[j]->GetPosition().x;
 						object.posY				= lights.first[j]->GetPosition().y;
 						object.posZ				= lights.first[j]->GetPosition().z;

@@ -121,8 +121,8 @@ bool TextureShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11Sha
 	///lightPtr->padding = 0.0f;	
 	for (int i = 0; i < light.size(); ++i)
 	{
-		lightPtr->lights[i].diffuseColour = light[i]->GetDiffuseColour();
-		lightPtr->lights[i].ambientColour = light[i]->GetAmbientColour();
+		lightPtr->lights[i].diffuseColour = light[i]->GetDiffuse();
+		lightPtr->lights[i].ambientColour = light[i]->GetAmbient();
 		lightPtr->lights[i].position = light[i]->GetPosition();
 		lightPtr->lights[i].angle = 45.f;
 
