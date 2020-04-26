@@ -53,6 +53,9 @@
     <Filter Include="Shaders\Water">
       <UniqueIdentifier>{3fbb59d8-4e36-4ee2-b35b-c60fadf9dfb7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MFC\Dialogues\Misc">
+      <UniqueIdentifier>{438ca32c-937d-4714-b6cf-4476bf7868a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -155,7 +158,9 @@
     <ClCompile Include="WaterShader.cpp">
       <Filter>Shaders\Water</Filter>
     </ClCompile>
-    <ClCompile Include="LightDialogue.cpp" />
+    <ClCompile Include="LightDialogue.cpp">
+      <Filter>MFC\Dialogues\Misc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -275,7 +280,9 @@
     <ClInclude Include="WaterShader.h">
       <Filter>Shaders\Water</Filter>
     </ClInclude>
-    <ClInclude Include="LightDialogue.h" />
+    <ClInclude Include="LightDialogue.h">
+      <Filter>MFC\Dialogues\Misc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

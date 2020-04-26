@@ -578,12 +578,14 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 				XMFLOAT4 ambient = { 0.2f, 0.2f, 0.2f, 1.f };
 				///XMFLOAT3 position = { 50.f, 10.f, 10.f };
 				XMFLOAT3 position = { sceneGraph->at(i).posX, sceneGraph->at(i).posY, sceneGraph->at(i).posZ };
-				XMFLOAT3 direction = { 0.f, 1.f, 0.f };
+				DirectX::SimpleMath::Vector3 direction = { sceneGraph->at(i).rotX, sceneGraph->at(i).rotY, sceneGraph->at(i).rotZ };
+				direction.Normalize();
+				///XMFLOAT3 direction = { 0.f, 1.f, 0.f };
 				float constantAttenuation = sceneGraph->at(i).light_constant;
 				float linearAttenuation = sceneGraph->at(i).light_linear;
 				float quadraticAttenuation = sceneGraph->at(i).light_quadratic;
 				LIGHT_TYPE type = (LIGHT_TYPE)sceneGraph->at(i).light_type;
-				bool enabled = true;
+				bool enabled = sceneGraph->at(i).enabled;
 				m_lights.first.push_back(new Light(diffuse, ambient, position, direction, constantAttenuation, linearAttenuation, quadraticAttenuation, type, enabled));
 				m_lights.second.push_back(sceneGraph->at(i).ID);
 			}

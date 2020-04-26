@@ -254,6 +254,57 @@ void MFCMain::CheckDialogues()
 		m_toolSystem.SetLandscapePaint(m_terrainPaintDialogue.GetPaint());
 	}
 
+	// Else, if light editor is active
+	else if (m_lightDialogue.GetActive())
+	{
+		// If scene graph should be updated
+		if (m_lightDialogue.GetUpdate())
+		{
+			// Reset update controller
+			m_lightDialogue.SetUpdate(false);
+
+			// Get edited lights
+			std::pair<std::vector<Light*>, std::vector<int>> lights = m_lightDialogue.GetLights();
+
+			// Get scene graph
+			std::vector<SceneObject> sceneGraph = m_toolSystem.GetSceneGraph();
+
+			// Loop through scene graph
+			for (int i = 0; i < sceneGraph.size(); ++i)
+			{
+				// Loop through lights
+				for (int j = 0; j < lights.first.size(); ++j)
+				{
+					// If scene graph ID matches light ID
+					if (sceneGraph[i].ID == lights.second[j])
+					{
+						// Store current scene object
+						SceneObject object = sceneGraph[i];						
+						
+						// Setup object details from matching light
+						object.light_diffuse_r	= lights.first[j]->GetDiffuseColour().x;
+						object.light_diffuse_g	= lights.first[j]->GetDiffuseColour().y;
+						object.light_diffuse_b	= lights.first[j]->GetDiffuseColour().z;
+						object.posX				= lights.first[j]->GetPosition().x;
+						object.posY				= lights.first[j]->GetPosition().y;
+						object.posZ				= lights.first[j]->GetPosition().z;
+						object.rotX				= lights.first[j]->GetDirection().x;
+						object.rotY				= lights.first[j]->GetDirection().y;
+						object.rotZ				= lights.first[j]->GetDirection().z;
+						object.light_type		= (int)lights.first[j]->GetType();
+						object.light_constant	= lights.first[j]->GetConstantAttenuation();
+						object.light_linear		= lights.first[j]->GetLinearAttenuation();
+						object.light_quadratic	= lights.first[j]->GetQuadraticAttenuation();
+						object.enabled			= lights.first[j]->GetEnabled();
+
+						// Replace scene object with new light	
+						m_toolSystem.SetSceneObject(object, i);
+					}
+				}
+			}
+		}	
+	}
+
 	// Else, if no dialogues are active
 	else
 	{
@@ -405,6 +456,6 @@ void MFCMain::ToolBarLight()
 	// Create & display dialogue window
 	m_lightDialogue.Create(IDD_DIALOG8);
 	m_lightDialogue.ShowWindow(SW_SHOW);
-	//m_lightDialogue.SetActive(true);
-	m_lightDialogue.SetLightData(m_toolSystem.GetLights());
+	m_lightDialogue.SetActive(true);
+	m_lightDialogue.SetLightData(&m_toolSystem.GetLights());
 }

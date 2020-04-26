@@ -168,6 +168,7 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 		object.m_type = MODEL_TYPE::NOT_WATER;
 		object.model_path = "database/data/light.cmo";
 		object.tex_diffuse_path = "database/data/light.dds";
+		object.enabled = true;
 	}
 	break;
 	case OBJECT_SPAWN::CUBE:

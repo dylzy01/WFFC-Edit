@@ -14,6 +14,7 @@ public:
 
 	MODEL_TYPE m_type;
 	int ID;
+	int enabled;
 	int chunk_ID;
 	std::string model_path;
 	std::string tex_diffuse_path;

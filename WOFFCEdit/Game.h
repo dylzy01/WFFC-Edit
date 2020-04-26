@@ -84,6 +84,8 @@ public:
 	void SetSelectedObjectIDs(std::vector<int> selectedObjectIDs) { m_selectedObjectIDs = selectedObjectIDs; }
 	void SetDisplayList(DisplayObject object, int i) { m_displayList[i] = object; }
 	void SetTransform(int i, OBJECT_FUNCTION function, DirectX::SimpleMath::Vector3 vector);
+	void SetLights(std::pair<std::vector<Light*>, std::vector<int>> lights) { m_lights = lights; }
+	void SetSceneObject(SceneObject object, int index) { m_sceneGraph[index] = object; BuildDisplayList(&m_sceneGraph); }
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();

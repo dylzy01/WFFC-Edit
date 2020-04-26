@@ -41,6 +41,7 @@ public: //methods
 	// Getters
 	EDITOR GetEditor() { return m_d3dRenderer.GetEditor(); } //return current editor
 	std::pair<std::vector<Light*>, std::vector<int>> GetLights() { return m_d3dRenderer.GetLights(); }
+	std::vector<SceneObject> GetSceneGraph() { return m_d3dRenderer.GetSceneGraph(); }
 
 	// Setters
 	void SetWireframe(bool wireframe) { m_d3dRenderer.SetWireframe(wireframe); }
@@ -112,6 +113,8 @@ public: //methods
 	void SetLandscapePaint(LANDSCAPE_PAINT paint) { m_landscapePaint = paint; }
 	void SetLandscapeSculpt(LANDSCAPE_FUNCTION function) { m_landscapeFunction = function; }
 	void SetLandscapeConstraint(LANDSCAPE_CONSTRAINT constraint) { m_landscapeConstraint = constraint; }
+	void SetLights(std::pair<std::vector<Light*>, std::vector<int>> lights) { m_d3dRenderer.SetLights(lights); }
+	void SetSceneObject(SceneObject object, int index) { m_d3dRenderer.SetSceneObject(object, index); }
 
 public:	//variables
 	std::vector<SceneObject>    m_sceneGraph;	//our scenegraph storing all the objects in the current chunk
