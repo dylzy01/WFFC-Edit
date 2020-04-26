@@ -17,11 +17,13 @@
 #include "TerrainSculptDialogue.h"
 #include "TerrainPaintDialogue.h"
 
+#include "LightDialogue.h"
+
 class MFCMain : public CWinApp 
 {
 public:
-	MFCMain();
-	~MFCMain();
+	MFCMain() {}
+	~MFCMain() {}
 	BOOL InitInstance();
 	int  Run();
 
@@ -40,6 +42,8 @@ private:
 	ObjectSpawnDialogue m_objectSpawnDialogue;
 	TerrainSculptDialogue m_terrainSculptDialogue;
 	TerrainPaintDialogue m_terrainPaintDialogue;
+
+	LightDialogue m_lightDialogue;
 
 	int m_width;		
 	int m_height;
@@ -60,6 +64,7 @@ private:
 	afx_msg void ToolBarTerrainPaint();
 	afx_msg void ToolBarUndo();
 	afx_msg void ToolBarRedo();
+	afx_msg void ToolBarLight();
 
 	DECLARE_MESSAGE_MAP()	// required macro for message map functionality  One per class
 };

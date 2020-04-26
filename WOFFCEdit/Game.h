@@ -77,6 +77,7 @@ public:
 	EDITOR GetEditor() { return m_editor; }
 	OBJECT_FUNCTION GetObjectFunction() { return m_objectFunction; }
 	RECT GetScreenDimensions() { return m_screenDimensions; }
+	std::pair<std::vector<Light*>, std::vector<int>> GetLights() { return m_lights; }
 
 	// Setters
 	void SetWireframe(bool wireframe) { m_wireframe = wireframe; }

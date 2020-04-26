@@ -10,6 +10,7 @@
 #include "ObjectManager.h"
 #include "LandscapeManager.h"
 #include "SceneManager.h"
+#include "Light.h"
 
 class ToolMain
 {
@@ -39,6 +40,7 @@ public: //methods
 
 	// Getters
 	EDITOR GetEditor() { return m_d3dRenderer.GetEditor(); } //return current editor
+	std::pair<std::vector<Light*>, std::vector<int>> GetLights() { return m_d3dRenderer.GetLights(); }
 
 	// Setters
 	void SetWireframe(bool wireframe) { m_d3dRenderer.SetWireframe(wireframe); }

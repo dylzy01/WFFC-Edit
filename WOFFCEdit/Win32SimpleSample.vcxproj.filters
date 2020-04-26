@@ -155,6 +155,7 @@
     <ClCompile Include="WaterShader.cpp">
       <Filter>Shaders\Water</Filter>
     </ClCompile>
+    <ClCompile Include="LightDialogue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -274,6 +275,7 @@
     <ClInclude Include="WaterShader.h">
       <Filter>Shaders\Water</Filter>
     </ClInclude>
+    <ClInclude Include="LightDialogue.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

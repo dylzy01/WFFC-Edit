@@ -18,6 +18,7 @@ BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_BUTTON40048, &MFCMain::ToolBarTerrainPaint)
 	ON_COMMAND(ID_BUTTON40053, &MFCMain::ToolBarUndo)
 	ON_COMMAND(ID_BUTTON40054, &MFCMain::ToolBarRedo)
+	ON_COMMAND(ID_BUTTON40060, &MFCMain::ToolBarLight)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_TOOL, &CMyFrame::OnUpdatePage)
 END_MESSAGE_MAP()
 
@@ -393,10 +394,17 @@ void MFCMain::ToolBarRedo()
 	m_toolSystem.onActionRedo();
 }
 
-MFCMain::MFCMain()
+void MFCMain::ToolBarLight()
 {
-}
+	// Destroy other windows
+	m_objectEditorDialogue.DestroyWindow();
+	m_objectSpawnDialogue.DestroyWindow();
+	m_terrainSculptDialogue.DestroyWindow();
+	m_terrainPaintDialogue.DestroyWindow();
 
-MFCMain::~MFCMain()
-{
+	// Create & display dialogue window
+	m_lightDialogue.Create(IDD_DIALOG8);
+	m_lightDialogue.ShowWindow(SW_SHOW);
+	//m_lightDialogue.SetActive(true);
+	m_lightDialogue.SetLightData(m_toolSystem.GetLights());
 }
