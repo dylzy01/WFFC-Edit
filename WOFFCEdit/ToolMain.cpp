@@ -556,7 +556,7 @@ void ToolMain::UpdateInput(MSG * msg)
 		LandscapeManager::StorePosition(true);
 		SceneManager::SetSceneGraph(&m_sceneGraph);
 		///SaveDisplayList(m_d3dRenderer.GetDisplayList());
-		m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+		//m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
 		break;
 
 	case WM_MBUTTONDOWN:

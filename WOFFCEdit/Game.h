@@ -58,8 +58,9 @@ public:
 	void OnWindowSizeChanged(int width, int height);
 
 	// Tool specific
-	void BuildDisplayList(std::vector<SceneObject> * SceneGraph); //note vector passed by reference 
-	void BuildDisplayChunk(ChunkObject *SceneChunk, std::vector<DirectX::SimpleMath::Vector2> location = { { 0.f, 0.f } });
+	void BuildDisplayList(std::vector<SceneObject> * sceneGraph); //note vector passed by reference 
+	void RebuildDisplayList(std::vector<SceneObject> * sceneGraph); //note vector passed by reference 
+	void BuildDisplayChunk(ChunkObject *sceneChunk, std::vector<DirectX::SimpleMath::Vector2> location = { { 0.f, 0.f } });
 	void ReplaceObjects(std::vector<int> IDs, std::vector<SceneObject> * sceneGraph);
 	void SaveDisplayChunk();	//saves geometry et al
 	void ClearDisplayList();
@@ -85,7 +86,7 @@ public:
 	void SetDisplayList(DisplayObject object, int i) { m_displayList[i] = object; }
 	void SetTransform(int i, OBJECT_FUNCTION function, DirectX::SimpleMath::Vector3 vector);
 	void SetLights(std::pair<std::vector<Light*>, std::vector<int>> lights) { m_lights = lights; }
-	void SetSceneObject(SceneObject object, int index) { m_sceneGraph[index] = object; BuildDisplayList(&m_sceneGraph); }
+	void SetSceneObject(SceneObject object, int index) { m_sceneGraph[index] = object; RebuildDisplayList(&m_sceneGraph); }
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();

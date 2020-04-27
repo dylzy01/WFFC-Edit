@@ -288,14 +288,17 @@ void MFCMain::CheckDialogues()
 						object.posX				= lights.first[j]->GetPosition().x;
 						object.posY				= lights.first[j]->GetPosition().y;
 						object.posZ				= lights.first[j]->GetPosition().z;
-						object.rotX				= lights.first[j]->GetDirection().x;
-						object.rotY				= lights.first[j]->GetDirection().y;
-						object.rotZ				= lights.first[j]->GetDirection().z;
+						object.dirX				= lights.first[j]->GetDirection().x;
+						object.dirY				= lights.first[j]->GetDirection().y;
+						object.dirZ				= lights.first[j]->GetDirection().z;
 						object.light_type		= (int)lights.first[j]->GetType();
 						object.light_constant	= lights.first[j]->GetConstantAttenuation();
 						object.light_linear		= lights.first[j]->GetLinearAttenuation();
 						object.light_quadratic	= lights.first[j]->GetQuadraticAttenuation();
 						object.enabled			= lights.first[j]->GetEnabled();
+						object.ambR				= lights.first[j]->GetAmbient().x;
+						object.ambG				= lights.first[j]->GetAmbient().y;
+						object.ambB				= lights.first[j]->GetAmbient().z;
 
 						// Replace scene object with new light	
 						m_toolSystem.SetSceneObject(object, i);

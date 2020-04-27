@@ -43,7 +43,8 @@ struct InputType
 float4 CalculateLighting(float3 direction, float3 normal, float4 diffuse)
 {
     float intensity = saturate(dot(normal, direction));
-    return saturate(diffuse * intensity);
+    float4 colour = saturate(diffuse * intensity);
+    return colour;
 }
 
 // Calculate attenuation
@@ -59,20 +60,23 @@ float CalculateCone(float angle, float3 direction, float3 vec)
     float minCos = cos(angle);
     float maxCos = (minCos + 1.f) / 2.f;
     float angleCos = dot(direction, vec);
-    return smoothstep(minCos, maxCos, angleCos);
+    float cone = smoothstep(minCos, maxCos, angleCos);
+    return cone;
 }
 
 // Calculate directional
 float4 CalculateDirectional(Light light, float3 normal)
 {
-    return CalculateLighting(light.direction, normal, light.diffuseColour) + light.ambientColour;
+   float4 directional = CalculateLighting(light.direction, normal, light.diffuseColour) + light.ambientColour;
+   return directional;
 }
 
 // Calculate point
 float4 CalculatePoint(Light light, float3 normal, float3 vec)
 {
     float attenuation = CalculateAttenuation(light.constA, light.linA, light.quadA, vec);
-    return (CalculateLighting(vec, normal, light.diffuseColour) * attenuation) + light.ambientColour;
+    float4 pointLight = CalculateLighting(vec, normal, light.diffuseColour) * attenuation + light.ambientColour;
+    return pointLight;
 }
 
 // Calculate spot
@@ -80,7 +84,8 @@ float4 CalculateSpot(Light light, float3 normal, float3 vec)
 {
     float attenuation = CalculateAttenuation(light.constA, light.linA, light.quadA, vec);
     float intensity = CalculateCone(light.spotAngle, light.direction, vec);
-    return (CalculateLighting(vec, normal, light.diffuseColour) * attenuation * intensity) + light.ambientColour;
+    float4 spot = (CalculateLighting(vec, normal, light.diffuseColour) * attenuation * intensity) + light.ambientColour;
+    return spot;
 }
 
 // Produce lighting
@@ -92,7 +97,7 @@ float4 GenerateLight(float3 normal, float3 position3D)
 
     // Loop through lights to determine pixel colour
     [unroll]
-    for (int i = 0; i < 2; ++i)
+    for (int i = 0; i < 1; ++i)
     {
         if (Lights[i].enabled < 0.5f) { continue; }
         
@@ -141,10 +146,34 @@ float4 main(InputType input) : SV_TARGET
 {     
     // Sample texture
     float4 textureColour = shaderTexture.Sample(sampleType, input.tex);
-
-    // Add lighting
-    textureColour *= GenerateLight(input.normal, input.position3D);
     
-    return textureColour;
+    //float distance = Lights[0].lightPosition - input.position3D;
+    
+    //if (distance < 10.f)
+    {
+        // Add lighting
+        //textureColour *= GenerateLight(input.normal, input.position3D);
+    }
+    //else
+    //{
+    //    textureColour *= 0.f;
+    //}
+    
+    //float3 lightVector = normalize(Lights[0].lightPosition - input.position3D);
+    //float4 lightColour = Lights[0].ambientColour + CalculateLighting(lightVector, input.normal, Lights[0].diffuseColour);
+    
+    //return lightColour * textureColour;
+    
+    float3 lightVector = Lights[0].lightPosition - input.position3D;
+    float distance = length(lightVector);
+    ///float attenuation = 1.f / (Lights[0].constA + (Lights[0].linA + distance) + (Lights[0].quadA * pow(distance, 2)));
+    ///float attenuation = 1.f / (1.f + (0.125f + distance) + (0.f * pow(distance, 2)));
+    float attenuation = 1.f / (8.f + (0.125f + distance) + (0.f * pow(distance, 2)));
+    float diffuse = Lights[0].diffuseColour * attenuation;
+    
+    lightVector = normalize(Lights[0].lightPosition - input.position3D);
+    float4 lightColour = Lights[0].ambientColour + CalculateLighting(lightVector, input.normal, diffuse);
+    
+    return lightColour * textureColour;
 }
 

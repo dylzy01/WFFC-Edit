@@ -56,5 +56,6 @@ public:
 	int ID;
 	int enabled;
 	float dirX, dirY, dirZ;
+	float ambR, ambG, ambB;
 };
 

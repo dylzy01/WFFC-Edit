@@ -1,7 +1,7 @@
 // Toon pixel shader
 
 // Maximum number of lights
-#define MAXLIGHTS 3
+#define NUMLIGHTS 3
 
 // Light types
 #define DIRECTIONAL 1
@@ -14,36 +14,37 @@ SamplerState sampleType : register(s0);
 
 struct Light
 {
-    float4 diffuseColour;
-    float4 ambientColour;
-    float3 lightPosition;
-    float spotAngle;
+    float4  diffuseColour;
+    float4  ambientColour;
+    float3  lightPosition;
+    float   spotAngle;
     
-    float3 direction;
-    float constA;
-    float linA;
-    float quadA;
-    int type;
-    float enabled;
+    float3  direction;
+    float   constA;
+    float   linA;
+    float   quadA;
+    int     type;
+    float   enabled;
 };
 
 cbuffer LightBuffer : register(b0)
 {
-    Light Lights[MAXLIGHTS];
+    Light   Lights[NUMLIGHTS];
 };
 
 struct InputType
 {
-    float4 position : SV_POSITION;
-    float3 normal : NORMAL;
-    float2 tex : TEXCOORD0;
-    float3 position3D : TEXCOORD2;
+    float4  position : SV_POSITION;
+    float3  normal : NORMAL;
+    float2  tex : TEXCOORD0;
+    float3  position3D : TEXCOORD2;
 };
 
 // Calculate lighting intensity from direction & normal, then combine with light colour
 float4 CalculateLighting(float3 direction, float3 normal, float4 diffuse)
 {
     float intensity = saturate(dot(normal, direction));
+    ///intensity *= 2.f;
     return saturate(diffuse * intensity);
 }
 
@@ -66,22 +67,24 @@ float CalculateCone(float angle, float3 direction, float3 vec)
 // Calculate directional
 float4 CalculateDirectional(Light light, float3 normal)
 {
-    return (CalculateLighting(light.direction, normal, light.diffuseColour) + light.ambientColour);
+    return CalculateLighting(light.direction, normal, light.diffuseColour);// + light.ambientColour);
 }
 
 // Calculate point
 float4 CalculatePoint(Light light, float3 normal, float3 vec)
 {
     float attenuation = CalculateAttenuation(light.constA, light.linA, light.quadA, vec);
-    return ((CalculateLighting(vec, normal, light.diffuseColour) * attenuation) + light.ambientColour);
+    float4 diffuse = light.diffuseColour * attenuation;
+    return light.ambientColour + CalculateLighting(normalize(vec), normal, diffuse);
 }
 
 // Calculate spot
 float4 CalculateSpot(Light light, float3 normal, float3 vec)
 {
     float attenuation = CalculateAttenuation(light.constA, light.linA, light.quadA, vec);
+    float4 diffuse = light.diffuseColour * attenuation;
     float intensity = CalculateCone(light.spotAngle, light.direction, vec);
-    return ((CalculateLighting(vec, normal, light.diffuseColour) * attenuation * intensity) + light.ambientColour);
+    return light.ambientColour + CalculateLighting(normalize(vec), normal, diffuse) * intensity;
 }
 
 // Produce lighting
@@ -128,12 +131,12 @@ float4 GenerateLight(float3 normal, float3 position3D)
         }
         else if (Lights[i].type == 2)
         {
-            vec = normalize(Lights[i].lightPosition - position3D);
+            vec = Lights[i].lightPosition - position3D;
             col += CalculatePoint(Lights[i], vec, normal);
         }
         else if (Lights[i].type == 3)
         {
-            vec = normalize(Lights[i].lightPosition - position3D);
+            vec = Lights[i].lightPosition - position3D;
             col += CalculateSpot(Lights[i], vec, normal);
         }
     }
@@ -146,8 +149,19 @@ float4 main(InputType input) : SV_TARGET
     // Sample texture
     float4 textureColour = shaderTexture.Sample(sampleType, input.tex);    
     
-     // Get normalized light vector compared to world position
-    float3 lightVector = normalize(Lights[2].lightPosition - input.position3D);        
+    // Get distance between object and light
+    float3 lightVector = Lights[0].lightPosition - input.position3D;
+    float distance = length(lightVector);
+    
+    // Calculate attenuation
+    ///float attenuation = 1.f / (Lights[0].constA + (Lights[0].linA + distance) + (Lights[0].quadA * pow(distance, 2)));
+    ///float attenuation = 1.f / (1.f + (0.125f + distance) + (0.f * pow(distance, 2)));
+    float attenuation = 1.f / (8.f + (0.125f + distance) + (5.f * pow(distance, 2)));
+    float diffuse = Lights[0].diffuseColour * attenuation;
+    
+    // Get normalized light vector compared to world position
+    lightVector = normalize(lightVector);
+    float4 lightColour = Lights[0].ambientColour + CalculateLighting(lightVector, input.normal, diffuse);
     
     // Get normalized dot product between object normal and light
     float lightDot = max(0, dot(input.normal, lightVector));
@@ -174,9 +188,41 @@ float4 main(InputType input) : SV_TARGET
         textureColour *= 0.2f;
     }
     
-    // Add lighting
-    textureColour *= GenerateLight(input.normal, input.position3D);
+    return textureColour * lightColour;
     
-    return textureColour;
+    // Sample texture
+    //float4 textureColour = shaderTexture.Sample(sampleType, input.tex);
+    
+    //// Get normalized light vector compared to world position
+    //float3 lightVector = normalize(Lights[0].lightPosition - input.position3D);
+    
+    //// Get normalized dot product between object normal and light
+    //float lightDot = max(0, dot(input.normal, lightVector));
+    
+    //// Calculate toon shading threshold based on light
+    //if (lightDot > 0.9f)
+    //{
+    //    textureColour *= 1.f;
+    //}
+    //else if (lightDot > 0.65f)
+    //{
+    //    textureColour *= 0.8f;
+    //}
+    //else if (lightDot > 0.4f)
+    //{
+    //    textureColour *= 0.6f;
+    //}
+    //else if (lightDot > 0.15f)
+    //{
+    //    textureColour *= 0.4f;
+    //}
+    //else
+    //{
+    //    textureColour *= 0.2f;
+    //}     
+    
+    //// Add lighting
+    //textureColour *= GenerateLight(input.normal, input.position3D);
+    
+    //return textureColour;
 }
-

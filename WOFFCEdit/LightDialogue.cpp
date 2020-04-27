@@ -110,14 +110,15 @@ END_MESSAGE_MAP()
 // Kill the dialogue
 void LightDialogue::End()
 {
-	OnBnClickedOk();
+	////OnBnClickedOk();	
 	DestroyWindow();
 }
 
 // User is finished with dialogue
 void LightDialogue::OnBnClickedOk()
-{
+{		
 	m_active = false;
+	End();
 	CDialogEx::OnOK();
 }
 
@@ -396,6 +397,12 @@ void LightDialogue::OnEnChangeAmbR()
 	float ambR;
 	if (!string.IsEmpty()) { ambR = _ttof(string); }
 	else { ambR = m_lights.first[ID]->GetAmbient().x; }
+	if (ambR >= 4.f) { ambR /= 50.f; }
+	else if (ambR >= 3.f) { ambR /= 40.f; }
+	else if (ambR >= 2.f) { ambR /= 30.f; }
+	else if (ambR >= 1.f) { ambR /= 20.f; }
+	else if (ambR >= 0.f) { ambR /= 10.f; }
+	///ambR /= 10.f;
 
 	// Update R ambient of light
 	m_lights.first[ID]->SetAmbientR(ambR);
@@ -418,6 +425,12 @@ void LightDialogue::OnEnChangeAmbG()
 	float ambG;
 	if (!string.IsEmpty()) { ambG = _ttof(string); }
 	else { ambG = m_lights.first[ID]->GetAmbient().y; }
+	if (ambG >= 4.f) { ambG /= 50.f; }
+	else if (ambG >= 3.f) { ambG /= 40.f; }
+	else if (ambG >= 2.f) { ambG /= 30.f; }
+	else if (ambG >= 1.f) { ambG /= 20.f; }
+	else if (ambG >= 0.f) { ambG /= 10.f; }
+	///ambG /= 10.f;
 
 	// Update G ambient of light
 	m_lights.first[ID]->SetAmbientG(ambG);
@@ -440,6 +453,12 @@ void LightDialogue::OnEnChangeAmbB()
 	float ambB;
 	if (!string.IsEmpty()) { ambB = _ttof(string); }
 	else { ambB = m_lights.first[ID]->GetAmbient().z; }
+	if (ambB >= 4.f) { ambB /= 50.f; }
+	else if (ambB >= 3.f) { ambB /= 40.f; }
+	else if (ambB >= 2.f) { ambB /= 30.f; }
+	else if (ambB >= 1.f) { ambB /= 20.f; }
+	else if (ambB >= 0.f) { ambB /= 10.f; }
+	///ambB /= 10.f;
 
 	// Update B ambient of light
 	m_lights.first[ID]->SetAmbientG(ambB);

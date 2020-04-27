@@ -23,6 +23,7 @@ c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\blend
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\watershader.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\water.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\toonshader.obj
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\toonblendshader.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\toolmain.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\textureshader.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\terrainsculptdialogue.obj
@@ -40,11 +41,13 @@ c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\blend
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\outline_ps.cso
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\outline_vs.cso
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\texture_vs.cso
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\toon_ps.cso
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\toon_blend_ps.cso
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\toon_blend_vs.cso
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\toon_vs.cso
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\water_ps.cso
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\water_vs.cso
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\texture_ps.cso
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\toon_ps.cso
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\win32simplesample.res
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\wofedit.pdb
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\wofedit.tlog\cl.command.1.tlog

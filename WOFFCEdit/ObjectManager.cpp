@@ -17,7 +17,7 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 
 	// Define object values
 	{
-		object.ID = sceneGraph.size() + 1;
+		object.ID = sceneGraph.size();
 		object.chunk_ID = 0;
 		object.posX = position.x;
 		object.posY = position.y;
@@ -65,7 +65,7 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 		object.light_diffuse_r = 2.f;
 		object.light_diffuse_g = 3.f;
 		object.light_diffuse_b = 4.f;				
-		object.light_constant = 9.f;
+		object.light_constant = 1.f;
 		object.light_linear = 0.f;
 		object.light_quadratic = 1.f;
 		
@@ -172,6 +172,9 @@ void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 posit
 		object.dirX = 0.f;
 		object.dirY = 1.f;
 		object.dirZ = 0.f;		
+		object.ambR = 0.2f;
+		object.ambG = 0.2f;
+		object.ambB = 0.2f;
 	}
 	break;
 	case OBJECT_SPAWN::CUBE:
@@ -312,7 +315,7 @@ void ObjectManager::Cut(std::vector<int> & IDs, std::vector<SceneObject> & scene
 
 		// Define object values
 		{
-			object.ID = sceneGraph.size() + 1;
+			object.ID = sceneGraph.size();
 			object.chunk_ID = sceneGraph[IDs[i]].chunk_ID;
 			object.posX = sceneGraph[IDs[i]].posX;
 			object.posY = sceneGraph[IDs[i]].posY;
@@ -392,7 +395,7 @@ void ObjectManager::Copy(std::vector<int> IDs, std::vector<SceneObject> sceneGra
 
 		// Define object values
 		{
-			object.ID = sceneGraph.size() + 1;
+			object.ID = sceneGraph.size();
 			object.chunk_ID = sceneGraph[IDs[i]].chunk_ID;
 			object.posX = sceneGraph[IDs[i]].posX + 5.f;
 			object.posY = sceneGraph[IDs[i]].posY;

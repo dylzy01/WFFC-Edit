@@ -493,118 +493,215 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 	{
 		//create a temp display object that we will populate then append to the display list.
 		DisplayObject newDisplayObject;
+		
+		// Check & set model type
+		if (sceneGraph->at(i).model_path == "database/data/water.cmo") { newDisplayObject.m_type = MODEL_TYPE::WATER; }
+		else { newDisplayObject.m_type = MODEL_TYPE::NOT_WATER; }
 
-		// If object is a light
-		///if (sceneGraph->at(i).light_type != 0)
+		//load model
+		std::wstring modelwstr = StringToWCHART(sceneGraph->at(i).model_path);							//convect string to Wchar
+		newDisplayObject.m_model = Model::CreateFromCMO(device, modelwstr.c_str(), *m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+
+		//Load Texture
+		std::wstring texturewstr = StringToWCHART(sceneGraph->at(i).tex_diffuse_path);								//convect string to Wchar
+		HRESULT rs;
+		rs = CreateDDSTextureFromFile(device, texturewstr.c_str(), nullptr, &newDisplayObject.m_texture_diffuse);	//load tex into Shader resource
+
+		//if texture fails.  load error default
+		if (rs) { CreateDDSTextureFromFile(device, L"database/data/Error.dds", nullptr, &newDisplayObject.m_texture_diffuse); }	//load tex into Shader resource
+
+		//apply new texture to models effect
+		//newDisplayObject.m_model->UpdateEffects([&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+		//{
+		//	auto lights = dynamic_cast<BasicEffect*>(effect);
+		//	if (lights)
+		//	{
+		//		lights->SetTexture(newDisplayObject.m_texture_diffuse);
+		//	}
+		//});
+
+		// set ID
+		newDisplayObject.m_ID = sceneGraph->at(i).ID;
+
+		//set position
+		newDisplayObject.m_position.x = sceneGraph->at(i).posX;
+		newDisplayObject.m_position.y = sceneGraph->at(i).posY;
+		newDisplayObject.m_position.z = sceneGraph->at(i).posZ;
+
+		//set orientation
+		newDisplayObject.m_orientation.x = sceneGraph->at(i).rotX;
+		newDisplayObject.m_orientation.y = sceneGraph->at(i).rotY;
+		newDisplayObject.m_orientation.z = sceneGraph->at(i).rotZ;
+
+		//set scale
+		newDisplayObject.m_scale.x = sceneGraph->at(i).scaX;
+		newDisplayObject.m_scale.y = sceneGraph->at(i).scaY;
+		newDisplayObject.m_scale.z = sceneGraph->at(i).scaZ;
+
+		//set wireframe / render flags
+		newDisplayObject.m_render = sceneGraph->at(i).editor_render;
+		newDisplayObject.m_wireframe = sceneGraph->at(i).editor_wireframe;
+
+		//set lights
+		newDisplayObject.m_light_type = sceneGraph->at(i).light_type;
+		newDisplayObject.m_light_diffuse_r = sceneGraph->at(i).light_diffuse_r;
+		newDisplayObject.m_light_diffuse_g = sceneGraph->at(i).light_diffuse_g;
+		newDisplayObject.m_light_diffuse_b = sceneGraph->at(i).light_diffuse_b;
+		newDisplayObject.m_light_specular_r = sceneGraph->at(i).light_specular_r;
+		newDisplayObject.m_light_specular_g = sceneGraph->at(i).light_specular_g;
+		newDisplayObject.m_light_specular_b = sceneGraph->at(i).light_specular_b;
+		newDisplayObject.m_light_spot_cutoff = sceneGraph->at(i).light_spot_cutoff;
+		newDisplayObject.m_light_constant = sceneGraph->at(i).light_constant;
+		newDisplayObject.m_light_linear = sceneGraph->at(i).light_linear;
+		newDisplayObject.m_light_quadratic = sceneGraph->at(i).light_quadratic;
+			
+		// Custom lights
+		if (sceneGraph->at(i).light_type != 0)
 		{
-			/*XMFLOAT4 diffuse = { sceneGraph->at(i).light_diffuse_r, sceneGraph->at(i).light_diffuse_g, sceneGraph->at(i).light_diffuse_b, 1.f };
+			XMFLOAT4 diffuse = { sceneGraph->at(i).light_diffuse_r, sceneGraph->at(i).light_diffuse_g, sceneGraph->at(i).light_diffuse_b, 1.f };
 			XMFLOAT4 ambient = { 0.2f, 0.2f, 0.2f, 1.f };
-			///XMFLOAT3 position = { 50.f, 10.f, 10.f };
 			XMFLOAT3 position = { sceneGraph->at(i).posX, sceneGraph->at(i).posY, sceneGraph->at(i).posZ };
+			///DirectX::SimpleMath::Vector3 direction = { sceneGraph->at(i).rotX, sceneGraph->at(i).rotY, sceneGraph->at(i).rotZ };
 			XMFLOAT3 direction = { 0.f, 1.f, 0.f };
 			float constantAttenuation = sceneGraph->at(i).light_constant;
 			float linearAttenuation = sceneGraph->at(i).light_linear;
 			float quadraticAttenuation = sceneGraph->at(i).light_quadratic;
 			LIGHT_TYPE type = (LIGHT_TYPE)sceneGraph->at(i).light_type;
-			bool enabled = true;
-			m_lights.push_back(MyLight(diffuse, ambient, position, direction, constantAttenuation, linearAttenuation, quadraticAttenuation, type, enabled));*/
+			bool enabled = sceneGraph->at(i).enabled;
+			m_lights.first.push_back(new Light(diffuse, ambient, position, direction, constantAttenuation, linearAttenuation, quadraticAttenuation, type, enabled));
+			m_lights.second.push_back(sceneGraph->at(i).ID);
 		}
 
-		// Else, if object isn't a light
-		///else
+		// Set bounding box		
+		for (int j = 0; j < newDisplayObject.m_model->meshes.size(); ++j)
 		{
-			// Check & set model type
-			if (sceneGraph->at(i).model_path == "database/data/water.cmo") { newDisplayObject.m_type = MODEL_TYPE::WATER; }
-			else { newDisplayObject.m_type = MODEL_TYPE::NOT_WATER; }
-
-			//load model
-			std::wstring modelwstr = StringToWCHART(sceneGraph->at(i).model_path);							//convect string to Wchar
-			newDisplayObject.m_model = Model::CreateFromCMO(device, modelwstr.c_str(), *m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
-
-			//Load Texture
-			std::wstring texturewstr = StringToWCHART(sceneGraph->at(i).tex_diffuse_path);								//convect string to Wchar
-			HRESULT rs;
-			rs = CreateDDSTextureFromFile(device, texturewstr.c_str(), nullptr, &newDisplayObject.m_texture_diffuse);	//load tex into Shader resource
-
-			//if texture fails.  load error default
-			if (rs) { CreateDDSTextureFromFile(device, L"database/data/Error.dds", nullptr, &newDisplayObject.m_texture_diffuse); }	//load tex into Shader resource
-
-			//apply new texture to models effect
-			//newDisplayObject.m_model->UpdateEffects([&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
-			//{
-			//	auto lights = dynamic_cast<BasicEffect*>(effect);
-			//	if (lights)
-			//	{
-			//		lights->SetTexture(newDisplayObject.m_texture_diffuse);
-			//	}
-			//});
-
-			//set position
-			newDisplayObject.m_position.x = sceneGraph->at(i).posX;
-			newDisplayObject.m_position.y = sceneGraph->at(i).posY;
-			newDisplayObject.m_position.z = sceneGraph->at(i).posZ;
-
-			//set orientation
-			newDisplayObject.m_orientation.x = sceneGraph->at(i).rotX;
-			newDisplayObject.m_orientation.y = sceneGraph->at(i).rotY;
-			newDisplayObject.m_orientation.z = sceneGraph->at(i).rotZ;
-
-			//set scale
-			newDisplayObject.m_scale.x = sceneGraph->at(i).scaX;
-			newDisplayObject.m_scale.y = sceneGraph->at(i).scaY;
-			newDisplayObject.m_scale.z = sceneGraph->at(i).scaZ;
-
-			//set wireframe / render flags
-			newDisplayObject.m_render = sceneGraph->at(i).editor_render;
-			newDisplayObject.m_wireframe = sceneGraph->at(i).editor_wireframe;
-
-			//set lights
-			newDisplayObject.m_light_type = sceneGraph->at(i).light_type;
-			newDisplayObject.m_light_diffuse_r = sceneGraph->at(i).light_diffuse_r;
-			newDisplayObject.m_light_diffuse_g = sceneGraph->at(i).light_diffuse_g;
-			newDisplayObject.m_light_diffuse_b = sceneGraph->at(i).light_diffuse_b;
-			newDisplayObject.m_light_specular_r = sceneGraph->at(i).light_specular_r;
-			newDisplayObject.m_light_specular_g = sceneGraph->at(i).light_specular_g;
-			newDisplayObject.m_light_specular_b = sceneGraph->at(i).light_specular_b;
-			newDisplayObject.m_light_spot_cutoff = sceneGraph->at(i).light_spot_cutoff;
-			newDisplayObject.m_light_constant = sceneGraph->at(i).light_constant;
-			newDisplayObject.m_light_linear = sceneGraph->at(i).light_linear;
-			newDisplayObject.m_light_quadratic = sceneGraph->at(i).light_quadratic;
-			
-			// Custom lights
-			if (sceneGraph->at(i).light_type != 0)
-			{
-				XMFLOAT4 diffuse = { sceneGraph->at(i).light_diffuse_r, sceneGraph->at(i).light_diffuse_g, sceneGraph->at(i).light_diffuse_b, 1.f };
-				XMFLOAT4 ambient = { 0.2f, 0.2f, 0.2f, 1.f };
-				///XMFLOAT3 position = { 50.f, 10.f, 10.f };
-				XMFLOAT3 position = { sceneGraph->at(i).posX, sceneGraph->at(i).posY, sceneGraph->at(i).posZ };
-				///DirectX::SimpleMath::Vector3 direction = { sceneGraph->at(i).rotX, sceneGraph->at(i).rotY, sceneGraph->at(i).rotZ };
-				DirectX::SimpleMath::Vector3 direction = { sceneGraph->at(i).dirX, sceneGraph->at(i).dirY, sceneGraph->at(i).dirZ };
-				///direction.Normalize();
-				///XMFLOAT3 direction = { 0.f, 1.f, 0.f };
-				float constantAttenuation = sceneGraph->at(i).light_constant;
-				float linearAttenuation = sceneGraph->at(i).light_linear;
-				float quadraticAttenuation = sceneGraph->at(i).light_quadratic;
-				LIGHT_TYPE type = (LIGHT_TYPE)sceneGraph->at(i).light_type;
-				bool enabled = sceneGraph->at(i).enabled;
-				m_lights.first.push_back(new Light(diffuse, ambient, position, direction, constantAttenuation, linearAttenuation, quadraticAttenuation, type, enabled));
-				m_lights.second.push_back(sceneGraph->at(i).ID);
-			}
-
-			// Set bounding box		
-			for (int j = 0; j < newDisplayObject.m_model->meshes.size(); ++j)
-			{
-				newDisplayObject.m_model->meshes[j]->boundingBox.Extents.x *= newDisplayObject.m_scale.x;
-				newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y *= newDisplayObject.m_scale.y;
-				newDisplayObject.m_model->meshes[j]->boundingBox.Extents.z *= newDisplayObject.m_scale.z;
-				newDisplayObject.m_model->meshes[j]->boundingBox.Center = newDisplayObject.m_position;
-				newDisplayObject.m_model->meshes[j]->boundingBox.Center.y += newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y;
-			}
-		}
+			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.x *= newDisplayObject.m_scale.x;
+			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y *= newDisplayObject.m_scale.y;
+			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.z *= newDisplayObject.m_scale.z;
+			newDisplayObject.m_model->meshes[j]->boundingBox.Center = newDisplayObject.m_position;
+			newDisplayObject.m_model->meshes[j]->boundingBox.Center.y += newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y;
+		}		
 		
 		// Add object to list
 		m_displayList.push_back(newDisplayObject);	
 	}	
+}
+
+void Game::RebuildDisplayList(std::vector<SceneObject>* sceneGraph)
+{
+	CreateDeviceDependentResources();
+
+	// Clear current list of lights
+	m_lights.first.clear();
+	m_lights.second.clear();
+
+	// Update local scene graph
+	m_sceneGraph = *sceneGraph;
+
+	auto device = m_deviceResources->GetD3DDevice();
+	auto context = m_deviceResources->GetD3DDeviceContext();
+
+	if (!m_displayList.empty())		//is the vector empty
+	{
+		m_displayList.clear();		//if not, empty it
+	}
+
+	//for every item in the scenegraph
+	int numObjects = sceneGraph->size();
+	for (int i = 0; i < numObjects; i++)
+	{
+		//create a temp display object that we will populate then append to the display list.
+		DisplayObject newDisplayObject;
+
+		// Check & set model type
+		if (sceneGraph->at(i).model_path == "database/data/water.cmo") { newDisplayObject.m_type = MODEL_TYPE::WATER; }
+		else { newDisplayObject.m_type = MODEL_TYPE::NOT_WATER; }
+
+		//load model
+		std::wstring modelwstr = StringToWCHART(sceneGraph->at(i).model_path);							//convect string to Wchar
+		newDisplayObject.m_model = Model::CreateFromCMO(device, modelwstr.c_str(), *m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+
+		//Load Texture
+		std::wstring texturewstr = StringToWCHART(sceneGraph->at(i).tex_diffuse_path);								//convect string to Wchar
+		HRESULT rs;
+		rs = CreateDDSTextureFromFile(device, texturewstr.c_str(), nullptr, &newDisplayObject.m_texture_diffuse);	//load tex into Shader resource
+
+		//if texture fails.  load error default
+		if (rs) { CreateDDSTextureFromFile(device, L"database/data/Error.dds", nullptr, &newDisplayObject.m_texture_diffuse); }	//load tex into Shader resource
+
+		//apply new texture to models effect
+		//newDisplayObject.m_model->UpdateEffects([&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+		//{
+		//	auto lights = dynamic_cast<BasicEffect*>(effect);
+		//	if (lights)
+		//	{
+		//		lights->SetTexture(newDisplayObject.m_texture_diffuse);
+		//	}
+		//});
+
+		//set position
+		newDisplayObject.m_position.x = sceneGraph->at(i).posX;
+		newDisplayObject.m_position.y = sceneGraph->at(i).posY;
+		newDisplayObject.m_position.z = sceneGraph->at(i).posZ;
+
+		//set orientation
+		newDisplayObject.m_orientation.x = sceneGraph->at(i).rotX;
+		newDisplayObject.m_orientation.y = sceneGraph->at(i).rotY;
+		newDisplayObject.m_orientation.z = sceneGraph->at(i).rotZ;
+
+		//set scale
+		newDisplayObject.m_scale.x = sceneGraph->at(i).scaX;
+		newDisplayObject.m_scale.y = sceneGraph->at(i).scaY;
+		newDisplayObject.m_scale.z = sceneGraph->at(i).scaZ;
+
+		//set wireframe / render flags
+		newDisplayObject.m_render = sceneGraph->at(i).editor_render;
+		newDisplayObject.m_wireframe = sceneGraph->at(i).editor_wireframe;
+
+		//set lights
+		newDisplayObject.m_light_type = sceneGraph->at(i).light_type;
+		newDisplayObject.m_light_diffuse_r = sceneGraph->at(i).light_diffuse_r;
+		newDisplayObject.m_light_diffuse_g = sceneGraph->at(i).light_diffuse_g;
+		newDisplayObject.m_light_diffuse_b = sceneGraph->at(i).light_diffuse_b;
+		newDisplayObject.m_light_specular_r = sceneGraph->at(i).light_specular_r;
+		newDisplayObject.m_light_specular_g = sceneGraph->at(i).light_specular_g;
+		newDisplayObject.m_light_specular_b = sceneGraph->at(i).light_specular_b;
+		newDisplayObject.m_light_spot_cutoff = sceneGraph->at(i).light_spot_cutoff;
+		newDisplayObject.m_light_constant = sceneGraph->at(i).light_constant;
+		newDisplayObject.m_light_linear = sceneGraph->at(i).light_linear;
+		newDisplayObject.m_light_quadratic = sceneGraph->at(i).light_quadratic;
+
+		// Custom lights
+		if (sceneGraph->at(i).light_type != 0)
+		{
+			XMFLOAT4 diffuse = { sceneGraph->at(i).light_diffuse_r, sceneGraph->at(i).light_diffuse_g, sceneGraph->at(i).light_diffuse_b, 1.f };
+			XMFLOAT4 ambient = { sceneGraph->at(i).ambR, sceneGraph->at(i).ambG, sceneGraph->at(i).ambB, 1.f };
+			XMFLOAT3 position = { sceneGraph->at(i).posX, sceneGraph->at(i).posY, sceneGraph->at(i).posZ };
+			///DirectX::SimpleMath::Vector3 direction = { sceneGraph->at(i).rotX, sceneGraph->at(i).rotY, sceneGraph->at(i).rotZ };
+			DirectX::SimpleMath::Vector3 direction = { sceneGraph->at(i).dirX, sceneGraph->at(i).dirY, sceneGraph->at(i).dirZ };
+			direction.Normalize();
+			float constantAttenuation = sceneGraph->at(i).light_constant;
+			float linearAttenuation = sceneGraph->at(i).light_linear;
+			float quadraticAttenuation = sceneGraph->at(i).light_quadratic;
+			LIGHT_TYPE type = (LIGHT_TYPE)sceneGraph->at(i).light_type;
+			bool enabled = sceneGraph->at(i).enabled;
+			m_lights.first.push_back(new Light(diffuse, ambient, position, direction, constantAttenuation, linearAttenuation, quadraticAttenuation, type, enabled));
+			m_lights.second.push_back(sceneGraph->at(i).ID);
+		}
+
+		// Set bounding box		
+		for (int j = 0; j < newDisplayObject.m_model->meshes.size(); ++j)
+		{
+			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.x *= newDisplayObject.m_scale.x;
+			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y *= newDisplayObject.m_scale.y;
+			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.z *= newDisplayObject.m_scale.z;
+			newDisplayObject.m_model->meshes[j]->boundingBox.Center = newDisplayObject.m_position;
+			newDisplayObject.m_model->meshes[j]->boundingBox.Center.y += newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y;
+		}
+
+		// Add object to list
+		m_displayList.push_back(newDisplayObject);
+	}
 }
 
 void Game::BuildDisplayChunk(ChunkObject * SceneChunk, std::vector<DirectX::SimpleMath::Vector2> location)
@@ -746,20 +843,45 @@ void Game::SetTransform(int i, OBJECT_FUNCTION function, DirectX::SimpleMath::Ve
 	case OBJECT_FUNCTION::SCALE: 
 	{
 		// Update object scale
-		m_displayList[i].m_scale = vector;
-		
+		m_displayList[i].m_scale = vector;		
 	}
 	break;
 	case OBJECT_FUNCTION::ROTATE: 
 	{
 		// Update object rotation
 		m_displayList[i].m_orientation = vector;
+
+		// Loop through lights
+		for (int j = 0; j < m_lights.first.size(); ++j)
+		{
+			// If light ID matches object ID
+			if (m_lights.second[j] == i)
+			{
+				// Store object orientaiton & normalize for light direction
+				DirectX::SimpleMath::Vector3 direction = m_displayList[i].m_orientation;
+				direction.Normalize();
+
+				// Update light direction
+				m_lights.first[j]->SetDirection(direction);
+			}
+		}
 	}
 	break;
 	case OBJECT_FUNCTION::TRANSLATE: 
 	{
 		// Update object translation
-		m_displayList[i].m_position = vector;		
+		m_displayList[i].m_position = vector;	
+
+		// Loop through lights
+		for (int j = 0; j < m_lights.first.size(); ++j)
+		{
+			// If light ID matches object ID
+			if (m_lights.second[j] == i)
+			{
+				// Update light position				
+				m_lights.first[j]->SetPosition(m_displayList[i].m_position);
+			}
+		}
 	}
 	break;
 	}

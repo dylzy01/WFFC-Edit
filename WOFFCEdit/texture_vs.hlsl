@@ -35,14 +35,14 @@ OutputType main(InputType input)
     output.position = mul(output.position, projectionMatrix);    
     
     // Calculate normal vector against world matrix only & normalize
-    output.normal = mul(input.normal, (float3x3) worldMatrix);
+    output.normal = mul(input.normal, (float3x3)worldMatrix);
     output.normal = normalize(output.normal);
     
     // Store texture coordinates for pixel shader
     output.tex = input.tex;
     
     // Calculate the world position of the vertex
-    output.position3D = (float3) mul(input.position, worldMatrix);
+    output.position3D = mul(input.position, worldMatrix).xyz;
     
     return output;
 }
