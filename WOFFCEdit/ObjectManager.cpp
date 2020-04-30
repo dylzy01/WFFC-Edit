@@ -12,202 +12,206 @@ std::vector<DirectX::SimpleMath::Vector3> ObjectManager::m_storedObjectTranslati
 void ObjectManager::Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 position, 
 	std::vector<SceneObject> & sceneGraph, int type, XMFLOAT3 diffuse, float constA, float linA, float quadA)
 {
-	// Setup temp object
-	SceneObject object;
+	// Continue if active lights is below 10
+	if (m_game->GetLights().first.size() < 10)
+	{
+		// Setup temp object
+		SceneObject object;
 
-	// Define object values
-	{
-		object.ID = sceneGraph.size();
-		object.chunk_ID = 0;
-		object.posX = position.x;
-		object.posY = position.y;
-		object.posZ = position.z;
-		object.rotX = 0.f;
-		object.rotY = 0.f;
-		object.rotZ = 0.f;
-		object.scaX = 1.f;
-		object.scaY = 1.f;
-		object.scaZ = 1.f;
-		object.render = false;
-		object.collectable = false;
-		object.collision_mesh = "";
-		object.collectable = false;
-		object.destructable = false;
-		object.health_amount = 0;
-		object.editor_render = true;
-		object.editor_texture_vis = true;
-		object.editor_normals_vis = false;
-		object.editor_collision_vis = false;
-		object.editor_pivot_vis = false;
-		object.pivotX = 0.f;
-		object.pivotY = 0.f;
-		object.pivotZ = 0.f;
-		object.snapToGround = false;
-		object.AINode = false;
-		object.audio_path = "";
-		object.volume = 0.f;
-		object.pitch = 0.f;
-		object.pan = 0.f;
-		object.one_shot = false;
-		object.play_on_init = false;
-		object.play_in_editor = false;
-		object.min_dist = 0.f;
-		object.max_dist = 0.f;
-		object.camera = false;
-		object.path_node = false;
-		object.path_node_start = false;
-		object.path_node_end = false;
-		object.parent_id = 0;
-		object.editor_wireframe = false;
-			
-		object.light_type = type;
-		///object.light_type = 3;
-		object.light_diffuse_r = 2.f;
-		object.light_diffuse_g = 3.f;
-		object.light_diffuse_b = 4.f;				
-		object.light_constant = 1.f;
-		object.light_linear = 0.f;
-		object.light_quadratic = 1.f;
-		
-		object.light_specular_r = 4.f;
-		object.light_specular_g = 5.f;
-		object.light_specular_b = 6.f;
-		object.light_spot_cutoff = 8.f;
-	}
+		// Define object values
+		{
+			object.ID = sceneGraph.size();
+			object.chunk_ID = 0;
+			object.posX = position.x;
+			object.posY = position.y;
+			object.posZ = position.z;
+			object.rotX = 0.f;
+			object.rotY = 0.f;
+			object.rotZ = 0.f;
+			object.scaX = 1.f;
+			object.scaY = 1.f;
+			object.scaZ = 1.f;
+			object.render = false;
+			object.collectable = false;
+			object.collision_mesh = "";
+			object.collectable = false;
+			object.destructable = false;
+			object.health_amount = 0;
+			object.editor_render = true;
+			object.editor_texture_vis = true;
+			object.editor_normals_vis = false;
+			object.editor_collision_vis = false;
+			object.editor_pivot_vis = false;
+			object.pivotX = 0.f;
+			object.pivotY = 0.f;
+			object.pivotZ = 0.f;
+			object.snapToGround = false;
+			object.AINode = false;
+			object.audio_path = "";
+			object.volume = 0.f;
+			object.pitch = 0.f;
+			object.pan = 0.f;
+			object.one_shot = false;
+			object.play_on_init = false;
+			object.play_in_editor = false;
+			object.min_dist = 0.f;
+			object.max_dist = 0.f;
+			object.camera = false;
+			object.path_node = false;
+			object.path_node_start = false;
+			object.path_node_end = false;
+			object.parent_id = 0;
+			object.editor_wireframe = false;
 
-	// Switch between spawn
-	switch (spawn)
-	{
-		// Residential //////////////////////////////////////////////////////////////////////////
-	case OBJECT_SPAWN::HOUSE_ONE:
-	{
-		// Set object to house #1
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/house0.cmo";
-		object.tex_diffuse_path = "database/data/house0.dds";
-	}
-	break;
-	case OBJECT_SPAWN::HOUSE_TWO:
-	{
-		// Set object to house #2
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/house1.cmo";
-		object.tex_diffuse_path = "database/data/house1.dds";
-	}
-	break;
-	case OBJECT_SPAWN::CAVE:
-	{
-		// Set object to cave
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/cave.cmo";
-		object.tex_diffuse_path = "database/data/cave.dds";
-	}
-	break;
-	// Props ////////////////////////////////////////////////////////////////////////////////
-	case OBJECT_SPAWN::BRIDGE:
-	{
-		// Set object to bridge
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/bridge.cmo";
-		object.tex_diffuse_path = "database/data/sand.dds";
-	}
-	break;
-	case OBJECT_SPAWN::FENCE:
-	{
-		// Set object to fence
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/fence.cmo";
-		object.tex_diffuse_path = "database/data/sand.dds";
-	}
-	break;
-	case OBJECT_SPAWN::BOAT:
-	{
-		// Set object to boat
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/boat.cmo";
-		object.tex_diffuse_path = "database/data/sand.dds";
-	}
-	break;
-	// Nature ///////////////////////////////////////////////////////////////////////////////
-	case OBJECT_SPAWN::GRASS:
-	{
-		// Set object to grass
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/grass.cmo";
-		object.tex_diffuse_path = "database/data/grass.dds";
-	}
-	break;
-	case OBJECT_SPAWN::TREE_ONE:
-	{
-		// Set object to tree
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/tree0.cmo";
-		object.tex_diffuse_path = "database/data/tree0.dds";
-	}
-	break;
-	case OBJECT_SPAWN::TREE_TWO:
-	{
-		// Set object to tree
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/tree1.cmo";
-		object.tex_diffuse_path = "database/data/tree1.dds";
-	}
-	break;
-	case OBJECT_SPAWN::WATER:
-	{
-		// Set object to water
-		object.m_type = MODEL_TYPE::WATER;
-		object.model_path = "database/data/water.cmo";
-		object.tex_diffuse_path = "database/data/water.dds";
-	}
-	break;
-	// Misc /////////////////////////////////////////////////////////////////////////////////
-	case OBJECT_SPAWN::LIGHT:
-	{
-		// Set object to light
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/light.cmo";
-		object.tex_diffuse_path = "database/data/light.dds";
-		object.enabled = true;
-		object.dirX = 0.f;
-		object.dirY = 1.f;
-		object.dirZ = 0.f;		
-		object.ambR = 0.2f;
-		object.ambG = 0.2f;
-		object.ambB = 0.2f;
-	}
-	break;
-	case OBJECT_SPAWN::CUBE:
-	{
-		// Set object to cube
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/cube.cmo";
-	}
-	break;
-	case OBJECT_SPAWN::CYLINDER:
-	{
-		// Set object to cylinder
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/cylinder.cmo";
-	}
-	break;
-	case OBJECT_SPAWN::CONE:
-	{
-		// Set object to cone
-		object.m_type = MODEL_TYPE::NOT_WATER;
-		object.model_path = "database/data/cone.cmo";
-	}
-	break;
-	}
+			object.light_type = type;
+			///object.light_type = 3;
+			object.light_diffuse_r = 2.f;
+			object.light_diffuse_g = 3.f;
+			object.light_diffuse_b = 4.f;
+			object.light_constant = 1.f;
+			object.light_linear = 0.f;
+			object.light_quadratic = 1.f;
 
-	// Add new object to database
-	SQLManager::AddObject(object);
+			object.light_specular_r = 4.f;
+			object.light_specular_g = 5.f;
+			object.light_specular_b = 6.f;
+			object.light_spot_cutoff = 8.f;
+		}
 
-	// Add new object to scene graph
-	sceneGraph.push_back(object);	
+		// Switch between spawn
+		switch (spawn)
+		{
+			// Residential //////////////////////////////////////////////////////////////////////////
+		case OBJECT_SPAWN::HOUSE_ONE:
+		{
+			// Set object to house #1
+			object.m_type = MODEL_TYPE::NOT_WATER;
+			object.model_path = "database/data/house0.cmo";
+			object.tex_diffuse_path = "database/data/house0.dds";
+		}
+		break;
+		case OBJECT_SPAWN::HOUSE_TWO:
+		{
+			// Set object to house #2
+			object.m_type = MODEL_TYPE::NOT_WATER;
+			object.model_path = "database/data/house1.cmo";
+			object.tex_diffuse_path = "database/data/house1.dds";
+		}
+		break;
+		case OBJECT_SPAWN::CAVE:
+		{
+			// Set object to cave
+			object.m_type = MODEL_TYPE::NOT_WATER;
+			object.model_path = "database/data/cave.cmo";
+			object.tex_diffuse_path = "database/data/cave.dds";
+		}
+		break;
+		// Props ////////////////////////////////////////////////////////////////////////////////
+		case OBJECT_SPAWN::BRIDGE:
+		{
+			// Set object to bridge
+			object.m_type = MODEL_TYPE::NOT_WATER;
+			object.model_path = "database/data/bridge.cmo";
+			object.tex_diffuse_path = "database/data/sand.dds";
+		}
+		break;
+		case OBJECT_SPAWN::FENCE:
+		{
+			// Set object to fence
+			object.m_type = MODEL_TYPE::NOT_WATER;
+			object.model_path = "database/data/fence.cmo";
+			object.tex_diffuse_path = "database/data/sand.dds";
+		}
+		break;
+		case OBJECT_SPAWN::BOAT:
+		{
+			// Set object to boat
+			object.m_type = MODEL_TYPE::NOT_WATER;
+			object.model_path = "database/data/boat.cmo";
+			object.tex_diffuse_path = "database/data/sand.dds";
+		}
+		break;
+		// Nature ///////////////////////////////////////////////////////////////////////////////
+		case OBJECT_SPAWN::GRASS:
+		{
+			// Set object to grass
+			object.m_type = MODEL_TYPE::NOT_WATER;
+			object.model_path = "database/data/grass.cmo";
+			object.tex_diffuse_path = "database/data/grass.dds";
+		}
+		break;
+		case OBJECT_SPAWN::TREE_ONE:
+		{
+			// Set object to tree
+			object.m_type = MODEL_TYPE::NOT_WATER;
+			object.model_path = "database/data/tree0.cmo";
+			object.tex_diffuse_path = "database/data/tree0.dds";
+		}
+		break;
+		case OBJECT_SPAWN::TREE_TWO:
+		{
+			// Set object to tree
+			object.m_type = MODEL_TYPE::NOT_WATER;
+			object.model_path = "database/data/tree1.cmo";
+			object.tex_diffuse_path = "database/data/tree1.dds";
+		}
+		break;
+		case OBJECT_SPAWN::WATER:
+		{
+			// Set object to water
+			object.m_type = MODEL_TYPE::WATER;
+			object.model_path = "database/data/water.cmo";
+			object.tex_diffuse_path = "database/data/water.dds";
+		}
+		break;
+		// Misc /////////////////////////////////////////////////////////////////////////////////
+		case OBJECT_SPAWN::LIGHT:
+		{
+			// Set object to light
+			object.m_type = MODEL_TYPE::NOT_WATER;
+			object.model_path = "database/data/light.cmo";
+			object.tex_diffuse_path = "database/data/light.dds";
+			object.enabled = true;
+			object.dirX = 0.f;
+			object.dirY = 1.f;
+			object.dirZ = 0.f;
+			object.ambR = 0.2f;
+			object.ambG = 0.2f;
+			object.ambB = 0.2f;
+		}
+		break;
+		case OBJECT_SPAWN::CUBE:
+		{
+			// Set object to cube
+			object.m_type = MODEL_TYPE::NOT_WATER;
+			object.model_path = "database/data/cube.cmo";
+		}
+		break;
+		case OBJECT_SPAWN::CYLINDER:
+		{
+			// Set object to cylinder
+			object.m_type = MODEL_TYPE::NOT_WATER;
+			object.model_path = "database/data/cylinder.cmo";
+		}
+		break;
+		case OBJECT_SPAWN::CONE:
+		{
+			// Set object to cone
+			object.m_type = MODEL_TYPE::NOT_WATER;
+			object.model_path = "database/data/cone.cmo";
+		}
+		break;
+		}
 
-	// Rebuild display list
-	m_game->BuildDisplayList(&sceneGraph);	
+		// Add new object to database
+		SQLManager::AddObject(object);
+
+		// Add new object to scene graph
+		sceneGraph.push_back(object);
+
+		// Rebuild display list
+		m_game->BuildDisplayList(&sceneGraph);
+	}
 }
 
 // Remove an object from scene graph & database

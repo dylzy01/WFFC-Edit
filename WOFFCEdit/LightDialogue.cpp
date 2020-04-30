@@ -13,7 +13,7 @@ IMPLEMENT_DYNAMIC(LightDialogue, CDialogEx)
 LightDialogue::LightDialogue(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG8, pParent)
 {
-	///m_sceneGraph = sceneGraph;
+	
 }
 
 void LightDialogue::SetLightData(std::pair<std::vector<Light*>, std::vector<int>>* lights)
@@ -65,25 +65,25 @@ void LightDialogue::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO1, m_boxID);
 	DDX_Control(pDX, IDC_COMBO2, m_boxType);
 
-	DDX_Control(pDX, IDC_EDIT1, m_posX);
-	DDX_Control(pDX, IDC_EDIT2, m_posY);
-	DDX_Control(pDX, IDC_EDIT3, m_posZ);
+	DDX_Control(pDX, IDC_EDIT1, m_ePosX);		DDX_Text(pDX, IDC_EDIT1, m_fPosX);
+	DDX_Control(pDX, IDC_EDIT2, m_ePosY);		DDX_Text(pDX, IDC_EDIT2, m_fPosY);
+	DDX_Control(pDX, IDC_EDIT3, m_ePosZ);		DDX_Text(pDX, IDC_EDIT3, m_fPosZ);
 
-	DDX_Control(pDX, IDC_EDIT4, m_dirX);
-	DDX_Control(pDX, IDC_EDIT5, m_dirY);
-	DDX_Control(pDX, IDC_EDIT6, m_dirZ);
+	DDX_Control(pDX, IDC_EDIT4, m_eDirX);		DDX_Text(pDX, IDC_EDIT4, m_fDirX);
+	DDX_Control(pDX, IDC_EDIT5, m_eDirY);		DDX_Text(pDX, IDC_EDIT5, m_fDirX);
+	DDX_Control(pDX, IDC_EDIT6, m_eDirZ);		DDX_Text(pDX, IDC_EDIT6, m_fDirX);
 
-	DDX_Control(pDX, IDC_EDIT7, m_difR);
-	DDX_Control(pDX, IDC_EDIT8, m_difG);
-	DDX_Control(pDX, IDC_EDIT9, m_difB);
+	DDX_Control(pDX, IDC_EDIT7, m_eDifR);		DDX_Text(pDX, IDC_EDIT7, m_fDifR);
+	DDX_Control(pDX, IDC_EDIT8, m_eDifG);		DDX_Text(pDX, IDC_EDIT8, m_fDifG);
+	DDX_Control(pDX, IDC_EDIT9, m_eDifB);		DDX_Text(pDX, IDC_EDIT9, m_fDifB);
 
-	DDX_Control(pDX, IDC_EDIT10, m_ambR);
-	DDX_Control(pDX, IDC_EDIT11, m_ambG);
-	DDX_Control(pDX, IDC_EDIT12, m_ambB);
+	DDX_Control(pDX, IDC_EDIT10, m_eAmbR);		DDX_Text(pDX, IDC_EDIT10, m_fAmbR);
+	DDX_Control(pDX, IDC_EDIT11, m_eAmbG);		DDX_Text(pDX, IDC_EDIT11, m_fAmbG);
+	DDX_Control(pDX, IDC_EDIT12, m_eAmbB);		DDX_Text(pDX, IDC_EDIT12, m_fAmbB);
 
-	DDX_Control(pDX, IDC_EDIT13, m_constA);
-	DDX_Control(pDX, IDC_EDIT14, m_linA);
-	DDX_Control(pDX, IDC_EDIT15, m_quadA);
+	DDX_Control(pDX, IDC_EDIT13, m_eConstA);	DDX_Text(pDX, IDC_EDIT13, m_fConstA);
+	DDX_Control(pDX, IDC_EDIT14, m_eLinA);		DDX_Text(pDX, IDC_EDIT14, m_fLinA);
+	DDX_Control(pDX, IDC_EDIT15, m_eQuadA);		DDX_Text(pDX, IDC_EDIT15, m_fQuadA);
 }
 
 BEGIN_MESSAGE_MAP(LightDialogue, CDialogEx)
@@ -181,7 +181,7 @@ void LightDialogue::OnEnChangePosX()
 
 	// Store new X position
 	CString string = _T("");
-	m_posX.GetWindowTextW(string);
+	m_ePosX.GetWindowTextW(string);
 
 	// Convert to float
 	float posX;
@@ -203,7 +203,7 @@ void LightDialogue::OnEnChangePosY()
 
 	// Store new Y position
 	CString string = _T("");
-	m_posY.GetWindowTextW(string);
+	m_ePosY.GetWindowTextW(string);
 
 	// Convert to float
 	float posY;
@@ -225,7 +225,7 @@ void LightDialogue::OnEnChangePosZ()
 
 	// Store new Z position
 	CString string = _T("");
-	m_posZ.GetWindowTextW(string);
+	m_ePosZ.GetWindowTextW(string);
 
 	// Convert to float
 	float posZ;
@@ -247,7 +247,7 @@ void LightDialogue::OnEnChangeDirX()
 
 	// Store new X direction
 	CString string = _T("");
-	m_dirX.GetWindowTextW(string);
+	m_eDirX.GetWindowTextW(string);
 
 	// Convert to float
 	float dirX;
@@ -273,7 +273,7 @@ void LightDialogue::OnEnChangeDirY()
 
 	// Store new Y direction
 	CString string = _T("");
-	m_dirY.GetWindowTextW(string);
+	m_eDirY.GetWindowTextW(string);
 
 	// Convert to float
 	float dirY;
@@ -299,7 +299,7 @@ void LightDialogue::OnEnChangeDirZ()
 
 	// Store new Z direction
 	CString string = _T("");
-	m_dirY.GetWindowTextW(string);
+	m_eDirY.GetWindowTextW(string);
 
 	// Convert to float
 	float dirZ;
@@ -325,7 +325,7 @@ void LightDialogue::OnEnChangeDifR()
 
 	// Store new R diffuse
 	CString string = _T("");
-	m_difR.GetWindowTextW(string);
+	m_eDifR.GetWindowTextW(string);
 
 	// Convert to float
 	float difR;
@@ -347,7 +347,7 @@ void LightDialogue::OnEnChangeDifG()
 
 	// Store new G diffuse
 	CString string = _T("");
-	m_difR.GetWindowTextW(string);
+	m_eDifR.GetWindowTextW(string);
 
 	// Convert to float
 	float difG;
@@ -369,7 +369,7 @@ void LightDialogue::OnEnChangeDifB()
 
 	// Store new B diffuse
 	CString string = _T("");
-	m_difR.GetWindowTextW(string);
+	m_eDifR.GetWindowTextW(string);
 
 	// Convert to float
 	float difB;
@@ -391,18 +391,18 @@ void LightDialogue::OnEnChangeAmbR()
 
 	// Store new R ambient
 	CString string = _T("");
-	m_difR.GetWindowTextW(string);
+	m_eDifR.GetWindowText(string);
 
 	// Convert to float
 	float ambR;
 	if (!string.IsEmpty()) { ambR = _ttof(string); }
 	else { ambR = m_lights.first[ID]->GetAmbient().x; }
-	if (ambR >= 4.f) { ambR /= 50.f; }
+	/*if (ambR >= 4.f) { ambR /= 50.f; }
 	else if (ambR >= 3.f) { ambR /= 40.f; }
 	else if (ambR >= 2.f) { ambR /= 30.f; }
 	else if (ambR >= 1.f) { ambR /= 20.f; }
-	else if (ambR >= 0.f) { ambR /= 10.f; }
-	///ambR /= 10.f;
+	else if (ambR >= 0.f) { ambR /= 10.f; }*/
+	ambR /= 10.f;
 
 	// Update R ambient of light
 	m_lights.first[ID]->SetAmbientR(ambR);
@@ -419,18 +419,18 @@ void LightDialogue::OnEnChangeAmbG()
 
 	// Store new G ambient
 	CString string = _T("");
-	m_difR.GetWindowTextW(string);
+	m_eDifR.GetWindowText(string);
 
 	// Convert to float
 	float ambG;
 	if (!string.IsEmpty()) { ambG = _ttof(string); }
 	else { ambG = m_lights.first[ID]->GetAmbient().y; }
-	if (ambG >= 4.f) { ambG /= 50.f; }
+	/*if (ambG >= 4.f) { ambG /= 50.f; }
 	else if (ambG >= 3.f) { ambG /= 40.f; }
 	else if (ambG >= 2.f) { ambG /= 30.f; }
 	else if (ambG >= 1.f) { ambG /= 20.f; }
-	else if (ambG >= 0.f) { ambG /= 10.f; }
-	///ambG /= 10.f;
+	else if (ambG >= 0.f) { ambG /= 10.f; }*/
+	ambG /= 10.f;
 
 	// Update G ambient of light
 	m_lights.first[ID]->SetAmbientG(ambG);
@@ -447,18 +447,18 @@ void LightDialogue::OnEnChangeAmbB()
 
 	// Store new B ambient
 	CString string = _T("");
-	m_difR.GetWindowTextW(string);
+	m_eDifR.GetWindowText(string);
 
 	// Convert to float
 	float ambB;
 	if (!string.IsEmpty()) { ambB = _ttof(string); }
 	else { ambB = m_lights.first[ID]->GetAmbient().z; }
-	if (ambB >= 4.f) { ambB /= 50.f; }
+	/*if (ambB >= 4.f) { ambB /= 50.f; }
 	else if (ambB >= 3.f) { ambB /= 40.f; }
 	else if (ambB >= 2.f) { ambB /= 30.f; }
 	else if (ambB >= 1.f) { ambB /= 20.f; }
-	else if (ambB >= 0.f) { ambB /= 10.f; }
-	///ambB /= 10.f;
+	else if (ambB >= 0.f) { ambB /= 10.f; }*/
+	ambB /= 10.f;
 
 	// Update B ambient of light
 	m_lights.first[ID]->SetAmbientG(ambB);
@@ -475,7 +475,7 @@ void LightDialogue::OnEnChangeConstA()
 
 	// Store new constant attenuation
 	CString string = _T("");
-	m_constA.GetWindowTextW(string);
+	m_eConstA.GetWindowTextW(string);
 
 	// Convert to float
 	float constA;
@@ -497,7 +497,7 @@ void LightDialogue::OnEnChangeLinA()
 
 	// Store new linear attenuation
 	CString string = _T("");
-	m_linA.GetWindowTextW(string);
+	m_eLinA.GetWindowTextW(string);
 
 	// Convert to float
 	float linA;
@@ -519,7 +519,7 @@ void LightDialogue::OnEnChangeQuadA()
 
 	// Store new quadratic attenuation
 	CString string = _T("");
-	m_quadA.GetWindowTextW(string);
+	m_eQuadA.GetWindowTextW(string);
 
 	// Convert to float
 	float quadA;
@@ -564,16 +564,16 @@ void LightDialogue::UpdatePosition(int ID)
 	XMFLOAT3 position = m_lights.first[ID]->GetPosition();
 
 	// Update X position box
-	CString sX; sX.Format(_T("%f"), position.x);
-	m_posX.SetWindowTextW(sX);
+	CString sX; sX.Format(L"%g", position.x);
+	m_ePosX.SetWindowTextW(sX);
 
 	// Update Y position box
-	CString sY; sY.Format(_T("%f"), position.y);
-	m_posY.SetWindowTextW(sY);
+	CString sY; sY.Format(L"%g", position.y);
+	m_ePosY.SetWindowTextW(sY);
 
 	// Update Z position box
-	CString sZ; sZ.Format(_T("%f"), position.z);
-	m_posZ.SetWindowTextW(sZ);
+	CString sZ; sZ.Format(L"%g", position.z);
+	m_ePosZ.SetWindowTextW(sZ);
 }
 
 void LightDialogue::UpdateDirection(int ID)
@@ -582,16 +582,16 @@ void LightDialogue::UpdateDirection(int ID)
 	XMFLOAT3 direction = m_lights.first[ID]->GetDirection();	
 
 	// Update X direction box
-	CString sX; sX.Format(_T("%f"), direction.x);
-	m_dirX.SetWindowTextW(sX);
+	CString sX; sX.Format(L"%g", direction.x);
+	m_eDirX.SetWindowTextW(sX);
 
 	// Update Y direction box
-	CString sY; sY.Format(_T("%f"), direction.y);
-	m_dirY.SetWindowTextW(sY);
+	CString sY; sY.Format(L"%g", direction.y);
+	m_eDirY.SetWindowTextW(sY);
 
 	// Update Z direction box
-	CString sZ; sZ.Format(_T("%f"), direction.z);
-	m_dirZ.SetWindowTextW(sZ);
+	CString sZ; sZ.Format(L"%g", direction.z);
+	m_eDirZ.SetWindowTextW(sZ);
 }
 
 void LightDialogue::UpdateDiffuse(int ID)
@@ -600,16 +600,16 @@ void LightDialogue::UpdateDiffuse(int ID)
 	XMFLOAT4 diffuse = m_lights.first[ID]->GetDiffuse();
 
 	// Update R diffuse box
-	CString sR; sR.Format(_T("%f"), diffuse.x);
-	m_difR.SetWindowTextW(sR);
+	CString sR; sR.Format(L"%g", diffuse.x);
+	m_eDifR.SetWindowTextW(sR);
 
 	// Update G diffuse box
-	CString sG; sG.Format(_T("%f"), diffuse.y);
-	m_difG.SetWindowTextW(sG);
+	CString sG; sG.Format(L"%g", diffuse.y);
+	m_eDifG.SetWindowTextW(sG);
 
 	// Update B diffuse box
-	CString sB; sB.Format(_T("%f"), diffuse.z);
-	m_difB.SetWindowTextW(sB);
+	CString sB; sB.Format(L"%g", diffuse.z);
+	m_eDifB.SetWindowTextW(sB);
 }
 
 void LightDialogue::UpdateAmbient(int ID)
@@ -618,16 +618,16 @@ void LightDialogue::UpdateAmbient(int ID)
 	XMFLOAT4 ambient = m_lights.first[ID]->GetAmbient();
 
 	// Update R ambient box
-	CString sR; sR.Format(_T("%f"), ambient.x);
-	m_ambR.SetWindowTextW(sR);
+	CString sR; sR.Format(L"%g", ambient.x);
+	m_eAmbR.SetWindowTextW(sR);
 
 	// Update G ambient box
-	CString sG; sG.Format(_T("%f"), ambient.y);
-	m_ambG.SetWindowTextW(sG);
+	CString sG; sG.Format(L"%g", ambient.y);
+	m_eAmbG.SetWindowTextW(sG);
 
 	// Update B ambient box
-	CString sB; sB.Format(_T("%f"), ambient.z);
-	m_ambB.SetWindowTextW(sB);
+	CString sB; sB.Format(L"%g", ambient.z);
+	m_eAmbB.SetWindowTextW(sB);
 }
 
 void LightDialogue::UpdateConstA(int ID)
@@ -636,8 +636,8 @@ void LightDialogue::UpdateConstA(int ID)
 	float constA = m_lights.first[ID]->GetConstantAttenuation();
 
 	// Update constant attenuation box
-	CString sA; sA.Format(_T("%f"), constA);
-	m_constA.SetWindowTextW(sA);
+	CString sA; sA.Format(L"%g", constA);
+	m_eConstA.SetWindowTextW(sA);
 }
 
 void LightDialogue::UpdateLinA(int ID)
@@ -646,8 +646,8 @@ void LightDialogue::UpdateLinA(int ID)
 	float linA = m_lights.first[ID]->GetLinearAttenuation();
 
 	// Update linear attenuation box
-	CString sA; sA.Format(_T("%f"), linA);
-	m_linA.SetWindowTextW(sA);
+	CString sA; sA.Format(L"%g", linA);
+	m_eLinA.SetWindowTextW(sA);
 }
 
 void LightDialogue::UpdateQuadA(int ID)
@@ -656,6 +656,6 @@ void LightDialogue::UpdateQuadA(int ID)
 	float quadA = m_lights.first[ID]->GetQuadraticAttenuation();
 
 	// Update linear attenuation box
-	CString sA; sA.Format(_T("%f"), quadA);
-	m_quadA.SetWindowTextW(sA);
+	CString sA; sA.Format(L"%g", quadA);
+	m_eQuadA.SetWindowTextW(sA);
 }

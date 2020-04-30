@@ -23,7 +23,7 @@ void ShaderManager::Initialise(ID3D11Device * device)
 }
 
 // Setup specific shader parameters
-void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, std::vector<Light*> light, ID3D11ShaderResourceView * texture1, ID3D11ShaderResourceView * texture2, DirectX::XMFLOAT2 screen)
+void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, std::vector<Light*> lights, ID3D11ShaderResourceView * texture1, ID3D11ShaderResourceView * texture2, DirectX::XMFLOAT2 screen)
 {	
 	// Setup temp light
 	std::vector<Light*> temp;
@@ -38,7 +38,7 @@ void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, std:
 		TextureShader::Enable(context);
 		
 		// If light vector is empty
-		if (light.size() == 0)
+		if (lights.size() == 0)
 		{
 			// Setup texture parameters
 			TextureShader::SetShaderParameters(context, texture1, temp);
@@ -47,7 +47,7 @@ void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, std:
 		else
 		{
 			// Setup texture parameters
-			TextureShader::SetShaderParameters(context, texture1, light);
+			TextureShader::SetShaderParameters(context, texture1, lights);
 		}		
 	}
 	break;
@@ -55,9 +55,19 @@ void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, std:
 	{
 		// Handle blend shader
 		BlendShader::Enable(context);
-		
-		// Setup blend parameters
-		BlendShader::SetShaderParameters(context, texture1, texture2);
+
+		// If light vector is empty
+		if (lights.size() == 0)
+		{
+			// Setup texture parameters
+			BlendShader::SetShaderParameters(context, texture1, texture2, temp);
+		}
+		// Else, if light vector is valid
+		else
+		{
+			// Setup texture parameters
+			BlendShader::SetShaderParameters(context, texture1, texture2, lights);
+		}
 	}
 	break;
 	case SHADER_TYPE::TOON_SINGLE:
@@ -66,7 +76,7 @@ void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, std:
 		ToonShader::Enable(context);
 
 		// If light vector is empty
-		if (light.size() == 0)
+		if (lights.size() == 0)
 		{
 			// Setup toon parameters
 			ToonShader::SetShaderParameters(context, texture1, temp);
@@ -75,7 +85,7 @@ void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, std:
 		else
 		{
 			// Setup toon parameters
-			ToonShader::SetShaderParameters(context, texture1, light);
+			ToonShader::SetShaderParameters(context, texture1, lights);
 		}
 	}
 	break;
@@ -85,7 +95,7 @@ void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, std:
 		ToonBlendShader::Enable(context);
 
 		// If light vector is empty
-		if (light.size() == 0)
+		if (lights.size() == 0)
 		{
 			// Setup toon blend parameters
 			ToonBlendShader::SetShaderParameters(context, texture1, texture2, temp);
@@ -94,7 +104,7 @@ void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, std:
 		else
 		{
 			// Setup toon blend parameters
-			ToonBlendShader::SetShaderParameters(context, texture1, texture2, light);
+			ToonBlendShader::SetShaderParameters(context, texture1, texture2, lights);
 		}
 	}
 	break;

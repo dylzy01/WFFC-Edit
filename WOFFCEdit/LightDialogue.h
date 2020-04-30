@@ -54,11 +54,16 @@ protected:
 public:
 	// Control variables for more efficient uses of the boxes
 	CComboBox m_boxID, m_boxType;
-	CEdit m_posX, m_posY, m_posZ;
-	CEdit m_dirX, m_dirY, m_dirZ;
-	CEdit m_difR, m_difG, m_difB;
-	CEdit m_ambR, m_ambG, m_ambB;
-	CEdit m_constA, m_linA, m_quadA;
+	CEdit m_ePosX, m_ePosY, m_ePosZ;
+	CEdit m_eDirX, m_eDirY, m_eDirZ;
+	CEdit m_eDifR, m_eDifG, m_eDifB;
+	CEdit m_eAmbR, m_eAmbG, m_eAmbB;
+	CEdit m_eConstA, m_eLinA, m_eQuadA;
+	float m_fPosX, m_fPosY, m_fPosZ;
+	float m_fDirX, m_fDirY, m_fDirZ;
+	float m_fDifR, m_fDifG, m_fDifB;
+	float m_fAmbR, m_fAmbG, m_fAmbB;
+	float m_fConstA, m_fLinA, m_fQuadA;
 
 	// Message handlers
 	afx_msg void OnBnClickedOk();

@@ -1,3 +1,5 @@
+// Texture vertex shader - blend
+
 cbuffer MatrixBuffer : register(b0)
 {
     matrix worldMatrix;
@@ -39,8 +41,8 @@ OutputType main(InputType input)
     // Store texture coordinates for pixel shader
     output.tex = input.tex;
     
-    // Calculate the world position of the vertex, for the point light
-    output.position3D = (float3) mul(input.position, worldMatrix);
+    // Calculate the world position of the vertex
+    output.position3D = mul(input.position, worldMatrix).xyz;
     
     return output;
 }

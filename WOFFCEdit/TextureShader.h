@@ -15,7 +15,7 @@ public:
 	static bool Initialise(ID3D11Device * device);
 
 	// Setup shader 
-	static bool SetShaderParameters(ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture, std::vector<Light*> light);
+	static bool SetShaderParameters(ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture, std::vector<Light*> lights);
 
 	// Handler
 	static void Enable(ID3D11DeviceContext * context);
@@ -25,16 +25,7 @@ public:
 	static void SetView(DirectX::SimpleMath::Matrix * view) { m_view = view; }
 	static void SetProjection(DirectX::SimpleMath::Matrix * projection) { m_projection = projection; }
 
-private:
-
-	// Buffer for single light information
-	/*struct LightBufferType
-	{
-		DirectX::SimpleMath::Vector4 ambient;
-		DirectX::SimpleMath::Vector4 diffuse;
-		DirectX::SimpleMath::Vector3 position;
-		float padding;
-	};*/
+private:	
 
 	// Container for light data
 	struct LightInfo
@@ -58,8 +49,21 @@ private:
 		LightInfo lights[3];
 	};
 
+	// Buffer for multiple lights information
+	struct LightBufferType
+	{
+		LightInfo lights[10];
+	};
+
+	// Buffer for number of lights
+	struct ActiveBufferType
+	{
+		int activeCount;
+	};
+
 	// Buffer
 	static ID3D11Buffer*								m_bufferLight;
+	static ID3D11Buffer*								m_bufferActive;
 	static Microsoft::WRL::ComPtr<ID3D11VertexShader>	m_shaderVertex;
 	static Microsoft::WRL::ComPtr<ID3D11PixelShader>	m_shaderPixel;
 	static ID3D11InputLayout *							m_inputLayout;

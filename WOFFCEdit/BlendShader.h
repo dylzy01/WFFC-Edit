@@ -3,6 +3,7 @@
 #include "Tools.h"
 #include <d3dcompiler.h>
 #include "Shader.h"
+#include "Light.h"
 
 class BlendShader : public Shader
 {
@@ -14,7 +15,7 @@ public:
 	static bool Initialise(ID3D11Device * device);
 
 	// Setup shader 
-	static bool SetShaderParameters(ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture1, ID3D11ShaderResourceView* texture2);
+	static bool SetShaderParameters(ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture1, ID3D11ShaderResourceView* texture2, std::vector<Light*> lights);
 
 	// Handler
 	static void Enable(ID3D11DeviceContext * context);	
@@ -26,17 +27,43 @@ public:
 
 private:
 
-	// Buffer for single light information
+	// Container for light data
+	struct LightInfo
+	{
+		DirectX::XMFLOAT4 diffuseColour;
+		DirectX::XMFLOAT4 ambientColour;
+		DirectX::XMFLOAT3 position;
+		float angle;
+
+		DirectX::XMFLOAT3 direction;
+		float constA;
+		float linA;
+		float quadA;
+		int type;
+		float enabled;
+	};
+
+	// Buffer for multiple lights information
 	struct LightBufferType
 	{
-		DirectX::SimpleMath::Vector4 ambient;
-		DirectX::SimpleMath::Vector4 diffuse;
-		DirectX::SimpleMath::Vector3 position;
-		float padding;
+		LightInfo lights[3];
+	};
+
+	// Buffer for multiple lights information
+	struct LightBufferType
+	{
+		LightInfo lights[10];
+	};
+
+	// Buffer for number of lights
+	struct ActiveBufferType
+	{
+		int activeCount;
 	};
 
 	// Buffers	
 	static ID3D11Buffer*								m_bufferLight;
+	static ID3D11Buffer*								m_bufferActive;
 	static Microsoft::WRL::ComPtr<ID3D11VertexShader>	m_shaderVertex;
 	static Microsoft::WRL::ComPtr<ID3D11PixelShader>	m_shaderPixel;
 	static ID3D11InputLayout *							m_inputLayout;

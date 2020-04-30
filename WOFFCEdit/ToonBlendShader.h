@@ -46,11 +46,18 @@ private:
 	// Buffer for multiple lights information
 	struct LightBufferType
 	{
-		LightInfo lights[3];
+		LightInfo lights[10];
+	};
+
+	// Buffer for number of lights
+	struct ActiveBufferType
+	{
+		int activeCount;
 	};
 
 	// Buffers	
 	static ID3D11Buffer*								m_bufferLight;
+	static ID3D11Buffer*								m_bufferCount;
 	static Microsoft::WRL::ComPtr<ID3D11VertexShader>	m_shaderVertex;
 	static Microsoft::WRL::ComPtr<ID3D11PixelShader>	m_shaderPixel;
 	static ID3D11InputLayout *							m_inputLayout;
