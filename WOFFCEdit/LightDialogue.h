@@ -42,8 +42,6 @@ protected:
 	afx_msg void End();									// Kill the dialogue
 
 	// Local storage 
-	std::vector<SceneObject>* m_sceneGraph;
-	std::vector<int>* m_IDs;
 	std::pair<std::vector<Light*>, std::vector<int>> m_lights;
 
 	// Active controller

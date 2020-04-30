@@ -46,12 +46,6 @@ private:
 	// Buffer for multiple lights information
 	struct LightBufferType
 	{
-		LightInfo lights[3];
-	};
-
-	// Buffer for multiple lights information
-	struct LightBufferType
-	{
 		LightInfo lights[10];
 	};
 

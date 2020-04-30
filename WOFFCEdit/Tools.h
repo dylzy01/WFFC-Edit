@@ -132,7 +132,6 @@ enum class SHADER_TYPE {
 	BLEND,
 	TOON_SINGLE,
 	TOON_BLEND,
-	OUTLINE,
 	WATER
 };
 

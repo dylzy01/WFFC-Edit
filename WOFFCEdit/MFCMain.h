@@ -56,7 +56,7 @@ private:
 	afx_msg void MenuEditEditorLandscape();
 	afx_msg void MenuEditWireframeOn();
 	afx_msg void MenuEditWireframeOff();
-	afx_msg	void ToolBarButton1();
+	afx_msg	void ToolBarSave();
 	afx_msg void ToolBarObjectSpawn();
 	afx_msg void ToolBarObjectSelect();
 	afx_msg void ToolBarObjectDelete();

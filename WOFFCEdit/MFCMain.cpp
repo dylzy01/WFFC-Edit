@@ -10,7 +10,7 @@ BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_EDITOR_LANDSCAPEEDITOR, &MFCMain::MenuEditEditorLandscape)
 	ON_COMMAND(ID_WIREFRAME_ON, &MFCMain::MenuEditWireframeOn)
 	ON_COMMAND(ID_WIREFRAME_OFF, &MFCMain::MenuEditWireframeOff)
-	ON_COMMAND(ID_BUTTON40001,	&MFCMain::ToolBarButton1)
+	ON_COMMAND(ID_BUTTON40001,	&MFCMain::ToolBarSave)
 	ON_COMMAND(ID_BUTTON40055, &MFCMain::ToolBarObjectSelect)
 	ON_COMMAND(ID_BUTTON40050, &MFCMain::ToolBarObjectSpawn)
 	ON_COMMAND(ID_BUTTON40059, &MFCMain::ToolBarObjectDelete)
@@ -91,50 +91,6 @@ int MFCMain::Run()
 				if (i != 0) { statusString += L", " + std::to_wstring(IDs[i]); }
 				else { statusString += std::to_wstring(IDs[i]); }
 			}
-
-			// Switch between current mode
-			//switch (m_toolSystem.GetEditor())
-			//{
-			//case EDITOR::OBJECT_SPAWN:
-			//{
-			//	// Fill status string with selected object IDs
-			//	std::vector<int> IDs = m_toolSystem.getCurrentObjectSelectionID();
-			//	for (int i = 0; i < IDs.size(); ++i)
-			//	{
-			//		if (i != 0) { statusString += L", " + std::to_wstring(IDs[i]); }
-			//		else { statusString += std::to_wstring(IDs[i]); }
-			//	}
-			//}
-			//break;
-			//case EDITOR::OBJECT_FUNCTION:
-			//{
-			//	// Fill status string with selected object IDs
-			//	std::vector<int> IDs = m_toolSystem.getCurrentObjectSelectionID();
-			//	for (int i = 0; i < IDs.size(); ++i)
-			//	{
-			//		if (i != 0) { statusString += L", " + std::to_wstring(IDs[i]); }
-			//		else { statusString += std::to_wstring(IDs[i]); }
-			//	}
-			//}
-			//break;
-			//case EDITOR::LANDSCAPE_FUNCTION:
-			//{
-			//	// Fill status string with selected chunk row,column(s)
-			//	std::vector<TERRAIN> chunks = m_toolSystem.getCurrentTerrainSelection();
-			//	for (int i = 0; i < chunks.size(); ++i)
-			//	{
-			//		if (i != 0) {
-			//			statusString += L", (" + std::to_wstring(chunks[i].row) + L","
-			//				+ std::to_wstring(chunks[i].column) + L")";
-			//		}
-			//		else {
-			//			statusString += L"(" + std::to_wstring(chunks[i].row) + L","
-			//				+ std::to_wstring(chunks[i].column) + L")";
-			//		}
-			//	}
-			//}
-			//break;
-			//}
 
 			// Check which dialogue is open & update ToolMain
 			CheckDialogues();
@@ -282,23 +238,25 @@ void MFCMain::CheckDialogues()
 						SceneObject object = sceneGraph[i];						
 						
 						// Setup object details from matching light
-						object.light_diffuse_r	= lights.first[j]->GetDiffuse().x;
-						object.light_diffuse_g	= lights.first[j]->GetDiffuse().y;
-						object.light_diffuse_b	= lights.first[j]->GetDiffuse().z;
-						object.posX				= lights.first[j]->GetPosition().x;
-						object.posY				= lights.first[j]->GetPosition().y;
-						object.posZ				= lights.first[j]->GetPosition().z;
-						object.dirX				= lights.first[j]->GetDirection().x;
-						object.dirY				= lights.first[j]->GetDirection().y;
-						object.dirZ				= lights.first[j]->GetDirection().z;
-						object.light_type		= (int)lights.first[j]->GetType();
-						object.light_constant	= lights.first[j]->GetConstantAttenuation();
-						object.light_linear		= lights.first[j]->GetLinearAttenuation();
-						object.light_quadratic	= lights.first[j]->GetQuadraticAttenuation();
-						object.enabled			= lights.first[j]->GetEnabled();
-						object.ambR				= lights.first[j]->GetAmbient().x;
-						object.ambG				= lights.first[j]->GetAmbient().y;
-						object.ambB				= lights.first[j]->GetAmbient().z;
+						{
+							object.light_diffuse_r = lights.first[j]->GetDiffuse().x;
+							object.light_diffuse_g = lights.first[j]->GetDiffuse().y;
+							object.light_diffuse_b = lights.first[j]->GetDiffuse().z;
+							object.posX = lights.first[j]->GetPosition().x;
+							object.posY = lights.first[j]->GetPosition().y;
+							object.posZ = lights.first[j]->GetPosition().z;
+							object.dirX = lights.first[j]->GetDirection().x;
+							object.dirY = lights.first[j]->GetDirection().y;
+							object.dirZ = lights.first[j]->GetDirection().z;
+							object.light_type = (int)lights.first[j]->GetType();
+							object.light_constant = lights.first[j]->GetConstantAttenuation();
+							object.light_linear = lights.first[j]->GetLinearAttenuation();
+							object.light_quadratic = lights.first[j]->GetQuadraticAttenuation();
+							object.enabled = lights.first[j]->GetEnabled();
+							object.ambR = lights.first[j]->GetAmbient().x;
+							object.ambG = lights.first[j]->GetAmbient().y;
+							object.ambB = lights.first[j]->GetAmbient().z;
+						}
 
 						// Replace scene object with new light	
 						m_toolSystem.SetSceneObject(object, i);
@@ -375,7 +333,7 @@ void MFCMain::MenuEditWireframeOff()
 	m_toolSystem.SetWireframe(false);
 }
 
-void MFCMain::ToolBarButton1()
+void MFCMain::ToolBarSave()
 {	
 	m_toolSystem.onActionSaveTerrain();
 	m_toolSystem.onActionSave();	
@@ -384,12 +342,13 @@ void MFCMain::ToolBarButton1()
 void MFCMain::ToolBarObjectSpawn()
 {
 	// Destroy other windows
+	m_objectEditorDialogue.DestroyWindow();
 	m_terrainSculptDialogue.DestroyWindow();
 	m_terrainPaintDialogue.DestroyWindow();
+	m_lightDialogue.DestroyWindow();
 
 	// Create & display dialogue window
 	m_objectSpawnDialogue.Create(IDD_DIALOG4);
-	///m_objectSpawnDialogue.Create(IDD_DIALOG8);
 	m_objectSpawnDialogue.ShowWindow(SW_SHOW);
 	m_objectSpawnDialogue.SetActive(true);
 }
@@ -400,6 +359,7 @@ void MFCMain::ToolBarObjectSelect()
 	m_objectSpawnDialogue.DestroyWindow();
 	m_terrainSculptDialogue.DestroyWindow();
 	m_terrainPaintDialogue.DestroyWindow();
+	m_lightDialogue.DestroyWindow();
 
 	// Create & display dialogue window
 	m_objectEditorDialogue.Create(IDD_DIALOG7);
@@ -418,6 +378,7 @@ void MFCMain::ToolBarTerrainSculpt()
 	m_objectEditorDialogue.DestroyWindow();
 	m_objectSpawnDialogue.DestroyWindow();
 	m_terrainPaintDialogue.DestroyWindow();
+	m_lightDialogue.DestroyWindow();
 	
 	// Create & display dialogue window
 	m_terrainSculptDialogue.Create(IDD_DIALOG5);
@@ -431,6 +392,7 @@ void MFCMain::ToolBarTerrainPaint()
 	m_objectEditorDialogue.DestroyWindow();
 	m_objectSpawnDialogue.DestroyWindow();
 	m_terrainSculptDialogue.DestroyWindow();
+	m_lightDialogue.DestroyWindow();
 	
 	// Create & display dialogue window
 	m_terrainPaintDialogue.Create(IDD_DIALOG6);

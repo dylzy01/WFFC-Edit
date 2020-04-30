@@ -15,9 +15,6 @@ void ShaderManager::Initialise(ID3D11Device * device)
 	// Initialise toon blend shader
 	ToonBlendShader::Initialise(device);
 
-	// Initialise outline shader
-	OutlineShader::Initialise(device);
-
 	// Initialise water shader
 	WaterShader::Initialise(device);
 }
@@ -108,15 +105,6 @@ void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, std:
 		}
 	}
 	break;
-	case SHADER_TYPE::OUTLINE:
-	{
-		// Handle outline shader
-		OutlineShader::Enable(context);
-
-		// Setup outline parameters
-		OutlineShader::SetShaderParameters(context, texture1, screen);
-	}
-	break;
 	case SHADER_TYPE::WATER:
 	{
 		// Handle water shader
@@ -136,7 +124,6 @@ void ShaderManager::SetWorld(DirectX::SimpleMath::Matrix * world)
 	BlendShader::SetWorld(world);
 	ToonShader::SetWorld(world);
 	ToonBlendShader::SetWorld(world);
-	OutlineShader::SetWorld(world);
 	WaterShader::SetWorld(world);
 }
 
@@ -147,7 +134,6 @@ void ShaderManager::SetView(DirectX::SimpleMath::Matrix * view)
 	BlendShader::SetView(view);
 	ToonShader::SetView(view);
 	ToonBlendShader::SetView(view);
-	OutlineShader::SetView(view);
 	WaterShader::SetView(view);
 }
 
@@ -158,7 +144,6 @@ void ShaderManager::SetProjection(DirectX::SimpleMath::Matrix * projection)
 	BlendShader::SetProjection(projection);
 	ToonShader::SetProjection(projection);
 	ToonBlendShader::SetProjection(projection);
-	OutlineShader::SetProjection(projection);
 	WaterShader::SetProjection(projection);
 }
 

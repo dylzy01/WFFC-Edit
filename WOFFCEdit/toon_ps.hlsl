@@ -41,27 +41,25 @@ struct InputType
 // Produce lighting
 float4 GenerateLight(float3 normal, float3 position3D)
 {
-    // Final colour
+    // Initialise colour value
     float4 col = { 0.f, 0.f, 0.f, 0.f };
-    
-    // Calculate light direction
-    float3 dir = Lights[0].lightPosition - position3D;
-    
-    // Distance between light and object
-    float dis = length(dir);  
-    
-    // Initialise diffuse & light value
-    float diffuse = 0.f, light = 0.f;
     
     // Loop through lights to determine pixel colour
     [unroll]
     for (int i = 0; i < activeLights; ++i)
     {
         // Continue if light is enabled
-        if (Lights[i].enabled < 0.5f) { continue; }
+        if (Lights[i].enabled < 0.5f)
+        {
+            continue;
+        }
+        
+        // Setup direction & distance
+        float3 dir = Lights[i].lightPosition - position3D;
+        float dis = length(dir);
         
         // Setup diffuse colour
-        diffuse = Lights[i].diffuseColour;
+        float diffuse = Lights[i].diffuseColour;
         
         // Apply different lighting based on type
         if (Lights[i].type == 2 || Lights[i].type == 3)
@@ -84,7 +82,7 @@ float4 GenerateLight(float3 normal, float3 position3D)
         }
         
         // Calculate lighting
-        light = saturate(dot(normal, normalize(dir)));
+        float light = saturate(dot(normal, normalize(dir)));
         col += saturate(diffuse * light);
         col += Lights[i].ambientColour;
     }

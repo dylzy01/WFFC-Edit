@@ -87,6 +87,8 @@ void LightDialogue::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(LightDialogue, CDialogEx)
+	ON_COMMAND(IDOK, &LightDialogue::End)
+	ON_BN_CLICKED(IDOK, &LightDialogue::OnBnClickedOk)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &LightDialogue::OnCbnSelchangeID)
 	ON_CBN_SELCHANGE(IDC_COMBO2, &LightDialogue::OnCbnSelchangeType)
 	ON_BN_CLICKED(IDC_CHECK1, &LightDialogue::OnBnClickedEnable)
@@ -111,6 +113,9 @@ END_MESSAGE_MAP()
 void LightDialogue::End()
 {
 	////OnBnClickedOk();	
+
+	// Properly destroy the window : including links/pointers created
+	// This allows the dialogue to start again
 	DestroyWindow();
 }
 
@@ -503,6 +508,7 @@ void LightDialogue::OnEnChangeLinA()
 	float linA;
 	if (!string.IsEmpty()) { linA = _ttof(string); }
 	else { linA = m_lights.first[ID]->GetLinearAttenuation(); }
+	linA /= 10.f;
 
 	// Update linear attenuation of light
 	m_lights.first[ID]->SetLinearAttenuation(linA);
@@ -525,6 +531,7 @@ void LightDialogue::OnEnChangeQuadA()
 	float quadA;
 	if (!string.IsEmpty()) { quadA = _ttof(string); }
 	else { quadA = m_lights.first[ID]->GetQuadraticAttenuation(); }
+	quadA /= 100.f;
 
 	// Update quadratic attenuation of light
 	m_lights.first[ID]->SetQuadraticAttenuation(quadA);
