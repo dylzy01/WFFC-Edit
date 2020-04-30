@@ -26,7 +26,7 @@ public:
 	static void Store(std::vector<int> IDs);
 
 	// Transform selected objects
-	static void Transform(OBJECT_FUNCTION function, OBJECT_CONSTRAINT constraint,
+	static void Transform(OBJECT_FUNCTION function, CONSTRAINT constraint,
 		std::vector<int> IDs, std::vector<SceneObject> & sceneGraph);	
 
 	// Copy details of selected objects & remove from database
@@ -44,13 +44,13 @@ public:
 
 private:
 	// Scale selected objects
-	static void Scale(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject> & sceneGraph);
+	static void Scale(CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject> & sceneGraph);
 
 	// Rotate selected objects
-	static void Rotate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject> & sceneGraph);
+	static void Rotate(CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject> & sceneGraph);
 
 	// Translate selected objects
-	static void Translate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject> & sceneGraph);
+	static void Translate(CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject> & sceneGraph);
 
 	// Get S,R,T...
 	static DirectX::SimpleMath::Vector3 GetScale(int i);

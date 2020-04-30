@@ -117,7 +117,7 @@ void PaintDialogue::OnBnSelchangePaint()
 	int index = m_boxSelect.GetCurSel();
 
 	// Set new paint value
-	m_paint = (LANDSCAPE_PAINT)index;
+	m_paint = (TERRAIN_PAINT)index;
 
 	// Uncheck previous paint
 	Uncheck();
@@ -125,12 +125,12 @@ void PaintDialogue::OnBnSelchangePaint()
 	// Switch between paint and check appropriate box
 	switch (m_paint)
 	{
-	case LANDSCAPE_PAINT::GRASS: CheckDlgButton(IDC_CHECK2, true); break;
-	case LANDSCAPE_PAINT::DIRT: CheckDlgButton(IDC_CHECK14, true); break;
-	case LANDSCAPE_PAINT::SAND: CheckDlgButton(IDC_CHECK15, true); break;
-	case LANDSCAPE_PAINT::STONE: CheckDlgButton(IDC_CHECK9, true); break;
-	case LANDSCAPE_PAINT::SNOW: CheckDlgButton(IDC_CHECK17, true); break;
-	case LANDSCAPE_PAINT::NA: CheckDlgButton(IDC_CHECK18, true); break;
+	case TERRAIN_PAINT::GRASS: CheckDlgButton(IDC_CHECK2, true); break;
+	case TERRAIN_PAINT::DIRT: CheckDlgButton(IDC_CHECK14, true); break;
+	case TERRAIN_PAINT::SAND: CheckDlgButton(IDC_CHECK15, true); break;
+	case TERRAIN_PAINT::STONE: CheckDlgButton(IDC_CHECK9, true); break;
+	case TERRAIN_PAINT::SNOW: CheckDlgButton(IDC_CHECK17, true); break;
+	case TERRAIN_PAINT::NA: CheckDlgButton(IDC_CHECK18, true); break;
 	}
 }
 
@@ -143,7 +143,7 @@ void PaintDialogue::OnBnClickedGrass()
 	case true:
 	{
 		// Set paint
-		m_paint = LANDSCAPE_PAINT::GRASS;
+		m_paint = TERRAIN_PAINT::GRASS;
 
 		// Uncheck other buttons
 		Uncheck();
@@ -152,7 +152,7 @@ void PaintDialogue::OnBnClickedGrass()
 	case false:
 	{
 		// Reset paint
-		m_paint = LANDSCAPE_PAINT::NA;
+		m_paint = TERRAIN_PAINT::NA;
 
 		// Check N/A button & apply
 		CheckDlgButton(IDC_CHECK18, true);
@@ -174,7 +174,7 @@ void PaintDialogue::OnBnClickedDirt()
 	case true: 
 	{
 		// Set paint
-		m_paint = LANDSCAPE_PAINT::DIRT;
+		m_paint = TERRAIN_PAINT::DIRT;
 		
 		// Uncheck other buttons
 		Uncheck();
@@ -183,7 +183,7 @@ void PaintDialogue::OnBnClickedDirt()
 	case false: 
 	{
 		// Reset paint
-		m_paint = LANDSCAPE_PAINT::NA;
+		m_paint = TERRAIN_PAINT::NA;
 
 		// Check N/A button & apply
 		CheckDlgButton(IDC_CHECK18, true);
@@ -205,7 +205,7 @@ void PaintDialogue::OnBnClickedSand()
 	case true:
 	{
 		// Set paint
-		m_paint = LANDSCAPE_PAINT::SAND;
+		m_paint = TERRAIN_PAINT::SAND;
 
 		// Uncheck other buttons
 		Uncheck();
@@ -214,7 +214,7 @@ void PaintDialogue::OnBnClickedSand()
 	case false:
 	{
 		// Reset paint
-		m_paint = LANDSCAPE_PAINT::NA;
+		m_paint = TERRAIN_PAINT::NA;
 
 		// Check N/A button & apply
 		CheckDlgButton(IDC_CHECK18, true);
@@ -236,7 +236,7 @@ void PaintDialogue::OnBnClickedStone()
 	case true:
 	{
 		// Set paint
-		m_paint = LANDSCAPE_PAINT::STONE;
+		m_paint = TERRAIN_PAINT::STONE;
 
 		// Uncheck other buttons
 		Uncheck();
@@ -245,7 +245,7 @@ void PaintDialogue::OnBnClickedStone()
 	case false:
 	{
 		// Reset paint
-		m_paint = LANDSCAPE_PAINT::NA;
+		m_paint = TERRAIN_PAINT::NA;
 
 		// Check N/A button & apply
 		CheckDlgButton(IDC_CHECK18, true);
@@ -267,7 +267,7 @@ void PaintDialogue::OnBnClickedSnow()
 	case true:
 	{
 		// Set paint
-		m_paint = LANDSCAPE_PAINT::SNOW;
+		m_paint = TERRAIN_PAINT::SNOW;
 
 		// Uncheck other buttons
 		Uncheck();
@@ -276,7 +276,7 @@ void PaintDialogue::OnBnClickedSnow()
 	case false:
 	{
 		// Reset paint
-		m_paint = LANDSCAPE_PAINT::NA;
+		m_paint = TERRAIN_PAINT::NA;
 
 		// Check N/A button & apply
 		CheckDlgButton(IDC_CHECK18, true);
@@ -296,7 +296,7 @@ void PaintDialogue::OnBnClickedNA()
 	if (IsDlgButtonChecked(IDC_CHECK18))
 	{
 		// Set paint
-		m_paint = LANDSCAPE_PAINT::NA;
+		m_paint = TERRAIN_PAINT::NA;
 
 		// Uncheck other buttons
 		Uncheck();
@@ -306,22 +306,9 @@ void PaintDialogue::OnBnClickedNA()
 	Update((int)m_paint);
 }
 
-// Paint surroundings has been checked
-void PaintDialogue::OnBnClickedSurround()
-{
-	// Update surround controller based on button state
-	///m_surround = IsDlgButtonChecked(IDC_CHECK12);
-
-	// Update surround controller of display chunk based on button state
-	m_displayChunk->SetSurround(IsDlgButtonChecked(IDC_CHECK12));
-}
-
 // Blend paints has been checked
 void PaintDialogue::OnBnClickedBlend()
 {
-	// Update blend controller based on button state
-	///m_blend = IsDlgButtonChecked(IDC_CHECK3);
-
 	// Update blend controller of display chunk based on button state
 	m_displayChunk->SetBlend(IsDlgButtonChecked(IDC_CHECK3));
 }
@@ -334,7 +321,7 @@ void PaintDialogue::Uncheck()
 	// Switch between current paint
 	switch (m_paint)
 	{
-	case LANDSCAPE_PAINT::GRASS:
+	case TERRAIN_PAINT::GRASS:
 	{
 		// Uncheck dirt button
 		CheckDlgButton(IDC_CHECK14, false);
@@ -352,7 +339,7 @@ void PaintDialogue::Uncheck()
 		CheckDlgButton(IDC_CHECK18, false);
 	}
 	break;
-	case LANDSCAPE_PAINT::DIRT:
+	case TERRAIN_PAINT::DIRT:
 	{
 		// Uncheck grass button
 		CheckDlgButton(IDC_CHECK2, false);
@@ -370,7 +357,7 @@ void PaintDialogue::Uncheck()
 		CheckDlgButton(IDC_CHECK18, false);
 	}
 	break;
-	case LANDSCAPE_PAINT::SAND:
+	case TERRAIN_PAINT::SAND:
 	{
 		// Uncheck grass button
 		CheckDlgButton(IDC_CHECK2, false);
@@ -388,7 +375,7 @@ void PaintDialogue::Uncheck()
 		CheckDlgButton(IDC_CHECK18, false);
 	}
 	break;
-	case LANDSCAPE_PAINT::STONE:
+	case TERRAIN_PAINT::STONE:
 	{
 		// Uncheck grass button
 		CheckDlgButton(IDC_CHECK2, false);
@@ -406,7 +393,7 @@ void PaintDialogue::Uncheck()
 		CheckDlgButton(IDC_CHECK18, false);
 	}
 	break;
-	case LANDSCAPE_PAINT::SNOW:
+	case TERRAIN_PAINT::SNOW:
 	{
 		// Uncheck grass button
 		CheckDlgButton(IDC_CHECK2, false);
@@ -424,7 +411,7 @@ void PaintDialogue::Uncheck()
 		CheckDlgButton(IDC_CHECK18, false);
 	}
 	break;
-	case LANDSCAPE_PAINT::NA:
+	case TERRAIN_PAINT::NA:
 	{
 		// Uncheck grass button
 		CheckDlgButton(IDC_CHECK2, false);

@@ -5,7 +5,7 @@ bool TerrainManager::m_store;
 std::vector<DirectX::SimpleMath::Vector3> TerrainManager::m_storedPositions;
 
 // Paint selected terrain
-void TerrainManager::Paint(TERRAIN & terrain, LANDSCAPE_PAINT paint)
+void TerrainManager::Paint(TERRAIN & terrain, TERRAIN_PAINT paint)
 {
 	// Pick terrain
 	terrain = MouseManager::PickTerrain();
@@ -27,7 +27,7 @@ void TerrainManager::Paint(TERRAIN & terrain, LANDSCAPE_PAINT paint)
 }
 
 // Sculpt selected terrain
-void TerrainManager::Sculpt(TERRAIN & terrain, LANDSCAPE_FUNCTION function, LANDSCAPE_CONSTRAINT constraint)
+void TerrainManager::Sculpt(TERRAIN & terrain, TERRAIN_SCULPT function, CONSTRAINT constraint)
 {
 	// Pick terrain
 	terrain = MouseManager::PickTerrain();
@@ -36,14 +36,14 @@ void TerrainManager::Sculpt(TERRAIN & terrain, LANDSCAPE_FUNCTION function, LAND
 	if (terrain.intersect)
 	{
 		// If function is increase or decrease
-		if (function == LANDSCAPE_FUNCTION::INCREASE || function == LANDSCAPE_FUNCTION::DECREASE)
+		if (function == TERRAIN_SCULPT::INCREASE || function == TERRAIN_SCULPT::DECREASE)
 		{
 			// Increase or decrease terrain
 			m_displayChunk->SculptTerrain(terrain.row, terrain.column, function, constraint);
 		}
 
 		// Else, if function is flatten
-		else if (function == LANDSCAPE_FUNCTION::FLATTEN)
+		else if (function == TERRAIN_SCULPT::FLATTEN)
 		{
 			// If first point should be stored
 			if (m_store)

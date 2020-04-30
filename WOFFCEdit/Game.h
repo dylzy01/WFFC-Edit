@@ -146,10 +146,10 @@ private:
 	EDITOR m_editor;
 	OBJECT_SPAWN m_objectSpawn = OBJECT_SPAWN::NA;
 	OBJECT_FUNCTION m_objectFunction = OBJECT_FUNCTION::NA;
-	OBJECT_CONSTRAINT m_objectConstraint = OBJECT_CONSTRAINT::NA;
-	LANDSCAPE_PAINT m_landscapePaint = LANDSCAPE_PAINT::NA;
-	LANDSCAPE_FUNCTION m_landscapeSculpt = LANDSCAPE_FUNCTION::NA;
-	LANDSCAPE_CONSTRAINT m_landscapeConstraint = LANDSCAPE_CONSTRAINT::NA;
+	CONSTRAINT m_objectConstraint = CONSTRAINT::NA;
+	TERRAIN_PAINT m_landscapePaint = TERRAIN_PAINT::NA;
+	TERRAIN_SCULPT m_landscapeSculpt = TERRAIN_SCULPT::NA;
+	CONSTRAINT m_landscapeConstraint = CONSTRAINT::NA;
 
 	// Water controllers
 	Water* m_water;

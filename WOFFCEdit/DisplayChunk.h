@@ -35,22 +35,24 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>   m_terrainInputLayout;
 
 	// Painting
-	void PaintTerrain(int row, int column, LANDSCAPE_PAINT paint);
-	void OverwritePaint(int row, int column, LANDSCAPE_PAINT paint);
-	void PaintOverBlended(LANDSCAPE_PAINT paint, std::pair<int, int> index);
+	void PaintTerrain(int row, int column, TERRAIN_PAINT paint);
+	void OverwritePaint(int row, int column, TERRAIN_PAINT paint);
+	void PaintOverBlended(TERRAIN_PAINT paint, std::pair<int, int> index);
 
 	// Sculpting
-	void SculptTerrain(int row, int column, LANDSCAPE_FUNCTION function, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position = { { 0,0,0 } });
+	void SculptTerrain(int row, int column, TERRAIN_SCULPT function, CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position = { { 0,0,0 } });
 	
 	// Getters
 	ChunkObject GetChunk();
 	DirectX::VertexPositionNormalTexture GetGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
-	LANDSCAPE_PAINT GetPaint(int row, int column);
+	TERRAIN_PAINT GetPaint(int row, int column);
+	float GetScaleFactor() { return m_scaleFactor; }
 	
 	// Setters
 	void SetSelected(bool selected, int row, int column);
-	void SetSurround(bool surround) { m_surround = surround; }
 	void SetBlend(bool blend) { m_blend = blend; }	
+	void SetPlateau(bool plateau) { m_plateau = plateau; }
+	void SetScaleFactor(float scale) { m_scaleFactor = scale; }
 
 private:
 	DirectX::VertexPositionNormalTexture m_terrainGeometry[TERRAINRESOLUTION][TERRAINRESOLUTION];
@@ -63,8 +65,8 @@ private:
 	bool SearchForPaint(std::vector<std::pair<int, int>> vector, std::pair<int, int> terrain);
 
 	// Painting
-	LANDSCAPE_PAINT RemoveDuplicates(int row, int column, LANDSCAPE_PAINT paint = LANDSCAPE_PAINT::NA);
-	void CheckSurroundings(int row, int column, LANDSCAPE_PAINT paint);
+	TERRAIN_PAINT RemoveDuplicates(int row, int column, TERRAIN_PAINT paint = TERRAIN_PAINT::NA);
+	void CheckSurroundings(int row, int column, TERRAIN_PAINT paint);
 	void SavePaint(std::string path, std::vector<std::pair<int, int>> vector);
 	void ReadPaints(std::string path, std::vector<std::pair<int, int>> &vector);
 	void ReadAllPaints();
@@ -111,4 +113,8 @@ private:
 
 	// Paint controllers
 	bool m_surround, m_blend;
+
+	// Sculpt controllers
+	bool m_plateau;
+	float m_scaleFactor = 1.f;
 };

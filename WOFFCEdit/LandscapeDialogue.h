@@ -18,7 +18,7 @@ public:
 
 	// Getters
 	EDITOR GetEditor() { return m_editor; }
-	LANDSCAPE_FUNCTION GetSculpt() { return m_sculpt; }
+	TERRAIN_SCULPT GetSculpt() { return m_sculpt; }
 	bool GetPaintGrass() { return m_grass; }
 	bool GetPaintDirt() { return m_dirt; }
 	bool GetPaintSand() { return m_sand; }
@@ -44,10 +44,10 @@ protected:
 	void ResetConstraints() { m_x = m_y = m_z = false; }
 
 	// Enable/disable other sculpts
-	void UpdateSculpt(LANDSCAPE_FUNCTION function, bool enable);
+	void UpdateSculpt(TERRAIN_SCULPT function, bool enable);
 	
 	// Enable/disable other paints
-	void UpdatePaint(LANDSCAPE_PAINT paint, bool enable);
+	void UpdatePaint(TERRAIN_PAINT paint, bool enable);
 
 protected:
 	std::vector<SceneObject>* m_sceneGraph;
@@ -67,7 +67,7 @@ public:
 
 	// Controllers
 	EDITOR m_editor = EDITOR::NA;
-	LANDSCAPE_FUNCTION m_sculpt = LANDSCAPE_FUNCTION::NA;
+	TERRAIN_SCULPT m_sculpt = TERRAIN_SCULPT::NA;
 	bool m_active = false;
 	bool m_grass = false, m_dirt = false, m_sand = false;
 	bool m_x = false, m_y = false, m_z = false;

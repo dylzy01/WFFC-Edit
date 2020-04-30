@@ -53,14 +53,14 @@ public: //methods
 		{
 			// Reset object transform
 			m_objectFunction = OBJECT_FUNCTION::NA;
-			m_objectConstraint = OBJECT_CONSTRAINT::NA;
+			m_objectConstraint = CONSTRAINT::NA;
 
 			// Reset landscape sculpt
-			m_terrainFunction = LANDSCAPE_FUNCTION::NA;
-			m_terrainConstraint = LANDSCAPE_CONSTRAINT::NA;
+			m_terrainFunction = TERRAIN_SCULPT::NA;
+			m_terrainConstraint = CONSTRAINT::NA;
 
 			// Reset landscape paint
-			m_paint = LANDSCAPE_PAINT::NA;
+			m_paint = TERRAIN_PAINT::NA;
 		}
 		break;
 		case EDITOR::OBJECT_FUNCTION:
@@ -69,50 +69,50 @@ public: //methods
 			m_objectSpawn = OBJECT_SPAWN::NA;
 
 			// Reset landscape sculpt
-			m_terrainFunction = LANDSCAPE_FUNCTION::NA;
-			m_terrainConstraint = LANDSCAPE_CONSTRAINT::NA;
+			m_terrainFunction = TERRAIN_SCULPT::NA;
+			m_terrainConstraint = CONSTRAINT::NA;
 
 			// Reset landscape paint
-			m_paint = LANDSCAPE_PAINT::NA;
+			m_paint = TERRAIN_PAINT::NA;
 		}
 		break;
 		case EDITOR::TERRAIN_PAINT:
 		{
 			// Reset object spawn
 			m_objectSpawn = OBJECT_SPAWN::NA;
-			m_objectConstraint = OBJECT_CONSTRAINT::NA;
+			m_objectConstraint = CONSTRAINT::NA;
 
 			// Reset object transform
 			m_objectFunction = OBJECT_FUNCTION::NA;
-			m_objectConstraint = OBJECT_CONSTRAINT::NA;
+			m_objectConstraint = CONSTRAINT::NA;
 
 			// Reset landscape sculpt
-			m_terrainFunction = LANDSCAPE_FUNCTION::NA;
-			m_terrainConstraint = LANDSCAPE_CONSTRAINT::NA;
+			m_terrainFunction = TERRAIN_SCULPT::NA;
+			m_terrainConstraint = CONSTRAINT::NA;
 		}
 		break;
 		case EDITOR::TERRAIN_FUNCTION:
 		{
 			// Reset object spawn
 			m_objectSpawn = OBJECT_SPAWN::NA;
-			m_objectConstraint = OBJECT_CONSTRAINT::NA;
+			m_objectConstraint = CONSTRAINT::NA;
 
 			// Reset object transform
 			m_objectFunction = OBJECT_FUNCTION::NA;
-			m_objectConstraint = OBJECT_CONSTRAINT::NA;
+			m_objectConstraint = CONSTRAINT::NA;
 
 			// Reset landscape paint
-			m_paint = LANDSCAPE_PAINT::NA;
+			m_paint = TERRAIN_PAINT::NA;
 		}
 		break;
 		}
 	}
 	void SetObjectSpawn(OBJECT_SPAWN spawn) { m_objectSpawn = spawn; }
 	void SetObjectFunction(OBJECT_FUNCTION function) { m_objectFunction = function; }
-	void SetObjectConstraint(OBJECT_CONSTRAINT constraint) { m_objectConstraint = constraint; }
-	void SetLandscapePaint(LANDSCAPE_PAINT paint) { m_paint = paint; }
-	void SetLandscapeSculpt(LANDSCAPE_FUNCTION function) { m_terrainFunction = function; }
-	void SetLandscapeConstraint(LANDSCAPE_CONSTRAINT constraint) { m_terrainConstraint = constraint; }
+	void SetObjectConstraint(CONSTRAINT constraint) { m_objectConstraint = constraint; }
+	void SetTerrainPaint(TERRAIN_PAINT paint) { m_paint = paint; }
+	void SetTerrainSculpt(TERRAIN_SCULPT function) { m_terrainFunction = function; }
+	void SetTerrainConstraint(CONSTRAINT constraint) { m_terrainConstraint = constraint; }
 	void SetLights(std::pair<std::vector<Light*>, std::vector<int>> lights) { m_d3dRenderer.SetLights(lights); }
 	void SetSceneObject(SceneObject object, int index) { m_d3dRenderer.SetSceneObject(object, index); }
 
@@ -127,10 +127,10 @@ public:	//variables
 	EDITOR m_editor;								//control which editor state is being applied
 	OBJECT_SPAWN m_objectSpawn;						//control which object is to be spawned
 	OBJECT_FUNCTION m_objectFunction;				//control which object function is being applied
-	OBJECT_CONSTRAINT m_objectConstraint;			//control which constraint is applied to object functions
-	LANDSCAPE_PAINT m_paint;				//control which paint should be applied to terrain
-	LANDSCAPE_FUNCTION m_terrainFunction;			//control which sculpt function should be applied to terrain
-	LANDSCAPE_CONSTRAINT m_terrainConstraint;		//control which constraint is applied to terrain functions
+	CONSTRAINT m_objectConstraint;			//control which constraint is applied to object functions
+	TERRAIN_PAINT m_paint;				//control which paint should be applied to terrain
+	TERRAIN_SCULPT m_terrainFunction;			//control which sculpt function should be applied to terrain
+	CONSTRAINT m_terrainConstraint;		//control which constraint is applied to terrain functions
 
 private:	//methods
 	void	onContentAdded();

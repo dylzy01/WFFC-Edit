@@ -17,7 +17,7 @@ public:
 
 	// Getters
 	bool GetActive() { return m_active; }
-	LANDSCAPE_FUNCTION GetSculpt() { return m_sculpt; }
+	TERRAIN_SCULPT GetSculpt() { return m_sculpt; }
 	bool GetConstraintX() { return m_x; }
 	bool GetConstraintY() { return m_y; }
 	bool GetConstraintZ() { return m_z; }
@@ -42,7 +42,7 @@ private:
 
 	// Controllers
 	bool m_active = false;
-	LANDSCAPE_FUNCTION m_sculpt = LANDSCAPE_FUNCTION::NA;
+	TERRAIN_SCULPT m_sculpt = TERRAIN_SCULPT::NA;
 	bool m_x = false, m_y = false, m_z = false;
 
 	DECLARE_MESSAGE_MAP()

@@ -72,18 +72,17 @@ enum class OBJECT_FUNCTION {
 	ROTATE
 };
 
-enum class OBJECT_CONSTRAINT {
+enum class CONSTRAINT {
 	NA,
-	XY,
-	XZ,
-	YZ,
 	X,
 	Y,
 	Z,
-	ALL
+	XY,
+	XZ,
+	YZ
 };
 
-enum class LANDSCAPE_PAINT {
+enum class TERRAIN_PAINT {
 	NA,
 	GRASS,
 	DIRT,
@@ -102,23 +101,12 @@ enum class LANDSCAPE_PAINT {
 	STONE_SNOW
 };
 
-enum class LANDSCAPE_FUNCTION {
+enum class TERRAIN_SCULPT {
 	NA,
-	SELECT,
 	INCREASE,
 	FLATTEN,
-	DECREASE
-};
-
-enum class LANDSCAPE_CONSTRAINT {
-	NA,
-	XY,
-	XZ,
-	YZ,
-	X, 
-	Y,
-	Z,
-	ALL
+	DECREASE,
+	SELECT,
 };
 
 enum class SHADER_TYPE {
@@ -140,7 +128,7 @@ struct TERRAIN {
 	int row, column, ID;
 	bool intersect = false;
 	DirectX::SimpleMath::Vector3 position;
-	LANDSCAPE_PAINT paint;
+	TERRAIN_PAINT paint;
 };
 
 class Tools

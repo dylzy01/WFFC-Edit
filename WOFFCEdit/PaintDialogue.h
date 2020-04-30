@@ -22,14 +22,12 @@ public:
 
 	// Getters
 	bool GetActive() { return m_active; }
-	bool GetUpdate() { return m_update; }
 	bool GetSurround() { return m_surround; }
 	bool GetBlend() { return m_blend; }
-	LANDSCAPE_PAINT GetPaint() { return m_paint; }
+	TERRAIN_PAINT GetPaint() { return m_paint; }
 
 	// Setters
 	void SetActive(bool active) { m_active = active; }
-	void SetUpdate(bool update) { m_update = update; }
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -46,10 +44,9 @@ protected:
 
 	// Controllers
 	bool m_active;
-	bool m_update;
 	bool m_surround;
 	bool m_blend;
-	LANDSCAPE_PAINT m_paint;
+	TERRAIN_PAINT m_paint;
 
 	DECLARE_MESSAGE_MAP()
 public:
@@ -65,7 +62,6 @@ public:
 	afx_msg void OnBnClickedStone();
 	afx_msg void OnBnClickedSnow();
 	afx_msg void OnBnClickedNA();
-	afx_msg void OnBnClickedSurround();
 	afx_msg void OnBnClickedBlend();
 
 private:

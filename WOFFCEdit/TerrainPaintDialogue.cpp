@@ -28,12 +28,12 @@ void TerrainPaintDialogue::DoDataExchange(CDataExchange* pDX)
 void TerrainPaintDialogue::UpdateButtons(bool enable)
 {
 	// Update paint
-	if (enable) { m_paint = LANDSCAPE_PAINT::NA; }
+	if (enable) { m_paint = TERRAIN_PAINT::NA; }
 
 	// Switch between paints
 	switch (m_paint)
 	{
-	case LANDSCAPE_PAINT::GRASS:
+	case TERRAIN_PAINT::GRASS:
 	{
 		// Enable/disable dirt button
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
@@ -52,7 +52,7 @@ void TerrainPaintDialogue::UpdateButtons(bool enable)
 		GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
 	}
 	break;
-	case LANDSCAPE_PAINT::DIRT:
+	case TERRAIN_PAINT::DIRT:
 	{
 		// Enable/disable grass button
 		if (!enable) { CheckDlgButton(IDC_CHECK5, enable); }
@@ -71,7 +71,7 @@ void TerrainPaintDialogue::UpdateButtons(bool enable)
 		GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
 	}
 	break;
-	case LANDSCAPE_PAINT::SAND:
+	case TERRAIN_PAINT::SAND:
 	{
 		// Enable/disable grass button
 		if (!enable) { CheckDlgButton(IDC_CHECK5, enable); }
@@ -90,7 +90,7 @@ void TerrainPaintDialogue::UpdateButtons(bool enable)
 		GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
 	}
 	break;
-	case LANDSCAPE_PAINT::STONE:
+	case TERRAIN_PAINT::STONE:
 	{
 		// Enable/disable grass button
 		if (!enable) { CheckDlgButton(IDC_CHECK5, enable); }
@@ -109,7 +109,7 @@ void TerrainPaintDialogue::UpdateButtons(bool enable)
 		GetDlgItem(IDC_CHECK13)->EnableWindow(enable);
 	}
 	break;
-	case LANDSCAPE_PAINT::SNOW:
+	case TERRAIN_PAINT::SNOW:
 	{
 		// Enable/disable grass button
 		if (!enable) { CheckDlgButton(IDC_CHECK5, enable); }
@@ -128,7 +128,7 @@ void TerrainPaintDialogue::UpdateButtons(bool enable)
 		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 	}
 	break;
-	case LANDSCAPE_PAINT::NA:
+	case TERRAIN_PAINT::NA:
 	{
 		// Enable/disable grass button
 		if (!enable) { CheckDlgButton(IDC_CHECK5, enable); }
@@ -186,7 +186,7 @@ void TerrainPaintDialogue::OnBnClickedOk()
 // Set paint to grass
 void TerrainPaintDialogue::OnBnClickedGrass() 
 { 
-	m_paint = LANDSCAPE_PAINT::GRASS; 
+	m_paint = TERRAIN_PAINT::GRASS; 
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK5))
@@ -201,7 +201,7 @@ void TerrainPaintDialogue::OnBnClickedGrass()
 // Set paint to dirt
 void TerrainPaintDialogue::OnBnClickedDirt() 
 { 
-	m_paint = LANDSCAPE_PAINT::DIRT; 
+	m_paint = TERRAIN_PAINT::DIRT; 
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK6))
@@ -216,7 +216,7 @@ void TerrainPaintDialogue::OnBnClickedDirt()
 // Set paint to sand
 void TerrainPaintDialogue::OnBnClickedSand() 
 { 
-	m_paint = LANDSCAPE_PAINT::SAND; 
+	m_paint = TERRAIN_PAINT::SAND; 
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK7))
@@ -231,7 +231,7 @@ void TerrainPaintDialogue::OnBnClickedSand()
 // Set paint to stone
 void TerrainPaintDialogue::OnBnClickedStone() 
 { 
-	m_paint = LANDSCAPE_PAINT::STONE; 
+	m_paint = TERRAIN_PAINT::STONE; 
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK8))
@@ -246,7 +246,7 @@ void TerrainPaintDialogue::OnBnClickedStone()
 // Set paint to snow
 void TerrainPaintDialogue::OnBnClickedSnow() 
 { 
-	m_paint = LANDSCAPE_PAINT::SNOW; 
+	m_paint = TERRAIN_PAINT::SNOW; 
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK13))

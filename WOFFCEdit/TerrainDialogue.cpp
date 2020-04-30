@@ -128,7 +128,7 @@ void TerrainDialogue::OnBnSelchangeTexture()
 	int texture = m_boxTex.GetCurSel();
 
 	// Set new paint
-	m_displayChunk->OverwritePaint(row, col, (LANDSCAPE_PAINT)texture);
+	m_displayChunk->OverwritePaint(row, col, (TERRAIN_PAINT)texture);
 
 	// Tell MFC/ToolMain to update display chunk
 	m_update = true;
@@ -157,7 +157,7 @@ void TerrainDialogue::UpdateCoordinates(int row, int column)
 void TerrainDialogue::UpdateTexture(int row, int column)
 {
 	// Store texture of selected terrain
-	LANDSCAPE_PAINT paint = m_displayChunk->GetPaint(row, column);
+	TERRAIN_PAINT paint = m_displayChunk->GetPaint(row, column);
 
 	// Set combo box
 	m_boxTex.SetCurSel((int)paint);

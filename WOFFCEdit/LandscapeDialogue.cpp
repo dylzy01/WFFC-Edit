@@ -25,16 +25,16 @@ void LandscapeDialogue::DoDataExchange(CDataExchange* pDX)
 }
 
 // Enable/disable other sculpts
-void LandscapeDialogue::UpdateSculpt(LANDSCAPE_FUNCTION function, bool enable)
+void LandscapeDialogue::UpdateSculpt(TERRAIN_SCULPT function, bool enable)
 {
 	// Update sculpt controller
-	if (enable) { m_sculpt = LANDSCAPE_FUNCTION::NA; }
+	if (enable) { m_sculpt = TERRAIN_SCULPT::NA; }
 	else { m_sculpt = function; }	
 	
 	// Switch between functions
 	switch (function)
 	{
-	case LANDSCAPE_FUNCTION::INCREASE:
+	case TERRAIN_SCULPT::INCREASE:
 	{
 		// Enable/disable decrease function
 		if (!enable) { CheckDlgButton(IDC_CHECK7, enable); }
@@ -45,7 +45,7 @@ void LandscapeDialogue::UpdateSculpt(LANDSCAPE_FUNCTION function, bool enable)
 		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 	}
 	break;
-	case LANDSCAPE_FUNCTION::DECREASE:
+	case TERRAIN_SCULPT::DECREASE:
 	{
 		// Enable/disable increase function
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
@@ -56,7 +56,7 @@ void LandscapeDialogue::UpdateSculpt(LANDSCAPE_FUNCTION function, bool enable)
 		GetDlgItem(IDC_CHECK8)->EnableWindow(enable);
 	}
 	break;
-	case LANDSCAPE_FUNCTION::FLATTEN:
+	case TERRAIN_SCULPT::FLATTEN:
 	{
 		// Enable/disable increase function
 		if (!enable) { CheckDlgButton(IDC_CHECK6, enable); }
@@ -71,12 +71,12 @@ void LandscapeDialogue::UpdateSculpt(LANDSCAPE_FUNCTION function, bool enable)
 }
 
 // Enable/disable other paints
-void LandscapeDialogue::UpdatePaint(LANDSCAPE_PAINT paint, bool enable)
+void LandscapeDialogue::UpdatePaint(TERRAIN_PAINT paint, bool enable)
 {
 	// Switch between paints
 	switch (paint)
 	{
-	case LANDSCAPE_PAINT::GRASS:
+	case TERRAIN_PAINT::GRASS:
 	{
 		// Enable/disable dirt paint
 		m_dirt = enable;
@@ -89,7 +89,7 @@ void LandscapeDialogue::UpdatePaint(LANDSCAPE_PAINT paint, bool enable)
 		GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
 	}
 	break;
-	case LANDSCAPE_PAINT::DIRT:
+	case TERRAIN_PAINT::DIRT:
 	{
 		// Enable/disable grass paint
 		m_grass = enable;
@@ -102,7 +102,7 @@ void LandscapeDialogue::UpdatePaint(LANDSCAPE_PAINT paint, bool enable)
 		GetDlgItem(IDC_CHECK14)->EnableWindow(enable);
 	}
 	break;
-	case LANDSCAPE_PAINT::SAND:
+	case TERRAIN_PAINT::SAND:
 	{		
 		// Enable/disable grass paint
 		m_grass = enable;
@@ -166,7 +166,7 @@ void LandscapeDialogue::OnBnClickedGrass()
 	case true:
 	{
 		// Uncheck & disable other paints
-		UpdatePaint(LANDSCAPE_PAINT::GRASS, false);
+		UpdatePaint(TERRAIN_PAINT::GRASS, false);
 	}
 	break;
 	case false:
@@ -175,7 +175,7 @@ void LandscapeDialogue::OnBnClickedGrass()
 		ResetConstraints();
 
 		// Enable other paints
-		UpdatePaint(LANDSCAPE_PAINT::GRASS, true);
+		UpdatePaint(TERRAIN_PAINT::GRASS, true);
 	}
 	break;
 	}
@@ -196,7 +196,7 @@ void LandscapeDialogue::OnBnClickedDirt()
 	case true:
 	{
 		// Uncheck & disable other paints
-		UpdatePaint(LANDSCAPE_PAINT::DIRT, false);
+		UpdatePaint(TERRAIN_PAINT::DIRT, false);
 	}
 	break;
 	case false:
@@ -205,7 +205,7 @@ void LandscapeDialogue::OnBnClickedDirt()
 		ResetConstraints();
 
 		// Enable other paints
-		UpdatePaint(LANDSCAPE_PAINT::DIRT, true);
+		UpdatePaint(TERRAIN_PAINT::DIRT, true);
 	}
 	break;
 	}
@@ -226,7 +226,7 @@ void LandscapeDialogue::OnBnClickedSand()
 	case true:
 	{
 		// Uncheck & disable other paints
-		UpdatePaint(LANDSCAPE_PAINT::SAND, false);
+		UpdatePaint(TERRAIN_PAINT::SAND, false);
 	}
 	break;
 	case false:
@@ -235,7 +235,7 @@ void LandscapeDialogue::OnBnClickedSand()
 		ResetConstraints();
 
 		// Enable other paints
-		UpdatePaint(LANDSCAPE_PAINT::SAND, true);
+		UpdatePaint(TERRAIN_PAINT::SAND, true);
 	}
 	break;
 	}
@@ -253,7 +253,7 @@ void LandscapeDialogue::OnBnClickedIncrease()
 	case true:
 	{
 		// Uncheck & disable other functions
-		UpdateSculpt(LANDSCAPE_FUNCTION::INCREASE, false);
+		UpdateSculpt(TERRAIN_SCULPT::INCREASE, false);
 	}
 	break;
 	case false:
@@ -262,7 +262,7 @@ void LandscapeDialogue::OnBnClickedIncrease()
 		ResetConstraints();
 
 		// Enable other functions
-		UpdateSculpt(LANDSCAPE_FUNCTION::INCREASE, true);
+		UpdateSculpt(TERRAIN_SCULPT::INCREASE, true);
 	}
 	break;
 	}
@@ -280,7 +280,7 @@ void LandscapeDialogue::OnBnClickedDecrease()
 	case true:
 	{
 		// Uncheck & disable other functions
-		UpdateSculpt(LANDSCAPE_FUNCTION::DECREASE, false);
+		UpdateSculpt(TERRAIN_SCULPT::DECREASE, false);
 	}
 	break;
 	case false:
@@ -289,7 +289,7 @@ void LandscapeDialogue::OnBnClickedDecrease()
 		ResetConstraints();
 
 		// Enable other functions
-		UpdateSculpt(LANDSCAPE_FUNCTION::DECREASE, true);
+		UpdateSculpt(TERRAIN_SCULPT::DECREASE, true);
 	}
 	break;
 	}
@@ -307,7 +307,7 @@ void LandscapeDialogue::OnBnClickedFlatten()
 	case true:
 	{
 		// Uncheck & disable other functions
-		UpdateSculpt(LANDSCAPE_FUNCTION::FLATTEN, false);
+		UpdateSculpt(TERRAIN_SCULPT::FLATTEN, false);
 	}
 	break;
 	case false:
@@ -316,7 +316,7 @@ void LandscapeDialogue::OnBnClickedFlatten()
 		ResetConstraints();
 
 		// Enable other functions
-		UpdateSculpt(LANDSCAPE_FUNCTION::FLATTEN, true);
+		UpdateSculpt(TERRAIN_SCULPT::FLATTEN, true);
 	}
 	break;
 	}

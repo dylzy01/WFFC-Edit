@@ -294,7 +294,7 @@ void ObjectManager::Store(std::vector<int> IDs)
 }
 
 // Transform selected objects
-void ObjectManager::Transform(OBJECT_FUNCTION function, OBJECT_CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject>& sceneGraph)
+void ObjectManager::Transform(OBJECT_FUNCTION function, CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject>& sceneGraph)
 {
 	// Switch between function
 	switch (function)
@@ -480,7 +480,7 @@ void ObjectManager::Paste(std::vector<SceneObject> & sceneGraph)
 }
 
 // Scale selected objects
-void ObjectManager::Scale(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject>& sceneGraph)
+void ObjectManager::Scale(CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject>& sceneGraph)
 {
 	// Overwrite selected object IDs
 	m_selectedObjectIDs = IDs;
@@ -493,7 +493,7 @@ void ObjectManager::Scale(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, st
 		// Switch between object constraint
 		switch (constraint)
 		{
-		case OBJECT_CONSTRAINT::X:
+		case CONSTRAINT::X:
 		{
 			// Scale selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].scaX = scale.x;
@@ -503,7 +503,7 @@ void ObjectManager::Scale(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, st
 			scale.z = sceneGraph[m_selectedObjectIDs[i]].scaZ;
 		}
 		break;
-		case OBJECT_CONSTRAINT::Y:
+		case CONSTRAINT::Y:
 		{
 			// Scale selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].scaY = scale.y;
@@ -513,7 +513,7 @@ void ObjectManager::Scale(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, st
 			scale.z = sceneGraph[m_selectedObjectIDs[i]].scaZ;
 		}
 		break;
-		case OBJECT_CONSTRAINT::Z:
+		case CONSTRAINT::Z:
 		{
 			// Scale selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].scaZ = scale.z;
@@ -523,7 +523,7 @@ void ObjectManager::Scale(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, st
 			scale.y = sceneGraph[m_selectedObjectIDs[i]].scaY;
 		}
 		break;
-		case OBJECT_CONSTRAINT::XY:
+		case CONSTRAINT::XY:
 		{
 			// Scale selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].scaX = scale.x;
@@ -533,7 +533,7 @@ void ObjectManager::Scale(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, st
 			scale.z = sceneGraph[m_selectedObjectIDs[i]].scaZ;
 		}
 		break;
-		case OBJECT_CONSTRAINT::XZ:
+		case CONSTRAINT::XZ:
 		{
 			// Scale selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].scaX = scale.x;
@@ -543,7 +543,7 @@ void ObjectManager::Scale(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, st
 			scale.y = sceneGraph[m_selectedObjectIDs[i]].scaY;
 		}
 		break;
-		case OBJECT_CONSTRAINT::YZ:
+		case CONSTRAINT::YZ:
 		{
 			// Scale selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].scaY = scale.y;
@@ -553,7 +553,7 @@ void ObjectManager::Scale(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, st
 			scale.x = sceneGraph[m_selectedObjectIDs[i]].scaX;
 		}
 		break;
-		case OBJECT_CONSTRAINT::ALL:
+		case CONSTRAINT::NA:
 		{
 			// Scale selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].scaX = scale.x;
@@ -569,7 +569,7 @@ void ObjectManager::Scale(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, st
 }
 
 // Rotate selected objects
-void ObjectManager::Rotate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject>& sceneGraph)
+void ObjectManager::Rotate(CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject>& sceneGraph)
 {
 	// Overwrite selected object IDs
 	m_selectedObjectIDs = IDs;
@@ -582,7 +582,7 @@ void ObjectManager::Rotate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, s
 		// Switch between object constraint
 		switch (constraint)
 		{
-		case OBJECT_CONSTRAINT::X:
+		case CONSTRAINT::X:
 		{
 			// Rotate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].rotX = rotate.x;
@@ -592,7 +592,7 @@ void ObjectManager::Rotate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, s
 			rotate.z = sceneGraph[m_selectedObjectIDs[i]].rotZ;
 		}
 		break;
-		case OBJECT_CONSTRAINT::Y:
+		case CONSTRAINT::Y:
 		{
 			// Rotate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].rotY = rotate.y;
@@ -602,7 +602,7 @@ void ObjectManager::Rotate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, s
 			rotate.z = sceneGraph[m_selectedObjectIDs[i]].rotZ;
 		}
 		break;
-		case OBJECT_CONSTRAINT::Z:
+		case CONSTRAINT::Z:
 		{
 			// Rotate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].rotZ = rotate.z;
@@ -612,7 +612,7 @@ void ObjectManager::Rotate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, s
 			rotate.y = sceneGraph[m_selectedObjectIDs[i]].rotY;
 		}
 		break;
-		case OBJECT_CONSTRAINT::XY:
+		case CONSTRAINT::XY:
 		{
 			// Rotate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].rotX = rotate.x;
@@ -622,7 +622,7 @@ void ObjectManager::Rotate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, s
 			rotate.z = sceneGraph[m_selectedObjectIDs[i]].rotZ;
 		}
 		break;
-		case OBJECT_CONSTRAINT::XZ:
+		case CONSTRAINT::XZ:
 		{
 			// Rotate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].rotX = rotate.x;
@@ -632,7 +632,7 @@ void ObjectManager::Rotate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, s
 			rotate.y = sceneGraph[m_selectedObjectIDs[i]].rotY;
 		}
 		break;
-		case OBJECT_CONSTRAINT::YZ:
+		case CONSTRAINT::YZ:
 		{
 			// Rotate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].rotY = rotate.y;
@@ -642,7 +642,7 @@ void ObjectManager::Rotate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, s
 			rotate.x = sceneGraph[m_selectedObjectIDs[i]].rotX;
 		}
 		break;
-		case OBJECT_CONSTRAINT::ALL:
+		case CONSTRAINT::NA:
 		{
 			// Rotate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].rotX = rotate.x;
@@ -658,7 +658,7 @@ void ObjectManager::Rotate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, s
 }
 
 // Translate selected objects
-void ObjectManager::Translate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject>& sceneGraph)
+void ObjectManager::Translate(CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject>& sceneGraph)
 {
 	// Overwrite selected object IDs
 	m_selectedObjectIDs = IDs;
@@ -672,7 +672,7 @@ void ObjectManager::Translate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs
 		// Switch between object constraint
 		switch (constraint)
 		{
-		case OBJECT_CONSTRAINT::X:
+		case CONSTRAINT::X:
 		{
 			// Translate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].posX = translate.x;
@@ -682,7 +682,7 @@ void ObjectManager::Translate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs
 			translate.z = sceneGraph[m_selectedObjectIDs[i]].posZ;
 		}
 		break;
-		case OBJECT_CONSTRAINT::Y:
+		case CONSTRAINT::Y:
 		{
 			// Translate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].posY = translate.y;
@@ -692,7 +692,7 @@ void ObjectManager::Translate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs
 			translate.z = sceneGraph[m_selectedObjectIDs[i]].posZ;
 		}
 		break;
-		case OBJECT_CONSTRAINT::Z:
+		case CONSTRAINT::Z:
 		{
 			// Translate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].posZ = translate.z;
@@ -702,7 +702,7 @@ void ObjectManager::Translate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs
 			translate.y = sceneGraph[m_selectedObjectIDs[i]].posY;
 		}
 		break;
-		case OBJECT_CONSTRAINT::XY:
+		case CONSTRAINT::XY:
 		{
 			// Translate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].posX = translate.x;
@@ -712,7 +712,7 @@ void ObjectManager::Translate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs
 			translate.z = sceneGraph[m_selectedObjectIDs[i]].posZ;
 		}
 		break;
-		case OBJECT_CONSTRAINT::XZ:
+		case CONSTRAINT::XZ:
 		{
 			// Translate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].posX = translate.x;
@@ -722,7 +722,7 @@ void ObjectManager::Translate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs
 			translate.y = sceneGraph[m_selectedObjectIDs[i]].posY;
 		}
 		break;
-		case OBJECT_CONSTRAINT::YZ:
+		case CONSTRAINT::YZ:
 		{
 			// Translate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].posY = translate.y;
@@ -732,7 +732,7 @@ void ObjectManager::Translate(OBJECT_CONSTRAINT constraint, std::vector<int> IDs
 			translate.x = sceneGraph[m_selectedObjectIDs[i]].posX;
 		}
 		break;
-		case OBJECT_CONSTRAINT::ALL:
+		case CONSTRAINT::NA:
 		{
 			// Translate selected object based on mouse drag
 			sceneGraph[m_selectedObjectIDs[i]].posX = translate.x;

@@ -28,12 +28,12 @@ void TerrainSculptDialogue::DoDataExchange(CDataExchange* pDX)
 void TerrainSculptDialogue::UpdateButtons(bool enable)
 {
 	// Update sculpt
-	if (enable) { m_sculpt = LANDSCAPE_FUNCTION::NA; }
+	if (enable) { m_sculpt = TERRAIN_SCULPT::NA; }
 	
 	// Switch between sculpts
 	switch (m_sculpt)
 	{
-	case LANDSCAPE_FUNCTION::INCREASE:
+	case TERRAIN_SCULPT::INCREASE:
 	{
 		// Enable/disable flatten button
 		if (!enable) { CheckDlgButton(IDC_CHECK2, enable); }
@@ -44,7 +44,7 @@ void TerrainSculptDialogue::UpdateButtons(bool enable)
 		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
 	}
 	break;
-	case LANDSCAPE_FUNCTION::FLATTEN:
+	case TERRAIN_SCULPT::FLATTEN:
 	{
 		// Enable/disable increase button
 		if (!enable) { CheckDlgButton(IDC_CHECK1, enable); }
@@ -55,7 +55,7 @@ void TerrainSculptDialogue::UpdateButtons(bool enable)
 		///GetDlgItem(IDC_CHECK7)->EnableWindow(enable);
 	}
 	break;
-	case LANDSCAPE_FUNCTION::DECREASE:
+	case TERRAIN_SCULPT::DECREASE:
 	{
 		// Enable/disable increase button
 		if (!enable) { CheckDlgButton(IDC_CHECK1, enable); }
@@ -66,7 +66,7 @@ void TerrainSculptDialogue::UpdateButtons(bool enable)
 		///GetDlgItem(IDC_CHECK2)->EnableWindow(enable);
 	}
 	break;
-	case LANDSCAPE_FUNCTION::NA:
+	case TERRAIN_SCULPT::NA:
 	{
 		// Enable/disable increase button
 		if (!enable) { CheckDlgButton(IDC_CHECK1, enable); }
@@ -117,7 +117,7 @@ void TerrainSculptDialogue::OnBnClickedOk()
 // Set sculpt to increase
 void TerrainSculptDialogue::OnBnClickedIncrease() 
 { 
-	m_sculpt = LANDSCAPE_FUNCTION::INCREASE;
+	m_sculpt = TERRAIN_SCULPT::INCREASE;
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK1))
@@ -132,7 +132,7 @@ void TerrainSculptDialogue::OnBnClickedIncrease()
 // Set sculpt to flatten
 void TerrainSculptDialogue::OnBnClickedFlatten() 
 { 
-	m_sculpt = LANDSCAPE_FUNCTION::FLATTEN;
+	m_sculpt = TERRAIN_SCULPT::FLATTEN;
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK2))
@@ -147,7 +147,7 @@ void TerrainSculptDialogue::OnBnClickedFlatten()
 // Set sculpt to decrease
 void TerrainSculptDialogue::OnBnClickedDecrease() 
 { 
-	m_sculpt = LANDSCAPE_FUNCTION::DECREASE; 
+	m_sculpt = TERRAIN_SCULPT::DECREASE; 
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK7))

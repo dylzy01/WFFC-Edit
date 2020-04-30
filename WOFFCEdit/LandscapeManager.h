@@ -14,10 +14,10 @@ public:
 	~TerrainManager() {}
 
 	// Paint selected terrain
-	static void Paint(TERRAIN & terrain, LANDSCAPE_PAINT paint);
+	static void Paint(TERRAIN & terrain, TERRAIN_PAINT paint);
 
 	// Sculpt selected terrain
-	static void Sculpt(TERRAIN & terrain, LANDSCAPE_FUNCTION function, LANDSCAPE_CONSTRAINT constraint);
+	static void Sculpt(TERRAIN & terrain, TERRAIN_SCULPT function, CONSTRAINT constraint);
 	
 	// Setters
 	static void SetDisplayChunk(DisplayChunk * chunk) { m_displayChunk = chunk; }

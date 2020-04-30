@@ -17,7 +17,7 @@ public:
 
 	// Getters
 	bool GetActive() { return m_active; }
-	LANDSCAPE_PAINT GetPaint() { return m_paint; }
+	TERRAIN_PAINT GetPaint() { return m_paint; }
 
 	// Setters
 	void SetActive(bool active) { m_active = active; }
@@ -36,7 +36,7 @@ private:
 
 	// Controllers
 	bool m_active = false;
-	LANDSCAPE_PAINT m_paint = LANDSCAPE_PAINT::NA;
+	TERRAIN_PAINT m_paint = TERRAIN_PAINT::NA;
 
 	DECLARE_MESSAGE_MAP()
 
