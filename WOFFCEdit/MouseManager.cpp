@@ -150,36 +150,32 @@ int MouseManager::ObjectIntersection(DirectX::SimpleMath::Ray ray)
 	{
 		// Loop through all meshes
 		for (int j = 0; j < m_game->GetDisplayList()[i].m_model->meshes.size(); ++j)
-		{
-			// Check if ray trace intersects with current mesh
-			///if (ray.Intersects(m_game->GetDisplayList()[i].m_model->meshes[j]->boundingBox, distance))
+		{			
+			// If current object intersects ray trace
+			if (m_game->GetDisplayList()[i].m_model->meshes[j]->boundingBox.Intersects(ray.position, ray.direction, pickedDistance))
 			{
-				// If current object intersects ray trace
-				if (m_game->GetDisplayList()[i].m_model->meshes[j]->boundingBox.Intersects(ray.position, ray.direction, pickedDistance))
+				// If object is first picked
+				if (firstPick)
 				{
-					// If object is first picked
-					if (firstPick)
-					{
-						// Setup ID to return
-						ID = i;
+					// Setup ID to return
+					ID = i;
 
-						// Store current distance
-						storedDistance = pickedDistance;
+					// Store current distance
+					storedDistance = pickedDistance;
 
-						// Reset controller
-						firstPick = false;
-					}
-					// Else, if a closer object has been intersected
-					else if (pickedDistance < storedDistance)
-					{
-						// Setup ID to return
-						ID = i;
-
-						// Store current distance
-						storedDistance = pickedDistance;
-					}
+					// Reset controller
+					firstPick = false;
 				}
-			}
+				// Else, if a closer object has been intersected
+				else if (pickedDistance < storedDistance)
+				{
+					// Setup ID to return
+					ID = i;
+
+					// Store current distance
+					storedDistance = pickedDistance;
+				}
+			}			
 		}
 	}
 
@@ -190,9 +186,6 @@ int MouseManager::ObjectIntersection(DirectX::SimpleMath::Ray ray)
 // Check if ray trace intersects a piece of terrain
 TERRAIN MouseManager::TerrainIntersection(DirectX::SimpleMath::Ray ray)
 {
-	// Setup temp display chunk
-	///DisplayChunk* chunk = m_game->GetDisplayChunk();
-
 	// Setup temp terrain
 	TERRAIN terrain;
 	terrain.intersect = false;
@@ -216,45 +209,39 @@ TERRAIN MouseManager::TerrainIntersection(DirectX::SimpleMath::Ray ray)
 			DirectX::SimpleMath::Vector3 topLeft = m_game->GetDisplayChunk()->GetGeometry(i + 1, j).position;
 
 			// If ray intersects with either triangle in current geometry
-			if (ray.Intersects(bottomLeft, bottomRight, topRight, distance) || ray.Intersects(bottomLeft, topLeft, topRight, distance))
-			{
-				// If current geometry is within ray trace bounds
-				if (m_game->GetDisplayChunk()->GetGeometry(i, j).position.y < one.y && m_game->GetDisplayChunk()->GetGeometry(i, j).position.y > two.y)
-				///if (chunk->GetGeometry(i, j).position.y < one.y && chunk->GetGeometry(i, j).position.y > two.y)
+			if (ray.Intersects(bottomLeft, bottomRight, topRight, pickedDistance) || ray.Intersects(bottomLeft, topLeft, topRight, pickedDistance))
+			{				
+				// If terrain is first picked
+				if (firstPick)
 				{
-					// If terrain is first picked
-					if (firstPick)
-					{
-						// Setup values to return
-						terrain.row = i;
-						terrain.column = j;
-						terrain.intersect = true;
-						terrain.position = m_game->GetDisplayChunk()->GetGeometry(i, j).position;
+					// Setup values to return
+					terrain.row = i;
+					terrain.column = j;
+					terrain.intersect = true;
+					terrain.position = m_game->GetDisplayChunk()->GetGeometry(i, j).position;
 
-						// Store current distance
-						storedDistance = pickedDistance;
+					// Store current distance
+					storedDistance = pickedDistance;
 
-						// Reset controller
-						firstPick = false;
-					}
+					// Reset controller
+					firstPick = false;
+				}
 
-					// Else, if closer terrain has been intersected
-					else if (pickedDistance < storedDistance)
-					{
-						// Setup values to return
-						terrain.row = i;
-						terrain.column = j;
-						terrain.intersect = true;
-						terrain.position = m_game->GetDisplayChunk()->GetGeometry(i, j).position;
+				// Else, if closer terrain has been intersected
+				else if (pickedDistance < storedDistance)
+				{
+					// Setup values to return
+					terrain.row = i;
+					terrain.column = j;
+					terrain.intersect = true;
+					terrain.position = m_game->GetDisplayChunk()->GetGeometry(i, j).position;
 
-						// Store current distance
-						storedDistance = distance;
-					}
+					// Store current distance
+					storedDistance = distance;
 				}
 			}
 		}
 	}
 
-	// Return empty values if no intersection
 	return terrain;
 }

@@ -37,6 +37,7 @@ public:
 	DirectX::VertexPositionNormalTexture GetGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
 	LANDSCAPE_PAINT GetPaint(int row, int column);
 	void PaintTerrain(int row, int column, LANDSCAPE_PAINT paint, bool checkSurroundings = false);
+	void OverwritePaint(int row, int column, LANDSCAPE_PAINT paint);
 	void PaintOverBlended(LANDSCAPE_PAINT paint, std::pair<int, int> index);
 	void SculptTerrain(int row, int column, LANDSCAPE_FUNCTION function, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position = { { 0,0,0 } });
 	
@@ -52,7 +53,7 @@ private:
 	bool FindInVector(int &index, std::vector<std::pair<int, int>> vector, std::pair<int, int> terrain);
 	bool SearchAndDestroy(int &index, std::vector<std::pair<int, int>> &vector, std::pair<int, int> terrain);
 	bool SearchForPaint(std::vector<std::pair<int, int>> vector, std::pair<int, int> terrain);
-	LANDSCAPE_PAINT CheckForDuplicates(int row, int column, LANDSCAPE_PAINT paint = LANDSCAPE_PAINT::NA);
+	LANDSCAPE_PAINT RemoveDuplicates(int row, int column, LANDSCAPE_PAINT paint = LANDSCAPE_PAINT::NA);
 	void CheckSurroundings(int row, int column, LANDSCAPE_PAINT paint);
 	LANDSCAPE_PAINT CheckPaint(int row, int column);
 	void SavePaint(std::string path, std::vector<std::pair<int, int>> vector);
