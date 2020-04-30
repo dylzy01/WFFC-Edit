@@ -794,7 +794,6 @@ void Game::ReplaceObjects(std::vector<int> IDs, std::vector<SceneObject> * scene
 void Game::SaveDisplayChunk()
 {
 	m_displayChunk.GenerateHeightmap();
-	///BuildDisplayList(&m_sceneGraph);
 	m_displayChunk.SaveHeightMap();			//save heightmap to file.
 }
 

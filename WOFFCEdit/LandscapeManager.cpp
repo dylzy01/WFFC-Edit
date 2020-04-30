@@ -13,6 +13,9 @@ void LandscapeManager::Paint(TERRAIN & terrain, LANDSCAPE_PAINT paint, bool chec
 	// If terrain is intersected
 	if (terrain.intersect)
 	{
+		// Apply selected paint
+		terrain.paint = paint;
+		
 		// Store selected terrain (row, column)
 		DirectX::SimpleMath::Vector2 index;
 		index.x = terrain.row;

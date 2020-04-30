@@ -158,6 +158,7 @@
     <ClCompile Include="ToonBlendShader.cpp">
       <Filter>Shaders\Toon</Filter>
     </ClCompile>
+    <ClCompile Include="TerrainDialogue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -280,6 +281,7 @@
     <ClInclude Include="ToonBlendShader.h">
       <Filter>Shaders\Toon</Filter>
     </ClInclude>
+    <ClInclude Include="TerrainDialogue.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

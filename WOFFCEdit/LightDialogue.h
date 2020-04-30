@@ -21,7 +21,7 @@ public:
 	void SetLightData(std::pair<std::vector<Light*>, std::vector<int>>* lights);
 
 	// Update current light with dialogue values
-	void Update(int ID);
+	void Update(int index);
 	
 	// Getters
 	bool GetActive() { return m_active; }
@@ -44,7 +44,7 @@ protected:
 	// Local storage 
 	std::pair<std::vector<Light*>, std::vector<int>> m_lights;
 
-	// Active controller
+	// Controllers
 	bool m_active;
 	bool m_update;
 

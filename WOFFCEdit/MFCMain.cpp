@@ -19,6 +19,7 @@ BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_BUTTON40053, &MFCMain::ToolBarUndo)
 	ON_COMMAND(ID_BUTTON40054, &MFCMain::ToolBarRedo)
 	ON_COMMAND(ID_BUTTON40060, &MFCMain::ToolBarLight)
+	ON_COMMAND(ID_BUTTON40061, &MFCMain::ToolBarTerrain)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_TOOL, &CMyFrame::OnUpdatePage)
 END_MESSAGE_MAP()
 
@@ -210,7 +211,7 @@ void MFCMain::CheckDialogues()
 		m_toolSystem.SetLandscapePaint(m_terrainPaintDialogue.GetPaint());
 	}
 
-	// Else, if light editor is active
+	// Else, if light inspector is active
 	else if (m_lightDialogue.GetActive())
 	{
 		// If scene graph should be updated
@@ -264,6 +265,24 @@ void MFCMain::CheckDialogues()
 				}
 			}
 		}	
+	}
+
+	// Else, if terrain inspector is active
+	else if (m_terrainDialogue.GetActive())
+	{
+		// If right mouse is pressed
+		if (m_toolSystem.GetInput()->mouseRight)
+		{
+			// Get current terrain selection
+			TERRAIN terrain = MouseManager::PickTerrain();
+
+			// If terrain has been intersected
+			if (terrain.intersect)
+			{
+				// Update dialogue data
+				m_terrainDialogue.Update(terrain.row, terrain.column);
+			}			
+		}
 	}
 
 	// Else, if no dialogues are active
@@ -423,4 +442,18 @@ void MFCMain::ToolBarLight()
 	m_lightDialogue.ShowWindow(SW_SHOW);
 	m_lightDialogue.SetActive(true);
 	m_lightDialogue.SetLightData(&m_toolSystem.GetLights());
+}
+
+void MFCMain::ToolBarTerrain()
+{
+	// Destroy other windows (except terrain related)
+	m_objectEditorDialogue.DestroyWindow();
+	m_objectSpawnDialogue.DestroyWindow();
+	m_lightDialogue.DestroyWindow();
+
+	// Create & display dialogue window
+	m_terrainDialogue.Create(IDD_DIALOG9);
+	m_terrainDialogue.ShowWindow(SW_SHOW);
+	m_terrainDialogue.SetActive(true);
+	m_terrainDialogue.SetTerrainData(m_toolSystem.GetDisplayChunk());
 }

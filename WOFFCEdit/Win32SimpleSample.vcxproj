@@ -194,6 +194,7 @@
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="SQLManager.cpp" />
     <ClCompile Include="sqlite3.c" />
+    <ClCompile Include="TerrainDialogue.cpp" />
     <ClCompile Include="TerrainPaintDialogue.cpp" />
     <ClCompile Include="TerrainSculptDialogue.cpp" />
     <ClCompile Include="TextureShader.cpp" />
@@ -237,6 +238,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="MFCMain.h" />
+    <ClInclude Include="TerrainDialogue.h" />
     <ClInclude Include="TerrainPaintDialogue.h" />
     <ClInclude Include="TerrainSculptDialogue.h" />
     <ClInclude Include="TextureShader.h" />

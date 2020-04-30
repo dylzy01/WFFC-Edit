@@ -88,7 +88,16 @@ DirectX::SimpleMath::Vector3 MouseManager::PickSpawn()
 TERRAIN MouseManager::PickTerrain()
 {
 	// Return picked terrain object
-	return TerrainIntersection(RayTrace(m_input->mousePos));
+	TERRAIN terrain = TerrainIntersection(RayTrace(m_input->mousePos));
+
+	// If terrain has been intersected
+	if (terrain.intersect)
+	{
+		// Search for current terrain paint & apply
+		terrain.paint = m_game->GetDisplayChunk()->GetPaint(terrain.row, terrain.column);
+	}
+
+	return terrain;
 }
 
 // Setup ray trace from given position

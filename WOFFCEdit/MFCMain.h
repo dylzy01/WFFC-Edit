@@ -18,6 +18,7 @@
 #include "TerrainPaintDialogue.h"
 
 #include "LightDialogue.h"
+#include "TerrainDialogue.h"
 
 class MFCMain : public CWinApp 
 {
@@ -44,6 +45,7 @@ private:
 	TerrainPaintDialogue m_terrainPaintDialogue;
 
 	LightDialogue m_lightDialogue;
+	TerrainDialogue m_terrainDialogue;
 
 	int m_width;		
 	int m_height;
@@ -65,6 +67,7 @@ private:
 	afx_msg void ToolBarUndo();
 	afx_msg void ToolBarRedo();
 	afx_msg void ToolBarLight();
+	afx_msg void ToolBarTerrain();
 
 	DECLARE_MESSAGE_MAP()	// required macro for message map functionality  One per class
 };

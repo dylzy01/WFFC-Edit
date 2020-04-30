@@ -6,12 +6,6 @@
 
 #include <random>
 
-struct TERRAIN {
-	int row, column, ID;
-	bool intersect = false;
-	DirectX::SimpleMath::Vector3 position;
-};
-
 enum class MODEL_TYPE {
 	NOT_WATER,
 	WATER
@@ -140,6 +134,13 @@ enum class LIGHT_TYPE {
 	DIRECTIONAL = 1,
 	POINT = 2,
 	SPOT = 3
+};
+
+struct TERRAIN {
+	int row, column, ID;
+	bool intersect = false;
+	DirectX::SimpleMath::Vector3 position;
+	LANDSCAPE_PAINT paint;
 };
 
 class Tools

@@ -19,14 +19,12 @@ public: //methods
 	~ToolMain() { SQLManager::Disconnect(); }
 
 	//onAction - These are the interface to MFC
-	std::vector<int>	getCurrentObjectSelectionID() { return m_selectedObjectIDs; }			//returns the selection numbers of currently selected objects so that It can be displayed.
+	std::vector<int>	getCurrentObjectSelectionID() { return m_selectedObjectIDs; }		//returns the selection numbers of currently selected objects so that It can be displayed.
 	std::vector<TERRAIN>	getCurrentTerrainSelection() { return m_selectedTerrains; }		//returns the currently selected chunk so it can be displayed
 	void				onActionInitialise(HWND handle, int width, int height);				//Passes through handle and hieght and width and initialises DirectX renderer and SQL LITE
 	void				onActionFocusCamera();
 	void				onActionLoad();
-	void				onActionLoad_();													//load the current chunk
 	afx_msg void		onActionSave();
-	afx_msg	void		onActionSave_();													//save the current chunk
 	afx_msg void		onActionSaveTerrain();												//save chunk geometry
 	afx_msg void		onActionDeleteObjects();											//delete selected objects
 	afx_msg void		onActionUndo();
@@ -41,7 +39,9 @@ public: //methods
 	// Getters
 	EDITOR GetEditor() { return m_d3dRenderer.GetEditor(); } //return current editor
 	std::pair<std::vector<Light*>, std::vector<int>> GetLights() { return m_d3dRenderer.GetLights(); }
+	DisplayChunk* GetDisplayChunk() { return m_d3dRenderer.GetDisplayChunk(); }
 	std::vector<SceneObject> GetSceneGraph() { return m_d3dRenderer.GetSceneGraph(); }
+	InputCommands* GetInput() { return &m_toolInputCommands; }
 
 	// Setters
 	void SetWireframe(bool wireframe) { m_d3dRenderer.SetWireframe(wireframe); }
