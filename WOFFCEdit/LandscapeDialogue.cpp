@@ -155,7 +155,7 @@ void LandscapeDialogue::OnBnClickedOk()
 void LandscapeDialogue::OnBnClickedGrass()
 {
 	// Set editor to paint
-	m_editor = EDITOR::LANDSCAPE_PAINT;
+	m_editor = EDITOR::TERRAIN_PAINT;
 
 	// Check/uncheck button
 	m_grass = IsDlgButtonChecked(IDC_CHECK12);
@@ -185,7 +185,7 @@ void LandscapeDialogue::OnBnClickedGrass()
 void LandscapeDialogue::OnBnClickedDirt()
 {
 	// Set editor to paint
-	m_editor = EDITOR::LANDSCAPE_PAINT;
+	m_editor = EDITOR::TERRAIN_PAINT;
 
 	// Check/uncheck button
 	m_dirt = IsDlgButtonChecked(IDC_CHECK13);
@@ -215,7 +215,7 @@ void LandscapeDialogue::OnBnClickedDirt()
 void LandscapeDialogue::OnBnClickedSand()
 {
 	// Set editor to paint
-	m_editor = EDITOR::LANDSCAPE_PAINT;
+	m_editor = EDITOR::TERRAIN_PAINT;
 
 	// Check/uncheck button
 	m_sand = IsDlgButtonChecked(IDC_CHECK14);
@@ -245,7 +245,7 @@ void LandscapeDialogue::OnBnClickedSand()
 void LandscapeDialogue::OnBnClickedIncrease()
 {
 	// Set editor to sculpt
-	m_editor = EDITOR::LANDSCAPE_FUNCTION;
+	m_editor = EDITOR::TERRAIN_FUNCTION;
 	
 	// Switch between checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK6))
@@ -272,7 +272,7 @@ void LandscapeDialogue::OnBnClickedIncrease()
 void LandscapeDialogue::OnBnClickedDecrease()
 {
 	// Set editor to sculpt
-	m_editor = EDITOR::LANDSCAPE_FUNCTION;
+	m_editor = EDITOR::TERRAIN_FUNCTION;
 	
 	// Switch between checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK7))
@@ -299,7 +299,7 @@ void LandscapeDialogue::OnBnClickedDecrease()
 void LandscapeDialogue::OnBnClickedFlatten()
 {
 	// Set editor to sculpt
-	m_editor = EDITOR::LANDSCAPE_FUNCTION;
+	m_editor = EDITOR::TERRAIN_FUNCTION;
 		
 	// Switch between checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK8))

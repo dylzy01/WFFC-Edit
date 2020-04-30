@@ -53,8 +53,8 @@ void ToolMain::onActionInitialise(HWND handle, int width, int height)
 	ObjectManager::SetInput(&m_toolInputCommands);
 
 	// Set static landscape manager display chunk
-	LandscapeManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk());
-	LandscapeManager::StorePosition(true);
+	TerrainManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk());
+	TerrainManager::StorePosition(true);
 
 	// Set static scene manager game & display chunk
 	SceneManager::SetGame(&m_d3dRenderer);
@@ -257,16 +257,16 @@ void ToolMain::Tick(MSG *msg)
 			}			
 		}			
 		break;
-		case EDITOR::LANDSCAPE_PAINT:
+		case EDITOR::TERRAIN_PAINT:
 		{
 			// Paint terrain
-			LandscapeManager::Paint(m_selectedTerrain, m_landscapePaint, true);
+			TerrainManager::Paint(m_selectedTerrain, m_paint);
 		}
 		break;
-		case EDITOR::LANDSCAPE_FUNCTION:
+		case EDITOR::TERRAIN_FUNCTION:
 		{
 			// Sculpt terrain
-			LandscapeManager::Sculpt(m_selectedTerrain, m_landscapeFunction, m_landscapeConstraint);
+			TerrainManager::Sculpt(m_selectedTerrain, m_terrainFunction, m_terrainConstraint);
 		}
 		break;
 		}		
@@ -339,7 +339,7 @@ void ToolMain::UpdateInput(MSG * msg)
 
 	case WM_RBUTTONUP:
 		m_rDown = m_toolInputCommands.mouseRight = m_toolInputCommands.mouseDrag = false;
-		LandscapeManager::StorePosition(true);
+		TerrainManager::StorePosition(true);
 		SceneManager::SetSceneGraph(&m_sceneGraph);
 		///SaveDisplayList(m_d3dRenderer.GetDisplayList());
 		//m_d3dRenderer.BuildDisplayList(&m_sceneGraph);

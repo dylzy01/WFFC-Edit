@@ -186,6 +186,7 @@
     <ClCompile Include="ObjectEditorDialogue.cpp" />
     <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="ObjectSpawnDialogue.cpp" />
+    <ClCompile Include="PaintDialogue.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="MFCMain.cpp" />
     <ClCompile Include="SceneManager.cpp" />
@@ -225,6 +226,7 @@
     <ClInclude Include="ObjectEditorDialogue.h" />
     <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="ObjectSpawnDialogue.h" />
+    <ClInclude Include="PaintDialogue.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ReadData.h" />
     <ClInclude Include="resource.h" />
@@ -260,6 +262,13 @@
     <ResourceCompile Include="Win32SimpleSample.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="bitmap1.bmp" />
+    <Image Include="bitmap2.bmp" />
+    <Image Include="bitmap3.bmp" />
+    <Image Include="bitmap4.bmp" />
+    <Image Include="bitmap5.bmp" />
+    <Image Include="bitmap6.bmp" />
+    <Image Include="icon1.ico" />
     <Image Include="toolbar1.bmp" />
     <Image Include="toolbar2.bmp" />
     <Image Include="toolbar_select.bmp" />

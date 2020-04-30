@@ -34,33 +34,44 @@ public:
 	ID3D11ShaderResourceView *					m_normalMap;					//normal map texture
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>   m_terrainInputLayout;
 
-	DirectX::VertexPositionNormalTexture GetGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
-	LANDSCAPE_PAINT GetPaint(int row, int column);
-	void PaintTerrain(int row, int column, LANDSCAPE_PAINT paint, bool checkSurroundings = false);
+	// Painting
+	void PaintTerrain(int row, int column, LANDSCAPE_PAINT paint);
 	void OverwritePaint(int row, int column, LANDSCAPE_PAINT paint);
 	void PaintOverBlended(LANDSCAPE_PAINT paint, std::pair<int, int> index);
+
+	// Sculpting
 	void SculptTerrain(int row, int column, LANDSCAPE_FUNCTION function, LANDSCAPE_CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position = { { 0,0,0 } });
 	
-	void SetSelected(bool selected, int row, int column);
-	void DrawTerrain(std::vector<std::pair<int, int>> terrain);
-
+	// Getters
 	ChunkObject GetChunk();
+	DirectX::VertexPositionNormalTexture GetGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
+	LANDSCAPE_PAINT GetPaint(int row, int column);
+	
+	// Setters
+	void SetSelected(bool selected, int row, int column);
+	void SetSurround(bool surround) { m_surround = surround; }
+	void SetBlend(bool blend) { m_blend = blend; }	
 
 private:
 	DirectX::VertexPositionNormalTexture m_terrainGeometry[TERRAINRESOLUTION][TERRAINRESOLUTION];
 	BYTE m_heightMap[TERRAINRESOLUTION*TERRAINRESOLUTION];
 	void CalculateTerrainNormals();	
+
+	// Searching containers
 	bool FindInVector(int &index, std::vector<std::pair<int, int>> vector, std::pair<int, int> terrain);
 	bool SearchAndDestroy(int &index, std::vector<std::pair<int, int>> &vector, std::pair<int, int> terrain);
 	bool SearchForPaint(std::vector<std::pair<int, int>> vector, std::pair<int, int> terrain);
+
+	// Painting
 	LANDSCAPE_PAINT RemoveDuplicates(int row, int column, LANDSCAPE_PAINT paint = LANDSCAPE_PAINT::NA);
 	void CheckSurroundings(int row, int column, LANDSCAPE_PAINT paint);
-	LANDSCAPE_PAINT CheckPaint(int row, int column);
 	void SavePaint(std::string path, std::vector<std::pair<int, int>> vector);
 	void ReadPaints(std::string path, std::vector<std::pair<int, int>> &vector);
 	void ReadAllPaints();
 	void SaveAllPaints();
 
+	// Drawing
+	void DrawTerrain(std::vector<std::pair<int, int>> terrain);
 	void DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResources, std::vector<Light*> lights);
 
 	float	m_terrainHeightScale;
@@ -96,9 +107,8 @@ private:
 	std::vector<std::pair<int, int>> m_sandStone, m_sandSnow;
 	std::vector<std::pair<int, int>> m_stoneSnow;
 
-	std::vector<std::pair<int, int>> m_grassTemp, m_dirtTemp, m_sandTemp, m_stoneTemp, m_snowTemp;
-	std::vector<std::pair<int, int>> m_highlight;
+	std::vector<std::pair<int, int>> m_highlight, m_grassTemp, m_dirtTemp, m_sandTemp, m_stoneTemp, m_snowTemp;
 
-	// Shaders
-	///TextureShader m_shader;
+	// Paint controllers
+	bool m_surround, m_blend;
 };

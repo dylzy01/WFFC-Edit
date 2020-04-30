@@ -1,11 +1,11 @@
 #include "LandscapeManager.h"
 
-DisplayChunk * LandscapeManager::m_displayChunk;
-bool LandscapeManager::m_store;
-std::vector<DirectX::SimpleMath::Vector3> LandscapeManager::m_storedPositions;
+DisplayChunk * TerrainManager::m_displayChunk;
+bool TerrainManager::m_store;
+std::vector<DirectX::SimpleMath::Vector3> TerrainManager::m_storedPositions;
 
 // Paint selected terrain
-void LandscapeManager::Paint(TERRAIN & terrain, LANDSCAPE_PAINT paint, bool checkSurroundings)
+void TerrainManager::Paint(TERRAIN & terrain, LANDSCAPE_PAINT paint)
 {
 	// Pick terrain
 	terrain = MouseManager::PickTerrain();
@@ -22,12 +22,12 @@ void LandscapeManager::Paint(TERRAIN & terrain, LANDSCAPE_PAINT paint, bool chec
 		index.y = terrain.column;
 
 		// Paint terrain the selected texture
-		m_displayChunk->PaintTerrain(index.x, index.y, paint, checkSurroundings);
+		m_displayChunk->PaintTerrain(index.x, index.y, paint);
 	}
 }
 
 // Sculpt selected terrain
-void LandscapeManager::Sculpt(TERRAIN & terrain, LANDSCAPE_FUNCTION function, LANDSCAPE_CONSTRAINT constraint)
+void TerrainManager::Sculpt(TERRAIN & terrain, LANDSCAPE_FUNCTION function, LANDSCAPE_CONSTRAINT constraint)
 {
 	// Pick terrain
 	terrain = MouseManager::PickTerrain();

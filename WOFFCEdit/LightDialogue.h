@@ -2,8 +2,8 @@
 #include "afxdialogex.h"
 #include "resource.h"
 #include "afxwin.h"
-#include "SceneObject.h"
 #include <vector>
+#include <string>
 #include "Tools.h"
 #include "Light.h"
 

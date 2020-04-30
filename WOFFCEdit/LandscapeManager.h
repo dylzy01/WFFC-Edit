@@ -7,14 +7,14 @@
 #include "SQLManager.h"
 #include "MouseManager.h"
 
-class LandscapeManager
+class TerrainManager
 {
 public:
-	LandscapeManager() {}
-	~LandscapeManager() {}
+	TerrainManager() {}
+	~TerrainManager() {}
 
 	// Paint selected terrain
-	static void Paint(TERRAIN & terrain, LANDSCAPE_PAINT paint, bool checkSurroundings = false);
+	static void Paint(TERRAIN & terrain, LANDSCAPE_PAINT paint);
 
 	// Sculpt selected terrain
 	static void Sculpt(TERRAIN & terrain, LANDSCAPE_FUNCTION function, LANDSCAPE_CONSTRAINT constraint);

@@ -158,7 +158,10 @@
     <ClCompile Include="ToonBlendShader.cpp">
       <Filter>Shaders\Toon</Filter>
     </ClCompile>
-    <ClCompile Include="TerrainDialogue.cpp" />
+    <ClCompile Include="TerrainDialogue.cpp">
+      <Filter>MFC\Dialogues\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="PaintDialogue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -253,7 +256,6 @@
     <ClInclude Include="DebugDraw.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="ReadData.h" />
     <ClInclude Include="ShaderManager.h">
       <Filter>Custom\Managers</Filter>
     </ClInclude>
@@ -281,7 +283,13 @@
     <ClInclude Include="ToonBlendShader.h">
       <Filter>Shaders\Toon</Filter>
     </ClInclude>
-    <ClInclude Include="TerrainDialogue.h" />
+    <ClInclude Include="TerrainDialogue.h">
+      <Filter>MFC\Dialogues\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="ReadData.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PaintDialogue.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -299,6 +307,27 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="toolbar2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="icon1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="bitmap1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="bitmap2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="bitmap3.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="bitmap4.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="bitmap5.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="bitmap6.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

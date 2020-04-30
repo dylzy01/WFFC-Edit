@@ -2,8 +2,8 @@
 #include "afxdialogex.h"
 #include "resource.h"
 #include "afxwin.h"
-#include "SceneObject.h"
 #include <vector>
+#include <string>
 #include "Tools.h"
 #include "DisplayChunk.h"
 
@@ -18,7 +18,7 @@ public:
 	virtual ~TerrainDialogue() {}
 
 	// Pass in data pointers the class will operate on
-	void SetTerrainData(DisplayChunk* displayChunk);
+	void SetChunkData(DisplayChunk* displayChunk);
 
 	// Update current terrain with dialogue values/vice versa
 	void Update(int row, int column);
@@ -42,7 +42,6 @@ protected:
 
 	// Local storage
 	DisplayChunk* m_displayChunk;
-	DirectX::VertexPositionNormalTexture* m_geometry[128][128];
 														
 	// Controllers
 	bool m_active;
@@ -56,7 +55,7 @@ public:
 
 	// Message handlers
 	afx_msg void OnBnClickedOk();
-	afx_msg void OnBnSelchangeChangeIndex();
+	afx_msg void OnBnSelchangeIndex();
 	afx_msg void OnBnSelchangeTexture();
 
 private:

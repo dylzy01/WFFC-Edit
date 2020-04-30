@@ -99,11 +99,11 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	}	
 	
 	// Draw all highlighted geometry
-	if (m_highlight.size() != 0) {
+	/*if (m_highlight.size() != 0) {
 		m_batch->Begin();
 		DrawTerrain(m_highlight);
 		m_batch->End();
-	}
+	}*/
 
 	// Draw all default geometry
 	if (m_default.size() != 0) {
@@ -398,14 +398,14 @@ LANDSCAPE_PAINT DisplayChunk::GetPaint(int row, int column)
 	return paint;
 }
 
-void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint, bool checkSurroundings)
+void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint)
 {	
 	// Store row & column
 	std::pair<int, int> index(i, j);
 
 	// Check for duplicates and return current paint
 	LANDSCAPE_PAINT current = RemoveDuplicates(i, j, paint);
-
+	
 	// If current paint is grass
 	if (current == LANDSCAPE_PAINT::GRASS)
 	{
@@ -415,14 +415,30 @@ void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint, bool checkS
 		// Else, apply selected paint
 		else
 		{
-			// Switch between selected paint
-			switch (paint)
+			// If should blend
+			if (m_blend)
 			{
-			case LANDSCAPE_PAINT::DIRT:		m_grassDirt.push_back(index); break;
-			case LANDSCAPE_PAINT::SAND:		m_grassSand.push_back(index); break;
-			case LANDSCAPE_PAINT::STONE:	m_grassStone.push_back(index); break;
-			case LANDSCAPE_PAINT::SNOW:		m_grassSnow.push_back(index); break;
+				// Switch between selected paint
+				switch (paint)
+				{
+				case LANDSCAPE_PAINT::DIRT:		m_grassDirt.push_back(index); break;
+				case LANDSCAPE_PAINT::SAND:		m_grassSand.push_back(index); break;
+				case LANDSCAPE_PAINT::STONE:	m_grassStone.push_back(index); break;
+				case LANDSCAPE_PAINT::SNOW:		m_grassSnow.push_back(index); break;
+				}
 			}
+			// Else, should overwrite
+			else
+			{
+				// Switch between selected paint
+				switch (paint)
+				{
+				case LANDSCAPE_PAINT::DIRT:		m_dirt.push_back(index); break;
+				case LANDSCAPE_PAINT::SAND:		m_sand.push_back(index); break;
+				case LANDSCAPE_PAINT::STONE:	m_stone.push_back(index); break;
+				case LANDSCAPE_PAINT::SNOW:		m_snow.push_back(index); break;
+				}
+			}			
 		}
 	}
 
@@ -435,14 +451,30 @@ void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint, bool checkS
 		// Else, apply selected paint
 		else
 		{
-			// Switch between selected paint
-			switch (paint)
+			// If should blend
+			if (m_blend)
 			{
-			case LANDSCAPE_PAINT::GRASS:	m_grassDirt.push_back(index); break;
-			case LANDSCAPE_PAINT::SAND:		m_dirtSand.push_back(index); break;
-			case LANDSCAPE_PAINT::STONE:	m_dirtStone.push_back(index); break;
-			case LANDSCAPE_PAINT::SNOW:		m_dirtSnow.push_back(index); break;
+				// Switch between selected paint
+				switch (paint)
+				{
+				case LANDSCAPE_PAINT::GRASS:	m_grassDirt.push_back(index); break;
+				case LANDSCAPE_PAINT::SAND:		m_dirtSand.push_back(index); break;
+				case LANDSCAPE_PAINT::STONE:	m_dirtStone.push_back(index); break;
+				case LANDSCAPE_PAINT::SNOW:		m_dirtSnow.push_back(index); break;
+				}
 			}
+			// Else, if should overwrite
+			else
+			{
+				// Switch between selected paint
+				switch (paint)
+				{
+				case LANDSCAPE_PAINT::GRASS:	m_grass.push_back(index); break;
+				case LANDSCAPE_PAINT::SAND:		m_sand.push_back(index); break;
+				case LANDSCAPE_PAINT::STONE:	m_stone.push_back(index); break;
+				case LANDSCAPE_PAINT::SNOW:		m_snow.push_back(index); break;
+				}
+			}			
 		}
 	}
 
@@ -455,14 +487,30 @@ void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint, bool checkS
 		// Else, apply selected paint
 		else
 		{
-			// Switch between selected paint
-			switch (paint)
+			// If should blend
+			if (m_blend)
 			{
-			case LANDSCAPE_PAINT::GRASS: m_grassSand.push_back(index); break;
-			case LANDSCAPE_PAINT::DIRT: m_dirtSand.push_back(index); break;
-			case LANDSCAPE_PAINT::STONE: m_sandStone.push_back(index); break;
-			case LANDSCAPE_PAINT::SNOW: m_sandSnow.push_back(index); break;
+				// Switch between selected paint
+				switch (paint)
+				{
+				case LANDSCAPE_PAINT::GRASS: m_grassSand.push_back(index); break;
+				case LANDSCAPE_PAINT::DIRT: m_dirtSand.push_back(index); break;
+				case LANDSCAPE_PAINT::STONE: m_sandStone.push_back(index); break;
+				case LANDSCAPE_PAINT::SNOW: m_sandSnow.push_back(index); break;
+				}
 			}
+			// Else, if should overwrite
+			else
+			{
+				// Switch between selected paint
+				switch (paint)
+				{
+				case LANDSCAPE_PAINT::GRASS: m_grass.push_back(index); break;
+				case LANDSCAPE_PAINT::DIRT: m_dirt.push_back(index); break;
+				case LANDSCAPE_PAINT::STONE: m_stone.push_back(index); break;
+				case LANDSCAPE_PAINT::SNOW: m_snow.push_back(index); break;
+				}
+			}			
 		}
 	}
 
@@ -475,14 +523,30 @@ void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint, bool checkS
 		// Else, apply selected paint
 		else
 		{
-			// Switch between selected paint
-			switch (paint)
+			// If should blend
+			if (m_blend)
 			{
-			case LANDSCAPE_PAINT::GRASS: m_grassStone.push_back(index); break;
-			case LANDSCAPE_PAINT::DIRT: m_dirtStone.push_back(index); break;
-			case LANDSCAPE_PAINT::SAND: m_sandStone.push_back(index); break;
-			case LANDSCAPE_PAINT::SNOW: m_stoneSnow.push_back(index); break;
+				// Switch between selected paint
+				switch (paint)
+				{
+				case LANDSCAPE_PAINT::GRASS: m_grassStone.push_back(index); break;
+				case LANDSCAPE_PAINT::DIRT: m_dirtStone.push_back(index); break;
+				case LANDSCAPE_PAINT::SAND: m_sandStone.push_back(index); break;
+				case LANDSCAPE_PAINT::SNOW: m_stoneSnow.push_back(index); break;
+				}
 			}
+			// Else, if should overwrite
+			else
+			{
+				// Switch between selected paint
+				switch (paint)
+				{
+				case LANDSCAPE_PAINT::GRASS: m_grass.push_back(index); break;
+				case LANDSCAPE_PAINT::DIRT: m_dirt.push_back(index); break;
+				case LANDSCAPE_PAINT::SAND: m_sand.push_back(index); break;
+				case LANDSCAPE_PAINT::SNOW: m_snow.push_back(index); break;
+				}
+			}			
 		}
 	}
 
@@ -495,14 +559,30 @@ void DisplayChunk::PaintTerrain(int i, int j, LANDSCAPE_PAINT paint, bool checkS
 		// Else, apply selected paint
 		else
 		{
-			// Switch between selected paint
-			switch (paint)
+			// If should blend
+			if (m_blend)
 			{
-			case LANDSCAPE_PAINT::GRASS: m_grassSnow.push_back(index); break;
-			case LANDSCAPE_PAINT::DIRT: m_dirtSnow.push_back(index); break;
-			case LANDSCAPE_PAINT::SAND: m_sandSnow.push_back(index); break;
-			case LANDSCAPE_PAINT::STONE: m_stoneSnow.push_back(index); break;
+				// Switch between selected paint
+				switch (paint)
+				{
+				case LANDSCAPE_PAINT::GRASS: m_grassSnow.push_back(index); break;
+				case LANDSCAPE_PAINT::DIRT: m_dirtSnow.push_back(index); break;
+				case LANDSCAPE_PAINT::SAND: m_sandSnow.push_back(index); break;
+				case LANDSCAPE_PAINT::STONE: m_stoneSnow.push_back(index); break;
+				}
 			}
+			// Else, if should overwrite
+			else
+			{
+				// Switch between selected paint
+				switch (paint)
+				{
+				case LANDSCAPE_PAINT::GRASS: m_grass.push_back(index); break;
+				case LANDSCAPE_PAINT::DIRT: m_dirt.push_back(index); break;
+				case LANDSCAPE_PAINT::SAND: m_sand.push_back(index); break;
+				case LANDSCAPE_PAINT::STONE: m_stone.push_back(index); break;
+				}
+			}			
 		}
 	}
 	
@@ -1349,1017 +1429,1017 @@ LANDSCAPE_PAINT DisplayChunk::RemoveDuplicates(int row, int column, LANDSCAPE_PA
 	bool check = false;
 
 	// Search through grass vector
-	check = SearchAndDestroy(index, m_grass, terrain);
-	if (check) { current = LANDSCAPE_PAINT::GRASS; }
+	//check = SearchAndDestroy(index, m_grass, terrain);
+	//if (check) { current = LANDSCAPE_PAINT::GRASS; }
 
-	// Else, search through dirt vector
-	if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
-	if (check) { current = LANDSCAPE_PAINT::DIRT; }
+	//// Else, search through dirt vector
+	//if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
+	//if (check) { current = LANDSCAPE_PAINT::DIRT; }
 
-	// Else, search through sand vector
-	if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
-	if (check) { current = LANDSCAPE_PAINT::SAND; }
+	//// Else, search through sand vector
+	//if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
+	//if (check) { current = LANDSCAPE_PAINT::SAND; }
 
-	// Else, search through stone vector
-	if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
-	if (check) { current = LANDSCAPE_PAINT::STONE; }
+	//// Else, search through stone vector
+	//if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
+	//if (check) { current = LANDSCAPE_PAINT::STONE; }
 
-	// Else, search through snow vector
-	if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
-	if (check) { current = LANDSCAPE_PAINT::SNOW; }
+	//// Else, search through snow vector
+	//if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
+	//if (check) { current = LANDSCAPE_PAINT::SNOW; }
 
-	// Else, search through grass/dirt blend vector
-	if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
-	if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; }
+	//// Else, search through grass/dirt blend vector
+	//if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
+	//if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; }
 
-	// Else, search through grass/sand blend vector
-	if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
-	if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; }
+	//// Else, search through grass/sand blend vector
+	//if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
+	//if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; }
 
-	// Else, search through grass/stone blend vector
-	if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
-	if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; }
+	//// Else, search through grass/stone blend vector
+	//if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
+	//if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; }
 
-	// Else, search through grass/snow blend vector
-	if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
-	if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; }
+	//// Else, search through grass/snow blend vector
+	//if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
+	//if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; }
 
-	// Else, search through dirt/sand blend vector
-	if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
-	if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; }
+	//// Else, search through dirt/sand blend vector
+	//if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
+	//if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; }
 
-	// Else, search through dirt/stone blend vector
-	if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
-	if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; }
+	//// Else, search through dirt/stone blend vector
+	//if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
+	//if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; }
 
-	// Else, search through dirt/snow blend vector
-	if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
-	if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; }
+	//// Else, search through dirt/snow blend vector
+	//if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
+	//if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; }
 
-	// Else, search through sand/stone blend vector
-	if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
-	if (check) { current = LANDSCAPE_PAINT::SAND_STONE; }
+	//// Else, search through sand/stone blend vector
+	//if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
+	//if (check) { current = LANDSCAPE_PAINT::SAND_STONE; }
 
-	// Else, search through sand/snow blend vector
-	if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
-	if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; }
+	//// Else, search through sand/snow blend vector
+	//if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
+	//if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; }
 
-	// Else, search through stone/snow blend vector
-	if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
-	if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; }
+	//// Else, search through stone/snow blend vector
+	//if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
+	//if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; }
 
 	// Switch between paints
-	//switch (paint)
-	//{
-	//case LANDSCAPE_PAINT::GRASS:
-	//{
-	//	// Else, search through dirt vector
-	//	check = SearchAndDestroy(index, m_dirt, terrain);
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
-
-	//	// Else, search through sand vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND; break; }
-
-	//	// Else, search through stone vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE; break; }
-
-	//	// Else, search through snow vector
-	//	if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
-
-	//	// Else, search through grass/dirt blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
-
-	//	// Else, search through grass/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
-
-	//	// Else, search through grass/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
-
-	//	// Else, search through grass/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
-
-	//	// Else, search through dirt/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
-
-	//	// Else, search through dirt/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
-
-	//	// Else, search through dirt/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
-
-	//	// Else, search through sand/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
-
-	//	// Else, search through sand/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
-
-	//	// Else, search through stone/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::DIRT:
-	//{
-	//	// Search through grass vector
-	//	check = SearchAndDestroy(index, m_grass, terrain);
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
-
-	//	// Else, search through sand vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND; break; }
-
-	//	// Else, search through stone vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE; break; }
-
-	//	// Else, search through snow vector
-	//	if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
-
-	//	// Else, search through grass/dirt blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
-
-	//	// Else, search through grass/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
-
-	//	// Else, search through grass/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
-
-	//	// Else, search through grass/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
-
-	//	// Else, search through dirt/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
-
-	//	// Else, search through dirt/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
-
-	//	// Else, search through dirt/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
-
-	//	// Else, search through sand/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
-
-	//	// Else, search through sand/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
-
-	//	// Else, search through stone/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::SAND:
-	//{
-	//	// Search through grass vector
-	//	check = SearchAndDestroy(index, m_grass, terrain);
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
-
-	//	// Else, search through dirt vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
-
-	//	// Else, search through stone vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE; break; }
-
-	//	// Else, search through snow vector
-	//	if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
-
-	//	// Else, search through grass/dirt blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
-
-	//	// Else, search through grass/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
-
-	//	// Else, search through grass/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
-
-	//	// Else, search through grass/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
-
-	//	// Else, search through dirt/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
-
-	//	// Else, search through dirt/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
-
-	//	// Else, search through dirt/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
-
-	//	// Else, search through sand/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
-
-	//	// Else, search through sand/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
-
-	//	// Else, search through stone/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::STONE:
-	//{
-	//	// Search through grass vector
-	//	check = SearchAndDestroy(index, m_grass, terrain);
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
-
-	//	// Else, search through dirt vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
-
-	//	// Else, search through sand vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND; break; }
-
-	//	// Else, search through snow vector
-	//	if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
-
-	//	// Else, search through grass/dirt blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
-
-	//	// Else, search through grass/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
-
-	//	// Else, search through grass/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
-
-	//	// Else, search through grass/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
-
-	//	// Else, search through dirt/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
-
-	//	// Else, search through dirt/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
-
-	//	// Else, search through dirt/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
-
-	//	// Else, search through sand/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
-
-	//	// Else, search through sand/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
-
-	//	// Else, search through stone/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::SNOW:
-	//{
-	//	// Search through grass vector
-	//	check = SearchAndDestroy(index, m_grass, terrain);
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
-
-	//	// Else, search through dirt vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
-
-	//	// Else, search through sand vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND; break; }
-
-	//	// Else, search through stone vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE; break; }
-
-	//	// Else, search through grass/dirt blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
-
-	//	// Else, search through grass/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
-
-	//	// Else, search through grass/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
-
-	//	// Else, search through grass/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
-
-	//	// Else, search through dirt/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
-
-	//	// Else, search through dirt/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
-
-	//	// Else, search through dirt/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
-
-	//	// Else, search through sand/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
-
-	//	// Else, search through sand/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
-
-	//	// Else, search through stone/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::GRASS_DIRT:
-	//{
-	//	// Search through grass vector
-	//	check = SearchAndDestroy(index, m_grass, terrain);
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
-
-	//	// Else, search through dirt vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
-
-	//	// Else, search through sand vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND; break; }
-
-	//	// Else, search through stone vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE; break; }
-
-	//	// Else, search through snow vector
-	//	if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
-
-	//	// Else, search through grass/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
-
-	//	// Else, search through grass/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
-
-	//	// Else, search through grass/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
-
-	//	// Else, search through dirt/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
-
-	//	// Else, search through dirt/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
-
-	//	// Else, search through dirt/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
-
-	//	// Else, search through sand/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
-
-	//	// Else, search through sand/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
-
-	//	// Else, search through stone/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::GRASS_SAND:
-	//{
-	//	// Search through grass vector
-	//	check = SearchAndDestroy(index, m_grass, terrain);
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
-
-	//	// Else, search through dirt vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
-
-	//	// Else, search through sand vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND; break; }
-
-	//	// Else, search through stone vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE; break; }
-
-	//	// Else, search through snow vector
-	//	if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
-
-	//	// Else, search through grass/dirt blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
-
-	//	// Else, search through grass/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
-
-	//	// Else, search through grass/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
-
-	//	// Else, search through dirt/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
-
-	//	// Else, search through dirt/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
-
-	//	// Else, search through dirt/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
-
-	//	// Else, search through sand/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
-
-	//	// Else, search through sand/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
-
-	//	// Else, search through stone/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::GRASS_STONE:
-	//{
-	//	// Search through grass vector
-	//	check = SearchAndDestroy(index, m_grass, terrain);
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
-
-	//	// Else, search through dirt vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
-
-	//	// Else, search through sand vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND; break; }
-
-	//	// Else, search through stone vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE; break; }
-
-	//	// Else, search through snow vector
-	//	if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
-
-	//	// Else, search through grass/dirt blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
-
-	//	// Else, search through grass/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
-
-	//	// Else, search through grass/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
-
-	//	// Else, search through dirt/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
-
-	//	// Else, search through dirt/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
-
-	//	// Else, search through dirt/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
-
-	//	// Else, search through sand/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
-
-	//	// Else, search through sand/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
-
-	//	// Else, search through stone/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::GRASS_SNOW:
-	//{
-	//	// Search through grass vector
-	//	check = SearchAndDestroy(index, m_grass, terrain);
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
-
-	//	// Else, search through dirt vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
-
-	//	// Else, search through sand vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND; break; }
-
-	//	// Else, search through stone vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE; break; }
-
-	//	// Else, search through snow vector
-	//	if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
-
-	//	// Else, search through grass/dirt blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
-
-	//	// Else, search through grass/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
-
-	//	// Else, search through grass/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
-
-	//	// Else, search through dirt/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
-
-	//	// Else, search through dirt/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
-
-	//	// Else, search through dirt/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
-
-	//	// Else, search through sand/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
-
-	//	// Else, search through sand/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
-
-	//	// Else, search through stone/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::DIRT_SAND:
-	//{
-	//	// Search through grass vector
-	//	check = SearchAndDestroy(index, m_grass, terrain);
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
-
-	//	// Else, search through dirt vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
-
-	//	// Else, search through sand vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND; break; }
-
-	//	// Else, search through stone vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE; break; }
-
-	//	// Else, search through snow vector
-	//	if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
-
-	//	// Else, search through grass/dirt blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
-
-	//	// Else, search through grass/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
-
-	//	// Else, search through grass/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
-
-	//	// Else, search through grass/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
-
-	//	// Else, search through dirt/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
-
-	//	// Else, search through dirt/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
-
-	//	// Else, search through sand/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
-
-	//	// Else, search through sand/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
-
-	//	// Else, search through stone/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::DIRT_STONE:
-	//{
-	//	// Search through grass vector
-	//	check = SearchAndDestroy(index, m_grass, terrain);
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
-
-	//	// Else, search through dirt vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
-
-	//	// Else, search through sand vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND; break; }
-
-	//	// Else, search through stone vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE; break; }
-
-	//	// Else, search through snow vector
-	//	if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
-
-	//	// Else, search through grass/dirt blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
-
-	//	// Else, search through grass/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
-
-	//	// Else, search through grass/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
-
-	//	// Else, search through grass/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
-
-	//	// Else, search through dirt/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
-
-	//	// Else, search through dirt/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
-
-	//	// Else, search through sand/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
-
-	//	// Else, search through sand/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
-
-	//	// Else, search through stone/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::DIRT_SNOW:
-	//{
-	//	// Search through grass vector
-	//	check = SearchAndDestroy(index, m_grass, terrain);
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
-
-	//	// Else, search through dirt vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
-
-	//	// Else, search through sand vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND; break; }
-
-	//	// Else, search through stone vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE; break; }
-
-	//	// Else, search through snow vector
-	//	if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
-
-	//	// Else, search through grass/dirt blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
-
-	//	// Else, search through grass/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
-
-	//	// Else, search through grass/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
-
-	//	// Else, search through grass/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
-
-	//	// Else, search through dirt/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
-
-	//	// Else, search through dirt/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
-
-	//	// Else, search through sand/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
-
-	//	// Else, search through sand/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
-
-	//	// Else, search through stone/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::SAND_STONE:
-	//{
-	//	// Search through grass vector
-	//	check = SearchAndDestroy(index, m_grass, terrain);
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
-
-	//	// Else, search through dirt vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
-
-	//	// Else, search through sand vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND; break; }
-
-	//	// Else, search through stone vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE; break; }
-
-	//	// Else, search through snow vector
-	//	if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
-
-	//	// Else, search through grass/dirt blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
-
-	//	// Else, search through grass/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
-
-	//	// Else, search through grass/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
-
-	//	// Else, search through grass/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
-
-	//	// Else, search through dirt/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
-
-	//	// Else, search through dirt/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
-
-	//	// Else, search through dirt/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
-
-	//	// Else, search through sand/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
-
-	//	// Else, search through stone/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::SAND_SNOW:
-	//{
-	//	// Search through grass vector
-	//	check = SearchAndDestroy(index, m_grass, terrain);
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
-
-	//	// Else, search through dirt vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
-
-	//	// Else, search through sand vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND; break; }
-
-	//	// Else, search through stone vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE; break; }
-
-	//	// Else, search through snow vector
-	//	if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
-
-	//	// Else, search through grass/dirt blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
-
-	//	// Else, search through grass/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
-
-	//	// Else, search through grass/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
-
-	//	// Else, search through grass/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
-
-	//	// Else, search through dirt/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
-
-	//	// Else, search through dirt/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
-
-	//	// Else, search through dirt/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
-
-	//	// Else, search through sand/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
-
-	//	// Else, search through stone/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::STONE_SNOW:
-	//{
-	//	// Search through grass vector
-	//	check = SearchAndDestroy(index, m_grass, terrain);
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
-
-	//	// Else, search through dirt vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
-
-	//	// Else, search through sand vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND; break; }
-
-	//	// Else, search through stone vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE; break; }
-
-	//	// Else, search through snow vector
-	//	if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
-
-	//	// Else, search through grass/dirt blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
-
-	//	// Else, search through grass/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
-
-	//	// Else, search through grass/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
-
-	//	// Else, search through grass/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
-
-	//	// Else, search through dirt/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
-
-	//	// Else, search through dirt/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
-
-	//	// Else, search through dirt/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
-
-	//	// Else, search through sand/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
-
-	//	// Else, search through sand/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::NA:
-	//{		
-	//	// Search through grass vector
-	//	check = SearchAndDestroy(index, m_grass, terrain);
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
-
-	//	// Else, search through dirt vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
-	//	
-	//	// Else, search through sand vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND; break; }
-
-	//	// Else, search through stone vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE; break; }
-
-	//	// Else, search through snow vector
-	//	if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
-
-	//	// Else, search through grass/dirt blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
-
-	//	// Else, search through grass/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
-
-	//	// Else, search through grass/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
-
-	//	// Else, search through grass/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
-
-	//	// Else, search through dirt/sand blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
-
-	//	// Else, search through dirt/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
-
-	//	// Else, search through dirt/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
-	//	
-	//	// Else, search through sand/stone blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
-
-	//	// Else, search through sand/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
-
-	//	// Else, search through stone/snow blend vector
-	//	if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
-	//	if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
-	//}
-	//break;
-	//}
+	switch (paint)
+	{
+	case LANDSCAPE_PAINT::GRASS:
+	{
+		// Else, search through dirt vector
+		check = SearchAndDestroy(index, m_dirt, terrain);
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
+
+		// Else, search through sand vector
+		if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
+
+		// Else, search through stone vector
+		if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
+
+		// Else, search through snow vector
+		if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
+
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
+
+		// Else, search through sand/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
+	}
+	break;
+	case LANDSCAPE_PAINT::DIRT:
+	{
+		// Search through grass vector
+		check = SearchAndDestroy(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
+
+		// Else, search through sand vector
+		if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
+
+		// Else, search through stone vector
+		if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
+
+		// Else, search through snow vector
+		if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
+
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
+
+		// Else, search through sand/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
+	}
+	break;
+	case LANDSCAPE_PAINT::SAND:
+	{
+		// Search through grass vector
+		check = SearchAndDestroy(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
+
+		// Else, search through dirt vector
+		if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
+
+		// Else, search through stone vector
+		if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
+
+		// Else, search through snow vector
+		if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
+
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
+
+		// Else, search through sand/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
+	}
+	break;
+	case LANDSCAPE_PAINT::STONE:
+	{
+		// Search through grass vector
+		check = SearchAndDestroy(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
+
+		// Else, search through dirt vector
+		if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
+
+		// Else, search through sand vector
+		if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
+
+		// Else, search through snow vector
+		if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
+
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
+
+		// Else, search through sand/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
+	}
+	break;
+	case LANDSCAPE_PAINT::SNOW:
+	{
+		// Search through grass vector
+		check = SearchAndDestroy(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
+
+		// Else, search through dirt vector
+		if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
+
+		// Else, search through sand vector
+		if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
+
+		// Else, search through stone vector
+		if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
+
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
+
+		// Else, search through sand/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
+	}
+	break;
+	case LANDSCAPE_PAINT::GRASS_DIRT:
+	{
+		// Search through grass vector
+		check = SearchAndDestroy(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
+
+		// Else, search through dirt vector
+		if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
+
+		// Else, search through sand vector
+		if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
+
+		// Else, search through stone vector
+		if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
+
+		// Else, search through snow vector
+		if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
+
+		// Else, search through sand/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
+	}
+	break;
+	case LANDSCAPE_PAINT::GRASS_SAND:
+	{
+		// Search through grass vector
+		check = SearchAndDestroy(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
+
+		// Else, search through dirt vector
+		if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
+
+		// Else, search through sand vector
+		if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
+
+		// Else, search through stone vector
+		if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
+
+		// Else, search through snow vector
+		if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
+
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
+
+		// Else, search through sand/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
+	}
+	break;
+	case LANDSCAPE_PAINT::GRASS_STONE:
+	{
+		// Search through grass vector
+		check = SearchAndDestroy(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
+
+		// Else, search through dirt vector
+		if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
+
+		// Else, search through sand vector
+		if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
+
+		// Else, search through stone vector
+		if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
+
+		// Else, search through snow vector
+		if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
+
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
+
+		// Else, search through sand/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
+	}
+	break;
+	case LANDSCAPE_PAINT::GRASS_SNOW:
+	{
+		// Search through grass vector
+		check = SearchAndDestroy(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
+
+		// Else, search through dirt vector
+		if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
+
+		// Else, search through sand vector
+		if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
+
+		// Else, search through stone vector
+		if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
+
+		// Else, search through snow vector
+		if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
+
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
+
+		// Else, search through sand/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
+	}
+	break;
+	case LANDSCAPE_PAINT::DIRT_SAND:
+	{
+		// Search through grass vector
+		check = SearchAndDestroy(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
+
+		// Else, search through dirt vector
+		if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
+
+		// Else, search through sand vector
+		if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
+
+		// Else, search through stone vector
+		if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
+
+		// Else, search through snow vector
+		if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
+
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
+
+		// Else, search through sand/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
+	}
+	break;
+	case LANDSCAPE_PAINT::DIRT_STONE:
+	{
+		// Search through grass vector
+		check = SearchAndDestroy(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
+
+		// Else, search through dirt vector
+		if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
+
+		// Else, search through sand vector
+		if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
+
+		// Else, search through stone vector
+		if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
+
+		// Else, search through snow vector
+		if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
+
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
+
+		// Else, search through sand/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
+	}
+	break;
+	case LANDSCAPE_PAINT::DIRT_SNOW:
+	{
+		// Search through grass vector
+		check = SearchAndDestroy(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
+
+		// Else, search through dirt vector
+		if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
+
+		// Else, search through sand vector
+		if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
+
+		// Else, search through stone vector
+		if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
+
+		// Else, search through snow vector
+		if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
+
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
+
+		// Else, search through sand/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
+	}
+	break;
+	case LANDSCAPE_PAINT::SAND_STONE:
+	{
+		// Search through grass vector
+		check = SearchAndDestroy(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
+
+		// Else, search through dirt vector
+		if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
+
+		// Else, search through sand vector
+		if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
+
+		// Else, search through stone vector
+		if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
+
+		// Else, search through snow vector
+		if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
+
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
+	}
+	break;
+	case LANDSCAPE_PAINT::SAND_SNOW:
+	{
+		// Search through grass vector
+		check = SearchAndDestroy(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
+
+		// Else, search through dirt vector
+		if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
+
+		// Else, search through sand vector
+		if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
+
+		// Else, search through stone vector
+		if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
+
+		// Else, search through snow vector
+		if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
+
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
+
+		// Else, search through sand/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
+	}
+	break;
+	case LANDSCAPE_PAINT::STONE_SNOW:
+	{
+		// Search through grass vector
+		check = SearchAndDestroy(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
+
+		// Else, search through dirt vector
+		if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
+
+		// Else, search through sand vector
+		if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
+
+		// Else, search through stone vector
+		if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
+
+		// Else, search through snow vector
+		if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
+
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
+
+		// Else, search through sand/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
+	}
+	break;
+	case LANDSCAPE_PAINT::NA:
+	{		
+		// Search through grass vector
+		check = SearchAndDestroy(index, m_grass, terrain);
+		if (check) { current = LANDSCAPE_PAINT::GRASS; break; }
+
+		// Else, search through dirt vector
+		if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT; break; }
+		
+		// Else, search through sand vector
+		if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND; break; }
+
+		// Else, search through stone vector
+		if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE; break; }
+
+		// Else, search through snow vector
+		if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SNOW; break; }
+
+		// Else, search through grass/dirt blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; break; }
+
+		// Else, search through grass/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; break; }
+
+		// Else, search through grass/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; break; }
+
+		// Else, search through grass/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; break; }
+
+		// Else, search through dirt/sand blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; break; }
+
+		// Else, search through dirt/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; break; }
+
+		// Else, search through dirt/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; break; }
+		
+		// Else, search through sand/stone blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_STONE; break; }
+
+		// Else, search through sand/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; break; }
+
+		// Else, search through stone/snow blend vector
+		if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
+		if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; break; }
+	}
+	break;
+	}
 
 	// Return current terrain paint
 	return current;
@@ -2378,105 +2458,121 @@ void DisplayChunk::CheckSurroundings(int row, int column, LANDSCAPE_PAINT paint)
 	// just to blend it same as the rest if the value is '-1'
 	// if the rest is evenly spread, randomly choose ??
 
-	//// Store each 'c' index
-	//std::vector<std::pair<int, int>> c; {
-	//	c.push_back(std::pair<int, int>(row - 2, column - 2));		// 2 upward, 2 backward
-	//	c.push_back(std::pair<int, int>(row - 2, column));			// 2 upward
-	//	c.push_back(std::pair<int, int>(row - 2, column + 2));		// 2 upward, 2 forward
-	//	c.push_back(std::pair<int, int>(row, column - 2));			// 2 backward
-	//	c.push_back(std::pair<int, int>(row, column + 2));			// 2 forward
-	//	c.push_back(std::pair<int, int>(row + 2, column - 2));		// 2 downward, 2 backward
-	//	c.push_back(std::pair<int, int>(row + 2, column));			// 2 downward
-	//	c.push_back(std::pair<int, int>(row + 2, column + 2));		// 2 downward, 2 forward
-	//}
-	//
-	//// Check each 'c' index for their current paints
-	//std::vector<LANDSCAPE_PAINT> c_paints;
-	//for (int i = 0; i < c.size(); ++i) { 
-	//	c_paints.push_back(CheckPaint(c[i].first, c[i].second)); 
-	//}
-	//
-	//// Store each 'o' index
-	//std::vector<std::pair<int, int>> o; {	
-	//	o.push_back(std::pair<int, int>(row - 1, column - 1));		// 1 upward, 1 backward
-	//	o.push_back(std::pair<int, int>(row - 1, column));			// 1 upward
-	//	o.push_back(std::pair<int, int>(row - 1, column + 1));		// 1 upward, 1 forward
-	//	o.push_back(std::pair<int, int>(row, column - 1));			// 1 backward
-	//	o.push_back(std::pair<int, int>(row, column + 1));			// 1 forward
-	//	o.push_back(std::pair<int, int>(row + 1, column - 1));		// 1 downward, 1 backward
-	//	o.push_back(std::pair<int, int>(row + 1, column));			// 1 downward
-	//	o.push_back(std::pair<int, int>(row + 1, column + 1));		// 1 downward, 1 forward
-	//}
+	// Store each 'c' index
+	std::vector<std::pair<int, int>> c; {
+		c.push_back(std::pair<int, int>(row - 2, column - 2));		// 2 upward, 2 backward
+		c.push_back(std::pair<int, int>(row - 2, column));			// 2 upward
+		c.push_back(std::pair<int, int>(row - 2, column + 2));		// 2 upward, 2 forward
+		c.push_back(std::pair<int, int>(row, column - 2));			// 2 backward
+		c.push_back(std::pair<int, int>(row, column + 2));			// 2 forward
+		c.push_back(std::pair<int, int>(row + 2, column - 2));		// 2 downward, 2 backward
+		c.push_back(std::pair<int, int>(row + 2, column));			// 2 downward
+		c.push_back(std::pair<int, int>(row + 2, column + 2));		// 2 downward, 2 forward
+	}
+	
+	// Check each 'c' index for their current paints
+	std::vector<LANDSCAPE_PAINT> c_paints;
+	for (int i = 0; i < c.size(); ++i) { 
+		c_paints.push_back(GetPaint(c[i].first, c[i].second)); 
+	}
+	
+	// Store each 'o' index
+	std::vector<std::pair<int, int>> o; {	
+		o.push_back(std::pair<int, int>(row - 1, column - 1));		// 1 upward, 1 backward
+		o.push_back(std::pair<int, int>(row - 1, column));			// 1 upward
+		o.push_back(std::pair<int, int>(row - 1, column + 1));		// 1 upward, 1 forward
+		o.push_back(std::pair<int, int>(row, column - 1));			// 1 backward
+		o.push_back(std::pair<int, int>(row, column + 1));			// 1 forward
+		o.push_back(std::pair<int, int>(row + 1, column - 1));		// 1 downward, 1 backward
+		o.push_back(std::pair<int, int>(row + 1, column));			// 1 downward
+		o.push_back(std::pair<int, int>(row + 1, column + 1));		// 1 downward, 1 forward
+	}
 
-	//// Check each 'o' index for their current paints
-	//std::vector<LANDSCAPE_PAINT> o_paints;
-	//for (int i = 0; i < o.size(); ++i) { 
-	//	o_paints.push_back(CheckPaint(o[i].first, o[i].second)); 
-	//}
-	//	
-	//// Store 'x' paint
-	//LANDSCAPE_PAINT x_paint = CheckPaint(row, column);
-	//
-	//// Blend each 'o' index depending on 'x' & adjacent 'c' paints
-	//for (int i = 0; i < c.size(); ++i)
-	//{
-	//	// Switch between 'c' paints
-	//	switch (c_paints[i])
-	//	{
-	//	case LANDSCAPE_PAINT::GRASS:
-	//	{
-	//		// Switch between 'x' paint
-	//		switch (x_paint)
-	//		{
-	//		case LANDSCAPE_PAINT::GRASS: o_paints[i] = LANDSCAPE_PAINT::GRASS; break;
-	//		case LANDSCAPE_PAINT::DIRT: o_paints[i] = LANDSCAPE_PAINT::GRASS_AND_DIRT; break;
-	//		case LANDSCAPE_PAINT::SAND: o_paints[i] = LANDSCAPE_PAINT::GRASS_AND_SAND; break;
-	//		}
-	//	}
-	//	break;
-	//	case LANDSCAPE_PAINT::DIRT:
-	//	{
-	//		// Switch between 'x' paint
-	//		switch (x_paint)
-	//		{
-	//		case LANDSCAPE_PAINT::GRASS: o_paints[i] = LANDSCAPE_PAINT::GRASS_AND_DIRT; break;
-	//		case LANDSCAPE_PAINT::DIRT: o_paints[i] = LANDSCAPE_PAINT::DIRT; break;
-	//		case LANDSCAPE_PAINT::SAND: o_paints[i] = LANDSCAPE_PAINT::GRASS_AND_SAND; break;
-	//		}
-	//	}
-	//	break;
-	//	case LANDSCAPE_PAINT::SAND:
-	//	{
-	//		// Switch between 'x' paint
-	//		switch (x_paint)
-	//		{
-	//		case LANDSCAPE_PAINT::GRASS: o_paints[i] = LANDSCAPE_PAINT::GRASS_AND_SAND; break;
-	//		case LANDSCAPE_PAINT::DIRT: o_paints[i] = LANDSCAPE_PAINT::DIRT_AND_SAND; break;
-	//		case LANDSCAPE_PAINT::SAND: o_paints[i] = LANDSCAPE_PAINT::SAND; break;
-	//		}
-	//	}
-	//	break;
-	//	}
-	//}
+	// Check each 'o' index for their current paints
+	std::vector<LANDSCAPE_PAINT> o_paints;
+	for (int i = 0; i < o.size(); ++i) { 
+		o_paints.push_back(GetPaint(o[i].first, o[i].second));
+	}
+		
+	// Store 'x' paint
+	LANDSCAPE_PAINT x_paint = GetPaint(row, column);
+	
+	// Blend each 'o' index depending on 'x' & adjacent 'c' paints
+	for (int i = 0; i < c.size(); ++i)
+	{
+		// Switch between 'c' paints
+		switch (c_paints[i])
+		{
+		case LANDSCAPE_PAINT::GRASS:
+		{
+			// Switch between 'x' paint
+			switch (x_paint)
+			{
+			case LANDSCAPE_PAINT::GRASS:	o_paints[i] = LANDSCAPE_PAINT::GRASS;		break;
+			case LANDSCAPE_PAINT::DIRT:		o_paints[i] = LANDSCAPE_PAINT::GRASS_DIRT;	break;
+			case LANDSCAPE_PAINT::SAND:		o_paints[i] = LANDSCAPE_PAINT::GRASS_SAND;	break;
+			case LANDSCAPE_PAINT::STONE:	o_paints[i] = LANDSCAPE_PAINT::GRASS_STONE; break;
+			case LANDSCAPE_PAINT::SNOW:		o_paints[i] = LANDSCAPE_PAINT::GRASS_SNOW;	break;
+			case LANDSCAPE_PAINT::GRASS_DIRT: o_paints[i] = LANDSCAPE_PAINT::GRASS; break;
+			case LANDSCAPE_PAINT::GRASS_SAND: o_paints[i] = LANDSCAPE_PAINT::GRASS; break;
+			case LANDSCAPE_PAINT::GRASS_STONE: o_paints[i] = LANDSCAPE_PAINT::GRASS; break;
+			case LANDSCAPE_PAINT::GRASS_SNOW: o_paints[i] = LANDSCAPE_PAINT::GRASS; break;
+			///case LANDSCAPE_PAINT::DIRT_SAND: 
+			}
+		}
+		break;
+		case LANDSCAPE_PAINT::DIRT:
+		{
+			// Switch between 'x' paint
+			switch (x_paint)
+			{
+			case LANDSCAPE_PAINT::GRASS: o_paints[i] = LANDSCAPE_PAINT::GRASS_DIRT; break;
+			case LANDSCAPE_PAINT::DIRT: o_paints[i] = LANDSCAPE_PAINT::DIRT; break;
+			case LANDSCAPE_PAINT::SAND: o_paints[i] = LANDSCAPE_PAINT::GRASS_SAND; break;
+			}
+		}
+		break;
+		case LANDSCAPE_PAINT::SAND:
+		{
+			// Switch between 'x' paint
+			switch (x_paint)
+			{
+			case LANDSCAPE_PAINT::GRASS: o_paints[i] = LANDSCAPE_PAINT::GRASS_SAND; break;
+			case LANDSCAPE_PAINT::DIRT: o_paints[i] = LANDSCAPE_PAINT::DIRT_SAND; break;
+			case LANDSCAPE_PAINT::SAND: o_paints[i] = LANDSCAPE_PAINT::SAND; break;
+			}
+		}
+		break;
+		}
+	}
 
-	//// Loop through blended 'o' indexes
-	//for (int i = 0; i < o.size(); ++i)
-	//{
-	//	// Remove any duplicates
-	//	CheckForDuplicates(o[i].first, o[i].second, o_paints[i]);
+	// Loop through blended 'o' indexes
+	for (int i = 0; i < o.size(); ++i)
+	{
+		// Remove any duplicates
+		RemoveDuplicates(o[i].first, o[i].second, o_paints[i]);
 
-	//	// Switch between blended paint
-	//	switch (o_paints[i])
-	//	{
-	//	case LANDSCAPE_PAINT::GRASS: m_grass.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
-	//	case LANDSCAPE_PAINT::DIRT: m_dirt.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
-	//	case LANDSCAPE_PAINT::SAND: m_sand.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
-	//	case LANDSCAPE_PAINT::GRASS_AND_DIRT: m_grassAndDirt.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
-	//	case LANDSCAPE_PAINT::GRASS_AND_SAND: m_grassAndSand.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
-	//	case LANDSCAPE_PAINT::DIRT_AND_SAND: m_dirtAndSand.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
-	//	case LANDSCAPE_PAINT::NA: m_default.push_back(std::pair<int, int>(o[i].first, o[i].second)); break;
-	//	}
-	//}
+		// Switch between blended paint
+		switch (o_paints[i])
+		{
+		case LANDSCAPE_PAINT::GRASS:		m_grass.push_back(o[i]);		break;
+		case LANDSCAPE_PAINT::DIRT:			m_dirt.push_back(o[i]);			break;
+		case LANDSCAPE_PAINT::SAND:			m_sand.push_back(o[i]);			break;
+		case LANDSCAPE_PAINT::STONE:		m_sand.push_back(o[i]);			break;
+		case LANDSCAPE_PAINT::SNOW:			m_sand.push_back(o[i]);			break;
+		case LANDSCAPE_PAINT::GRASS_DIRT:	m_grassDirt.push_back(o[i]);	break;
+		case LANDSCAPE_PAINT::GRASS_SAND:	m_grassSand.push_back(o[i]);	break;
+		case LANDSCAPE_PAINT::GRASS_STONE:	m_grassStone.push_back(o[i]);	break;
+		case LANDSCAPE_PAINT::GRASS_SNOW:	m_grassSnow.push_back(o[i]);	break;
+		case LANDSCAPE_PAINT::DIRT_SAND:	m_dirtSand.push_back(o[i]);		break;
+		case LANDSCAPE_PAINT::DIRT_STONE:	m_dirtStone.push_back(o[i]);	break;
+		case LANDSCAPE_PAINT::DIRT_SNOW:	m_dirtSnow.push_back(o[i]);		break;
+		case LANDSCAPE_PAINT::SAND_STONE:	m_sandStone.push_back(o[i]);	break;
+		case LANDSCAPE_PAINT::SAND_SNOW:	m_sandSnow.push_back(o[i]);		break;
+		case LANDSCAPE_PAINT::STONE_SNOW:	m_stoneSnow.push_back(o[i]);	break;
+		case LANDSCAPE_PAINT::NA:			m_default.push_back(o[i]);		break;
+		}
+	}
 }
 
 void DisplayChunk::SavePaint(std::string path, std::vector<std::pair<int, int>> vector)

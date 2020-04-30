@@ -31,7 +31,7 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 private:
-	// Enable/disable other buttons
+	// Uncheck other buttons
 	void UpdateButtons(bool enable);
 
 	// Controllers

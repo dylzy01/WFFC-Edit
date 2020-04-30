@@ -20,6 +20,7 @@ BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_BUTTON40054, &MFCMain::ToolBarRedo)
 	ON_COMMAND(ID_BUTTON40060, &MFCMain::ToolBarLight)
 	ON_COMMAND(ID_BUTTON40061, &MFCMain::ToolBarTerrain)
+	ON_COMMAND(ID_BUTTON40062, &MFCMain::ToolBarPaint)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_TOOL, &CMyFrame::OnUpdatePage)
 END_MESSAGE_MAP()
 
@@ -169,7 +170,7 @@ void MFCMain::CheckDialogues()
 		m_toolSystem.SetLandscapePaint(LANDSCAPE_PAINT::NA);
 		
 		// Set tool editor
-		m_toolSystem.SetEditor(EDITOR::LANDSCAPE_FUNCTION);
+		m_toolSystem.SetEditor(EDITOR::TERRAIN_FUNCTION);
 
 		// Set sculpt mode
 		m_toolSystem.SetLandscapeSculpt(m_terrainSculptDialogue.GetSculpt());
@@ -205,7 +206,7 @@ void MFCMain::CheckDialogues()
 		m_toolSystem.SetLandscapeSculpt(LANDSCAPE_FUNCTION::NA);
 		
 		// Set tool editor
-		m_toolSystem.SetEditor(EDITOR::LANDSCAPE_PAINT);
+		m_toolSystem.SetEditor(EDITOR::TERRAIN_PAINT);
 
 		// Set paint mode
 		m_toolSystem.SetLandscapePaint(m_terrainPaintDialogue.GetPaint());
@@ -267,22 +268,14 @@ void MFCMain::CheckDialogues()
 		}	
 	}
 
-	// Else, if terrain inspector is active
-	else if (m_terrainDialogue.GetActive())
+	// Else, if paint inspector is active
+	else if (m_paintDialogue.GetActive())
 	{
-		// If right mouse is pressed
-		if (m_toolSystem.GetInput()->mouseRight)
-		{
-			// Get current terrain selection
-			TERRAIN terrain = MouseManager::PickTerrain();
+		// Set tool editor
+		m_toolSystem.SetEditor(EDITOR::TERRAIN_PAINT);
 
-			// If terrain has been intersected
-			if (terrain.intersect)
-			{
-				// Update dialogue data
-				m_terrainDialogue.Update(terrain.row, terrain.column);
-			}			
-		}
+		// Set paint mode
+		m_toolSystem.SetLandscapePaint(m_paintDialogue.GetPaint());
 	}
 
 	// Else, if no dialogues are active
@@ -299,6 +292,24 @@ void MFCMain::CheckDialogues()
 
 		// Deselect all objects
 		m_toolSystem.ClearSelected();
+	}
+
+	// If terrain inspector is active
+	if (m_terrainDialogue.GetActive())
+	{
+		// If right mouse is pressed
+		if (m_toolSystem.GetInput()->mouseRight)
+		{
+			// Get current terrain selection
+			TERRAIN terrain = MouseManager::PickTerrain();
+
+			// If terrain has been intersected
+			if (terrain.intersect)
+			{
+				// Update dialogue data
+				m_terrainDialogue.Update(terrain.row, terrain.column);
+			}
+		}
 	}
 }
 
@@ -455,5 +466,20 @@ void MFCMain::ToolBarTerrain()
 	m_terrainDialogue.Create(IDD_DIALOG9);
 	m_terrainDialogue.ShowWindow(SW_SHOW);
 	m_terrainDialogue.SetActive(true);
-	m_terrainDialogue.SetTerrainData(m_toolSystem.GetDisplayChunk());
+	m_terrainDialogue.SetChunkData(m_toolSystem.GetDisplayChunk());
+}
+
+void MFCMain::ToolBarPaint()
+{
+	// Destroy other windows (except terrain inspector)
+	m_objectEditorDialogue.DestroyWindow();
+	m_objectSpawnDialogue.DestroyWindow();
+	m_lightDialogue.DestroyWindow();
+	// remove new terrain sculpt here...
+
+	// Create & display dialogue window
+	m_paintDialogue.Create(IDD_DIALOG10);
+	m_paintDialogue.ShowWindow(SW_SHOW);
+	m_paintDialogue.SetActive(true);
+	m_paintDialogue.SetChunkData(m_toolSystem.GetDisplayChunk());
 }

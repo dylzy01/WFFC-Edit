@@ -17,20 +17,10 @@ TerrainDialogue::TerrainDialogue(CWnd* pParent /*=nullptr*/)
 }
 
 // Pass in data pointers the class will operate on
-void TerrainDialogue::SetTerrainData(DisplayChunk* displayChunk)
+void TerrainDialogue::SetChunkData(DisplayChunk* displayChunk)
 {
 	// Local storage 
 	m_displayChunk = displayChunk;
-		
-	// Loop through geometry
-	for (int i = 0; i < TERRAINRESOLUTION - 1; ++i)
-	{
-		for (int j = 0; j < TERRAINRESOLUTION - 1; ++j)
-		{
-			// Setup local geometry container
-			m_geometry[i][j] = &displayChunk->GetGeometry(i, j);
-		}
-	}
 
 	// Setup indexes
 	for (int i = 0; i < TERRAINRESOLUTION - 1; ++i)
@@ -88,8 +78,8 @@ void TerrainDialogue::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(TerrainDialogue, CDialogEx)
 	ON_COMMAND(IDOK, &TerrainDialogue::End)
 	ON_BN_CLICKED(IDOK, &TerrainDialogue::OnBnClickedOk)
-	ON_CBN_SELCHANGE(IDC_COMBO3, &TerrainDialogue::OnBnSelchangeChangeIndex)
-	ON_CBN_SELCHANGE(IDC_COMBO4, &TerrainDialogue::OnBnSelchangeChangeIndex)
+	ON_CBN_SELCHANGE(IDC_COMBO3, &TerrainDialogue::OnBnSelchangeIndex)
+	ON_CBN_SELCHANGE(IDC_COMBO4, &TerrainDialogue::OnBnSelchangeIndex)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &TerrainDialogue::OnBnSelchangeTexture)	
 END_MESSAGE_MAP()
 
@@ -111,7 +101,7 @@ void TerrainDialogue::OnBnClickedOk()
 }
 
 // Row or Column has been changed
-void TerrainDialogue::OnBnSelchangeChangeIndex()
+void TerrainDialogue::OnBnSelchangeIndex()
 {
 	// Store index selection
 	int row = m_boxRow.GetCurSel();

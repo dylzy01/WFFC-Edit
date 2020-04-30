@@ -69,6 +69,4 @@ private:
 	/*afx_msg void OnBnClickedResidential();
 	afx_msg void OnBnClickedNature();
 	afx_msg void OnBnClickedProps();*/
-public:
-	afx_msg void OnBnClickedCheck20();
 };
