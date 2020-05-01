@@ -91,7 +91,7 @@ public: //methods
 			m_terrainConstraint = CONSTRAINT::NA;
 		}
 		break;
-		case EDITOR::TERRAIN_FUNCTION:
+		case EDITOR::SCULPT_FREELY:
 		{
 			// Reset object spawn
 			m_objectSpawn = OBJECT_SPAWN::NA;
@@ -115,6 +115,7 @@ public: //methods
 	void SetTerrainConstraint(CONSTRAINT constraint) { m_terrainConstraint = constraint; }
 	void SetLights(std::pair<std::vector<Light*>, std::vector<int>> lights) { m_d3dRenderer.SetLights(lights); }
 	void SetSceneObject(SceneObject object, int index) { m_d3dRenderer.SetSceneObject(object, index); }
+	void SetSelectedTerrain(TERRAIN& terrain) { m_selectedTerrain = terrain; }
 
 public:	//variables
 	std::vector<SceneObject>    m_sceneGraph;	//our scenegraph storing all the objects in the current chunk

@@ -99,14 +99,13 @@ END_MESSAGE_MAP()
 // Kill the dialogue
 void PaintDialogue::End()
 {
+	m_active = false;
 	DestroyWindow();
 }
 
 // User is finished with dialogue
 void PaintDialogue::OnBnClickedOk()
 {
-	m_active = false;
-	End();
 	CDialogEx::OnOK();
 }
 

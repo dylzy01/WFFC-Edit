@@ -17,7 +17,7 @@ public:
 	static void Paint(TERRAIN & terrain, TERRAIN_PAINT paint);
 
 	// Sculpt selected terrain
-	static void Sculpt(TERRAIN & terrain, TERRAIN_SCULPT function, CONSTRAINT constraint);
+	static void Sculpt(TERRAIN & terrain, TERRAIN_SCULPT function, CONSTRAINT constraint, bool single = false);
 	
 	// Setters
 	static void SetDisplayChunk(DisplayChunk * chunk) { m_displayChunk = chunk; }

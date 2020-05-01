@@ -45,7 +45,7 @@ protected:
 	// Controllers
 	bool m_active;/// , m_plateau;
 	bool m_x, m_y, m_z;
-	float m_pLimit;
+	float m_scale;
 	TERRAIN_SCULPT m_sculpt;
 	CONSTRAINT m_constraint;
 
@@ -65,7 +65,6 @@ public:
 	afx_msg void OnBnClickedX();
 	afx_msg void OnBnClickedY();
 	afx_msg void OnBnClickedZ();
-	///afx_msg void OnBnClickedPlateau();
 	afx_msg void OnEnChangeScale();
 
 private:

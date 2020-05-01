@@ -50,17 +50,47 @@ void TerrainDialogue::SetChunkData(DisplayChunk* displayChunk)
 	texBoxEntry = L"Sand/Snow";		m_boxTex.AddString(texBoxEntry.c_str());
 	texBoxEntry = L"Stone/Snow";	m_boxTex.AddString(texBoxEntry.c_str());
 
+	// Setup sculpt types
+	std::wstring sculptBoxEntry;
+	sculptBoxEntry = L"N/A";		m_boxSculpt.AddString(sculptBoxEntry.c_str());
+	sculptBoxEntry = L"Increase";	m_boxSculpt.AddString(sculptBoxEntry.c_str());
+	sculptBoxEntry = L"Flatten";	m_boxSculpt.AddString(sculptBoxEntry.c_str());
+	sculptBoxEntry = L"Decrease";	m_boxSculpt.AddString(sculptBoxEntry.c_str());
+
+	// Setup constraint types
+	std::wstring constBoxEntry;
+	constBoxEntry = L"N/A";			m_boxConst.AddString(constBoxEntry.c_str());
+	constBoxEntry = L"X";			m_boxConst.AddString(constBoxEntry.c_str());
+	constBoxEntry = L"Y";			m_boxConst.AddString(constBoxEntry.c_str());
+	constBoxEntry = L"Z";			m_boxConst.AddString(constBoxEntry.c_str());
+	constBoxEntry = L"XY";			m_boxConst.AddString(constBoxEntry.c_str());
+	constBoxEntry = L"XZ";			m_boxConst.AddString(constBoxEntry.c_str());
+	constBoxEntry = L"YZ";			m_boxConst.AddString(constBoxEntry.c_str());
+
+	// Set initial scale factor
+	CString scale; scale.Format(L"%g", m_displayChunk->GetScaleFactor());
+	m_eScale.SetWindowTextW(scale);
+
+	// Reset scale limit
+	m_displayChunk->SetScaleFactor(1);
+
 	// Display first terrain
-	Update(0, 0);
+	UpdateTerrain(0, 0);
+
+	SetupCheckBoxes();
 }
 
 // Update current terrain with dialogue values/vice versa
-void TerrainDialogue::Update(int row, int column)
+void TerrainDialogue::UpdateTerrain(int row, int column)
 {
 	m_boxRow.SetCurSel(row);
 	m_boxCol.SetCurSel(column);
 	UpdateCoordinates(row, column);
 	UpdateTexture(row, column);
+
+	// Set sculpt & constraint box to N/A
+	m_boxSculpt.SetCurSel(0);
+	m_boxConst.SetCurSel(0);
 }
 
 void TerrainDialogue::DoDataExchange(CDataExchange* pDX)
@@ -72,6 +102,43 @@ void TerrainDialogue::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT17, m_eCoordY);
 	DDX_Control(pDX, IDC_EDIT18, m_eCoordZ);
 	DDX_Control(pDX, IDC_COMBO1, m_boxTex);
+	DDX_Control(pDX, IDC_COMBO5, m_boxSculpt);
+	DDX_Control(pDX, IDC_COMBO6, m_boxConst);
+	DDX_Control(pDX, IDC_EDIT20, m_eScale);
+}
+
+void TerrainDialogue::SetupCheckBoxes()
+{
+	// Increase
+	CBitmap bmp;
+	bmp.LoadBitmap(IDB_BITMAP7);
+	((CButton*)GetDlgItem(IDC_CHECK2))->SetBitmap(bmp);
+	bmp.Detach();
+
+	// Flatten
+	bmp.LoadBitmap(IDB_BITMAP9);
+	((CButton*)GetDlgItem(IDC_CHECK15))->SetBitmap(bmp);
+	bmp.Detach();
+
+	// Decrease
+	bmp.LoadBitmap(IDB_BITMAP8);
+	((CButton*)GetDlgItem(IDC_CHECK16))->SetBitmap(bmp);
+	bmp.Detach();
+
+	// X constraint
+	bmp.LoadBitmap(IDB_BITMAP10);
+	((CButton*)GetDlgItem(IDC_CHECK10))->SetBitmap(bmp);
+	bmp.Detach();
+
+	// Y constraint
+	bmp.LoadBitmap(IDB_BITMAP11);
+	((CButton*)GetDlgItem(IDC_CHECK18))->SetBitmap(bmp);
+	bmp.Detach();
+
+	// Z constraint
+	bmp.LoadBitmap(IDB_BITMAP12);
+	((CButton*)GetDlgItem(IDC_CHECK19))->SetBitmap(bmp);
+	bmp.Detach();
 }
 
 
@@ -81,6 +148,15 @@ BEGIN_MESSAGE_MAP(TerrainDialogue, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_COMBO3, &TerrainDialogue::OnBnSelchangeIndex)
 	ON_CBN_SELCHANGE(IDC_COMBO4, &TerrainDialogue::OnBnSelchangeIndex)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &TerrainDialogue::OnBnSelchangeTexture)	
+	ON_CBN_SELCHANGE(IDC_COMBO5, &TerrainDialogue::OnBnSelchangeSculpt)
+	ON_CBN_SELCHANGE(IDC_COMBO6, &TerrainDialogue::OnBnSelchangeConstraint)
+	ON_BN_CLICKED(IDC_CHECK2, &TerrainDialogue::OnBnClickedIncrease)
+	ON_BN_CLICKED(IDC_CHECK15, &TerrainDialogue::OnBnClickedFlatten)
+	ON_BN_CLICKED(IDC_CHECK16, &TerrainDialogue::OnBnClickedDecrease)
+	ON_BN_CLICKED(IDC_CHECK10, &TerrainDialogue::OnBnClickedX)
+	ON_BN_CLICKED(IDC_CHECK18, &TerrainDialogue::OnBnClickedY)
+	ON_BN_CLICKED(IDC_CHECK19, &TerrainDialogue::OnBnClickedZ)
+	ON_EN_CHANGE(IDC_EDIT20, &TerrainDialogue::OnEnChangeScale)
 END_MESSAGE_MAP()
 
 
@@ -89,14 +165,13 @@ END_MESSAGE_MAP()
 // Kill the dialogue
 void TerrainDialogue::End()
 {
+	m_active = false;
 	DestroyWindow();
 }
 
 // User is finished with dialogue
 void TerrainDialogue::OnBnClickedOk()
 {
-	m_active = false;
-	End();
 	CDialogEx::OnOK();
 }
 
@@ -112,9 +187,6 @@ void TerrainDialogue::OnBnSelchangeIndex()
 
 	// Update texture type
 	UpdateTexture(row, col);
-
-	// Tell MFC/ToolMain to update display chunk
-	m_update = true;
 }
 
 // Texture has been selected
@@ -129,13 +201,237 @@ void TerrainDialogue::OnBnSelchangeTexture()
 
 	// Set new paint
 	m_displayChunk->OverwritePaint(row, col, (TERRAIN_PAINT)texture);
+}
 
-	// Tell MFC/ToolMain to update display chunk
-	m_update = true;
+// Sculpt mode has been changed
+void TerrainDialogue::OnBnSelchangeSculpt()
+{
+	// Store index of selection
+	int index = m_boxSculpt.GetCurSel();
+
+	// Set new sculpt value
+	m_sculpt = (TERRAIN_SCULPT)index;
+
+	// Uncheck previous sculpt
+	Uncheck();
+
+	// Switch between sculpt and check appropriate box
+	switch (m_sculpt)
+	{
+	case TERRAIN_SCULPT::INCREASE: CheckDlgButton(IDC_CHECK2, true); break;
+	case TERRAIN_SCULPT::FLATTEN: CheckDlgButton(IDC_CHECK15, true); break;
+	case TERRAIN_SCULPT::DECREASE: CheckDlgButton(IDC_CHECK16, true); break;
+	case TERRAIN_SCULPT::NA: CheckDlgButton(IDC_CHECK2, false); CheckDlgButton(IDC_CHECK15, false); CheckDlgButton(IDC_CHECK16, false); break;
+	}
+}
+
+// Constraint mode has been changed
+void TerrainDialogue::OnBnSelchangeConstraint()
+{
+	// Store index of constraint value
+	int index = m_boxConst.GetCurSel();
+
+	// Set new constraint
+	m_constraint = (CONSTRAINT)index;
+
+	// Switch between constraint and check appropriate boxes
+	switch (m_constraint)
+	{
+	case CONSTRAINT::X: CheckDlgButton(IDC_CHECK10, true); break;
+	case CONSTRAINT::Y: CheckDlgButton(IDC_CHECK18, true); break;
+	case CONSTRAINT::Z: CheckDlgButton(IDC_CHECK19, true); break;
+	case CONSTRAINT::XY: CheckDlgButton(IDC_CHECK10, true); CheckDlgButton(IDC_CHECK18, true); break;
+	case CONSTRAINT::XZ: CheckDlgButton(IDC_CHECK10, true); CheckDlgButton(IDC_CHECK19, true); break;
+	case CONSTRAINT::YZ: CheckDlgButton(IDC_CHECK18, true); CheckDlgButton(IDC_CHECK19, true); break;
+	case CONSTRAINT::NA: CheckDlgButton(IDC_CHECK10, true); CheckDlgButton(IDC_CHECK18, true); CheckDlgButton(IDC_CHECK19, true); break;
+	}
+}
+
+// Increase mode has been selected
+void TerrainDialogue::OnBnClickedIncrease()
+{
+	// Switch between checked/unchecked
+	switch (IsDlgButtonChecked(IDC_CHECK2))
+	{
+	case true:
+	{
+		// Set sculpt
+		m_sculpt = TERRAIN_SCULPT::INCREASE;
+
+		// Uncheck other buttons
+		Uncheck();
+	}
+	break;
+	case false:
+	{
+		// Reset sculpt
+		m_sculpt = TERRAIN_SCULPT::NA;
+	}
+	break;
+	}
+
+	// Update all data
+	UpdateSculpt();
+}
+
+// Flatten mode has been selected
+void TerrainDialogue::OnBnClickedFlatten()
+{
+	// Switch between checked/unchecked
+	switch (IsDlgButtonChecked(IDC_CHECK15))
+	{
+	case true:
+	{
+		// Set sculpt
+		m_sculpt = TERRAIN_SCULPT::FLATTEN;
+
+		// Uncheck other buttons
+		Uncheck();
+	}
+	break;
+	case false:
+	{
+		// Reset sculpt
+		m_sculpt = TERRAIN_SCULPT::NA;
+	}
+	break;
+	}
+
+	// Update all data
+	UpdateSculpt();
+}
+
+// Decrease mode has been selected
+void TerrainDialogue::OnBnClickedDecrease()
+{
+	// Switch between checked/unchecked
+	switch (IsDlgButtonChecked(IDC_CHECK16))
+	{
+	case true:
+	{
+		// Set sculpt
+		m_sculpt = TERRAIN_SCULPT::DECREASE;
+
+		// Uncheck other buttons
+		Uncheck();
+	}
+	break;
+	case false:
+	{
+		// Reset sculpt
+		m_sculpt = TERRAIN_SCULPT::NA;
+	}
+	break;
+	}
+
+	// Update all data
+	UpdateSculpt();
+}
+
+// X constraint has been selected
+void TerrainDialogue::OnBnClickedX()
+{
+	// Switch between checked/unchecked
+	m_x = IsDlgButtonChecked(IDC_CHECK10);
+
+	// Update all data
+	UpdateSculpt();
+}
+
+// Y constraint has been selected
+void TerrainDialogue::OnBnClickedY()
+{
+	// Switch between checked/unchecked
+	m_y = IsDlgButtonChecked(IDC_CHECK18);
+
+	// Update all data
+	UpdateSculpt();
+}
+
+// Z constraint has been selected
+void TerrainDialogue::OnBnClickedZ()
+{
+	// Switch between checked/unchecked
+	m_z = IsDlgButtonChecked(IDC_CHECK19);
+
+	// Update all data
+	UpdateSculpt();
+}
+
+// Scale factor has been changed
+void TerrainDialogue::OnEnChangeScale()
+{
+	// Store new limit
+	CString string = _T("");
+	m_eScale.GetWindowTextW(string);
+
+	// Convert to float
+	float scale;
+	if (!string.IsEmpty()) { scale = _ttof(string); }
+	else { scale = 5.f; }
+
+	// Update limit
+	m_displayChunk->SetScaleFactor(scale);
 }
 
 // Update remaining terrain details when one is changed /////////////////////////////////////////////
 
+void TerrainDialogue::Uncheck()
+{
+	// Switch between current sculpt
+	switch (m_sculpt)
+	{
+	case TERRAIN_SCULPT::INCREASE:
+	{
+		m_sculpting = true;
+
+		// Uncheck flatten button
+		CheckDlgButton(IDC_CHECK15, false);
+
+		// Uncheck decrease button
+		CheckDlgButton(IDC_CHECK16, false);
+	}
+	break;
+	case TERRAIN_SCULPT::FLATTEN:
+	{
+		m_sculpting = true;
+
+		// Uncheck increase button
+		CheckDlgButton(IDC_CHECK2, false);
+
+		// Uncheck decrease button
+		CheckDlgButton(IDC_CHECK16, false);
+	}
+	break;
+	case TERRAIN_SCULPT::DECREASE:
+	{
+		m_sculpting = true;
+
+		// Uncheck increase button
+		CheckDlgButton(IDC_CHECK2, false);
+
+		// Uncheck flatten button
+		CheckDlgButton(IDC_CHECK15, false);
+	}
+	break;
+	case TERRAIN_SCULPT::NA:
+	{
+		m_sculpting = false;
+		
+		// Uncheck increase button
+		CheckDlgButton(IDC_CHECK2, false);
+
+		// Uncheck flatten button
+		CheckDlgButton(IDC_CHECK15, false);
+
+		// Uncheck decrease button
+		CheckDlgButton(IDC_CHECK16, false);
+	}
+	break;
+	}
+}
+
+// Display updated coordinates
 void TerrainDialogue::UpdateCoordinates(int row, int column)
 {
 	// Store position of selected terrain
@@ -154,6 +450,7 @@ void TerrainDialogue::UpdateCoordinates(int row, int column)
 	m_eCoordZ.SetWindowTextW(sZ);
 }
 
+// Display updated texture
 void TerrainDialogue::UpdateTexture(int row, int column)
 {
 	// Store texture of selected terrain
@@ -161,4 +458,53 @@ void TerrainDialogue::UpdateTexture(int row, int column)
 
 	// Set combo box
 	m_boxTex.SetCurSel((int)paint);
+}
+
+// Handle all sculpt updates
+void TerrainDialogue::UpdateSculpt()
+{
+	// Update sculpt box
+	UpdateSelectedSculpt((int)m_sculpt);
+
+	// Update constraint box & apply
+	UpdateSelectedConstraint();
+}
+
+// Display updated sculpt mode
+void TerrainDialogue::UpdateSelectedSculpt(int sculpt)
+{
+	m_boxSculpt.SetCurSel(sculpt);
+
+	if (sculpt == 0) { m_sculpting = false; }
+}
+
+// Display updated constraint
+void TerrainDialogue::UpdateSelectedConstraint()
+{
+	// If x, y and z constraints are selected
+	if (m_x && m_y && m_z) { m_constraint = CONSTRAINT::NA; }
+
+	// Else, if x and y constraints are selected
+	else if (m_x && m_y) { m_constraint = CONSTRAINT::XY; }
+
+	// Else, if x and z constraints are selected
+	else if (m_x && m_z) { m_constraint = CONSTRAINT::XZ; }
+
+	// Else, if y and z constraints are selected
+	else if (m_y && m_z) { m_constraint = CONSTRAINT::YZ; }
+
+	// Else, if only x constraint is selected
+	else if (m_x) { m_constraint = CONSTRAINT::X; }
+
+	// Else, if only y constraint is selected
+	else if (m_y) { m_constraint = CONSTRAINT::Y; }
+
+	// Else, if only z constraint is selected
+	else if (m_z) { m_constraint = CONSTRAINT::Z; }
+
+	// Else, if no constraints are selected
+	else { m_constraint = CONSTRAINT::NA; }
+
+	// Update constraint box
+	m_boxConst.SetCurSel((int)m_constraint);
 }

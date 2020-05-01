@@ -263,10 +263,16 @@ void ToolMain::Tick(MSG *msg)
 			TerrainManager::Paint(m_selectedTerrain, m_paint);
 		}
 		break;
-		case EDITOR::TERRAIN_FUNCTION:
+		case EDITOR::SCULPT_FREELY:
 		{
 			// Sculpt terrain
 			TerrainManager::Sculpt(m_selectedTerrain, m_terrainFunction, m_terrainConstraint);
+		}
+		break;
+		case EDITOR::SCULPT_SINGLE:
+		{
+			// Sculpt selected terrain
+			TerrainManager::Sculpt(m_selectedTerrain, m_terrainFunction, m_terrainConstraint, true);
 		}
 		break;
 		}		

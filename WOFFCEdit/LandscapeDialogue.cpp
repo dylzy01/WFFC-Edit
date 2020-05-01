@@ -245,7 +245,7 @@ void LandscapeDialogue::OnBnClickedSand()
 void LandscapeDialogue::OnBnClickedIncrease()
 {
 	// Set editor to sculpt
-	m_editor = EDITOR::TERRAIN_FUNCTION;
+	m_editor = EDITOR::SCULPT_FREELY;
 	
 	// Switch between checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK6))
@@ -272,7 +272,7 @@ void LandscapeDialogue::OnBnClickedIncrease()
 void LandscapeDialogue::OnBnClickedDecrease()
 {
 	// Set editor to sculpt
-	m_editor = EDITOR::TERRAIN_FUNCTION;
+	m_editor = EDITOR::SCULPT_FREELY;
 	
 	// Switch between checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK7))
@@ -299,7 +299,7 @@ void LandscapeDialogue::OnBnClickedDecrease()
 void LandscapeDialogue::OnBnClickedFlatten()
 {
 	// Set editor to sculpt
-	m_editor = EDITOR::TERRAIN_FUNCTION;
+	m_editor = EDITOR::SCULPT_FREELY;
 		
 	// Switch between checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK8))

@@ -171,7 +171,7 @@ void MFCMain::CheckDialogues()
 		m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
 		
 		// Set tool editor
-		m_toolSystem.SetEditor(EDITOR::TERRAIN_FUNCTION);
+		m_toolSystem.SetEditor(EDITOR::SCULPT_FREELY);
 
 		// Set sculpt mode
 		m_toolSystem.SetTerrainSculpt(m_terrainSculptDialogue.GetSculpt());
@@ -213,7 +213,12 @@ void MFCMain::CheckDialogues()
 		m_toolSystem.SetTerrainPaint(m_terrainPaintDialogue.GetPaint());
 	}
 
-	// Else, if light inspector is active
+	
+	
+	
+	
+	
+	// If light inspector is active
 	else if (m_lightDialogue.GetActive())
 	{
 		// If scene graph should be updated
@@ -269,6 +274,49 @@ void MFCMain::CheckDialogues()
 		}	
 	}
 
+	// Else, if terrain inspector is active
+	else if (m_terrainDialogue.GetActive())
+	{
+		// If right mouse is pressed
+		if (m_toolSystem.GetInput()->mouseRight)
+		{
+			// If the user isn't sculpting
+			if (!m_terrainDialogue.GetSculpting())
+			{
+				// Set tool editor to none
+				m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
+				
+				// Get current terrain selection
+				TERRAIN terrain = MouseManager::PickTerrain();
+
+				// If terrain has been intersected
+				if (terrain.intersect)
+				{
+					// Update dialogue data
+					m_terrainDialogue.UpdateTerrain(terrain.row, terrain.column);
+					m_terrainDialogue.SetTerrain(terrain);
+				}				
+			}
+
+			// Else, the user is sculpting
+			else
+			{
+				// Set tool editor
+				m_toolSystem.SetEditor(EDITOR::SCULPT_SINGLE);
+				
+				// Update tool selected terrain to match dialogue
+				TERRAIN temp = m_terrainDialogue.GetTerrain();
+				m_toolSystem.SetSelectedTerrain(m_terrainDialogue.GetTerrain());
+
+				// Set sculpt mode
+				m_toolSystem.SetTerrainSculpt(m_terrainDialogue.GetSculpt());
+
+				// Set constraint
+				m_toolSystem.SetTerrainConstraint(m_terrainDialogue.GetConstraint());
+			}			
+		}
+	}
+
 	// Else, if paint inspector is active
 	else if (m_paintDialogue.GetActive())
 	{
@@ -293,7 +341,7 @@ void MFCMain::CheckDialogues()
 		m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
 
 		// Set tool editor
-		m_toolSystem.SetEditor(EDITOR::TERRAIN_FUNCTION);
+		m_toolSystem.SetEditor(EDITOR::SCULPT_FREELY);
 
 		// Set sculpt mode
 		m_toolSystem.SetTerrainSculpt(m_sculptDialogue.GetSculpt());
@@ -316,24 +364,6 @@ void MFCMain::CheckDialogues()
 
 		// Deselect all objects
 		m_toolSystem.ClearSelected();
-	}
-
-	// If terrain inspector is active
-	if (m_terrainDialogue.GetActive())
-	{
-		// If right mouse is pressed
-		if (m_toolSystem.GetInput()->mouseRight)
-		{
-			// Get current terrain selection
-			TERRAIN terrain = MouseManager::PickTerrain();
-
-			// If terrain has been intersected
-			if (terrain.intersect)
-			{
-				// Update dialogue data
-				m_terrainDialogue.Update(terrain.row, terrain.column);
-			}
-		}
 	}
 }
 
@@ -469,8 +499,9 @@ void MFCMain::ToolBarLight()
 	// Destroy other windows
 	m_objectEditorDialogue.DestroyWindow();
 	m_objectSpawnDialogue.DestroyWindow();
-	m_terrainSculptDialogue.DestroyWindow();
-	m_terrainPaintDialogue.DestroyWindow();
+	m_terrainDialogue.DestroyWindow();
+	m_sculptDialogue.DestroyWindow();
+	m_paintDialogue.DestroyWindow();
 
 	// Create & display dialogue window
 	m_lightDialogue.Create(IDD_DIALOG8);
@@ -485,6 +516,8 @@ void MFCMain::ToolBarTerrain()
 	m_objectEditorDialogue.DestroyWindow();
 	m_objectSpawnDialogue.DestroyWindow();
 	m_lightDialogue.DestroyWindow();
+	m_sculptDialogue.DestroyWindow();
+	m_paintDialogue.DestroyWindow();
 
 	// Create & display dialogue window
 	m_terrainDialogue.Create(IDD_DIALOG9);
@@ -495,10 +528,11 @@ void MFCMain::ToolBarTerrain()
 
 void MFCMain::ToolBarPaint()
 {
-	// Destroy other windows (except terrain inspector)
+	// Destroy other windows 
 	m_objectEditorDialogue.DestroyWindow();
 	m_objectSpawnDialogue.DestroyWindow();
 	m_lightDialogue.DestroyWindow();
+	m_terrainDialogue.DestroyWindow();
 	m_sculptDialogue.DestroyWindow();
 
 	// Create & display dialogue window
@@ -514,6 +548,7 @@ void MFCMain::ToolBarSculpt()
 	m_objectEditorDialogue.DestroyWindow();
 	m_objectSpawnDialogue.DestroyWindow();
 	m_lightDialogue.DestroyWindow();
+	m_terrainDialogue.DestroyWindow();
 	m_paintDialogue.DestroyWindow();
 
 	// Create & display dialogue window

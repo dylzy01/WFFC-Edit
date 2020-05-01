@@ -112,18 +112,13 @@ END_MESSAGE_MAP()
 // Kill the dialogue
 void LightDialogue::End()
 {
-	////OnBnClickedOk();	
-
-	// Properly destroy the window : including links/pointers created
-	// This allows the dialogue to start again
+	m_active = false;
 	DestroyWindow();
 }
 
 // User is finished with dialogue
 void LightDialogue::OnBnClickedOk()
-{		
-	m_active = false;
-	End();
+{
 	CDialogEx::OnOK();
 }
 

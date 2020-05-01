@@ -31,6 +31,7 @@ public:
 	int  Run();
 
 private:
+	void CreateDialogues();
 	void CheckDialogues();
 
 	CMyFrame * m_frame;	//handle to the frame where all our UI is

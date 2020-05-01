@@ -27,10 +27,10 @@ void TerrainManager::Paint(TERRAIN & terrain, TERRAIN_PAINT paint)
 }
 
 // Sculpt selected terrain
-void TerrainManager::Sculpt(TERRAIN & terrain, TERRAIN_SCULPT function, CONSTRAINT constraint)
+void TerrainManager::Sculpt(TERRAIN & terrain, TERRAIN_SCULPT function, CONSTRAINT constraint, bool single)
 {
 	// Pick terrain
-	terrain = MouseManager::PickTerrain();
+	if (!single) { terrain = MouseManager::PickTerrain(); }	
 
 	// If terrain is intersected
 	if (terrain.intersect)

@@ -49,6 +49,9 @@ void SculptDialogue::SetChunkData(DisplayChunk * displayChunk)
 	// Set initial scale factor
 	CString scale; scale.Format(L"%g", m_displayChunk->GetScaleFactor());
 	m_eScale.SetWindowTextW(scale);
+
+	// Reset scale limit
+	m_displayChunk->SetScaleFactor(1);
 }
 
 void SculptDialogue::DoDataExchange(CDataExchange* pDX)
@@ -98,7 +101,7 @@ BEGIN_MESSAGE_MAP(SculptDialogue, CDialogEx)
 	ON_COMMAND(IDOK, &SculptDialogue::End)
 	ON_BN_CLICKED(IDOK, &SculptDialogue::OnBnClickedOk)
 	ON_CBN_SELCHANGE(IDC_COMBO3, &SculptDialogue::OnBnSelchangeSculpt)
-	ON_CBN_SELCHANGE(IDC_COMBO3, &SculptDialogue::OnBnSelchangeConstraint)
+	ON_CBN_SELCHANGE(IDC_COMBO4, &SculptDialogue::OnBnSelchangeConstraint)
 	ON_BN_CLICKED(IDC_CHECK2, &SculptDialogue::OnBnClickedIncrease)
 	ON_BN_CLICKED(IDC_CHECK14, &SculptDialogue::OnBnClickedFlatten)
 	ON_BN_CLICKED(IDC_CHECK15, &SculptDialogue::OnBnClickedDecrease)
@@ -288,13 +291,13 @@ void SculptDialogue::OnBnClickedZ()
 //	m_displayChunk->SetPlateau(IsDlgButtonChecked(IDC_CHECK3));
 //}
 
-// Plateau limit has been changed
+// Scale factor has been changed
 void SculptDialogue::OnEnChangeScale()
 {
 	// Store new limit
 	CString string = _T("");
 	m_eScale.GetWindowTextW(string);
-	
+
 	// Convert to float
 	float scale;
 	if (!string.IsEmpty()) { scale = _ttof(string); }
