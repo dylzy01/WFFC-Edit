@@ -22,12 +22,12 @@ public:
 	// Remove an object from scene graph & database
 	static void Remove(std::vector<int> & IDs, std::vector<SceneObject> & sceneGraph, int ID = -1);
 
-	// Temporarily store details of all objects
+	// Temporarily store details of all selected objects
 	static void Store(std::vector<int> IDs);
 
 	// Transform selected objects
 	static void Transform(OBJECT_FUNCTION function, CONSTRAINT constraint,
-		std::vector<int> IDs, std::vector<SceneObject> & sceneGraph);	
+		std::vector<int> IDs, std::vector<SceneObject> & sceneGraph);
 
 	// Copy details of selected objects & remove from database
 	static void Cut(std::vector<int> & IDs, std::vector<SceneObject> & sceneGraph);

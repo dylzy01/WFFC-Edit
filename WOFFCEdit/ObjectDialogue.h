@@ -19,7 +19,10 @@ public:
 	virtual ~ObjectDialogue() {}
 
 	// Pass in data pointers the class will operate on
-	void SetObjectData(std::vector<SceneObject> sceneGraph);
+	void SetObjectData(std::vector<SceneObject>* sceneGraph);
+
+	// Get currently selected object ID 
+	int GetSelectedObjectID() { return m_objectID; }
 
 	// Update selected object
 	void UpdateSelection(int ID) { m_objectID = ID; }
@@ -40,6 +43,7 @@ public:
 	
 	// Setters
 	void SetActive(bool active) { m_active = active; }
+	void SetUpdate(bool update) { m_update = update; }
 	void SetTransforming(bool transforming) { m_transforming = transforming; }
 
 // Dialog Data

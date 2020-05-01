@@ -56,7 +56,6 @@ public:
 	OBJECT_TYPE m_type;
 	int ID;
 	int enabled;
-	float dirX, dirY, dirZ;
 	float ambR, ambG, ambB;
 };
 

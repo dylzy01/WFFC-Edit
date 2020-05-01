@@ -38,7 +38,7 @@ public: //methods
 
 	// Getters
 	EDITOR GetEditor() { return m_d3dRenderer.GetEditor(); } //return current editor
-	std::pair<std::vector<Light*>, std::vector<int>> GetLights() { return m_d3dRenderer.GetLights(); }
+	std::vector<DisplayObject> GetLights() { return m_d3dRenderer.GetLights(); }
 	DisplayChunk* GetDisplayChunk() { return m_d3dRenderer.GetDisplayChunk(); }
 	std::vector<SceneObject> GetSceneGraph() { return m_d3dRenderer.GetSceneGraph(); }
 	InputCommands* GetInput() { return &m_toolInputCommands; }
@@ -113,9 +113,15 @@ public: //methods
 	void SetTerrainPaint(TERRAIN_PAINT paint) { m_paint = paint; }
 	void SetTerrainSculpt(TERRAIN_SCULPT function) { m_terrainFunction = function; }
 	void SetTerrainConstraint(CONSTRAINT constraint) { m_terrainConstraint = constraint; }
-	void SetLights(std::pair<std::vector<Light*>, std::vector<int>> lights) { m_d3dRenderer.SetLights(lights); }
+	void SetLights(std::vector<DisplayObject> lights) { m_d3dRenderer.SetLights(lights); }
 	void SetSceneObject(SceneObject object, int index) { m_d3dRenderer.SetSceneObject(object, index); }
-	void SetSelectedObjectID(int ID) { m_selectedObjectIDs.clear(); m_selectedObjectIDs.push_back(ID); m_d3dRenderer.SetSelectedObjectIDs(m_selectedObjectIDs); }
+	void SetSelectedObjectID(int ID) 
+	{ 
+		m_selectedObjectIDs.clear(); 
+		m_selectedObjectIDs.push_back(ID); 
+		m_d3dRenderer.SetSelectedObjectIDs(m_selectedObjectIDs); 
+	}
+	///void SetLights(std::pair<std::vector<Light*>, std::vector<int>>& lights) { m_lights = lights; }
 	void SetSelectedTerrain(TERRAIN& terrain) { m_selectedTerrain = terrain; }
 
 public:	//variables
@@ -125,6 +131,7 @@ public:	//variables
 	TERRAIN m_selectedTerrain;				
 	std::vector<TERRAIN> m_selectedTerrains;	//IDs of multiple current TERRAIN selections
 	std::vector<int> m_objectIDsToCopy;
+	///std::pair<std::vector<Light*>, std::vector<int>> m_lights;
 
 	EDITOR m_editor;								//control which editor state is being applied
 	OBJECT_TYPE m_objectSpawn;						//control which object is to be spawned
@@ -137,7 +144,7 @@ public:	//variables
 private:	//methods
 	void	onContentAdded();
 
-	void	SaveDisplayList(std::vector<DisplayObject> displayList);
+	void	SaveDisplayList(std::vector<DisplayObject> displayList);	
 		
 private:	//variables
 	HWND	m_toolHandle;					//Handle to the  window

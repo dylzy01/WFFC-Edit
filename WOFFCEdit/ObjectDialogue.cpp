@@ -16,17 +16,21 @@ ObjectDialogue::ObjectDialogue(CWnd* pParent /*=nullptr*/)
 
 }
 
-void ObjectDialogue::SetObjectData(std::vector<SceneObject> sceneGraph)
+void ObjectDialogue::SetObjectData(std::vector<SceneObject>* sceneGraph)
 {
 	// Local storage of scene graph
-	m_sceneGraph = sceneGraph;
+	m_sceneGraph = *sceneGraph;
 
 	// Loop through objects and add entries to the ID combo box
 	for (int i = 0; i < m_sceneGraph.size(); ++i)
 	{
-		// Setup object IDs
-		std::wstring idBoxEntry = std::to_wstring(m_sceneGraph.at(i).ID);
-		m_boxID.AddString(idBoxEntry.c_str());
+		// If object isn't a light
+		if (m_sceneGraph[i].m_type != OBJECT_TYPE::LIGHT)
+		{
+			// Setup object IDs
+			std::wstring idBoxEntry = std::to_wstring(m_sceneGraph[i].ID);
+			m_boxID.AddString(idBoxEntry.c_str());
+		}		
 	}
 
 	// Setup total objects in scene
@@ -47,7 +51,6 @@ void ObjectDialogue::SetObjectData(std::vector<SceneObject> sceneGraph)
 		typeBoxEntry = L"Palm Tree";	m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Pine Tree";	m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Water";		m_boxType.AddString(typeBoxEntry.c_str());
-		typeBoxEntry = L"Light";		m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Cube";			m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Cylinder";		m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Cone";			m_boxType.AddString(typeBoxEntry.c_str());
@@ -150,6 +153,8 @@ BEGIN_MESSAGE_MAP(ObjectDialogue, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK4, &ObjectDialogue::OnBnClickedSnapTerrain)
 	ON_BN_CLICKED(IDC_CHECK5, &ObjectDialogue::OnBnClickedSnapValue)
 	ON_EN_CHANGE(IDC_EDIT10, &ObjectDialogue::OnEnChangeSnapValue)
+	ON_BN_CLICKED(IDC_BUTTON1, &ObjectDialogue::OnBnClickedDelete)
+	ON_BN_CLICKED(IDC_BUTTON2, &ObjectDialogue::OnBnClickedDuplicate)
 END_MESSAGE_MAP()
 
 
@@ -198,6 +203,9 @@ void ObjectDialogue::OnCbnSelchangeType()
 
 	// Replace object with new type
 	ObjectManager::Replace(m_objectID, m_sceneGraph, (OBJECT_TYPE)type);
+
+	// Tell MFC/ToolMain to update scene graph
+	m_update = true;
 }
 
 // Object should be focussed/unfocussed
@@ -627,16 +635,16 @@ void ObjectDialogue::Uncheck()
 
 void ObjectDialogue::UpdateType(int ID)
 {
-	// Set object type
-	m_boxType.SetCurSel((int)m_sceneGraph.at(ID).m_type);
+	// Set object type	
+	m_boxType.SetCurSel((int)m_sceneGraph[ID].m_type);
 }
 
 void ObjectDialogue::UpdateScale(int ID)
 {
 	// Store current scale
-	float x = m_sceneGraph.at(ID).scaX;
-	float y = m_sceneGraph.at(ID).scaY;
-	float z = m_sceneGraph.at(ID).scaZ;
+	float x = m_sceneGraph[ID].scaX;
+	float y = m_sceneGraph[ID].scaY;
+	float z = m_sceneGraph[ID].scaZ;
 
 	// Update X scale box
 	CString sX; sX.Format(L"%g", x);
@@ -654,9 +662,9 @@ void ObjectDialogue::UpdateScale(int ID)
 void ObjectDialogue::UpdateRotation(int ID)
 {
 	// Store current rotation
-	float x = m_sceneGraph.at(ID).rotX;
-	float y = m_sceneGraph.at(ID).rotY;
-	float z = m_sceneGraph.at(ID).rotZ;
+	float x = m_sceneGraph[ID].rotX;
+	float y = m_sceneGraph[ID].rotY;
+	float z = m_sceneGraph[ID].rotZ;
 
 	// Update X rotation box
 	CString sX; sX.Format(L"%g", x);
@@ -674,9 +682,9 @@ void ObjectDialogue::UpdateRotation(int ID)
 void ObjectDialogue::UpdatePosition(int ID)
 {
 	// Store current position
-	float x = m_sceneGraph.at(ID).posX;
-	float y = m_sceneGraph.at(ID).posY;
-	float z = m_sceneGraph.at(ID).posZ;
+	float x = m_sceneGraph[ID].posX;
+	float y = m_sceneGraph[ID].posY;
+	float z = m_sceneGraph[ID].posZ;
 
 	// Update X position box
 	CString sX; sX.Format(L"%g", x);

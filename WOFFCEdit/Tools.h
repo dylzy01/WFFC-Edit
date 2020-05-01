@@ -12,7 +12,8 @@ enum class EDITOR {
 	OBJECT_FUNCTION,
 	TERRAIN_PAINT,
 	SCULPT_FREELY,
-	SCULPT_SINGLE
+	SCULPT_SINGLE,
+	LIGHTS
 };
 
 enum class OBJECT_TYPE {
@@ -37,11 +38,12 @@ enum class OBJECT_TYPE {
 	WATER,
 
 	// Misc,
-	LIGHT,
 	CUBE,
 	CYLINDER,
 	CONE,
 
+	// Other
+	LIGHT,
 	NA
 };
 

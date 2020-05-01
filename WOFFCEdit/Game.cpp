@@ -247,6 +247,17 @@ void Game::Render()
 	ShaderManager::SetWorld(&m_world);
 	ShaderManager::SetView(&m_view);
 	ShaderManager::SetProjection(&m_projection);
+
+	// Create vector of only lights
+	std::vector<DisplayObject> lights;
+	for (int i = 0; i < m_displayList.size(); ++i)
+	{
+		// If current object is a light
+		if (m_displayList[i].m_objectType == OBJECT_TYPE::LIGHT)
+		{
+			lights.push_back(m_displayList[i]);
+		}
+	}
 	
 	//RENDER OBJECTS FROM SCENEGRAPH
 	int numRenderObjects = m_displayList.size();
@@ -264,7 +275,7 @@ void Game::Render()
 		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
 
 		// Shader		
-		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, m_lights.first, m_displayList[i].m_texture_diffuse);		
+		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, lights, m_displayList[i].m_texture_diffuse);		
 		
 		m_displayList[i].m_model->Draw(context, *m_states, local, m_view, m_projection, false);	//last variable in draw,  make TRUE for wireframe
 
@@ -276,10 +287,10 @@ void Game::Render()
 	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
 	context->OMSetDepthStencilState(m_states->DepthDefault(),0);
 	context->RSSetState(m_states->CullNone());
-	if (m_wireframe) { context->RSSetState(m_states->Wireframe()); }	
+	if (m_wireframe) { context->RSSetState(m_states->Wireframe()); }		
 
 	//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
-	m_displayChunk.RenderBatch(m_deviceResources, m_lights.first);
+	m_displayChunk.RenderBatch(m_deviceResources, lights);
 
 	//HUD
 	m_sprites->Begin();
@@ -432,6 +443,60 @@ void Game::DrawDebug(int i)
 	m_deviceResources->PIXEndEvent();
 }
 
+std::vector<SceneObject> Game::SetupObjectTypes(std::vector<SceneObject> sceneGraph)
+{
+	// Loop through scene graph
+	for (int i = 0; i < sceneGraph.size(); ++i)
+	{
+		// Object isn't water
+		sceneGraph[i].m_isWater = false;
+
+		// If object is house 1
+		if (sceneGraph[i].model_path == "database/data/house0.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::HOUSE_ONE; }
+
+		// Else, if object is house 2
+		else if (sceneGraph[i].model_path == "database/data/house1.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::HOUSE_TWO; }
+
+		// Else, if object is cave
+		else if (sceneGraph[i].model_path == "database/data/cave.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::CAVE; }
+
+		// Else, if object is bridge
+		else if (sceneGraph[i].model_path == "database/data/bridge.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::BRIDGE; }
+
+		// Else, if object is fence
+		else if (sceneGraph[i].model_path == "database/data/fence.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::FENCE; }
+
+		// Else, if object is boat
+		else if (sceneGraph[i].model_path == "database/data/boat.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::BOAT; }
+
+		// Else, if object is grass
+		else if (sceneGraph[i].model_path == "database/data/grass.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::GRASS; }
+
+		// Else, if object is tree 1
+		else if (sceneGraph[i].model_path == "database/data/tree0.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::TREE_ONE; }
+
+		// Else, if object is tree 2
+		else if (sceneGraph[i].model_path == "database/data/tree1.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::TREE_TWO; }
+
+		// Else, if object is water
+		else if (sceneGraph[i].model_path == "database/data/water.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::WATER; sceneGraph[i].m_isWater = true; }
+
+		// Else, if object is light
+		else if (sceneGraph[i].model_path == "database/data/light.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::LIGHT; }
+
+		// Else, if object is cube
+		else if (sceneGraph[i].model_path == "database/data/cube.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::CUBE; }
+
+		// Else, if object is cylinder
+		else if (sceneGraph[i].model_path == "database/data/cylinder.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::CYLINDER; }
+
+		// Else, if object is cone
+		else if (sceneGraph[i].model_path == "database/data/cone.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::CONE; }
+	}
+
+	return sceneGraph;
+}
+
 #pragma endregion
 
 #pragma region Message Handlers
@@ -473,11 +538,11 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 	CreateDeviceDependentResources();
 	
 	// Clear current list of lights
-	m_lights.first.clear();
-	m_lights.second.clear();
+	//m_lights.clear();
 	
 	// Update local scene graph
-	m_sceneGraph = *sceneGraph;
+	///m_sceneGraph = *sceneGraph;
+	m_sceneGraph = SetupObjectTypes(*sceneGraph);
 	
 	auto device = m_deviceResources->GetD3DDevice();
 	auto context = m_deviceResources->GetD3DDeviceContext();
@@ -490,15 +555,15 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 	//for every item in the scenegraph
 	int numObjects = sceneGraph->size();
 	for (int i = 0; i < numObjects; i++)
-	{
+	{		
 		//create a temp display object that we will populate then append to the display list.
 		DisplayObject newDisplayObject;
 		
-		// Check & set if water or not
-		newDisplayObject.m_isWater = (sceneGraph->at(i).model_path == "database/data/water.cmo");
+		// Set if water or not
+		newDisplayObject.m_isWater = m_sceneGraph[i].m_isWater;
 
 		// Set object type
-		newDisplayObject.m_type = m_sceneGraph[i].m_type;
+		newDisplayObject.m_objectType = m_sceneGraph[i].m_type;
 
 		//load model
 		std::wstring modelwstr = StringToWCHART(sceneGraph->at(i).model_path);							//convect string to Wchar
@@ -556,22 +621,25 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 		newDisplayObject.m_light_constant = sceneGraph->at(i).light_constant;
 		newDisplayObject.m_light_linear = sceneGraph->at(i).light_linear;
 		newDisplayObject.m_light_quadratic = sceneGraph->at(i).light_quadratic;
+		newDisplayObject.SetAmbient(XMFLOAT4{ 0.2f, 0.2f, 0.2f, 1.f });
+		newDisplayObject.SetEnabled(true);
 			
-		// Custom lights
-		if (sceneGraph->at(i).light_type != 0)
+		// If object is a light
+		///if (sceneGraph->at(i).light_type != 0)
+		//if (newDisplayObject.GetLightType() != LIGHT_TYPE::NA)
 		{
-			XMFLOAT4 diffuse = { sceneGraph->at(i).light_diffuse_r, sceneGraph->at(i).light_diffuse_g, sceneGraph->at(i).light_diffuse_b, 1.f };
-			XMFLOAT4 ambient = { 0.2f, 0.2f, 0.2f, 1.f };
-			XMFLOAT3 position = { sceneGraph->at(i).posX, sceneGraph->at(i).posY, sceneGraph->at(i).posZ };
+			//XMFLOAT4 diffuse = { sceneGraph->at(i).light_diffuse_r, sceneGraph->at(i).light_diffuse_g, sceneGraph->at(i).light_diffuse_b, 1.f };
+			//XMFLOAT4 ambient = { 0.2f, 0.2f, 0.2f, 1.f };
+			//XMFLOAT3 position = { sceneGraph->at(i).posX, sceneGraph->at(i).posY, sceneGraph->at(i).posZ };
 			///DirectX::SimpleMath::Vector3 direction = { sceneGraph->at(i).rotX, sceneGraph->at(i).rotY, sceneGraph->at(i).rotZ };
-			XMFLOAT3 direction = { 0.f, 1.f, 0.f };
-			float constantAttenuation = sceneGraph->at(i).light_constant;
-			float linearAttenuation = sceneGraph->at(i).light_linear;
-			float quadraticAttenuation = sceneGraph->at(i).light_quadratic;
-			LIGHT_TYPE type = (LIGHT_TYPE)sceneGraph->at(i).light_type;
-			bool enabled = sceneGraph->at(i).enabled;
-			m_lights.first.push_back(new Light(diffuse, ambient, position, direction, constantAttenuation, linearAttenuation, quadraticAttenuation, type, enabled));
-			m_lights.second.push_back(sceneGraph->at(i).ID);
+			//XMFLOAT3 direction = { 0.f, 1.f, 0.f };
+			//float constantAttenuation = sceneGraph->at(i).light_constant;
+			//float linearAttenuation = sceneGraph->at(i).light_linear;
+			//float quadraticAttenuation = sceneGraph->at(i).light_quadratic;
+			//LIGHT_TYPE type = (LIGHT_TYPE)sceneGraph->at(i).light_type;
+			//bool enabled = sceneGraph->at(i).enabled;
+			//m_lights.first.push_back(new Light(diffuse, ambient, position, direction, constantAttenuation, linearAttenuation, quadraticAttenuation, type, enabled));
+			//m_lights.second.push_back(sceneGraph->at(i).ID);
 		}
 
 		// Set bounding box		
@@ -582,7 +650,7 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.z *= newDisplayObject.m_scale.z;
 			newDisplayObject.m_model->meshes[j]->boundingBox.Center = newDisplayObject.m_position;
 			newDisplayObject.m_model->meshes[j]->boundingBox.Center.y += newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y;
-		}		
+		}	
 		
 		// Add object to list
 		m_displayList.push_back(newDisplayObject);	
@@ -594,8 +662,7 @@ void Game::RebuildDisplayList(std::vector<SceneObject>* sceneGraph)
 	CreateDeviceDependentResources();
 
 	// Clear current list of lights
-	m_lights.first.clear();
-	m_lights.second.clear();
+	//m_lights.clear();
 
 	// Update local scene graph
 	m_sceneGraph = *sceneGraph;
@@ -619,7 +686,7 @@ void Game::RebuildDisplayList(std::vector<SceneObject>* sceneGraph)
 		newDisplayObject.m_isWater = (sceneGraph->at(i).model_path == "database/data/water.cmo");
 
 		// Set object type
-		newDisplayObject.m_type = m_sceneGraph[i].m_type;
+		newDisplayObject.m_objectType = m_sceneGraph[i].m_type;
 
 		//load model
 		std::wstring modelwstr = StringToWCHART(sceneGraph->at(i).model_path);							//convect string to Wchar
@@ -642,6 +709,9 @@ void Game::RebuildDisplayList(std::vector<SceneObject>* sceneGraph)
 		//		lights->SetTexture(newDisplayObject.m_texture_diffuse);
 		//	}
 		//});
+
+		// Set index
+		newDisplayObject.m_ID = sceneGraph->at(i).ID;
 
 		//set position
 		newDisplayObject.m_position.x = sceneGraph->at(i).posX;
@@ -674,24 +744,8 @@ void Game::RebuildDisplayList(std::vector<SceneObject>* sceneGraph)
 		newDisplayObject.m_light_constant = sceneGraph->at(i).light_constant;
 		newDisplayObject.m_light_linear = sceneGraph->at(i).light_linear;
 		newDisplayObject.m_light_quadratic = sceneGraph->at(i).light_quadratic;
-
-		// Custom lights
-		if (sceneGraph->at(i).light_type != 0)
-		{
-			XMFLOAT4 diffuse = { sceneGraph->at(i).light_diffuse_r, sceneGraph->at(i).light_diffuse_g, sceneGraph->at(i).light_diffuse_b, 1.f };
-			XMFLOAT4 ambient = { sceneGraph->at(i).ambR, sceneGraph->at(i).ambG, sceneGraph->at(i).ambB, 1.f };
-			XMFLOAT3 position = { sceneGraph->at(i).posX, sceneGraph->at(i).posY, sceneGraph->at(i).posZ };
-			///DirectX::SimpleMath::Vector3 direction = { sceneGraph->at(i).rotX, sceneGraph->at(i).rotY, sceneGraph->at(i).rotZ };
-			DirectX::SimpleMath::Vector3 direction = { sceneGraph->at(i).dirX, sceneGraph->at(i).dirY, sceneGraph->at(i).dirZ };
-			direction.Normalize();
-			float constantAttenuation = sceneGraph->at(i).light_constant;
-			float linearAttenuation = sceneGraph->at(i).light_linear;
-			float quadraticAttenuation = sceneGraph->at(i).light_quadratic;
-			LIGHT_TYPE type = (LIGHT_TYPE)sceneGraph->at(i).light_type;
-			bool enabled = sceneGraph->at(i).enabled;
-			m_lights.first.push_back(new Light(diffuse, ambient, position, direction, constantAttenuation, linearAttenuation, quadraticAttenuation, type, enabled));
-			m_lights.second.push_back(sceneGraph->at(i).ID);
-		}
+		newDisplayObject.SetAmbient(XMFLOAT4{ sceneGraph->at(i).ambR, sceneGraph->at(i).ambG, sceneGraph->at(i).ambB, 1.f });
+		newDisplayObject.SetEnabled(sceneGraph->at(i).enabled);
 
 		// Set bounding box		
 		for (int j = 0; j < newDisplayObject.m_model->meshes.size(); ++j)
@@ -701,7 +755,7 @@ void Game::RebuildDisplayList(std::vector<SceneObject>* sceneGraph)
 			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.z *= newDisplayObject.m_scale.z;
 			newDisplayObject.m_model->meshes[j]->boundingBox.Center = newDisplayObject.m_position;
 			newDisplayObject.m_model->meshes[j]->boundingBox.Center.y += newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y;
-		}
+		}		
 
 		// Add object to list
 		m_displayList.push_back(newDisplayObject);
@@ -717,84 +771,6 @@ void Game::BuildDisplayChunk(ChunkObject * SceneChunk, std::vector<DirectX::Simp
 	m_displayChunk.m_effect->SetProjection(m_projection);
 	///m_displayChunk.m_effectBlend->SetProjection(m_projection);
 	m_displayChunk.InitialiseBatch();
-}
-
-void Game::ReplaceObjects(std::vector<int> IDs, std::vector<SceneObject> * sceneGraph)
-{
-	auto device = m_deviceResources->GetD3DDevice();
-	auto devicecontext = m_deviceResources->GetD3DDeviceContext();
-	
-	// Loop through IDs size
-	for (int i = 0; i < IDs.size(); ++i)
-	{
-		//create a temp display object that we will populate then append to the display list.
-		DisplayObject newDisplayObject;
-
-		// Check & set if water or not
-		newDisplayObject.m_isWater = (sceneGraph->at(i).model_path == "database/data/water.cmo");
-
-		// Set object type
-		newDisplayObject.m_type = m_sceneGraph[i].m_type;
-
-		//load model
-		std::wstring modelwstr = StringToWCHART(sceneGraph->at(i).model_path);							//convect string to Wchar
-		newDisplayObject.m_model = Model::CreateFromCMO(device, modelwstr.c_str(), *m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
-
-		//Load Texture
-		std::wstring texturewstr = StringToWCHART(sceneGraph->at(i).tex_diffuse_path);								//convect string to Wchar
-		HRESULT rs;
-		rs = CreateDDSTextureFromFile(device, texturewstr.c_str(), nullptr, &newDisplayObject.m_texture_diffuse);	//load tex into Shader resource
-
-		//if texture fails.  load error default
-		if (rs)
-		{
-			CreateDDSTextureFromFile(device, L"database/data/Error.dds", nullptr, &newDisplayObject.m_texture_diffuse);	//load tex into Shader resource
-		}
-
-		//apply new texture to models effect
-		newDisplayObject.m_model->UpdateEffects([&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
-		{
-			auto lights = dynamic_cast<BasicEffect*>(effect);
-			if (lights)
-			{
-				lights->SetTexture(newDisplayObject.m_texture_diffuse);
-			}
-		});
-
-		//set position
-		newDisplayObject.m_position.x = sceneGraph->at(i).posX;
-		newDisplayObject.m_position.y = sceneGraph->at(i).posY;
-		newDisplayObject.m_position.z = sceneGraph->at(i).posZ;
-
-		//setorientation
-		newDisplayObject.m_orientation.x = sceneGraph->at(i).rotX;
-		newDisplayObject.m_orientation.y = sceneGraph->at(i).rotY;
-		newDisplayObject.m_orientation.z = sceneGraph->at(i).rotZ;
-
-		//set scale
-		newDisplayObject.m_scale.x = sceneGraph->at(i).scaX;
-		newDisplayObject.m_scale.y = sceneGraph->at(i).scaY;
-		newDisplayObject.m_scale.z = sceneGraph->at(i).scaZ;
-
-		//set wireframe / render flags
-		newDisplayObject.m_render = sceneGraph->at(i).editor_render;
-		newDisplayObject.m_wireframe = sceneGraph->at(i).editor_wireframe;
-
-		newDisplayObject.m_light_type = sceneGraph->at(i).light_type;
-		newDisplayObject.m_light_diffuse_r = sceneGraph->at(i).light_diffuse_r;
-		newDisplayObject.m_light_diffuse_g = sceneGraph->at(i).light_diffuse_g;
-		newDisplayObject.m_light_diffuse_b = sceneGraph->at(i).light_diffuse_b;
-		newDisplayObject.m_light_specular_r = sceneGraph->at(i).light_specular_r;
-		newDisplayObject.m_light_specular_g = sceneGraph->at(i).light_specular_g;
-		newDisplayObject.m_light_specular_b = sceneGraph->at(i).light_specular_b;
-		newDisplayObject.m_light_spot_cutoff = sceneGraph->at(i).light_spot_cutoff;
-		newDisplayObject.m_light_constant = sceneGraph->at(i).light_constant;
-		newDisplayObject.m_light_linear = sceneGraph->at(i).light_linear;
-		newDisplayObject.m_light_quadratic = sceneGraph->at(i).light_quadratic;
-
-		// Replace old object with new
-		///std::replace(m_displayList.begin(), m_displayList.end(), m_displayList[IDs[i]], newDisplayObject);
-	}
 }
 
 void Game::SaveDisplayChunk()
@@ -828,16 +804,36 @@ void Game::SaveDisplayList()
 void Game::RemoveLight(int ID)
 {
 	// Loop through lights
-	for (int i = 0; i < m_lights.first.size(); ++i)
+	//for (int i = 0; i < m_lights.first.size(); ++i)
+	//{
+	//	// If light ID matches parameter ID
+	//	if (m_lights.second[i] == ID)
+	//	{			
+	//		// Erase light from vector
+	//		m_lights.first.erase(m_lights.first.begin() + i);
+	//		m_lights.second.erase(m_lights.second.begin() + i);
+	//	}
+	//}
+}
+
+std::vector<DisplayObject> Game::GetLights()
+{
+	// Setup temp container
+	std::vector<DisplayObject> lights;
+
+	// Loop through display list
+	for (int i = 0; i < m_displayList.size(); ++i)
 	{
-		// If light ID matches parameter ID
-		if (m_lights.second[i] == ID)
-		{			
-			// Erase light from vector
-			m_lights.first.erase(m_lights.first.begin() + i);
-			m_lights.second.erase(m_lights.second.begin() + i);
+		// If object is a light
+		if (m_displayList[i].m_objectType == OBJECT_TYPE::LIGHT)
+		{
+			// Add to container
+			lights.push_back(m_displayList[i]);
 		}
 	}
+
+	// Return lights in scene
+	return lights;
 }
 
 void Game::SetTransform(int i, OBJECT_FUNCTION function, DirectX::SimpleMath::Vector3 vector)
@@ -852,24 +848,27 @@ void Game::SetTransform(int i, OBJECT_FUNCTION function, DirectX::SimpleMath::Ve
 	}
 	break;
 	case OBJECT_FUNCTION::ROTATE: 
-	{
+	{		
+		// If object is a light, normalise vector
+		if (m_displayList[i].m_objectType == OBJECT_TYPE::LIGHT) { vector.Normalize(); }
+		
 		// Update object rotation
 		m_displayList[i].m_orientation = vector;
-
+				
 		// Loop through lights
-		for (int j = 0; j < m_lights.first.size(); ++j)
-		{
-			// If light ID matches object ID
-			if (m_lights.second[j] == i)
-			{
-				// Store object orientaiton & normalize for light direction
-				DirectX::SimpleMath::Vector3 direction = m_displayList[i].m_orientation;
-				direction.Normalize();
+		//for (int j = 0; j < m_lights.first.size(); ++j)
+		//{
+		//	// If light ID matches object ID
+		//	if (m_lights.second[j] == i)
+		//	{
+		//		// Store object orientaiton & normalize for light direction
+		//		DirectX::SimpleMath::Vector3 direction = m_displayList[i].m_orientation;
+		//		direction.Normalize();
 
-				// Update light direction
-				m_lights.first[j]->SetDirection(direction);
-			}
-		}
+		//		// Update light direction
+		//		m_lights.first[j]->SetDirection(direction);
+		//	}
+		//}
 	}
 	break;
 	case OBJECT_FUNCTION::TRANSLATE: 
@@ -878,15 +877,15 @@ void Game::SetTransform(int i, OBJECT_FUNCTION function, DirectX::SimpleMath::Ve
 		m_displayList[i].m_position = vector;	
 
 		// Loop through lights
-		for (int j = 0; j < m_lights.first.size(); ++j)
-		{
-			// If light ID matches object ID
-			if (m_lights.second[j] == i)
-			{
-				// Update light position				
-				m_lights.first[j]->SetPosition(m_displayList[i].m_position);
-			}
-		}
+		//for (int j = 0; j < m_lights.first.size(); ++j)
+		//{
+		//	// If light ID matches object ID
+		//	if (m_lights.second[j] == i)
+		//	{
+		//		// Update light position				
+		//		m_lights.first[j]->SetPosition(m_displayList[i].m_position);
+		//	}
+		//}
 	}
 	break;
 	}
@@ -899,6 +898,24 @@ void Game::SetTransform(int i, OBJECT_FUNCTION function, DirectX::SimpleMath::Ve
 	// Update object bounding box translation
 	m_displayList[i].m_model->meshes[0]->boundingBox.Center = m_displayList[i].m_position;
 	m_displayList[i].m_model->meshes[0]->boundingBox.Center.y += m_displayList[i].m_model->meshes[0]->boundingBox.Extents.y;
+}
+
+void Game::SetLights(std::vector<DisplayObject> lights)
+{
+	// Loop through display list
+	for (int i = 0; i < m_displayList.size(); ++i)
+	{
+		// Loop through lights
+		for (int j = 0; j < lights.size(); ++j)
+		{
+			// If object ID matches light ID
+			if (m_displayList[i].m_ID == lights[j].m_ID)
+			{
+				// Update object to match light
+				m_displayList[i] = lights[j];
+			}
+		}		
+	}
 }
 
 #ifdef DXTK_AUDIO

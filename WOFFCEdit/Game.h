@@ -78,14 +78,14 @@ public:
 	EDITOR GetEditor() { return m_editor; }
 	OBJECT_FUNCTION GetObjectFunction() { return m_objectFunction; }
 	RECT GetScreenDimensions() { return m_screenDimensions; }
-	std::pair<std::vector<Light*>, std::vector<int>> GetLights() { return m_lights; }
+	std::vector<DisplayObject> GetLights();
 
 	// Setters
 	void SetWireframe(bool wireframe) { m_wireframe = wireframe; }
 	void SetSelectedObjectIDs(std::vector<int> selectedObjectIDs) { m_selectedObjectIDs = selectedObjectIDs; }
 	void SetDisplayList(DisplayObject object, int i) { m_displayList[i] = object; }
 	void SetTransform(int i, OBJECT_FUNCTION function, DirectX::SimpleMath::Vector3 vector);
-	void SetLights(std::pair<std::vector<Light*>, std::vector<int>> lights) { m_lights = lights; }
+	void SetLights(std::vector<DisplayObject> lights);
 	void SetSceneObject(SceneObject object, int index) { m_sceneGraph[index] = object; RebuildDisplayList(&m_sceneGraph); }
 
 #ifdef DXTK_AUDIO
@@ -104,6 +104,8 @@ private:
 
 	void XM_CALLCONV DrawGrid(DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
 	void DrawDebug(int i);
+
+	std::vector<SceneObject> SetupObjectTypes(std::vector<SceneObject> sceneGraph);
 
 	// frame time
 	float								m_deltaTime;
@@ -161,11 +163,7 @@ private:
 	bool m_switch = true;
 
 	// Lights
-	std::pair<std::vector<Light*>, std::vector<int>> m_lights;
-	std::vector<DirectX::SimpleMath::Vector3> m_lightColours{ {1.f, 1.f, 1.f}, {1.f, 1.f, 1.f}, {0.2f, 0.2f, 0.2f} };
-	std::vector<DirectX::SimpleMath::Vector3> m_lightPositions{ {41.f, 11.f, 46.f}, {25.f, 10.f, 50.f} };
-	std::vector<DirectX::SimpleMath::Vector3> m_lightDirections{ {0.f, -1.f, 0.f} };
-	std::vector<bool> m_lightEnabled{ true, false, false };
+	//std::vector<DisplayObject> m_lights;
 
 	// Device resources.
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;

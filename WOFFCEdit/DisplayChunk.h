@@ -14,7 +14,7 @@ public:
 	DisplayChunk();
 	~DisplayChunk();
 	void PopulateChunkData(ChunkObject * SceneChunk);
-	void RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResources, std::vector<Light*> lights);
+	void RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResources, std::vector<DisplayObject> lights);
 	void InitialiseBatch();	//initial setup, base coordinates etc based on scale
 	void LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResources);
 	void SaveHeightMap();			//saves the heightmap back to file.
@@ -74,7 +74,7 @@ private:
 
 	// Drawing
 	void DrawTerrain(std::vector<std::pair<int, int>> terrain);
-	void DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResources, std::vector<Light*> lights);
+	void DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResources, std::vector<DisplayObject> lights);
 
 	float	m_terrainHeightScale;
 	int		m_terrainSize;				//size of terrain in metres

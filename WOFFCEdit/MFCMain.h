@@ -21,7 +21,7 @@
 #include "TerrainDialogue.h"
 #include "PaintDialogue.h"
 #include "SculptDialogue.h"
-///#include "ObjectDialogue.h"
+#include "ObjectDialogue.h"
 
 class MFCMain : public CWinApp 
 {
@@ -50,7 +50,7 @@ private:
 	TerrainDialogue		m_terrainDialogue;
 	PaintDialogue		m_paintDialogue;
 	SculptDialogue		m_sculptDialogue;
-	///ObjectDialogue		m_objectDialogue;
+	ObjectDialogue		m_objectDialogue;
 
 	int m_width;		
 	int m_height;

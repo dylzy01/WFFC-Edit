@@ -87,7 +87,7 @@ void ToolMain::onActionLoad()
 		// Create & store an object from table data
 		m_sceneGraph.push_back(SQLManager::CreateObject());
 	}
-
+	
 	// Process object results into renderable
 	m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
 
@@ -251,7 +251,7 @@ void ToolMain::Tick(MSG *msg)
 				// If objects are selected and mouse has been dragged
 				if (m_selectedObjectIDs.size() != 0 && m_toolInputCommands.mouseDrag)
 				{
-					// Scale selected objects
+					// Transform selected objects
 					ObjectManager::Transform(m_objectFunction, m_objectConstraint, m_selectedObjectIDs, m_sceneGraph);
 				}
 			}			
@@ -273,6 +273,20 @@ void ToolMain::Tick(MSG *msg)
 		{
 			// Sculpt selected terrain
 			TerrainManager::Sculpt(m_selectedTerrain, m_terrainFunction, m_terrainConstraint, true);
+		}
+		break;
+		case EDITOR::LIGHTS:
+		{
+			// If translating
+			if (m_objectFunction == OBJECT_FUNCTION::TRANSLATE)
+			{
+				// If mouse has been dragged
+				if (m_toolInputCommands.mouseDrag)
+				{					
+					// Transform lights
+					ObjectManager::Transform(OBJECT_FUNCTION::TRANSLATE, m_objectConstraint, m_selectedObjectIDs, m_sceneGraph);
+				}
+			}
 		}
 		break;
 		}		
@@ -315,9 +329,6 @@ void ToolMain::UpdateInput(MSG * msg)
 			// Store current mouse position
 			m_toolInputCommands.mousePosPrevious = m_toolInputCommands.mousePos;
 		}
-
-		// Check if mouse has moved
-		///if (m_mousePosition != m_toolInputCommands.mousePos) { m_toolInputCommands.mouseDrag = true; }
 		break;
 
 	case WM_LBUTTONUP:
@@ -338,9 +349,6 @@ void ToolMain::UpdateInput(MSG * msg)
 			// Store current mouse position
 			m_toolInputCommands.mousePosPrevious = m_toolInputCommands.mousePos;
 		}
-
-		// Check if mouse has moved
-		///if (m_mousePosition != m_toolInputCommands.mousePos) { m_toolInputCommands.mouseDrag = true; }
 		break;
 
 	case WM_RBUTTONUP:
@@ -348,7 +356,7 @@ void ToolMain::UpdateInput(MSG * msg)
 		TerrainManager::StorePosition(true);
 		SceneManager::SetSceneGraph(&m_sceneGraph);
 		///SaveDisplayList(m_d3dRenderer.GetDisplayList());
-		//m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+		m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
 		break;
 
 	case WM_MBUTTONDOWN:

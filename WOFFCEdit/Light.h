@@ -1,10 +1,11 @@
 #pragma once
 #include "Tools.h"
+#include "SceneObject.h"
 ///#include "Light.h"
 ///#include <directxmath.h>
 using namespace DirectX;
 
-class Light/// : public Light
+class Light/// : public DisplayObject
 {
 public:
 	Light(XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT3 position, XMFLOAT3 direction, float constA, float linA, float quadA, LIGHT_TYPE type, bool enable)
@@ -29,7 +30,7 @@ public:
 	float GetConstantAttenuation() { return m_constA; }
 	float GetLinearAttenuation() { return m_linA; }
 	float GetQuadraticAttenuation() { return m_quadA; }
-	LIGHT_TYPE GetType() { return m_type; }
+	LIGHT_TYPE GetLightType() { return m_type; }
 	bool GetEnabled() { return m_enabled; }
 
 	// Setters
@@ -40,7 +41,7 @@ public:
 	void SetConstantAttenuation(float attenuation) { m_constA = attenuation; }
 	void SetLinearAttenuation(float attenuation) { m_linA = attenuation; }
 	void SetQuadraticAttenuation(float attenuation) { m_quadA = attenuation; }
-	void SetType(LIGHT_TYPE type) { m_type = type; }
+	void SetLightType(LIGHT_TYPE type) { m_type = type; }
 	void SetEnabled(bool enable) { m_enabled = enable; }
 
 	void SetDiffuseR(float r) { m_diffuse.x = r; }

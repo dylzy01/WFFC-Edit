@@ -19,17 +19,20 @@ public:
 	virtual ~LightDialogue() {}
 
 	// Pass in data pointers the class will operate on
-	void SetLightData(std::vector<SceneObject>* sceneGraph, std::pair<std::vector<Light*>, std::vector<int>>* lights);
+	void SetLightData(std::vector<SceneObject>* sceneGraph, std::vector<DisplayObject>* lights);
 
 	// Update current light with dialogue values
 	void Update(int index);
+
+	// Update current light position
+	void UpdateLightPosition(DirectX::XMFLOAT3 position);
 	
 	// Getters
 	bool GetActive() { return m_active; }
 	bool GetUpdate() { return m_update; }
 	bool GetTranslating() { return m_translating; }
-	int GetSelectedLightID() { return m_lights.second[m_boxID.GetCurSel()]; }
-	std::pair<std::vector<Light*>, std::vector<int>> GetLights() { return m_lights; }
+	int GetSelectedLightID() { return m_lights[m_boxID.GetCurSel()].m_ID; }
+	std::vector<DisplayObject> GetLights() { return m_lights; }
 	CONSTRAINT GetConstraint() { return m_constraint; }
 
 	// Setters
@@ -48,7 +51,7 @@ protected:
 
 	// Local storage 
 	std::vector<SceneObject> m_sceneGraph;
-	std::pair<std::vector<Light*>, std::vector<int>> m_lights;
+	std::vector<DisplayObject> m_lights;
 
 	// Controllers
 	bool m_active;

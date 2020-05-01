@@ -20,10 +20,10 @@ void ShaderManager::Initialise(ID3D11Device * device)
 }
 
 // Setup specific shader parameters
-void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, std::vector<Light*> lights, ID3D11ShaderResourceView * texture1, ID3D11ShaderResourceView * texture2, DirectX::XMFLOAT2 screen)
+void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, std::vector<DisplayObject> lights, ID3D11ShaderResourceView * texture1, ID3D11ShaderResourceView * texture2, DirectX::XMFLOAT2 screen)
 {	
 	// Setup temp light
-	std::vector<Light*> temp;
+	std::vector<DisplayObject> temp;
 	temp.push_back(GetLight());
 	
 	// Switch between shader type
@@ -148,7 +148,7 @@ void ShaderManager::SetProjection(DirectX::SimpleMath::Matrix * projection)
 }
 
 // Setup temp, disabled light
-Light * ShaderManager::GetLight()
+DisplayObject ShaderManager::GetLight()
 {
 	// Setup details
 	DirectX::XMFLOAT4 diffuse = { 0.f, 0.f, 0.f, 0.f };
@@ -159,9 +159,6 @@ Light * ShaderManager::GetLight()
 	LIGHT_TYPE type = LIGHT_TYPE::NA;
 	bool enable = false;
 
-	// Setup temp light
-	Light* light = new Light(diffuse, ambient, position, direction, constA, linA, quadA, type, enable);
-
 	// Return temp light
-	return light;
+	return DisplayObject(diffuse, ambient, position, direction, constA, linA, quadA, type, enable);
 }

@@ -220,7 +220,10 @@ void MFCMain::CheckDialogues()
 	
 	// If light inspector is active
 	else if (m_lightDialogue.GetActive())
-	{
+	{	
+		// Update selected object (light)
+		m_toolSystem.SetSelectedObjectID(m_lightDialogue.GetSelectedLightID());
+	
 		// If scene graph should be updated
 		if (m_lightDialogue.GetUpdate())
 		{
@@ -228,7 +231,7 @@ void MFCMain::CheckDialogues()
 			m_lightDialogue.SetUpdate(false);
 
 			// Get edited lights
-			std::pair<std::vector<Light*>, std::vector<int>> lights = m_lightDialogue.GetLights();
+			std::vector<DisplayObject> lights = m_lightDialogue.GetLights();
 
 			// Get scene graph
 			std::vector<SceneObject> sceneGraph = m_toolSystem.GetSceneGraph();
@@ -237,33 +240,33 @@ void MFCMain::CheckDialogues()
 			for (int i = 0; i < sceneGraph.size(); ++i)
 			{
 				// Loop through lights
-				for (int j = 0; j < lights.first.size(); ++j)
+				for (int j = 0; j < lights.size(); ++j)
 				{
 					// If scene graph ID matches light ID
-					if (sceneGraph[i].ID == lights.second[j])
+					if (sceneGraph[i].ID == lights[j].m_ID)
 					{
 						// Store current scene object
 						SceneObject object = sceneGraph[i];						
 						
 						// Setup object details from matching light
 						{
-							object.light_diffuse_r = lights.first[j]->GetDiffuse().x;
-							object.light_diffuse_g = lights.first[j]->GetDiffuse().y;
-							object.light_diffuse_b = lights.first[j]->GetDiffuse().z;
-							object.posX = lights.first[j]->GetPosition().x;
-							object.posY = lights.first[j]->GetPosition().y;
-							object.posZ = lights.first[j]->GetPosition().z;
-							object.dirX = lights.first[j]->GetDirection().x;
-							object.dirY = lights.first[j]->GetDirection().y;
-							object.dirZ = lights.first[j]->GetDirection().z;
-							object.light_type = (int)lights.first[j]->GetType();
-							object.light_constant = lights.first[j]->GetConstantAttenuation();
-							object.light_linear = lights.first[j]->GetLinearAttenuation();
-							object.light_quadratic = lights.first[j]->GetQuadraticAttenuation();
-							object.enabled = lights.first[j]->GetEnabled();
-							object.ambR = lights.first[j]->GetAmbient().x;
-							object.ambG = lights.first[j]->GetAmbient().y;
-							object.ambB = lights.first[j]->GetAmbient().z;
+							object.light_diffuse_r = lights[j].GetDiffuse().x;
+							object.light_diffuse_g = lights[j].GetDiffuse().y;
+							object.light_diffuse_b = lights[j].GetDiffuse().z;
+							object.posX = lights[j].GetPosition().x;
+							object.posY = lights[j].GetPosition().y;
+							object.posZ = lights[j].GetPosition().z;
+							object.rotX = lights[j].GetDirection().x;
+							object.rotY = lights[j].GetDirection().y;
+							object.rotZ = lights[j].GetDirection().z;
+							object.light_type = (int)lights[j].GetLightType();
+							object.light_constant = lights[j].GetConstantAttenuation();
+							object.light_linear = lights[j].GetLinearAttenuation();
+							object.light_quadratic = lights[j].GetQuadraticAttenuation();
+							object.enabled = lights[j].GetEnabled();
+							object.ambR = lights[j].GetAmbient().x;
+							object.ambG = lights[j].GetAmbient().y;
+							object.ambB = lights[j].GetAmbient().z;
 						}
 
 						// Replace scene object with new light	
@@ -277,16 +280,37 @@ void MFCMain::CheckDialogues()
 		else if (m_lightDialogue.GetTranslating())
 		{
 			// Set tool editor
-			m_toolSystem.SetEditor(EDITOR::OBJECT_FUNCTION);
+			m_toolSystem.SetEditor(EDITOR::LIGHTS);
 
 			// Set transform mode
 			m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::TRANSLATE);
 
 			// Set constraint
-			m_toolSystem.SetObjectConstraint(m_lightDialogue.GetConstraint());
+			m_toolSystem.SetObjectConstraint(m_lightDialogue.GetConstraint());	
 
-			// Update selected object (light)
-			m_toolSystem.SetSelectedObjectID(m_lightDialogue.GetSelectedLightID());
+			// Loop through lights
+			for (int i = 0; i < m_lightDialogue.GetLights().size(); ++i)
+			{
+				// If light matches currently selected
+				if (m_lightDialogue.GetLights()[i].m_ID == m_lightDialogue.GetSelectedLightID())
+				{
+					// Update position
+					m_lightDialogue.UpdateLightPosition(m_toolSystem.GetLights()[i].GetPosition());
+				}
+			}
+		}
+
+		// Else, reset editor
+		else
+		{
+			// Set tool editor
+			m_toolSystem.SetEditor(EDITOR::NA);
+
+			// Set transform mode
+			m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
+
+			// Set constraint
+			m_toolSystem.SetObjectConstraint(CONSTRAINT::NA);
 		}
 	}
 
@@ -367,21 +391,22 @@ void MFCMain::CheckDialogues()
 	}
 
 	// Else, if object inspector is active
-	//else if (m_objectDialogue.GetActive())
-	//{
-	//	// Set other modes to none
-	//	m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
-	//	m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
-	//	m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
+	else if (m_objectDialogue.GetActive())
+	{
+		// Update selected object (light)
+		m_toolSystem.SetSelectedObjectID(m_objectDialogue.GetSelectedObjectID());
+	
+		// Set other modes to none
+		m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
+		m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
+		m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
 
-	//	// Set tool editor
-	//	m_toolSystem.SetEditor(EDITOR::OBJECT_FUNCTION);
+		// Set tool editor
+		m_toolSystem.SetEditor(EDITOR::OBJECT_FUNCTION);
 
-	//	// Set constraint
-	//	m_toolSystem.SetObjectConstraint(m_objectDialogue.GetConstraint());
-
-	//	// If scene graph should be updated
-	//}
+		// Set constraint
+		m_toolSystem.SetObjectConstraint(m_objectDialogue.GetConstraint());
+	}
 	
 	// Else, if no dialogues are active
 	else
@@ -521,7 +546,7 @@ void MFCMain::ToolBarRedo()
 void MFCMain::ToolBarLight()
 {
 	// Destroy other windows
-	///m_objectDialogue.DestroyWindow();
+	m_objectDialogue.DestroyWindow();
 	m_objectSpawnDialogue.DestroyWindow();
 	m_terrainDialogue.DestroyWindow();
 	m_sculptDialogue.DestroyWindow();
@@ -537,7 +562,7 @@ void MFCMain::ToolBarLight()
 void MFCMain::ToolBarTerrain()
 {
 	// Destroy other windows 
-	///m_objectDialogue.DestroyWindow();
+	m_objectDialogue.DestroyWindow();
 	m_objectSpawnDialogue.DestroyWindow();
 	m_lightDialogue.DestroyWindow();
 	m_sculptDialogue.DestroyWindow();
@@ -553,7 +578,7 @@ void MFCMain::ToolBarTerrain()
 void MFCMain::ToolBarPaint()
 {
 	// Destroy other windows 
-	///m_objectDialogue.DestroyWindow();
+	m_objectDialogue.DestroyWindow();
 	m_objectSpawnDialogue.DestroyWindow();
 	m_lightDialogue.DestroyWindow();
 	m_terrainDialogue.DestroyWindow();
@@ -569,7 +594,7 @@ void MFCMain::ToolBarPaint()
 void MFCMain::ToolBarSculpt()
 {
 	// Destroy other windows 
-	///m_objectDialogue.DestroyWindow();
+	m_objectDialogue.DestroyWindow();
 	m_objectSpawnDialogue.DestroyWindow();
 	m_lightDialogue.DestroyWindow();
 	m_terrainDialogue.DestroyWindow();
@@ -592,8 +617,8 @@ void MFCMain::ToolBarObject()
 	m_sculptDialogue.DestroyWindow();
 
 	// Create & display dialogue window
-	/*m_objectDialogue.Create(IDD_DIALOG12);
+	m_objectDialogue.Create(IDD_DIALOG12);
 	m_objectDialogue.ShowWindow(SW_SHOW);
 	m_objectDialogue.SetActive(true);
-	m_objectDialogue.SetObjectData(&m_toolSystem.GetSceneGraph());*/
+	m_objectDialogue.SetObjectData(&m_toolSystem.GetSceneGraph());
 }

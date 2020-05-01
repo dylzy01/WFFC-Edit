@@ -16,29 +16,29 @@ LightDialogue::LightDialogue(CWnd* pParent /*=nullptr*/)
 	
 }
 
-void LightDialogue::SetLightData(std::vector<SceneObject>* sceneGraph, std::pair<std::vector<Light*>, std::vector<int>>* lights)
+void LightDialogue::SetLightData(std::vector<SceneObject>* sceneGraph, std::vector<DisplayObject>* lights)
 {
 	// Local storage
 	m_sceneGraph = *sceneGraph;
 	m_lights = *lights;
 
 	// Loop through lights and add entries to the ID combo box	
-	for (int i = 0; i < m_lights.first.size(); ++i)
+	for (int i = 0; i < m_lights.size(); ++i)
 	{
 		// Setup light IDs
-		std::wstring idBoxEntry = std::to_wstring(m_lights.second.at(i));
+		std::wstring idBoxEntry = std::to_wstring(m_lights.at(i).m_ID);
 		m_boxID.AddString(idBoxEntry.c_str());
 	}
 
 	// Setup total lights in scene
-	int total = m_lights.first.size();
+	int total = m_lights.size();
 	std::wstring totalLights = std::to_wstring(total);
 	SetDlgItemText(IDC_STATIC3, totalLights.c_str());
 
 	// Setup light types
 	{
 		std::wstring typeBoxEntry;
-		typeBoxEntry = L"NA";			m_boxType.AddString(typeBoxEntry.c_str());
+		///typeBoxEntry = L"NA";			m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Directional";	m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Point";		m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Spot";			m_boxType.AddString(typeBoxEntry.c_str());
@@ -57,7 +57,7 @@ void LightDialogue::SetLightData(std::vector<SceneObject>* sceneGraph, std::pair
 	}
 
 	// Display first light
-	if (m_lights.first.size() != 0) { Update(0); }	
+	if (m_lights.size() != 0) { Update(0); }	
 
 	// Set constraint to display N/A
 	m_boxConst.SetCurSel(0);
@@ -77,6 +77,18 @@ void LightDialogue::Update(int index)
 	UpdateConstA(index);
 	UpdateLinA(index);
 	UpdateQuadA(index);
+}
+
+void LightDialogue::UpdateLightPosition(DirectX::XMFLOAT3 position)
+{
+	// Get current ID
+	int ID = m_boxID.GetCurSel();
+
+	// Set current light position
+	m_lights[ID].SetPosition(position);
+
+	// Update position boxes
+	UpdatePosition(ID);
 }
 
 void LightDialogue::DoDataExchange(CDataExchange* pDX)
@@ -196,10 +208,10 @@ void LightDialogue::OnCbnSelchangeType()
 	int ID = m_boxID.GetCurSel();
 	
 	// Store type selection
-	int type = m_boxType.GetCurSel();	
+	int type = m_boxType.GetCurSel() + 1;	
 
 	// Set new light type
-	m_lights.first[ID]->SetType((LIGHT_TYPE)type);
+	m_lights[ID].SetLightType((LIGHT_TYPE)type);
 
 	// Tell MFC/ToolMain to update scene graph
 	m_update = true;
@@ -212,7 +224,7 @@ void LightDialogue::OnBnClickedEnable()
 	int ID = m_boxID.GetCurSel();
 
 	// Set light enabled/disabled
-	m_lights.first[ID]->SetEnabled(IsDlgButtonChecked(IDC_CHECK1));
+	m_lights[ID].SetEnabled(IsDlgButtonChecked(IDC_CHECK1));
 
 	// Tell MFC/ToolMain to update scene graph
 	m_update = true;
@@ -231,10 +243,10 @@ void LightDialogue::OnEnChangePosX()
 	// Convert to float
 	float posX;
 	if (!string.IsEmpty()) { posX = _ttof(string); }
-	else { posX = m_lights.first[ID]->GetPosition().x; }
+	else { posX = m_lights[ID].GetPosition().x; }
 
 	// Update X position of light
-	m_lights.first[ID]->SetPositionX(posX);
+	m_lights[ID].SetPositionX(posX);
 
 	// Tell MFC/ToolMain to update scene graph
 	m_update = true;
@@ -253,10 +265,10 @@ void LightDialogue::OnEnChangePosY()
 	// Convert to float
 	float posY;
 	if (!string.IsEmpty()) { posY = _ttof(string); }
-	else { posY = m_lights.first[ID]->GetPosition().y; }
+	else { posY = m_lights[ID].GetPosition().y; }
 
 	// Update Y position of light
-	m_lights.first[ID]->SetPositionY(posY);
+	m_lights[ID].SetPositionY(posY);
 
 	// Tell MFC/ToolMain to update scene graph
 	m_update = true;
@@ -275,10 +287,10 @@ void LightDialogue::OnEnChangePosZ()
 	// Convert to float
 	float posZ;
 	if (!string.IsEmpty()) { posZ = _ttof(string); }
-	else { posZ = m_lights.first[ID]->GetPosition().z; }
+	else { posZ = m_lights[ID].GetPosition().z; }
 
 	// Update Z position of light
-	m_lights.first[ID]->SetPositionZ(posZ);
+	m_lights[ID].SetPositionZ(posZ);
 
 	// Tell MFC/ToolMain to update scene graph
 	m_update = true;
@@ -297,14 +309,14 @@ void LightDialogue::OnEnChangeDirX()
 	// Convert to float
 	float dirX;
 	if (!string.IsEmpty()) { dirX = _ttof(string); }
-	else { dirX = m_lights.first[ID]->GetDirection().x; }
+	else { dirX = m_lights[ID].GetDirection().x; }
 
 	// Store as vector & normalize
 	///DirectX::SimpleMath::Vector3 direction = { dirX, 1.f, 1.f };
 	///direction.Normalize();
 
 	// Update X direction of light
-	m_lights.first[ID]->SetDirectionX(dirX);
+	m_lights[ID].SetDirectionX(dirX);
 
 	// Tell MFC/ToolMain to update scene graph
 	m_update = true;
@@ -323,14 +335,14 @@ void LightDialogue::OnEnChangeDirY()
 	// Convert to float
 	float dirY;
 	if (!string.IsEmpty()) { dirY = _ttof(string); }
-	else { dirY = m_lights.first[ID]->GetDirection().y; }
+	else { dirY = m_lights[ID].GetDirection().y; }
 
 	// Store as vector & normalize
 	///DirectX::SimpleMath::Vector3 direction = { 1.f, dirY, 1.f };
 	///direction.Normalize();
 
 	// Update Y direction of light
-	m_lights.first[ID]->SetDirectionY(dirY);
+	m_lights[ID].SetDirectionY(dirY);
 
 	// Tell MFC/ToolMain to update scene graph
 	m_update = true;
@@ -349,14 +361,14 @@ void LightDialogue::OnEnChangeDirZ()
 	// Convert to float
 	float dirZ;
 	if (!string.IsEmpty()) { dirZ = _ttof(string); }
-	else { dirZ = m_lights.first[ID]->GetDirection().z; }
+	else { dirZ = m_lights[ID].GetDirection().z; }
 
 	// Store as vector & normalize
 	///DirectX::SimpleMath::Vector3 direction = { 1.f, 1.f, dirZ };
 	///direction.Normalize();
 
 	// Update Z direction of light
-	m_lights.first[ID]->SetDirectionZ(dirZ);
+	m_lights[ID].SetDirectionZ(dirZ);
 
 	// Tell MFC/ToolMain to update scene graph
 	m_update = true;
@@ -375,10 +387,10 @@ void LightDialogue::OnEnChangeDifR()
 	// Convert to float
 	float difR;
 	if (!string.IsEmpty()) { difR = _ttof(string); }
-	else { difR = m_lights.first[ID]->GetDiffuse().x; }
+	else { difR = m_lights[ID].GetDiffuse().x; }
 	
 	// Update R diffuse of light
-	m_lights.first[ID]->SetDiffuseR(difR);
+	m_lights[ID].SetDiffuseR(difR);
 
 	// Tell MFC/ToolMain to update scene graph
 	m_update = true;
@@ -397,10 +409,10 @@ void LightDialogue::OnEnChangeDifG()
 	// Convert to float
 	float difG;
 	if (!string.IsEmpty()) { difG = _ttof(string); }
-	else { difG = m_lights.first[ID]->GetDiffuse().y; }
+	else { difG = m_lights[ID].GetDiffuse().y; }
 
 	// Update G diffuse of light
-	m_lights.first[ID]->SetDiffuseG(difG);
+	m_lights[ID].SetDiffuseG(difG);
 
 	// Tell MFC/ToolMain to update scene graph
 	m_update = true;
@@ -419,10 +431,10 @@ void LightDialogue::OnEnChangeDifB()
 	// Convert to float
 	float difB;
 	if (!string.IsEmpty()) { difB = _ttof(string); }
-	else { difB = m_lights.first[ID]->GetDiffuse().z; }
+	else { difB = m_lights[ID].GetDiffuse().z; }
 
 	// Update B diffuse of light
-	m_lights.first[ID]->SetDiffuseB(difB);
+	m_lights[ID].SetDiffuseB(difB);
 
 	// Tell MFC/ToolMain to update scene graph
 	m_update = true;
@@ -441,7 +453,7 @@ void LightDialogue::OnEnChangeAmbR()
 	// Convert to float
 	float ambR;
 	if (!string.IsEmpty()) { ambR = _ttof(string); }
-	else { ambR = m_lights.first[ID]->GetAmbient().x; }
+	else { ambR = m_lights[ID].GetAmbient().x; }
 	/*if (ambR >= 4.f) { ambR /= 50.f; }
 	else if (ambR >= 3.f) { ambR /= 40.f; }
 	else if (ambR >= 2.f) { ambR /= 30.f; }
@@ -450,7 +462,7 @@ void LightDialogue::OnEnChangeAmbR()
 	ambR /= 10.f;
 
 	// Update R ambient of light
-	m_lights.first[ID]->SetAmbientR(ambR);
+	m_lights[ID].SetAmbientR(ambR);
 
 	// Tell MFC/ToolMain to update scene graph
 	m_update = true;
@@ -469,7 +481,7 @@ void LightDialogue::OnEnChangeAmbG()
 	// Convert to float
 	float ambG;
 	if (!string.IsEmpty()) { ambG = _ttof(string); }
-	else { ambG = m_lights.first[ID]->GetAmbient().y; }
+	else { ambG = m_lights[ID].GetAmbient().y; }
 	/*if (ambG >= 4.f) { ambG /= 50.f; }
 	else if (ambG >= 3.f) { ambG /= 40.f; }
 	else if (ambG >= 2.f) { ambG /= 30.f; }
@@ -478,7 +490,7 @@ void LightDialogue::OnEnChangeAmbG()
 	ambG /= 10.f;
 
 	// Update G ambient of light
-	m_lights.first[ID]->SetAmbientG(ambG);
+	m_lights[ID].SetAmbientG(ambG);
 
 	// Tell MFC/ToolMain to update scene graph
 	m_update = true;
@@ -497,7 +509,7 @@ void LightDialogue::OnEnChangeAmbB()
 	// Convert to float
 	float ambB;
 	if (!string.IsEmpty()) { ambB = _ttof(string); }
-	else { ambB = m_lights.first[ID]->GetAmbient().z; }
+	else { ambB = m_lights[ID].GetAmbient().z; }
 	/*if (ambB >= 4.f) { ambB /= 50.f; }
 	else if (ambB >= 3.f) { ambB /= 40.f; }
 	else if (ambB >= 2.f) { ambB /= 30.f; }
@@ -506,7 +518,7 @@ void LightDialogue::OnEnChangeAmbB()
 	ambB /= 10.f;
 
 	// Update B ambient of light
-	m_lights.first[ID]->SetAmbientG(ambB);
+	m_lights[ID].SetAmbientG(ambB);
 
 	// Tell MFC/ToolMain to update scene graph
 	m_update = true;
@@ -525,10 +537,10 @@ void LightDialogue::OnEnChangeConstA()
 	// Convert to float
 	float constA;
 	if (!string.IsEmpty()) { constA = _ttof(string); }
-	else { constA = m_lights.first[ID]->GetConstantAttenuation(); }
+	else { constA = m_lights[ID].GetConstantAttenuation(); }
 
 	// Update constant attenuation of light
-	m_lights.first[ID]->SetConstantAttenuation(constA);
+	m_lights[ID].SetConstantAttenuation(constA);
 
 	// Tell MFC/ToolMain to update scene graph
 	m_update = true;
@@ -547,11 +559,11 @@ void LightDialogue::OnEnChangeLinA()
 	// Convert to float
 	float linA;
 	if (!string.IsEmpty()) { linA = _ttof(string); }
-	else { linA = m_lights.first[ID]->GetLinearAttenuation(); }
-	linA /= 10.f;
+	else { linA = m_lights[ID].GetLinearAttenuation(); }
+	///linA /= 10.f;
 
 	// Update linear attenuation of light
-	m_lights.first[ID]->SetLinearAttenuation(linA);
+	m_lights[ID].SetLinearAttenuation(linA);
 
 	// Tell MFC/ToolMain to update scene graph
 	m_update = true;
@@ -570,11 +582,11 @@ void LightDialogue::OnEnChangeQuadA()
 	// Convert to float
 	float quadA;
 	if (!string.IsEmpty()) { quadA = _ttof(string); }
-	else { quadA = m_lights.first[ID]->GetQuadraticAttenuation(); }
-	quadA /= 100.f;
+	else { quadA = m_lights[ID].GetQuadraticAttenuation(); }
+	///quadA /= 100.f;
 
 	// Update quadratic attenuation of light
-	m_lights.first[ID]->SetQuadraticAttenuation(quadA);
+	m_lights[ID].SetQuadraticAttenuation(quadA);
 
 	// Tell MFC/ToolMain to update scene graph
 	m_update = true;
@@ -649,28 +661,19 @@ void LightDialogue::OnBnClickedZ()
 void LightDialogue::UpdateType(int ID)
 {
 	// Set combo box
-	m_boxType.SetCurSel((int)m_lights.first[ID]->GetType());
-	
-	// Switch between light type & set combo box
-	/*switch (m_lights.first[ID]->GetType())
-	{
-	case LIGHT_TYPE::NA:			m_boxType.SetCurSel(0); break;	
-	case LIGHT_TYPE::DIRECTIONAL:	m_boxType.SetCurSel(1); break;
-	case LIGHT_TYPE::POINT:			m_boxType.SetCurSel(2); break;
-	case LIGHT_TYPE::SPOT:			m_boxType.SetCurSel(3); break;
-	}*/
+	m_boxType.SetCurSel((int)m_lights[ID].GetLightType() - 1);
 }
 
 void LightDialogue::UpdateEnabled(int ID)
 {
 	// Set enabled check box to match light 
-	CheckDlgButton(IDC_CHECK1, m_lights.first[ID]->GetEnabled());
+	CheckDlgButton(IDC_CHECK1, m_lights[ID].GetEnabled());
 }
 
 void LightDialogue::UpdatePosition(int ID)
 {
 	// Store current position
-	XMFLOAT3 position = m_lights.first[ID]->GetPosition();
+	XMFLOAT3 position = m_lights[ID].GetPosition();
 
 	// Update X position box
 	CString sX; sX.Format(L"%g", position.x);
@@ -688,7 +691,7 @@ void LightDialogue::UpdatePosition(int ID)
 void LightDialogue::UpdateDirection(int ID)
 {
 	// Store current direction
-	XMFLOAT3 direction = m_lights.first[ID]->GetDirection();	
+	XMFLOAT3 direction = m_lights[ID].GetDirection();	
 
 	// Update X direction box
 	CString sX; sX.Format(L"%g", direction.x);
@@ -706,7 +709,7 @@ void LightDialogue::UpdateDirection(int ID)
 void LightDialogue::UpdateDiffuse(int ID)
 {
 	// Store current diffuse
-	XMFLOAT4 diffuse = m_lights.first[ID]->GetDiffuse();
+	XMFLOAT4 diffuse = m_lights[ID].GetDiffuse();
 
 	// Update R diffuse box
 	CString sR; sR.Format(L"%g", diffuse.x);
@@ -724,7 +727,7 @@ void LightDialogue::UpdateDiffuse(int ID)
 void LightDialogue::UpdateAmbient(int ID)
 {
 	// Store current ambient
-	XMFLOAT4 ambient = m_lights.first[ID]->GetAmbient();
+	XMFLOAT4 ambient = m_lights[ID].GetAmbient();
 
 	// Update R ambient box
 	CString sR; sR.Format(L"%g", ambient.x);
@@ -742,7 +745,7 @@ void LightDialogue::UpdateAmbient(int ID)
 void LightDialogue::UpdateConstA(int ID)
 {
 	// Store current constant attenuation
-	float constA = m_lights.first[ID]->GetConstantAttenuation();
+	float constA = m_lights[ID].GetConstantAttenuation();
 
 	// Update constant attenuation box
 	CString sA; sA.Format(L"%g", constA);
@@ -752,7 +755,7 @@ void LightDialogue::UpdateConstA(int ID)
 void LightDialogue::UpdateLinA(int ID)
 {
 	// Store current linear attenuation
-	float linA = m_lights.first[ID]->GetLinearAttenuation();
+	float linA = m_lights[ID].GetLinearAttenuation();
 
 	// Update linear attenuation box
 	CString sA; sA.Format(L"%g", linA);
@@ -762,7 +765,7 @@ void LightDialogue::UpdateLinA(int ID)
 void LightDialogue::UpdateQuadA(int ID)
 {
 	// Store current quadratic attenuation
-	float quadA = m_lights.first[ID]->GetQuadraticAttenuation();
+	float quadA = m_lights[ID].GetQuadraticAttenuation();
 
 	// Update linear attenuation box
 	CString sA; sA.Format(L"%g", quadA);

@@ -3,7 +3,7 @@
 #include "Tools.h"
 #include <d3dcompiler.h>
 #include "Shader.h"
-#include "Light.h"
+#include "DisplayObject.h"
 
 class TextureShader : public Shader
 {
@@ -15,7 +15,7 @@ public:
 	static bool Initialise(ID3D11Device * device);
 
 	// Setup shader 
-	static bool SetShaderParameters(ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture, std::vector<Light*> lights);
+	static bool SetShaderParameters(ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture, std::vector<DisplayObject> lights);
 
 	// Handler
 	static void Enable(ID3D11DeviceContext * context);

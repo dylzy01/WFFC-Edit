@@ -104,7 +104,7 @@ bool TextureShader::Initialise(ID3D11Device * device)
 }
 
 // Setup shader 
-bool TextureShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture, std::vector<Light*> lights)
+bool TextureShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture, std::vector<DisplayObject> lights)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
@@ -138,17 +138,17 @@ bool TextureShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11Sha
 	lightPtr = (LightBufferType*)mappedResource.pData;	
 	for (int i = 0; i < lights.size(); ++i)
 	{
-		lightPtr->lights[i].diffuseColour = lights[i]->GetDiffuse();
-		lightPtr->lights[i].ambientColour = lights[i]->GetAmbient();
-		lightPtr->lights[i].position = lights[i]->GetPosition();
+		lightPtr->lights[i].diffuseColour = lights[i].GetDiffuse();
+		lightPtr->lights[i].ambientColour = lights[i].GetAmbient();
+		lightPtr->lights[i].position = lights[i].GetPosition();
 		lightPtr->lights[i].angle = 45.f;
 
-		lightPtr->lights[i].direction = lights[i]->GetDirection();
-		lightPtr->lights[i].constA = lights[i]->GetConstantAttenuation();
-		lightPtr->lights[i].linA = lights[i]->GetLinearAttenuation();
-		lightPtr->lights[i].quadA = lights[i]->GetQuadraticAttenuation();
-		lightPtr->lights[i].type = (int)lights[i]->GetType();
-		lightPtr->lights[i].enabled = lights[i]->GetEnabled();
+		lightPtr->lights[i].direction = lights[i].GetDirection();
+		lightPtr->lights[i].constA = lights[i].GetConstantAttenuation();
+		lightPtr->lights[i].linA = lights[i].GetLinearAttenuation();
+		lightPtr->lights[i].quadA = lights[i].GetQuadraticAttenuation();
+		lightPtr->lights[i].type = (int)lights[i].GetLightType();
+		lightPtr->lights[i].enabled = lights[i].GetEnabled();
 	}	
 	context->Unmap(m_bufferLight, 0);
 	context->PSSetConstantBuffers(1, 1, &m_bufferLight);

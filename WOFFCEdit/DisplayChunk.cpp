@@ -40,7 +40,7 @@ void DisplayChunk::PopulateChunkData(ChunkObject * SceneChunk)
 	m_tex_splat_4_tiling = SceneChunk->tex_splat_4_tiling;
 }
 
-void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResources, std::vector<Light*> lights)
+void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResources, std::vector<DisplayObject> lights)
 {	
 	// Setup device context
 	auto context = deviceResources->GetD3DDeviceContext();
@@ -2717,7 +2717,7 @@ void DisplayChunk::SaveAllPaints()
 	SavePaint("database/CSV/stoneSnow.csv", m_stoneSnow);
 }
 
-void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResources, std::vector<Light*> lights)
+void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResources, std::vector<DisplayObject> lights)
 {
 	// Setup device context
 	auto context = deviceResources->GetD3DDeviceContext();
