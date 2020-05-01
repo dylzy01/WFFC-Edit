@@ -13,7 +13,8 @@ public:
 	ID3D11ShaderResourceView *							m_texture_diffuse;					//diffuse texture
 	ID3D11ShaderResourceView *							m_texture_highlight;				//highlight texture
 
-	MODEL_TYPE m_type;
+	bool m_isWater;
+	OBJECT_TYPE m_type;
 	int m_ID;
 	DirectX::SimpleMath::Vector3			m_position;
 	DirectX::SimpleMath::Vector3			m_orientation;

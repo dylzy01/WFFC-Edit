@@ -199,11 +199,11 @@ void ToolMain::Tick(MSG *msg)
 			{
 				// Define light or not
 				LIGHT_TYPE type;
-				if (m_objectSpawn == OBJECT_SPAWN::LIGHT) { type = LIGHT_TYPE::POINT; }
+				if (m_objectSpawn == OBJECT_TYPE::LIGHT) { type = LIGHT_TYPE::POINT; }
 				else { type = LIGHT_TYPE::NA; }
 
 				// Create object at picking point
-				ObjectManager::Spawn(m_objectSpawn, MouseManager::PickSpawn(), m_sceneGraph, (int)type);
+				ObjectManager::SpawnObject(m_objectSpawn, MouseManager::PickSpawn(), m_sceneGraph, (int)type);
 
 				// Update scene graph
 				///m_d3dRenderer.BuildDisplayList(&m_sceneGraph);

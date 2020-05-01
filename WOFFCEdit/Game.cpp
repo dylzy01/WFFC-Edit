@@ -193,7 +193,7 @@ void Game::UpdateWaves()
 	for (int i = 0; i < m_displayList.size(); ++i)
 	{
 		// If current object is water
-		if (m_displayList[i].m_type == MODEL_TYPE::WATER)
+		if (m_displayList[i].m_isWater)
 		{
 			// Switch between positive/negative
 			switch (m_switch)
@@ -494,9 +494,11 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 		//create a temp display object that we will populate then append to the display list.
 		DisplayObject newDisplayObject;
 		
-		// Check & set model type
-		if (sceneGraph->at(i).model_path == "database/data/water.cmo") { newDisplayObject.m_type = MODEL_TYPE::WATER; }
-		else { newDisplayObject.m_type = MODEL_TYPE::NOT_WATER; }
+		// Check & set if water or not
+		newDisplayObject.m_isWater = (sceneGraph->at(i).model_path == "database/data/water.cmo");
+
+		// Set object type
+		newDisplayObject.m_type = m_sceneGraph[i].m_type;
 
 		//load model
 		std::wstring modelwstr = StringToWCHART(sceneGraph->at(i).model_path);							//convect string to Wchar
@@ -613,9 +615,11 @@ void Game::RebuildDisplayList(std::vector<SceneObject>* sceneGraph)
 		//create a temp display object that we will populate then append to the display list.
 		DisplayObject newDisplayObject;
 
-		// Check & set model type
-		if (sceneGraph->at(i).model_path == "database/data/water.cmo") { newDisplayObject.m_type = MODEL_TYPE::WATER; }
-		else { newDisplayObject.m_type = MODEL_TYPE::NOT_WATER; }
+		// Check & set if water or not
+		newDisplayObject.m_isWater = (sceneGraph->at(i).model_path == "database/data/water.cmo");
+
+		// Set object type
+		newDisplayObject.m_type = m_sceneGraph[i].m_type;
 
 		//load model
 		std::wstring modelwstr = StringToWCHART(sceneGraph->at(i).model_path);							//convect string to Wchar
@@ -726,9 +730,11 @@ void Game::ReplaceObjects(std::vector<int> IDs, std::vector<SceneObject> * scene
 		//create a temp display object that we will populate then append to the display list.
 		DisplayObject newDisplayObject;
 
-		// Check & set model type
-		if (sceneGraph->at(i).model_path == "database/data/water.cmo") { newDisplayObject.m_type = MODEL_TYPE::WATER; }
-		else { newDisplayObject.m_type = MODEL_TYPE::NOT_WATER; }
+		// Check & set if water or not
+		newDisplayObject.m_isWater = (sceneGraph->at(i).model_path == "database/data/water.cmo");
+
+		// Set object type
+		newDisplayObject.m_type = m_sceneGraph[i].m_type;
 
 		//load model
 		std::wstring modelwstr = StringToWCHART(sceneGraph->at(i).model_path);							//convect string to Wchar

@@ -6,11 +6,6 @@
 
 #include <random>
 
-enum class MODEL_TYPE {
-	NOT_WATER,
-	WATER
-};
-
 enum class EDITOR {
 	NA,
 	OBJECT_SPAWN,
@@ -20,8 +15,7 @@ enum class EDITOR {
 	SCULPT_SINGLE
 };
 
-enum class OBJECT_SPAWN {
-	NA,
+enum class OBJECT_TYPE {
 	/*RESIDENTIAL,
 	NATURE,
 	PROPS,*/
@@ -46,31 +40,18 @@ enum class OBJECT_SPAWN {
 	LIGHT,
 	CUBE,
 	CYLINDER,
-	CONE
-};
+	CONE,
 
-enum class RESIDENTIAL_SPAWN {
-	NA,
-	HOUSE_ONE,
-	HOUSE_TWO,
-	CAVE
-};
-
-enum class NATURE_SPAWN {
-	NA,
-	GRASS,
-	TREE_ONE,
-	TREE_TWO,
-	BUSH,
-	WATER
+	NA
 };
 
 enum class OBJECT_FUNCTION {
-	NA,
 	SELECT,
 	SCALE,
 	TRANSLATE,
-	ROTATE
+	ROTATE,
+
+	NA
 };
 
 enum class CONSTRAINT {

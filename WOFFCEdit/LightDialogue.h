@@ -6,6 +6,7 @@
 #include <string>
 #include "Tools.h"
 #include "Light.h"
+#include "ObjectManager.h"
 
 // LightDialogue dialog
 
@@ -18,7 +19,7 @@ public:
 	virtual ~LightDialogue() {}
 
 	// Pass in data pointers the class will operate on
-	void SetLightData(std::pair<std::vector<Light*>, std::vector<int>>* lights);
+	void SetLightData(std::vector<SceneObject>* sceneGraph, std::pair<std::vector<Light*>, std::vector<int>>* lights);
 
 	// Update current light with dialogue values
 	void Update(int index);
@@ -46,6 +47,7 @@ protected:
 	afx_msg void End();									// Kill the dialogue
 
 	// Local storage 
+	std::vector<SceneObject> m_sceneGraph;
 	std::pair<std::vector<Light*>, std::vector<int>> m_lights;
 
 	// Controllers
@@ -90,6 +92,7 @@ public:
 	afx_msg void OnEnChangeConstA();
 	afx_msg void OnEnChangeLinA();
 	afx_msg void OnEnChangeQuadA();
+	afx_msg void OnBnClickedSpawn();
 	afx_msg void OnBnClickedTranslate();
 	afx_msg void OnBnSelchangeConstraint();
 	afx_msg void OnBnClickedX();
@@ -98,7 +101,6 @@ public:
 
 private:
 	// Update light details
-	void UpdateID(std::pair<Light*, int>* light);
 	void UpdateType(int ID);
 	void UpdateEnabled(int ID);
 	void UpdatePosition(int ID);
@@ -109,4 +111,11 @@ private:
 	void UpdateLinA(int ID);
 	void UpdateQuadA(int ID);
 	void UpdateSelectedConstraint();
+
+private:
+	// Getters
+	XMFLOAT3 GetPosition();
+	XMFLOAT3 GetDirection();
+	XMFLOAT3 GetDiffuse();
+	float GetConstA(), GetLinA(), GetQuadA();
 };

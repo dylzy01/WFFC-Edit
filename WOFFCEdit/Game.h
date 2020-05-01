@@ -144,7 +144,7 @@ private:
 
 	// Editor controllers
 	EDITOR m_editor;
-	OBJECT_SPAWN m_objectSpawn = OBJECT_SPAWN::NA;
+	OBJECT_TYPE m_objectSpawn = OBJECT_TYPE::NA;
 	OBJECT_FUNCTION m_objectFunction = OBJECT_FUNCTION::NA;
 	CONSTRAINT m_objectConstraint = CONSTRAINT::NA;
 	TERRAIN_PAINT m_landscapePaint = TERRAIN_PAINT::NA;

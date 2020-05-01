@@ -28,13 +28,13 @@ void ObjectSpawnDialogue::DoDataExchange(CDataExchange* pDX)
 void ObjectSpawnDialogue::UpdateButtons(bool enable)
 {
 	// Update spawn
-	if (enable) { m_spawn = OBJECT_SPAWN::NA; }
+	if (enable) { m_spawn = OBJECT_TYPE::NA; }
 
 	// Switch between spawns
 	switch (m_spawn)
 	{
 	// Residential /////////////////////////////////////////////////////////////
-	case OBJECT_SPAWN::HOUSE_ONE:
+	case OBJECT_TYPE::HOUSE_ONE:
 	{
 		// Enable/disable house #2 button
 		if (!enable) { CheckDlgButton(IDC_CHECK13, enable); }
@@ -85,7 +85,7 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
-	case OBJECT_SPAWN::HOUSE_TWO:
+	case OBJECT_TYPE::HOUSE_TWO:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
@@ -136,7 +136,7 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
-	case OBJECT_SPAWN::CAVE:
+	case OBJECT_TYPE::CAVE:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
@@ -188,7 +188,7 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 	}
 	break;
 	// Props ///////////////////////////////////////////////////////////////////
-	case OBJECT_SPAWN::BRIDGE:
+	case OBJECT_TYPE::BRIDGE:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
@@ -239,7 +239,7 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
-	case OBJECT_SPAWN::FENCE:
+	case OBJECT_TYPE::FENCE:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
@@ -290,7 +290,7 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
-	case OBJECT_SPAWN::BOAT:
+	case OBJECT_TYPE::BOAT:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
@@ -342,7 +342,7 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 	}
 	break;
 	// Nature //////////////////////////////////////////////////////////////////
-	case OBJECT_SPAWN::GRASS:
+	case OBJECT_TYPE::GRASS:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
@@ -393,7 +393,7 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
-	case OBJECT_SPAWN::TREE_ONE:
+	case OBJECT_TYPE::TREE_ONE:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
@@ -444,7 +444,7 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
-	case OBJECT_SPAWN::TREE_TWO:
+	case OBJECT_TYPE::TREE_TWO:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
@@ -495,7 +495,7 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
-	case OBJECT_SPAWN::WATER:
+	case OBJECT_TYPE::WATER:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
@@ -547,7 +547,7 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 	}
 	break;	
 	// Misc ////////////////////////////////////////////////////////////////////
-	case OBJECT_SPAWN::LIGHT:
+	case OBJECT_TYPE::LIGHT:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
@@ -599,7 +599,7 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
-	case OBJECT_SPAWN::CUBE:
+	case OBJECT_TYPE::CUBE:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
@@ -651,7 +651,7 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
-	case OBJECT_SPAWN::CYLINDER:
+	case OBJECT_TYPE::CYLINDER:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
@@ -703,7 +703,7 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 		if (!enable) { CheckDlgButton(IDC_CHECK21, enable); }
 	}
 	break;
-	case OBJECT_SPAWN::CONE:
+	case OBJECT_TYPE::CONE:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
@@ -755,7 +755,7 @@ void ObjectSpawnDialogue::UpdateButtons(bool enable)
 		if (!enable) { CheckDlgButton(IDC_CHECK22, enable); }
 	}
 	break;
-	case OBJECT_SPAWN::NA:
+	case OBJECT_TYPE::NA:
 	{
 		// Enable/disable house #1 button
 		if (!enable) { CheckDlgButton(IDC_CHECK8, enable); }
@@ -861,7 +861,7 @@ void ObjectSpawnDialogue::OnBnClickedOk()
 // Set spawn to house #1
 void ObjectSpawnDialogue::OnBnClickedHouseOne()
 {
-	m_spawn = OBJECT_SPAWN::HOUSE_ONE;
+	m_spawn = OBJECT_TYPE::HOUSE_ONE;
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK8))
@@ -876,7 +876,7 @@ void ObjectSpawnDialogue::OnBnClickedHouseOne()
 // Set spawn to house #2
 void ObjectSpawnDialogue::OnBnClickedHouseTwo()
 {
-	m_spawn = OBJECT_SPAWN::HOUSE_TWO;
+	m_spawn = OBJECT_TYPE::HOUSE_TWO;
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK13))
@@ -891,7 +891,7 @@ void ObjectSpawnDialogue::OnBnClickedHouseTwo()
 // Set spawn to cave
 void ObjectSpawnDialogue::OnBnClickedCave()
 {
-	m_spawn = OBJECT_SPAWN::CAVE;
+	m_spawn = OBJECT_TYPE::CAVE;
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK16))
@@ -908,7 +908,7 @@ void ObjectSpawnDialogue::OnBnClickedCave()
 // Set spawn to bridge
 void ObjectSpawnDialogue::OnBnClickedBridge()
 {
-	m_spawn = OBJECT_SPAWN::BRIDGE;
+	m_spawn = OBJECT_TYPE::BRIDGE;
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK14))
@@ -923,7 +923,7 @@ void ObjectSpawnDialogue::OnBnClickedBridge()
 // Set spawn to fence
 void ObjectSpawnDialogue::OnBnClickedFence()
 {
-	m_spawn = OBJECT_SPAWN::FENCE;
+	m_spawn = OBJECT_TYPE::FENCE;
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK17))
@@ -938,7 +938,7 @@ void ObjectSpawnDialogue::OnBnClickedFence()
 // Set spawn to boat
 void ObjectSpawnDialogue::OnBnClickedBoat()
 {
-	m_spawn = OBJECT_SPAWN::BOAT;
+	m_spawn = OBJECT_TYPE::BOAT;
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK18))
@@ -955,7 +955,7 @@ void ObjectSpawnDialogue::OnBnClickedBoat()
 // Set spawn to grass
 void ObjectSpawnDialogue::OnBnClickedGrass()
 {
-	m_spawn = OBJECT_SPAWN::GRASS;
+	m_spawn = OBJECT_TYPE::GRASS;
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK5))
@@ -970,7 +970,7 @@ void ObjectSpawnDialogue::OnBnClickedGrass()
 // Set spawn to tree #1
 void ObjectSpawnDialogue::OnBnClickedTreeOne()
 {
-	m_spawn = OBJECT_SPAWN::TREE_ONE;
+	m_spawn = OBJECT_TYPE::TREE_ONE;
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK6))
@@ -985,7 +985,7 @@ void ObjectSpawnDialogue::OnBnClickedTreeOne()
 // Set spawn to tree #2
 void ObjectSpawnDialogue::OnBnClickedTreeTwo()
 {
-	m_spawn = OBJECT_SPAWN::TREE_TWO;
+	m_spawn = OBJECT_TYPE::TREE_TWO;
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK15))
@@ -1000,7 +1000,7 @@ void ObjectSpawnDialogue::OnBnClickedTreeTwo()
 // Set spawn to water
 void ObjectSpawnDialogue::OnBnClickedWater()
 {
-	m_spawn = OBJECT_SPAWN::WATER;
+	m_spawn = OBJECT_TYPE::WATER;
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK7))
@@ -1015,7 +1015,7 @@ void ObjectSpawnDialogue::OnBnClickedWater()
 // Set spawn to light
 void ObjectSpawnDialogue::OnBnClickedLight()
 {
-	m_spawn = OBJECT_SPAWN::LIGHT;
+	m_spawn = OBJECT_TYPE::LIGHT;
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK19))
@@ -1030,7 +1030,7 @@ void ObjectSpawnDialogue::OnBnClickedLight()
 // Set spawn to cube
 void ObjectSpawnDialogue::OnBnClickedCube()
 {
-	m_spawn = OBJECT_SPAWN::CUBE;
+	m_spawn = OBJECT_TYPE::CUBE;
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK20))
@@ -1045,7 +1045,7 @@ void ObjectSpawnDialogue::OnBnClickedCube()
 // Set spawn to cylinder
 void ObjectSpawnDialogue::OnBnClickedCylinder()
 {
-	m_spawn = OBJECT_SPAWN::CYLINDER;
+	m_spawn = OBJECT_TYPE::CYLINDER;
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK22))
@@ -1060,7 +1060,7 @@ void ObjectSpawnDialogue::OnBnClickedCylinder()
 // Set spawn to cone
 void ObjectSpawnDialogue::OnBnClickedCone()
 {
-	m_spawn = OBJECT_SPAWN::CONE;
+	m_spawn = OBJECT_TYPE::CONE;
 
 	// Switch between button checked/unchecked
 	switch (IsDlgButtonChecked(IDC_CHECK21))
@@ -1075,7 +1075,7 @@ void ObjectSpawnDialogue::OnBnClickedCone()
 // Open residential spawner
 //void ObjectSpawnDialogue::OnBnClickedResidential()
 //{
-//	m_spawn = OBJECT_SPAWN::RESIDENTIAL;
+//	m_spawn = OBJECT_TYPE::RESIDENTIAL;
 //	
 //	// Create & display dialogue window
 //	m_residentialObjectDialogue.Create(IDD_DIALOG8);
@@ -1086,7 +1086,7 @@ void ObjectSpawnDialogue::OnBnClickedCone()
 //// Open nature spawner
 //void ObjectSpawnDialogue::OnBnClickedNature()
 //{
-//	m_spawn = OBJECT_SPAWN::NATURE;
+//	m_spawn = OBJECT_TYPE::NATURE;
 //
 //	// Create & display dialogue window
 //	m_natureObjectDialogue.Create(IDD_DIALOG9);

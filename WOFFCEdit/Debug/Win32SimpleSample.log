@@ -1,20 +1,14 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Win32SimpleSample.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  LightDialogue.cpp
-  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\lightdialogue.cpp(25): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\lightdialogue.cpp(227): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\lightdialogue.cpp(249): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\lightdialogue.cpp(271): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\lightdialogue.cpp(293): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\lightdialogue.cpp(319): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\lightdialogue.cpp(345): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\lightdialogue.cpp(371): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\lightdialogue.cpp(393): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\lightdialogue.cpp(415): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\lightdialogue.cpp(437): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\lightdialogue.cpp(465): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\lightdialogue.cpp(493): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\lightdialogue.cpp(521): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\lightdialogue.cpp(543): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\lightdialogue.cpp(566): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  ObjectManager.cpp
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(64): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(65): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(247): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(292): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(324): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(404): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(478): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(713): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(802): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(891): warning C4018: '<': signed/unsigned mismatch
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(224): warning C4715: 'ObjectManager::SpawnObject': not all control paths return a value
   Win32SimpleSample.vcxproj -> C:\Users\dylan\Documents\GitHub\ToolsProgramming\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe

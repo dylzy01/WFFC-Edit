@@ -6,7 +6,6 @@ BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_FILE_QUIT, &MFCMain::MenuFileQuit)
 	ON_COMMAND(ID_FILE_SAVETERRAIN, &MFCMain::MenuFileSaveTerrain)
 	ON_COMMAND(ID_EDIT_SELECT, &MFCMain::MenuEditSelect)
-	ON_COMMAND(ID_EDITOR_OBJECTEDITOR, &MFCMain::MenuEditEditorObject)
 	ON_COMMAND(ID_EDITOR_LANDSCAPEEDITOR, &MFCMain::MenuEditEditorLandscape)
 	ON_COMMAND(ID_WIREFRAME_ON, &MFCMain::MenuEditWireframeOn)
 	ON_COMMAND(ID_WIREFRAME_OFF, &MFCMain::MenuEditWireframeOff)
@@ -22,6 +21,7 @@ BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_BUTTON40061, &MFCMain::ToolBarTerrain)
 	ON_COMMAND(ID_BUTTON40062, &MFCMain::ToolBarPaint)
 	ON_COMMAND(ID_BUTTON40063, &MFCMain::ToolBarSculpt)
+	ON_COMMAND(ID_BUTTON40065, &MFCMain::ToolBarObject)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_TOOL, &CMyFrame::OnUpdatePage)
 END_MESSAGE_MAP()
 
@@ -115,7 +115,7 @@ void MFCMain::CheckDialogues()
 	if (m_objectEditorDialogue.GetActive())
 	{
 		// Set other modes to none
-		m_toolSystem.SetObjectSpawn(OBJECT_SPAWN::NA);
+		m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
 		m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
 		m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
 		
@@ -166,7 +166,7 @@ void MFCMain::CheckDialogues()
 	else if (m_terrainSculptDialogue.GetActive())
 	{
 		// Set other modes to none
-		m_toolSystem.SetObjectSpawn(OBJECT_SPAWN::NA);
+		m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
 		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
 		m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
 		
@@ -202,7 +202,7 @@ void MFCMain::CheckDialogues()
 	else if (m_terrainPaintDialogue.GetActive())
 	{
 		// Set other modes to none
-		m_toolSystem.SetObjectSpawn(OBJECT_SPAWN::NA);
+		m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
 		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
 		m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
 		
@@ -337,7 +337,7 @@ void MFCMain::CheckDialogues()
 	else if (m_paintDialogue.GetActive())
 	{
 		// Set other modes to none
-		m_toolSystem.SetObjectSpawn(OBJECT_SPAWN::NA);
+		m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
 		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
 		m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
 	
@@ -352,7 +352,7 @@ void MFCMain::CheckDialogues()
 	else if (m_sculptDialogue.GetActive())
 	{
 		// Set other modes to none
-		m_toolSystem.SetObjectSpawn(OBJECT_SPAWN::NA);
+		m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
 		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
 		m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
 
@@ -366,6 +366,23 @@ void MFCMain::CheckDialogues()
 		m_toolSystem.SetTerrainConstraint(m_sculptDialogue.GetConstraint());
 	}
 
+	// Else, if object inspector is active
+	//else if (m_objectDialogue.GetActive())
+	//{
+	//	// Set other modes to none
+	//	m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
+	//	m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
+	//	m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
+
+	//	// Set tool editor
+	//	m_toolSystem.SetEditor(EDITOR::OBJECT_FUNCTION);
+
+	//	// Set constraint
+	//	m_toolSystem.SetObjectConstraint(m_objectDialogue.GetConstraint());
+
+	//	// If scene graph should be updated
+	//}
+	
 	// Else, if no dialogues are active
 	else
 	{
@@ -373,7 +390,7 @@ void MFCMain::CheckDialogues()
 		m_toolSystem.SetEditor(EDITOR::NA);
 
 		// Set all modes to none
-		m_toolSystem.SetObjectSpawn(OBJECT_SPAWN::NA);
+		m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
 		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
 		m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
 		m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
@@ -404,15 +421,6 @@ void MFCMain::MenuEditSelect()
 	m_toolSelectDialogue.ShowWindow(SW_SHOW);	//show modeless
 	///m_ToolSelectDialogue.SetObjectData(&m_ToolSystem.m_sceneGraph, &m_ToolSystem.m_selectedObject);
 	m_toolSelectDialogue.SetObjectData(&m_toolSystem.m_sceneGraph, &m_toolSystem.m_selectedObjectIDs);
-}
-
-void MFCMain::MenuEditEditorObject()
-{
-	// Create & display dialogue window
-	m_toolObjectDialogue.Create(IDD_DIALOG2);
-	m_toolObjectDialogue.ShowWindow(SW_SHOW);
-	m_toolObjectDialogue.SetObjectData(&m_toolSystem.m_sceneGraph, &m_toolSystem.m_selectedObjectIDs);
-	m_toolObjectDialogue.SetActive(true);
 }
 
 void MFCMain::MenuEditEditorLandscape()
@@ -513,7 +521,7 @@ void MFCMain::ToolBarRedo()
 void MFCMain::ToolBarLight()
 {
 	// Destroy other windows
-	m_objectEditorDialogue.DestroyWindow();
+	///m_objectDialogue.DestroyWindow();
 	m_objectSpawnDialogue.DestroyWindow();
 	m_terrainDialogue.DestroyWindow();
 	m_sculptDialogue.DestroyWindow();
@@ -523,13 +531,13 @@ void MFCMain::ToolBarLight()
 	m_lightDialogue.Create(IDD_DIALOG8);
 	m_lightDialogue.ShowWindow(SW_SHOW);
 	m_lightDialogue.SetActive(true);
-	m_lightDialogue.SetLightData(&m_toolSystem.GetLights());
+	m_lightDialogue.SetLightData(&m_toolSystem.GetSceneGraph(), &m_toolSystem.GetLights());
 }
 
 void MFCMain::ToolBarTerrain()
 {
-	// Destroy other windows (except terrain related)
-	m_objectEditorDialogue.DestroyWindow();
+	// Destroy other windows 
+	///m_objectDialogue.DestroyWindow();
 	m_objectSpawnDialogue.DestroyWindow();
 	m_lightDialogue.DestroyWindow();
 	m_sculptDialogue.DestroyWindow();
@@ -545,7 +553,7 @@ void MFCMain::ToolBarTerrain()
 void MFCMain::ToolBarPaint()
 {
 	// Destroy other windows 
-	m_objectEditorDialogue.DestroyWindow();
+	///m_objectDialogue.DestroyWindow();
 	m_objectSpawnDialogue.DestroyWindow();
 	m_lightDialogue.DestroyWindow();
 	m_terrainDialogue.DestroyWindow();
@@ -560,8 +568,8 @@ void MFCMain::ToolBarPaint()
 
 void MFCMain::ToolBarSculpt()
 {
-	// Destroy other windows (except terrain inspector)
-	m_objectEditorDialogue.DestroyWindow();
+	// Destroy other windows 
+	///m_objectDialogue.DestroyWindow();
 	m_objectSpawnDialogue.DestroyWindow();
 	m_lightDialogue.DestroyWindow();
 	m_terrainDialogue.DestroyWindow();
@@ -572,4 +580,20 @@ void MFCMain::ToolBarSculpt()
 	m_sculptDialogue.ShowWindow(SW_SHOW);
 	m_sculptDialogue.SetActive(true);
 	m_sculptDialogue.SetChunkData(m_toolSystem.GetDisplayChunk());
+}
+
+void MFCMain::ToolBarObject()
+{
+	// Destroy other windows 
+	m_objectSpawnDialogue.DestroyWindow();
+	m_lightDialogue.DestroyWindow();
+	m_terrainDialogue.DestroyWindow();
+	m_paintDialogue.DestroyWindow();
+	m_sculptDialogue.DestroyWindow();
+
+	// Create & display dialogue window
+	/*m_objectDialogue.Create(IDD_DIALOG12);
+	m_objectDialogue.ShowWindow(SW_SHOW);
+	m_objectDialogue.SetActive(true);
+	m_objectDialogue.SetObjectData(&m_toolSystem.GetSceneGraph());*/
 }

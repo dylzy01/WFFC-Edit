@@ -16,7 +16,7 @@ public:
 
 	// Getters
 	bool GetActive() { return m_active; }
-	OBJECT_SPAWN GetSpawn() { return m_spawn; }
+	OBJECT_TYPE GetSpawn() { return m_spawn; }
 	///ResidentialObjectDialogue* GetResidentialObjectDialogue() { return &m_residentialObjectDialogue; }
 	///NatureObjectDialogue* GetNatureObjectDialogue() { return &m_natureObjectDialogue; }
 
@@ -37,7 +37,7 @@ private:
 
 	// Controllers
 	bool m_active = false;
-	OBJECT_SPAWN m_spawn = OBJECT_SPAWN::NA;
+	OBJECT_TYPE m_spawn = OBJECT_TYPE::NA;
 
 	///ResidentialObjectDialogue m_residentialObjectDialogue;
 	///NatureObjectDialogue m_natureObjectDialogue;

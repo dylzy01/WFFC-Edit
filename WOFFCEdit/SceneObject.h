@@ -52,7 +52,8 @@ public:
 	float light_quadratic;
 
 	// Added
-	MODEL_TYPE m_type;
+	bool m_isWater;
+	OBJECT_TYPE m_type;
 	int ID;
 	int enabled;
 	float dirX, dirY, dirZ;

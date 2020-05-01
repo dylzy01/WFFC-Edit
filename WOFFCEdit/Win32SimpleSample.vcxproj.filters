@@ -110,9 +110,6 @@
     <ClCompile Include="TerrainSculptDialogue.cpp">
       <Filter>MFC\Dialogues\Terrain</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectDialogue.cpp">
-      <Filter>MFC\Dialogues\Object</Filter>
-    </ClCompile>
     <ClCompile Include="ObjectSpawnDialogue.cpp">
       <Filter>MFC\Dialogues\Object</Filter>
     </ClCompile>
@@ -167,6 +164,7 @@
     <ClCompile Include="SculptDialogue.cpp">
       <Filter>MFC\Dialogues\Misc</Filter>
     </ClCompile>
+    <ClCompile Include="ObjectDialogue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -234,9 +232,6 @@
     <ClInclude Include="TerrainSculptDialogue.h">
       <Filter>MFC\Dialogues\Terrain</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectDialogue.h">
-      <Filter>MFC\Dialogues\Object</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectSpawnDialogue.h">
       <Filter>MFC\Dialogues\Object</Filter>
     </ClInclude>
@@ -300,6 +295,7 @@
     <ClInclude Include="SculptDialogue.h">
       <Filter>MFC\Dialogues\Misc</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectDialogue.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -356,6 +352,15 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="bitmap12.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="bitmap13.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="bitmap14.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="bitmap15.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

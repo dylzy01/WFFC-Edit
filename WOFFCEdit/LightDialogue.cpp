@@ -16,9 +16,10 @@ LightDialogue::LightDialogue(CWnd* pParent /*=nullptr*/)
 	
 }
 
-void LightDialogue::SetLightData(std::pair<std::vector<Light*>, std::vector<int>>* lights)
+void LightDialogue::SetLightData(std::vector<SceneObject>* sceneGraph, std::pair<std::vector<Light*>, std::vector<int>>* lights)
 {
-	// Local storage of lights
+	// Local storage
+	m_sceneGraph = *sceneGraph;
 	m_lights = *lights;
 
 	// Loop through lights and add entries to the ID combo box	
@@ -35,21 +36,25 @@ void LightDialogue::SetLightData(std::pair<std::vector<Light*>, std::vector<int>
 	SetDlgItemText(IDC_STATIC3, totalLights.c_str());
 
 	// Setup light types
-	std::wstring typeBoxEntry;
-	typeBoxEntry = L"NA";			m_boxType.AddString(typeBoxEntry.c_str());
-	typeBoxEntry = L"Directional";	m_boxType.AddString(typeBoxEntry.c_str());	
-	typeBoxEntry = L"Point";		m_boxType.AddString(typeBoxEntry.c_str());	
-	typeBoxEntry = L"Spot";			m_boxType.AddString(typeBoxEntry.c_str());	
+	{
+		std::wstring typeBoxEntry;
+		typeBoxEntry = L"NA";			m_boxType.AddString(typeBoxEntry.c_str());
+		typeBoxEntry = L"Directional";	m_boxType.AddString(typeBoxEntry.c_str());
+		typeBoxEntry = L"Point";		m_boxType.AddString(typeBoxEntry.c_str());
+		typeBoxEntry = L"Spot";			m_boxType.AddString(typeBoxEntry.c_str());
+	}
 
 	// Setup constraint types
-	std::wstring constBoxEntry;
-	constBoxEntry = L"N/A";			m_boxConst.AddString(constBoxEntry.c_str());
-	constBoxEntry = L"X";			m_boxConst.AddString(constBoxEntry.c_str());
-	constBoxEntry = L"Y";			m_boxConst.AddString(constBoxEntry.c_str());
-	constBoxEntry = L"Z";			m_boxConst.AddString(constBoxEntry.c_str());
-	constBoxEntry = L"XY";			m_boxConst.AddString(constBoxEntry.c_str());
-	constBoxEntry = L"XZ";			m_boxConst.AddString(constBoxEntry.c_str());
-	constBoxEntry = L"YZ";			m_boxConst.AddString(constBoxEntry.c_str());
+	{
+		std::wstring constBoxEntry;
+		constBoxEntry = L"N/A";			m_boxConst.AddString(constBoxEntry.c_str());
+		constBoxEntry = L"X";			m_boxConst.AddString(constBoxEntry.c_str());
+		constBoxEntry = L"Y";			m_boxConst.AddString(constBoxEntry.c_str());
+		constBoxEntry = L"Z";			m_boxConst.AddString(constBoxEntry.c_str());
+		constBoxEntry = L"XY";			m_boxConst.AddString(constBoxEntry.c_str());
+		constBoxEntry = L"XZ";			m_boxConst.AddString(constBoxEntry.c_str());
+		constBoxEntry = L"YZ";			m_boxConst.AddString(constBoxEntry.c_str());
+	}
 
 	// Display first light
 	if (m_lights.first.size() != 0) { Update(0); }	
@@ -142,6 +147,7 @@ BEGIN_MESSAGE_MAP(LightDialogue, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT13, &LightDialogue::OnEnChangeConstA)
 	ON_EN_CHANGE(IDC_EDIT14, &LightDialogue::OnEnChangeLinA)
 	ON_EN_CHANGE(IDC_EDIT15, &LightDialogue::OnEnChangeQuadA)
+	///ON_BN_CLICKED(IDC_CHECK11, &LightDialogue::OnBnClickedSpawn)
 	ON_BN_CLICKED(IDC_CHECK2, &LightDialogue::OnBnClickedTranslate)
 	ON_BN_CLICKED(IDC_CHECK23, &LightDialogue::OnBnClickedX)
 	ON_BN_CLICKED(IDC_CHECK24, &LightDialogue::OnBnClickedY)
@@ -574,6 +580,15 @@ void LightDialogue::OnEnChangeQuadA()
 	m_update = true;
 }
 
+// Spawn has been selected
+void LightDialogue::OnBnClickedSpawn()
+{
+	// Spawn a light
+	ObjectManager::SpawnObject(OBJECT_TYPE::LIGHT, MouseManager::GetBasicSpawn(), m_sceneGraph, m_boxType.GetCurSel(), GetDiffuse(), GetConstA(), GetLinA(), GetQuadA());
+
+
+}
+
 // Translate has been selected
 void LightDialogue::OnBnClickedTranslate()
 {
@@ -631,21 +646,19 @@ void LightDialogue::OnBnClickedZ()
 
 // Update remaining light details when one is changed ///////////////////////////////////////////////
 
-void LightDialogue::UpdateID(std::pair<Light*, int>* light)
-{
-
-}
-
 void LightDialogue::UpdateType(int ID)
 {
+	// Set combo box
+	m_boxType.SetCurSel((int)m_lights.first[ID]->GetType());
+	
 	// Switch between light type & set combo box
-	switch (m_lights.first[ID]->GetType())
+	/*switch (m_lights.first[ID]->GetType())
 	{
 	case LIGHT_TYPE::NA:			m_boxType.SetCurSel(0); break;	
 	case LIGHT_TYPE::DIRECTIONAL:	m_boxType.SetCurSel(1); break;
 	case LIGHT_TYPE::POINT:			m_boxType.SetCurSel(2); break;
 	case LIGHT_TYPE::SPOT:			m_boxType.SetCurSel(3); break;
-	}
+	}*/
 }
 
 void LightDialogue::UpdateEnabled(int ID)
@@ -784,4 +797,142 @@ void LightDialogue::UpdateSelectedConstraint()
 
 	// Update constraint box
 	m_boxConst.SetCurSel((int)m_constraint);
+}
+
+XMFLOAT3 LightDialogue::GetPosition()
+{
+	// Store X position
+	CString stringX = _T("");
+	m_ePosX.GetWindowTextW(stringX);
+
+	// Convert to float
+	float posX;
+	if (!stringX.IsEmpty()) { posX = _ttof(stringX); }
+	else { posX = 150.f; }
+
+	// Store Y position
+	CString stringY = _T("");
+	m_ePosY.GetWindowTextW(stringY);
+
+	// Convert to float
+	float posY;
+	if (!stringY.IsEmpty()) { posY = _ttof(stringY); }
+	else { posY = 150.f; }
+
+	// Store Z position
+	CString stringZ = _T("");
+	m_ePosZ.GetWindowTextW(stringZ);
+
+	// Convert to float
+	float posZ;
+	if (!stringZ.IsEmpty()) { posZ = _ttof(stringZ); }
+	else { posZ = 150.f; }
+
+	return XMFLOAT3{ posX, posY, posZ };
+}
+
+XMFLOAT3 LightDialogue::GetDirection()
+{
+	// Store X direction
+	CString stringX = _T("");
+	m_eDirX.GetWindowTextW(stringX);
+
+	// Convert to float
+	float dirX;
+	if (!stringX.IsEmpty()) { dirX = _ttof(stringX); }
+	else { dirX = 0.f; }
+
+	// Store Y direction
+	CString stringY = _T("");
+	m_eDirY.GetWindowTextW(stringY);
+
+	// Convert to float
+	float dirY;
+	if (!stringY.IsEmpty()) { dirY = _ttof(stringY); }
+	else { dirY = 1.f; }
+
+	// Store Z direction
+	CString stringZ = _T("");
+	m_eDirY.GetWindowTextW(stringZ);
+
+	// Convert to float
+	float dirZ;
+	if (!stringZ.IsEmpty()) { dirZ = _ttof(stringZ); }
+	else { dirZ = 0.f; }
+
+	return XMFLOAT3{ dirX, dirY, dirZ };
+}
+
+XMFLOAT3 LightDialogue::GetDiffuse()
+{
+	// Store R diffuse
+	CString stringR = _T("");
+	m_eDifR.GetWindowTextW(stringR);
+
+	// Convert to float
+	float difR;
+	if (!stringR.IsEmpty()) { difR = _ttof(stringR); }
+	else { difR = 2.f; }
+
+	// Store G diffuse
+	CString stringG = _T("");
+	m_eDifR.GetWindowTextW(stringG);
+
+	// Convert to float
+	float difG;
+	if (!stringG.IsEmpty()) { difG = _ttof(stringG); }
+	else { difG = 2.f; }
+
+	// Store B diffuse
+	CString stringB = _T("");
+	m_eDifR.GetWindowTextW(stringB);
+
+	// Convert to float
+	float difB;
+	if (!stringB.IsEmpty()) { difB = _ttof(stringB); }
+	else { difB = 2.f; }
+
+	return XMFLOAT3{ difR, difG, difB };
+}
+
+float LightDialogue::GetConstA()
+{
+	// Store constant attenuation
+	CString string = _T("");
+	m_eConstA.GetWindowTextW(string);
+
+	// Convert to float
+	float constA;
+	if (!string.IsEmpty()) { constA = _ttof(string); }
+	else { constA = 8.f; }
+
+	return constA;
+}
+
+float LightDialogue::GetLinA()
+{
+	// Store linear attenuation
+	CString string = _T("");
+	m_eLinA.GetWindowTextW(string);
+
+	// Convert to float
+	float linA;
+	if (!string.IsEmpty()) { linA = _ttof(string); linA /= 10.f; }
+	else { linA = 0.0125; }
+	
+	return linA;
+}
+
+float LightDialogue::GetQuadA()
+{
+	// Store quadratic attenuation
+	CString string = _T("");
+	m_eQuadA.GetWindowTextW(string);
+
+	// Convert to float
+	float quadA;
+	if (!string.IsEmpty()) { quadA = _ttof(string); quadA /= 100.f; }
+	else { quadA = 0.1f; }
+	
+	return quadA;
 }

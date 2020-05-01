@@ -15,9 +15,9 @@ public:
 	~ObjectManager() {}
 
 	// Spawn an object at a location & add to database
-	static void Spawn(OBJECT_SPAWN spawn, DirectX::SimpleMath::Vector3 position,
+	static bool SpawnObject(OBJECT_TYPE objectType, DirectX::SimpleMath::Vector3 position,
 		std::vector<SceneObject> & sceneGraph, 
-		int type = NULL, XMFLOAT3 diffuse = { NULL, NULL, NULL }, float constA = NULL, float linA = NULL, float quadA = NULL);
+		int lightType = NULL, XMFLOAT3 diffuse = { NULL, NULL, NULL }, float constA = NULL, float linA = NULL, float quadA = NULL);
 
 	// Remove an object from scene graph & database
 	static void Remove(std::vector<int> & IDs, std::vector<SceneObject> & sceneGraph, int ID = -1);
@@ -37,6 +37,10 @@ public:
 
 	// Create new objects from copied
 	static void Paste(std::vector<SceneObject> & sceneGraph);
+
+	// Replace the model of an object
+	static bool Replace(int ID, std::vector<SceneObject> & sceneGraph, OBJECT_TYPE objectType, 
+		int lightType = NULL, XMFLOAT3 diffuse = { NULL, NULL, NULL }, float constA = NULL, float linA = NULL, float quadA = NULL);
 	
 	// Setters
 	static void SetGame(Game * game) { m_game = game; }

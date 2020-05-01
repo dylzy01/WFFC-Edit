@@ -2,9 +2,11 @@
 #include "afxdialogex.h"
 #include "resource.h"
 #include "afxwin.h"
-#include "SceneObject.h"
 #include <vector>
+#include <string>
 #include "Tools.h"
+#include "SceneObject.h"
+#include "ObjectManager.h"
 
 // ObjectDialogue dialog
 
@@ -14,67 +16,102 @@ class ObjectDialogue : public CDialogEx
 
 public:
 	ObjectDialogue(CWnd* pParent = nullptr);   // standard constructor
-	virtual ~ObjectDialogue();
+	virtual ~ObjectDialogue() {}
 
-	// Setup entire list of objects
-	void SetObjectData(std::vector<SceneObject>* sceneGraph, std::vector<int> * objects);	
+	// Pass in data pointers the class will operate on
+	void SetObjectData(std::vector<SceneObject> sceneGraph);
+
+	// Update selected object
+	void UpdateSelection(int ID) { m_objectID = ID; }
+
+	// Update current object with dialogue values
+	void Update(int ID);
 
 	// Getters
 	bool GetActive() { return m_active; }
-	EDITOR GetEditor() { return m_editor; }
-	OBJECT_SPAWN GetSpawn() { return m_spawn; }
-	OBJECT_FUNCTION GetTransform() { return m_transform; }
-	bool GetConstraintX() { return m_x; }
-	bool GetConstraintY() { return m_y; }
-	bool GetConstraintZ() { return m_z; }
-
+	bool GetUpdate() { return m_update; }
+	bool GetFocus() { return m_focus; }
+	bool GetTransforming() { return m_transforming; }
+	float GetSnap() { if (m_snapTerrain) { return -1; } else if (m_snapValue) { return m_snapScale; } }
+	int GetSelection() { return m_objectID; }
+	std::vector<SceneObject> GetSceneGraph() { return m_sceneGraph; }
+	OBJECT_FUNCTION GetFunction() { return m_function; }
+	CONSTRAINT GetConstraint() { return m_constraint; }
+	
 	// Setters
 	void SetActive(bool active) { m_active = active; }
+	void SetTransforming(bool transforming) { m_transforming = transforming; }
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_DIALOG2 };
+	enum { IDD = IDD_DIALOG12 };
 #endif
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	void SetupCheckBoxes();
+	afx_msg void End();									// Kill the dialogue
 
-	// Kill dialogue
-	afx_msg void End();
+	// Local storage
+	std::vector<SceneObject> m_sceneGraph;
+	
+	// Controllers
+	bool m_active;
+	bool m_update;
+	bool m_focus;
+	bool m_transforming = false;
+	bool m_x, m_y, m_z;
+	bool m_snapTerrain, m_snapValue;
+	float m_snapScale;
+	int m_objectID;
+	OBJECT_FUNCTION m_function;
+	CONSTRAINT m_constraint;
 
-	// Reset constraints after each function change
-	void ResetConstraints() { m_x = m_y = m_z = false; }
-
-	// Enable/disable other functions
-	void UpdateTransform(OBJECT_FUNCTION function, bool enable);
-
-	// Enable/disable other spawns
-	void UpdateSpawns(OBJECT_SPAWN spawn, bool enable);
-
-protected:
-	std::vector<SceneObject>* m_sceneGraph;
-	std::vector<int>* m_objectIDs;
-
+	DECLARE_MESSAGE_MAP()
 public:
+	// Control variables for more efficient uses of the boxes
+	CComboBox m_boxID, m_boxType, m_boxConst;
+	CEdit m_eScaX, m_eScaY, m_eScaZ;
+	CEdit m_eRotX, m_eRotY, m_eRotZ;
+	CEdit m_ePosX, m_ePosY, m_ePosZ;
+	CEdit m_eSnap;
+
+	// Message handlers
 	afx_msg void OnBnClickedOk();
-	afx_msg void OnBnClickedGrass();
-	afx_msg void OnBnClickedTree();
-	afx_msg void OnBnClickedWater();
+	afx_msg void OnCbnSelchangeID();
+	afx_msg void OnCbnSelchangeType();
+	afx_msg void OnBnClickedFocus();
+	afx_msg void OnEnChangeScaX();
+	afx_msg void OnEnChangeScaY();
+	afx_msg void OnEnChangeScaZ();
+	afx_msg void OnEnChangeRotX();
+	afx_msg void OnEnChangeRotY();
+	afx_msg void OnEnChangeRotZ();
+	afx_msg void OnEnChangePosX();
+	afx_msg void OnEnChangePosY();
+	afx_msg void OnEnChangePosZ();
 	afx_msg void OnBnClickedScale();
-	afx_msg void OnBnClickedTranslate();
 	afx_msg void OnBnClickedRotate();
+	afx_msg void OnBnClickedTranslate();
 	afx_msg void OnBnClickedX();
 	afx_msg void OnBnClickedY();
 	afx_msg void OnBnClickedZ();
+	afx_msg void OnBnClickedSnapTerrain();
+	afx_msg void OnBnClickedSnapValue();
+	afx_msg void OnEnChangeSnapValue();
+	afx_msg void OnBnClickedDelete();
+	afx_msg void OnBnClickedDuplicate();
 
-	// Controllers
-	bool m_active = false;
-	EDITOR m_editor = EDITOR::NA;
-	OBJECT_SPAWN m_spawn = OBJECT_SPAWN::NA;
-	OBJECT_FUNCTION m_transform = OBJECT_FUNCTION::NA;
-	bool m_x = false, m_y = false, m_z = false;
+private:
+	// Uncheck other function buttons
+	void Uncheck();
 
-	DECLARE_MESSAGE_MAP()
+	// Update object details
+	void UpdateType(int ID);
+	void UpdateScale(int ID);
+	void UpdateRotation(int ID);
+	void UpdatePosition(int ID);
+	
+	// Update constraint details
+	void UpdateSelectedConstraint();
 };
-
-///INT_PTR CALLBACK SelectProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);

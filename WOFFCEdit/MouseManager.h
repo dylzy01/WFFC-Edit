@@ -20,6 +20,9 @@ public:
 	// Picking a spawn point for an object
 	static DirectX::SimpleMath::Vector3 PickSpawn();
 
+	// Get spawn point in middle of screen
+	static DirectX::SimpleMath::Vector3 GetBasicSpawn();
+
 	// Picking a piece of terrain
 	static TERRAIN PickTerrain();
 

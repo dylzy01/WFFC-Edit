@@ -66,7 +66,7 @@ public: //methods
 		case EDITOR::OBJECT_FUNCTION:
 		{
 			// Reset object spawn
-			m_objectSpawn = OBJECT_SPAWN::NA;
+			m_objectSpawn = OBJECT_TYPE::NA;
 
 			// Reset landscape sculpt
 			m_terrainFunction = TERRAIN_SCULPT::NA;
@@ -79,7 +79,7 @@ public: //methods
 		case EDITOR::TERRAIN_PAINT:
 		{
 			// Reset object spawn
-			m_objectSpawn = OBJECT_SPAWN::NA;
+			m_objectSpawn = OBJECT_TYPE::NA;
 			m_objectConstraint = CONSTRAINT::NA;
 
 			// Reset object transform
@@ -94,7 +94,7 @@ public: //methods
 		case EDITOR::SCULPT_FREELY:
 		{
 			// Reset object spawn
-			m_objectSpawn = OBJECT_SPAWN::NA;
+			m_objectSpawn = OBJECT_TYPE::NA;
 			m_objectConstraint = CONSTRAINT::NA;
 
 			// Reset object transform
@@ -107,7 +107,7 @@ public: //methods
 		break;
 		}
 	}
-	void SetObjectSpawn(OBJECT_SPAWN spawn) { m_objectSpawn = spawn; }
+	void SetObjectSpawn(OBJECT_TYPE spawn) { m_objectSpawn = spawn; }
 	void SetObjectFunction(OBJECT_FUNCTION function) { m_objectFunction = function; }
 	void SetObjectConstraint(CONSTRAINT constraint) { m_objectConstraint = constraint; }
 	void SetTerrainPaint(TERRAIN_PAINT paint) { m_paint = paint; }
@@ -127,7 +127,7 @@ public:	//variables
 	std::vector<int> m_objectIDsToCopy;
 
 	EDITOR m_editor;								//control which editor state is being applied
-	OBJECT_SPAWN m_objectSpawn;						//control which object is to be spawned
+	OBJECT_TYPE m_objectSpawn;						//control which object is to be spawned
 	OBJECT_FUNCTION m_objectFunction;				//control which object function is being applied
 	CONSTRAINT m_objectConstraint;			//control which constraint is applied to object functions
 	TERRAIN_PAINT m_paint;				//control which paint should be applied to terrain
