@@ -31,7 +31,7 @@ public:
 	bool GetActive() { return m_active; }
 	bool GetUpdate() { return m_update; }
 	bool GetTranslating() { return m_translating; }
-	int GetSelectedLightID() { return m_lights[m_boxID.GetCurSel()].m_ID; }
+	int GetSelectedLightID() { if (m_boxID.GetCurSel() >= 0) { return m_lights[m_boxID.GetCurSel()].m_ID; } else { return -1; } }
 	std::vector<DisplayObject> GetLights() { return m_lights; }
 	CONSTRAINT GetConstraint() { return m_constraint; }
 

@@ -393,19 +393,27 @@ void MFCMain::CheckDialogues()
 	// Else, if object inspector is active
 	else if (m_objectDialogue.GetActive())
 	{
-		// Update selected object (light)
-		m_toolSystem.SetSelectedObjectID(m_objectDialogue.GetSelectedObjectID());
-	
-		// Set other modes to none
-		m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
-		m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
-		m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
+		// If objects have been setup
+		if (m_objectDialogue.GetObjectsSetup())
+		{
+			// Update selected object
+			int ID = m_objectDialogue.GetSelectedObjectID();
+			m_toolSystem.SetSelectedObjectID(m_objectDialogue.GetSelectedObjectID());
 
-		// Set tool editor
-		m_toolSystem.SetEditor(EDITOR::OBJECT_FUNCTION);
+			// Set other modes to none
+			m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
+			m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
+			m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
 
-		// Set constraint
-		m_toolSystem.SetObjectConstraint(m_objectDialogue.GetConstraint());
+			// Set tool editor
+			m_toolSystem.SetEditor(EDITOR::OBJECT_FUNCTION);
+
+			// Set object function
+			m_toolSystem.SetObjectFunction(m_objectDialogue.GetFunction());
+
+			// Set constraint
+			m_toolSystem.SetObjectConstraint(m_objectDialogue.GetConstraint());
+		}
 	}
 	
 	// Else, if no dialogues are active

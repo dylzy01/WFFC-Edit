@@ -490,6 +490,9 @@ void ObjectManager::Paste(std::vector<SceneObject> & sceneGraph)
 	// Loop through objects to copy
 	for (int i = 0; i < m_objectsToCopy.size(); ++i)
 	{
+		// Update object ID
+		m_objectsToCopy[i].ID = sceneGraph.size();
+		
 		// Add new object to database
 		SQLManager::AddObject(m_objectsToCopy[i]);
 

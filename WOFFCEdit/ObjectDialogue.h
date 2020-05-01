@@ -22,10 +22,14 @@ public:
 	void SetObjectData(std::vector<SceneObject>* sceneGraph);
 
 	// Get currently selected object ID 
-	int GetSelectedObjectID() { return m_objectID; }
+	int GetSelectedObjectID() { 
+		if (m_objects.size() != 0 && m_boxID.GetCurSel() >= 0 && m_boxID.GetCurSel() <= m_objects.size()) {
+			return m_objects[m_boxID.GetCurSel()].ID;
+		}		
+	}
 
 	// Update selected object
-	void UpdateSelection(int ID) { m_objectID = ID; }
+	void UpdateSelection(int ID) { m_selection = ID; }
 
 	// Update current object with dialogue values
 	void Update(int ID);
@@ -35,9 +39,10 @@ public:
 	bool GetUpdate() { return m_update; }
 	bool GetFocus() { return m_focus; }
 	bool GetTransforming() { return m_transforming; }
+	bool GetObjectsSetup() { return m_objectSetup; }
 	float GetSnap() { if (m_snapTerrain) { return -1; } else if (m_snapValue) { return m_snapScale; } }
-	int GetSelection() { return m_objectID; }
-	std::vector<SceneObject> GetSceneGraph() { return m_sceneGraph; }
+	int GetSelection() { return m_selection; }
+	std::vector<SceneObject> GetSceneGraph() { return m_objects; }
 	OBJECT_FUNCTION GetFunction() { return m_function; }
 	CONSTRAINT GetConstraint() { return m_constraint; }
 	
@@ -58,16 +63,18 @@ protected:
 
 	// Local storage
 	std::vector<SceneObject> m_sceneGraph;
+	std::vector<SceneObject> m_objects;
 	
 	// Controllers
 	bool m_active;
 	bool m_update;
 	bool m_focus;
 	bool m_transforming = false;
+	bool m_objectSetup = false;
 	bool m_x, m_y, m_z;
 	bool m_snapTerrain, m_snapValue;
 	float m_snapScale;
-	int m_objectID;
+	int m_selection;
 	OBJECT_FUNCTION m_function;
 	CONSTRAINT m_constraint;
 
@@ -107,6 +114,9 @@ public:
 	afx_msg void OnBnClickedDuplicate();
 
 private:
+	// Setup IDs of currently available objects
+	void SetupObjects();
+
 	// Uncheck other function buttons
 	void Uncheck();
 

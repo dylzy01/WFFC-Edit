@@ -207,14 +207,18 @@ void LightDialogue::OnCbnSelchangeType()
 	// Store ID selection
 	int ID = m_boxID.GetCurSel();
 	
-	// Store type selection
-	int type = m_boxType.GetCurSel() + 1;	
+	// If ID is valid
+	if (ID >= 0)
+	{
+		// Store type selection
+		int type = m_boxType.GetCurSel() + 1;
 
-	// Set new light type
-	m_lights[ID].SetLightType((LIGHT_TYPE)type);
+		// Set new light type
+		m_lights[ID].SetLightType((LIGHT_TYPE)type);
 
-	// Tell MFC/ToolMain to update scene graph
-	m_update = true;
+		// Tell MFC/ToolMain to update scene graph
+		m_update = true;
+	}
 }
 
 // Light has been enabled/disabled
@@ -223,11 +227,15 @@ void LightDialogue::OnBnClickedEnable()
 	// Store ID selection
 	int ID = m_boxID.GetCurSel();
 
-	// Set light enabled/disabled
-	m_lights[ID].SetEnabled(IsDlgButtonChecked(IDC_CHECK1));
+	// If ID is valid
+	if (ID >= 0)
+	{
+		// Set light enabled/disabled
+		m_lights[ID].SetEnabled(IsDlgButtonChecked(IDC_CHECK1));
 
-	// Tell MFC/ToolMain to update scene graph
-	m_update = true;
+		// Tell MFC/ToolMain to update scene graph
+		m_update = true;
+	}
 }
 
 // X position has been changed
@@ -236,20 +244,24 @@ void LightDialogue::OnEnChangePosX()
 	// Store ID selection
 	int ID = m_boxID.GetCurSel();
 
-	// Store new X position
-	CString string = _T("");
-	m_ePosX.GetWindowTextW(string);
+	// If ID is valid
+	if (ID >= 0)
+	{
+		// Store new X position
+		CString string = _T("");
+		m_ePosX.GetWindowTextW(string);
 
-	// Convert to float
-	float posX;
-	if (!string.IsEmpty()) { posX = _ttof(string); }
-	else { posX = m_lights[ID].GetPosition().x; }
+		// Convert to float
+		float posX;
+		if (!string.IsEmpty()) { posX = _ttof(string); }
+		else { posX = m_lights[ID].GetPosition().x; }
 
-	// Update X position of light
-	m_lights[ID].SetPositionX(posX);
+		// Update X position of light
+		m_lights[ID].SetPositionX(posX);
 
-	// Tell MFC/ToolMain to update scene graph
-	m_update = true;
+		// Tell MFC/ToolMain to update scene graph
+		m_update = true;
+	}
 }
 
 // Y position has been changed
@@ -258,20 +270,24 @@ void LightDialogue::OnEnChangePosY()
 	// Store ID selection
 	int ID = m_boxID.GetCurSel();
 
-	// Store new Y position
-	CString string = _T("");
-	m_ePosY.GetWindowTextW(string);
+	// If ID is valid
+	if (ID >= 0)
+	{
+		// Store new Y position
+		CString string = _T("");
+		m_ePosY.GetWindowTextW(string);
 
-	// Convert to float
-	float posY;
-	if (!string.IsEmpty()) { posY = _ttof(string); }
-	else { posY = m_lights[ID].GetPosition().y; }
+		// Convert to float
+		float posY;
+		if (!string.IsEmpty()) { posY = _ttof(string); }
+		else { posY = m_lights[ID].GetPosition().y; }
 
-	// Update Y position of light
-	m_lights[ID].SetPositionY(posY);
+		// Update Y position of light
+		m_lights[ID].SetPositionY(posY);
 
-	// Tell MFC/ToolMain to update scene graph
-	m_update = true;
+		// Tell MFC/ToolMain to update scene graph
+		m_update = true;
+	}
 }
 
 // Z position has been changed
@@ -280,20 +296,24 @@ void LightDialogue::OnEnChangePosZ()
 	// Store ID selection
 	int ID = m_boxID.GetCurSel();
 
-	// Store new Z position
-	CString string = _T("");
-	m_ePosZ.GetWindowTextW(string);
+	// If ID is valid
+	if (ID >= 0)
+	{
+		// Store new Z position
+		CString string = _T("");
+		m_ePosZ.GetWindowTextW(string);
 
-	// Convert to float
-	float posZ;
-	if (!string.IsEmpty()) { posZ = _ttof(string); }
-	else { posZ = m_lights[ID].GetPosition().z; }
+		// Convert to float
+		float posZ;
+		if (!string.IsEmpty()) { posZ = _ttof(string); }
+		else { posZ = m_lights[ID].GetPosition().z; }
 
-	// Update Z position of light
-	m_lights[ID].SetPositionZ(posZ);
+		// Update Z position of light
+		m_lights[ID].SetPositionZ(posZ);
 
-	// Tell MFC/ToolMain to update scene graph
-	m_update = true;
+		// Tell MFC/ToolMain to update scene graph
+		m_update = true;
+	}
 }
 
 // X direction has been changed
@@ -302,24 +322,28 @@ void LightDialogue::OnEnChangeDirX()
 	// Store ID selection
 	int ID = m_boxID.GetCurSel();
 
-	// Store new X direction
-	CString string = _T("");
-	m_eDirX.GetWindowTextW(string);
+	// If ID is valid
+	if (ID >= 0)
+	{
+		// Store new X direction
+		CString string = _T("");
+		m_eDirX.GetWindowTextW(string);
 
-	// Convert to float
-	float dirX;
-	if (!string.IsEmpty()) { dirX = _ttof(string); }
-	else { dirX = m_lights[ID].GetDirection().x; }
+		// Convert to float
+		float dirX;
+		if (!string.IsEmpty()) { dirX = _ttof(string); }
+		else { dirX = m_lights[ID].GetDirection().x; }
 
-	// Store as vector & normalize
-	///DirectX::SimpleMath::Vector3 direction = { dirX, 1.f, 1.f };
-	///direction.Normalize();
+		// Store as vector & normalize
+		///DirectX::SimpleMath::Vector3 direction = { dirX, 1.f, 1.f };
+		///direction.Normalize();
 
-	// Update X direction of light
-	m_lights[ID].SetDirectionX(dirX);
+		// Update X direction of light
+		m_lights[ID].SetDirectionX(dirX);
 
-	// Tell MFC/ToolMain to update scene graph
-	m_update = true;
+		// Tell MFC/ToolMain to update scene graph
+		m_update = true;
+	}
 }
 
 // Y direction has been changed
@@ -328,24 +352,28 @@ void LightDialogue::OnEnChangeDirY()
 	// Store ID selection
 	int ID = m_boxID.GetCurSel();
 
-	// Store new Y direction
-	CString string = _T("");
-	m_eDirY.GetWindowTextW(string);
+	// If ID is valid
+	if (ID >= 0)
+	{
+		// Store new Y direction
+		CString string = _T("");
+		m_eDirY.GetWindowTextW(string);
 
-	// Convert to float
-	float dirY;
-	if (!string.IsEmpty()) { dirY = _ttof(string); }
-	else { dirY = m_lights[ID].GetDirection().y; }
+		// Convert to float
+		float dirY;
+		if (!string.IsEmpty()) { dirY = _ttof(string); }
+		else { dirY = m_lights[ID].GetDirection().y; }
 
-	// Store as vector & normalize
-	///DirectX::SimpleMath::Vector3 direction = { 1.f, dirY, 1.f };
-	///direction.Normalize();
+		// Store as vector & normalize
+		///DirectX::SimpleMath::Vector3 direction = { 1.f, dirY, 1.f };
+		///direction.Normalize();
 
-	// Update Y direction of light
-	m_lights[ID].SetDirectionY(dirY);
+		// Update Y direction of light
+		m_lights[ID].SetDirectionY(dirY);
 
-	// Tell MFC/ToolMain to update scene graph
-	m_update = true;
+		// Tell MFC/ToolMain to update scene graph
+		m_update = true;
+	}
 }
 
 // Z direction has been changed
@@ -354,24 +382,28 @@ void LightDialogue::OnEnChangeDirZ()
 	// Store ID selection
 	int ID = m_boxID.GetCurSel();
 
-	// Store new Z direction
-	CString string = _T("");
-	m_eDirY.GetWindowTextW(string);
+	// If ID is valid
+	if (ID >= 0)
+	{
+		// Store new Z direction
+		CString string = _T("");
+		m_eDirY.GetWindowTextW(string);
 
-	// Convert to float
-	float dirZ;
-	if (!string.IsEmpty()) { dirZ = _ttof(string); }
-	else { dirZ = m_lights[ID].GetDirection().z; }
+		// Convert to float
+		float dirZ;
+		if (!string.IsEmpty()) { dirZ = _ttof(string); }
+		else { dirZ = m_lights[ID].GetDirection().z; }
 
-	// Store as vector & normalize
-	///DirectX::SimpleMath::Vector3 direction = { 1.f, 1.f, dirZ };
-	///direction.Normalize();
+		// Store as vector & normalize
+		///DirectX::SimpleMath::Vector3 direction = { 1.f, 1.f, dirZ };
+		///direction.Normalize();
 
-	// Update Z direction of light
-	m_lights[ID].SetDirectionZ(dirZ);
+		// Update Z direction of light
+		m_lights[ID].SetDirectionZ(dirZ);
 
-	// Tell MFC/ToolMain to update scene graph
-	m_update = true;
+		// Tell MFC/ToolMain to update scene graph
+		m_update = true;
+	}
 }
 
 // R diffuse has been changed
@@ -380,20 +412,24 @@ void LightDialogue::OnEnChangeDifR()
 	// Store ID selection
 	int ID = m_boxID.GetCurSel();
 
-	// Store new R diffuse
-	CString string = _T("");
-	m_eDifR.GetWindowTextW(string);
+	// If ID is valid
+	if (ID >= 0)
+	{
+		// Store new R diffuse
+		CString string = _T("");
+		m_eDifR.GetWindowTextW(string);
 
-	// Convert to float
-	float difR;
-	if (!string.IsEmpty()) { difR = _ttof(string); }
-	else { difR = m_lights[ID].GetDiffuse().x; }
-	
-	// Update R diffuse of light
-	m_lights[ID].SetDiffuseR(difR);
+		// Convert to float
+		float difR;
+		if (!string.IsEmpty()) { difR = _ttof(string); }
+		else { difR = m_lights[ID].GetDiffuse().x; }
 
-	// Tell MFC/ToolMain to update scene graph
-	m_update = true;
+		// Update R diffuse of light
+		m_lights[ID].SetDiffuseR(difR);
+
+		// Tell MFC/ToolMain to update scene graph
+		m_update = true;
+	}
 }
 
 // G diffuse has been changed
@@ -402,20 +438,24 @@ void LightDialogue::OnEnChangeDifG()
 	// Store ID selection
 	int ID = m_boxID.GetCurSel();
 
-	// Store new G diffuse
-	CString string = _T("");
-	m_eDifR.GetWindowTextW(string);
+	// If ID is valid
+	if (ID >= 0)
+	{
+		// Store new G diffuse
+		CString string = _T("");
+		m_eDifR.GetWindowTextW(string);
 
-	// Convert to float
-	float difG;
-	if (!string.IsEmpty()) { difG = _ttof(string); }
-	else { difG = m_lights[ID].GetDiffuse().y; }
+		// Convert to float
+		float difG;
+		if (!string.IsEmpty()) { difG = _ttof(string); }
+		else { difG = m_lights[ID].GetDiffuse().y; }
 
-	// Update G diffuse of light
-	m_lights[ID].SetDiffuseG(difG);
+		// Update G diffuse of light
+		m_lights[ID].SetDiffuseG(difG);
 
-	// Tell MFC/ToolMain to update scene graph
-	m_update = true;
+		// Tell MFC/ToolMain to update scene graph
+		m_update = true;
+	}
 }
 
 // B diffuse has been changed
@@ -424,20 +464,24 @@ void LightDialogue::OnEnChangeDifB()
 	// Store ID selection
 	int ID = m_boxID.GetCurSel();
 
-	// Store new B diffuse
-	CString string = _T("");
-	m_eDifR.GetWindowTextW(string);
+	// If ID is valid
+	if (ID >= 0)
+	{
+		// Store new B diffuse
+		CString string = _T("");
+		m_eDifR.GetWindowTextW(string);
 
-	// Convert to float
-	float difB;
-	if (!string.IsEmpty()) { difB = _ttof(string); }
-	else { difB = m_lights[ID].GetDiffuse().z; }
+		// Convert to float
+		float difB;
+		if (!string.IsEmpty()) { difB = _ttof(string); }
+		else { difB = m_lights[ID].GetDiffuse().z; }
 
-	// Update B diffuse of light
-	m_lights[ID].SetDiffuseB(difB);
+		// Update B diffuse of light
+		m_lights[ID].SetDiffuseB(difB);
 
-	// Tell MFC/ToolMain to update scene graph
-	m_update = true;
+		// Tell MFC/ToolMain to update scene graph
+		m_update = true;
+	}
 }
 
 // R ambient has been changed
@@ -446,26 +490,30 @@ void LightDialogue::OnEnChangeAmbR()
 	// Store ID selection
 	int ID = m_boxID.GetCurSel();
 
-	// Store new R ambient
-	CString string = _T("");
-	m_eDifR.GetWindowText(string);
+	// If ID is valid
+	if (ID >= 0)
+	{
+		// Store new R ambient
+		CString string = _T("");
+		m_eDifR.GetWindowText(string);
 
-	// Convert to float
-	float ambR;
-	if (!string.IsEmpty()) { ambR = _ttof(string); }
-	else { ambR = m_lights[ID].GetAmbient().x; }
-	/*if (ambR >= 4.f) { ambR /= 50.f; }
-	else if (ambR >= 3.f) { ambR /= 40.f; }
-	else if (ambR >= 2.f) { ambR /= 30.f; }
-	else if (ambR >= 1.f) { ambR /= 20.f; }
-	else if (ambR >= 0.f) { ambR /= 10.f; }*/
-	ambR /= 10.f;
+		// Convert to float
+		float ambR;
+		if (!string.IsEmpty()) { ambR = _ttof(string); }
+		else { ambR = m_lights[ID].GetAmbient().x; }
+		/*if (ambR >= 4.f) { ambR /= 50.f; }
+		else if (ambR >= 3.f) { ambR /= 40.f; }
+		else if (ambR >= 2.f) { ambR /= 30.f; }
+		else if (ambR >= 1.f) { ambR /= 20.f; }
+		else if (ambR >= 0.f) { ambR /= 10.f; }*/
+		ambR /= 10.f;
 
-	// Update R ambient of light
-	m_lights[ID].SetAmbientR(ambR);
+		// Update R ambient of light
+		m_lights[ID].SetAmbientR(ambR);
 
-	// Tell MFC/ToolMain to update scene graph
-	m_update = true;
+		// Tell MFC/ToolMain to update scene graph
+		m_update = true;
+	}
 }
 
 // G ambient has been changed
@@ -474,26 +522,30 @@ void LightDialogue::OnEnChangeAmbG()
 	// Store ID selection
 	int ID = m_boxID.GetCurSel();
 
-	// Store new G ambient
-	CString string = _T("");
-	m_eDifR.GetWindowText(string);
+	// If ID is valid
+	if (ID >= 0)
+	{
+		// Store new G ambient
+		CString string = _T("");
+		m_eDifR.GetWindowText(string);
 
-	// Convert to float
-	float ambG;
-	if (!string.IsEmpty()) { ambG = _ttof(string); }
-	else { ambG = m_lights[ID].GetAmbient().y; }
-	/*if (ambG >= 4.f) { ambG /= 50.f; }
-	else if (ambG >= 3.f) { ambG /= 40.f; }
-	else if (ambG >= 2.f) { ambG /= 30.f; }
-	else if (ambG >= 1.f) { ambG /= 20.f; }
-	else if (ambG >= 0.f) { ambG /= 10.f; }*/
-	ambG /= 10.f;
+		// Convert to float
+		float ambG;
+		if (!string.IsEmpty()) { ambG = _ttof(string); }
+		else { ambG = m_lights[ID].GetAmbient().y; }
+		/*if (ambG >= 4.f) { ambG /= 50.f; }
+		else if (ambG >= 3.f) { ambG /= 40.f; }
+		else if (ambG >= 2.f) { ambG /= 30.f; }
+		else if (ambG >= 1.f) { ambG /= 20.f; }
+		else if (ambG >= 0.f) { ambG /= 10.f; }*/
+		ambG /= 10.f;
 
-	// Update G ambient of light
-	m_lights[ID].SetAmbientG(ambG);
+		// Update G ambient of light
+		m_lights[ID].SetAmbientG(ambG);
 
-	// Tell MFC/ToolMain to update scene graph
-	m_update = true;
+		// Tell MFC/ToolMain to update scene graph
+		m_update = true;
+	}
 }
 
 // B ambient has been changed
@@ -502,26 +554,30 @@ void LightDialogue::OnEnChangeAmbB()
 	// Store ID selection
 	int ID = m_boxID.GetCurSel();
 
-	// Store new B ambient
-	CString string = _T("");
-	m_eDifR.GetWindowText(string);
+	// If ID is valid
+	if (ID >= 0)
+	{
+		// Store new B ambient
+		CString string = _T("");
+		m_eDifR.GetWindowText(string);
 
-	// Convert to float
-	float ambB;
-	if (!string.IsEmpty()) { ambB = _ttof(string); }
-	else { ambB = m_lights[ID].GetAmbient().z; }
-	/*if (ambB >= 4.f) { ambB /= 50.f; }
-	else if (ambB >= 3.f) { ambB /= 40.f; }
-	else if (ambB >= 2.f) { ambB /= 30.f; }
-	else if (ambB >= 1.f) { ambB /= 20.f; }
-	else if (ambB >= 0.f) { ambB /= 10.f; }*/
-	ambB /= 10.f;
+		// Convert to float
+		float ambB;
+		if (!string.IsEmpty()) { ambB = _ttof(string); }
+		else { ambB = m_lights[ID].GetAmbient().z; }
+		/*if (ambB >= 4.f) { ambB /= 50.f; }
+		else if (ambB >= 3.f) { ambB /= 40.f; }
+		else if (ambB >= 2.f) { ambB /= 30.f; }
+		else if (ambB >= 1.f) { ambB /= 20.f; }
+		else if (ambB >= 0.f) { ambB /= 10.f; }*/
+		ambB /= 10.f;
 
-	// Update B ambient of light
-	m_lights[ID].SetAmbientG(ambB);
+		// Update B ambient of light
+		m_lights[ID].SetAmbientG(ambB);
 
-	// Tell MFC/ToolMain to update scene graph
-	m_update = true;
+		// Tell MFC/ToolMain to update scene graph
+		m_update = true;
+	}
 }
 
 // Constant attenuation has been changed
@@ -530,20 +586,24 @@ void LightDialogue::OnEnChangeConstA()
 	// Store ID selection
 	int ID = m_boxID.GetCurSel();
 
-	// Store new constant attenuation
-	CString string = _T("");
-	m_eConstA.GetWindowTextW(string);
+	// If ID is valid
+	if (ID >= 0)
+	{
+		// Store new constant attenuation
+		CString string = _T("");
+		m_eConstA.GetWindowTextW(string);
 
-	// Convert to float
-	float constA;
-	if (!string.IsEmpty()) { constA = _ttof(string); }
-	else { constA = m_lights[ID].GetConstantAttenuation(); }
+		// Convert to float
+		float constA;
+		if (!string.IsEmpty()) { constA = _ttof(string); }
+		else { constA = m_lights[ID].GetConstantAttenuation(); }
 
-	// Update constant attenuation of light
-	m_lights[ID].SetConstantAttenuation(constA);
+		// Update constant attenuation of light
+		m_lights[ID].SetConstantAttenuation(constA);
 
-	// Tell MFC/ToolMain to update scene graph
-	m_update = true;
+		// Tell MFC/ToolMain to update scene graph
+		m_update = true;
+	}
 }
 
 // Linear attenuation has been changed
@@ -552,21 +612,25 @@ void LightDialogue::OnEnChangeLinA()
 	// Store ID selection
 	int ID = m_boxID.GetCurSel();
 
-	// Store new linear attenuation
-	CString string = _T("");
-	m_eLinA.GetWindowTextW(string);
+	// If ID is valid
+	if (ID >= 0)
+	{
+		// Store new linear attenuation
+		CString string = _T("");
+		m_eLinA.GetWindowTextW(string);
 
-	// Convert to float
-	float linA;
-	if (!string.IsEmpty()) { linA = _ttof(string); }
-	else { linA = m_lights[ID].GetLinearAttenuation(); }
-	///linA /= 10.f;
+		// Convert to float
+		float linA;
+		if (!string.IsEmpty()) { linA = _ttof(string); }
+		else { linA = m_lights[ID].GetLinearAttenuation(); }
+		///linA /= 10.f;
 
-	// Update linear attenuation of light
-	m_lights[ID].SetLinearAttenuation(linA);
+		// Update linear attenuation of light
+		m_lights[ID].SetLinearAttenuation(linA);
 
-	// Tell MFC/ToolMain to update scene graph
-	m_update = true;
+		// Tell MFC/ToolMain to update scene graph
+		m_update = true;
+	}
 }
 
 // Quadratic attenuation has been changed
@@ -575,21 +639,25 @@ void LightDialogue::OnEnChangeQuadA()
 	// Store ID selection
 	int ID = m_boxID.GetCurSel();
 
-	// Store new quadratic attenuation
-	CString string = _T("");
-	m_eQuadA.GetWindowTextW(string);
+	// If ID is valid
+	if (ID >= 0)
+	{
+		// Store new quadratic attenuation
+		CString string = _T("");
+		m_eQuadA.GetWindowTextW(string);
 
-	// Convert to float
-	float quadA;
-	if (!string.IsEmpty()) { quadA = _ttof(string); }
-	else { quadA = m_lights[ID].GetQuadraticAttenuation(); }
-	///quadA /= 100.f;
+		// Convert to float
+		float quadA;
+		if (!string.IsEmpty()) { quadA = _ttof(string); }
+		else { quadA = m_lights[ID].GetQuadraticAttenuation(); }
+		///quadA /= 100.f;
 
-	// Update quadratic attenuation of light
-	m_lights[ID].SetQuadraticAttenuation(quadA);
+		// Update quadratic attenuation of light
+		m_lights[ID].SetQuadraticAttenuation(quadA);
 
-	// Tell MFC/ToolMain to update scene graph
-	m_update = true;
+		// Tell MFC/ToolMain to update scene graph
+		m_update = true;
+	}
 }
 
 // Spawn has been selected
