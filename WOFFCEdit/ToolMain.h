@@ -115,6 +115,7 @@ public: //methods
 	void SetTerrainConstraint(CONSTRAINT constraint) { m_terrainConstraint = constraint; }
 	void SetLights(std::pair<std::vector<Light*>, std::vector<int>> lights) { m_d3dRenderer.SetLights(lights); }
 	void SetSceneObject(SceneObject object, int index) { m_d3dRenderer.SetSceneObject(object, index); }
+	void SetSelectedObjectID(int ID) { m_selectedObjectIDs.clear(); m_selectedObjectIDs.push_back(ID); m_d3dRenderer.SetSelectedObjectIDs(m_selectedObjectIDs); }
 	void SetSelectedTerrain(TERRAIN& terrain) { m_selectedTerrain = terrain; }
 
 public:	//variables

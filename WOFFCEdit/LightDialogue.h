@@ -26,7 +26,10 @@ public:
 	// Getters
 	bool GetActive() { return m_active; }
 	bool GetUpdate() { return m_update; }
+	bool GetTranslating() { return m_translating; }
+	int GetSelectedLightID() { return m_lights.second[m_boxID.GetCurSel()]; }
 	std::pair<std::vector<Light*>, std::vector<int>> GetLights() { return m_lights; }
+	CONSTRAINT GetConstraint() { return m_constraint; }
 
 	// Setters
 	void SetActive(bool active) { m_active = active; }
@@ -39,6 +42,7 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	void SetupCheckBoxes();
 	afx_msg void End();									// Kill the dialogue
 
 	// Local storage 
@@ -47,11 +51,14 @@ protected:
 	// Controllers
 	bool m_active;
 	bool m_update;
+	bool m_translating;
+	bool m_x, m_y, m_z;
+	CONSTRAINT m_constraint;
 
 	DECLARE_MESSAGE_MAP()
 public:
 	// Control variables for more efficient uses of the boxes
-	CComboBox m_boxID, m_boxType;
+	CComboBox m_boxID, m_boxType, m_boxConst;
 	CEdit m_ePosX, m_ePosY, m_ePosZ;
 	CEdit m_eDirX, m_eDirY, m_eDirZ;
 	CEdit m_eDifR, m_eDifG, m_eDifB;
@@ -83,6 +90,11 @@ public:
 	afx_msg void OnEnChangeConstA();
 	afx_msg void OnEnChangeLinA();
 	afx_msg void OnEnChangeQuadA();
+	afx_msg void OnBnClickedTranslate();
+	afx_msg void OnBnSelchangeConstraint();
+	afx_msg void OnBnClickedX();
+	afx_msg void OnBnClickedY();
+	afx_msg void OnBnClickedZ();
 
 private:
 	// Update light details
@@ -96,4 +108,5 @@ private:
 	void UpdateConstA(int ID);
 	void UpdateLinA(int ID);
 	void UpdateQuadA(int ID);
+	void UpdateSelectedConstraint();
 };

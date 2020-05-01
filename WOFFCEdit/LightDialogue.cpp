@@ -41,8 +41,23 @@ void LightDialogue::SetLightData(std::pair<std::vector<Light*>, std::vector<int>
 	typeBoxEntry = L"Point";		m_boxType.AddString(typeBoxEntry.c_str());	
 	typeBoxEntry = L"Spot";			m_boxType.AddString(typeBoxEntry.c_str());	
 
+	// Setup constraint types
+	std::wstring constBoxEntry;
+	constBoxEntry = L"N/A";			m_boxConst.AddString(constBoxEntry.c_str());
+	constBoxEntry = L"X";			m_boxConst.AddString(constBoxEntry.c_str());
+	constBoxEntry = L"Y";			m_boxConst.AddString(constBoxEntry.c_str());
+	constBoxEntry = L"Z";			m_boxConst.AddString(constBoxEntry.c_str());
+	constBoxEntry = L"XY";			m_boxConst.AddString(constBoxEntry.c_str());
+	constBoxEntry = L"XZ";			m_boxConst.AddString(constBoxEntry.c_str());
+	constBoxEntry = L"YZ";			m_boxConst.AddString(constBoxEntry.c_str());
+
 	// Display first light
 	if (m_lights.first.size() != 0) { Update(0); }	
+
+	// Set constraint to display N/A
+	m_boxConst.SetCurSel(0);
+
+	SetupCheckBoxes();
 }
 
 void LightDialogue::Update(int index)
@@ -64,6 +79,7 @@ void LightDialogue::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_COMBO1, m_boxID);
 	DDX_Control(pDX, IDC_COMBO2, m_boxType);
+	DDX_Control(pDX, IDC_COMBO6, m_boxConst);
 
 	DDX_Control(pDX, IDC_EDIT1, m_ePosX);		DDX_Text(pDX, IDC_EDIT1, m_fPosX);
 	DDX_Control(pDX, IDC_EDIT2, m_ePosY);		DDX_Text(pDX, IDC_EDIT2, m_fPosY);
@@ -84,6 +100,25 @@ void LightDialogue::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT13, m_eConstA);	DDX_Text(pDX, IDC_EDIT13, m_fConstA);
 	DDX_Control(pDX, IDC_EDIT14, m_eLinA);		DDX_Text(pDX, IDC_EDIT14, m_fLinA);
 	DDX_Control(pDX, IDC_EDIT15, m_eQuadA);		DDX_Text(pDX, IDC_EDIT15, m_fQuadA);
+}
+
+void LightDialogue::SetupCheckBoxes()
+{
+	// X constraint
+	CBitmap bmp;
+	bmp.LoadBitmap(IDB_BITMAP10);
+	((CButton*)GetDlgItem(IDC_CHECK23))->SetBitmap(bmp);
+	bmp.Detach();
+
+	// Y constraint
+	bmp.LoadBitmap(IDB_BITMAP11);
+	((CButton*)GetDlgItem(IDC_CHECK24))->SetBitmap(bmp);
+	bmp.Detach();
+
+	// Z constraint
+	bmp.LoadBitmap(IDB_BITMAP12);
+	((CButton*)GetDlgItem(IDC_CHECK25))->SetBitmap(bmp);
+	bmp.Detach();
 }
 
 BEGIN_MESSAGE_MAP(LightDialogue, CDialogEx)
@@ -107,6 +142,10 @@ BEGIN_MESSAGE_MAP(LightDialogue, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT13, &LightDialogue::OnEnChangeConstA)
 	ON_EN_CHANGE(IDC_EDIT14, &LightDialogue::OnEnChangeLinA)
 	ON_EN_CHANGE(IDC_EDIT15, &LightDialogue::OnEnChangeQuadA)
+	ON_BN_CLICKED(IDC_CHECK2, &LightDialogue::OnBnClickedTranslate)
+	ON_BN_CLICKED(IDC_CHECK23, &LightDialogue::OnBnClickedX)
+	ON_BN_CLICKED(IDC_CHECK24, &LightDialogue::OnBnClickedY)
+	ON_BN_CLICKED(IDC_CHECK25, &LightDialogue::OnBnClickedZ)
 END_MESSAGE_MAP()
 
 // Kill the dialogue
@@ -535,6 +574,61 @@ void LightDialogue::OnEnChangeQuadA()
 	m_update = true;
 }
 
+// Translate has been selected
+void LightDialogue::OnBnClickedTranslate()
+{
+	m_translating = IsDlgButtonChecked(IDC_CHECK2);
+}
+
+// Constraint mode has been changed
+void LightDialogue::OnBnSelchangeConstraint()
+{
+	// Store index of constraint value
+	int index = m_boxConst.GetCurSel();
+
+	// Set new constraint
+	m_constraint = (CONSTRAINT)index;
+
+	// Switch between constraint and check appropriate boxes
+	switch (m_constraint)
+	{
+	case CONSTRAINT::X: CheckDlgButton(IDC_CHECK10, true); break;
+	case CONSTRAINT::Y: CheckDlgButton(IDC_CHECK18, true); break;
+	case CONSTRAINT::Z: CheckDlgButton(IDC_CHECK19, true); break;
+	case CONSTRAINT::XY: CheckDlgButton(IDC_CHECK10, true); CheckDlgButton(IDC_CHECK18, true); break;
+	case CONSTRAINT::XZ: CheckDlgButton(IDC_CHECK10, true); CheckDlgButton(IDC_CHECK19, true); break;
+	case CONSTRAINT::YZ: CheckDlgButton(IDC_CHECK18, true); CheckDlgButton(IDC_CHECK19, true); break;
+	case CONSTRAINT::NA: CheckDlgButton(IDC_CHECK10, true); CheckDlgButton(IDC_CHECK18, true); CheckDlgButton(IDC_CHECK19, true); break;
+	}
+}
+
+// X constraint has been selected
+void LightDialogue::OnBnClickedX()
+{
+	// Switch between checked/unchecked
+	m_x = IsDlgButtonChecked(IDC_CHECK23);
+
+	UpdateSelectedConstraint();
+}
+
+// Y constraint has been selected
+void LightDialogue::OnBnClickedY()
+{
+	// Switch between checked/unchecked
+	m_y = IsDlgButtonChecked(IDC_CHECK24);
+
+	UpdateSelectedConstraint();
+}
+
+// Z constraint has been selected
+void LightDialogue::OnBnClickedZ()
+{
+	// Switch between checked/unchecked
+	m_z = IsDlgButtonChecked(IDC_CHECK25);
+
+	UpdateSelectedConstraint();
+}
+
 // Update remaining light details when one is changed ///////////////////////////////////////////////
 
 void LightDialogue::UpdateID(std::pair<Light*, int>* light)
@@ -660,4 +754,34 @@ void LightDialogue::UpdateQuadA(int ID)
 	// Update linear attenuation box
 	CString sA; sA.Format(L"%g", quadA);
 	m_eQuadA.SetWindowTextW(sA);
+}
+
+void LightDialogue::UpdateSelectedConstraint()
+{
+	// If x, y and z constraints are selected
+	if (m_x && m_y && m_z) { m_constraint = CONSTRAINT::NA; }
+
+	// Else, if x and y constraints are selected
+	else if (m_x && m_y) { m_constraint = CONSTRAINT::XY; }
+
+	// Else, if x and z constraints are selected
+	else if (m_x && m_z) { m_constraint = CONSTRAINT::XZ; }
+
+	// Else, if y and z constraints are selected
+	else if (m_y && m_z) { m_constraint = CONSTRAINT::YZ; }
+
+	// Else, if only x constraint is selected
+	else if (m_x) { m_constraint = CONSTRAINT::X; }
+
+	// Else, if only y constraint is selected
+	else if (m_y) { m_constraint = CONSTRAINT::Y; }
+
+	// Else, if only z constraint is selected
+	else if (m_z) { m_constraint = CONSTRAINT::Z; }
+
+	// Else, if no constraints are selected
+	else { m_constraint = CONSTRAINT::NA; }
+
+	// Update constraint box
+	m_boxConst.SetCurSel((int)m_constraint);
 }

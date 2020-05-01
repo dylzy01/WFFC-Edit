@@ -271,7 +271,23 @@ void MFCMain::CheckDialogues()
 					}
 				}
 			}
-		}	
+		}
+
+		// Else, if light is being translated
+		else if (m_lightDialogue.GetTranslating())
+		{
+			// Set tool editor
+			m_toolSystem.SetEditor(EDITOR::OBJECT_FUNCTION);
+
+			// Set transform mode
+			m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::TRANSLATE);
+
+			// Set constraint
+			m_toolSystem.SetObjectConstraint(m_lightDialogue.GetConstraint());
+
+			// Update selected object (light)
+			m_toolSystem.SetSelectedObjectID(m_lightDialogue.GetSelectedLightID());
+		}
 	}
 
 	// Else, if terrain inspector is active
