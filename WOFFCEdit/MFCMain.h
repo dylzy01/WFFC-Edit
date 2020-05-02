@@ -8,8 +8,8 @@
 #include "ToolMain.h"
 #include "resource.h"
 #include "MFCFrame.h"
+
 #include "SelectDialogue.h"
-#include "ObjectDialogue.h"
 #include "LandscapeDialogue.h"
 
 #include "ObjectEditorDialogue.h"
@@ -39,6 +39,7 @@ private:
 	HWND m_toolHandle;	//Handle to the MFC window
 	ToolMain m_toolSystem;	//Instance of Tool System that we interface to. 
 	CRect m_windowRect;	//Window area rectangle. 
+
 	SelectDialogue m_toolSelectDialogue;			//for modeless dialogue, declare it here
 	LandscapeDialogue m_toolLandscapeDialogue;
 

@@ -796,8 +796,8 @@ void DisplayChunk::SculptTerrain(int row, int column, TERRAIN_SCULPT sculpt, CON
 	//		(start.z - others[i].z) * (start.z - others[i].z));
 	//	distances.push_back(dist);
 	//}
-		
-	// Loop through distances
+	//	
+	//// Loop through distances
 	//for (int i = 0; i < distances.size(); ++i)
 	//{
 	//	// Divide each distance to put in 0,1 interval
@@ -817,13 +817,61 @@ void DisplayChunk::SculptTerrain(int row, int column, TERRAIN_SCULPT sculpt, CON
 	//	case CONSTRAINT::Y:
 	//	{
 	//		// Increase position
-	//		m_terrainGeometry[row][column].position.y += 1.f;
+	//		m_terrainGeometry[row][column].position.y += m_scaleFactor;
 	//		m_terrainGeometry[row][column + 1].position.y += distances[0];
 	//		m_terrainGeometry[row + 1][column + 1].position.y += distances[1];
 	//		m_terrainGeometry[row + 1][column].position.y += distances[2];
 	//	}
 	//	break;
 	//	}
+	//}
+	
+	// Centre point
+	///DirectX::VertexPositionNormalTexture* centre = &m_terrainGeometry[row][column];
+
+	// Surrounding points
+	//std::vector<DirectX::VertexPositionNormalTexture*> surroundings;
+	//surroundings.push_back(&m_terrainGeometry[row - 1][column - 1]);	// Top left
+	//surroundings.push_back(&m_terrainGeometry[row - 1][column]);		// Top Middle
+	//surroundings.push_back(&m_terrainGeometry[row - 1][column + 1]);	// Top Right
+	//surroundings.push_back(&m_terrainGeometry[row][column - 1]);		// Left
+	//surroundings.push_back(&m_terrainGeometry[row][column + 1]);		// Right
+	//surroundings.push_back(&m_terrainGeometry[row + 1][column - 1]);	// Bottom left
+	//surroundings.push_back(&m_terrainGeometry[row + 1][column]);		// Bottom Middle
+	//surroundings.push_back(&m_terrainGeometry[row + 1][column + 1]);	// Bottom Right
+
+	// Quad sculpt setup ///////////////////////////////////////////////
+	//std::vector<int> rows = { row, row, row + 1, row + 1 };
+	//std::vector<int> cols = { column, column + 1, column + 1, column };
+	//std::vector<DirectX::VertexPositionNormalTexture*> quad;
+	//quad.push_back(&m_terrainGeometry[rows[0]][cols[0]]);
+	//quad.push_back(&m_terrainGeometry[rows[1]][cols[1]]);
+	//quad.push_back(&m_terrainGeometry[rows[2]][cols[2]]);
+	//quad.push_back(&m_terrainGeometry[rows[3]][cols[3]]);
+	//std::vector<DirectX::VertexPositionNormalTexture*> surroundings;
+	//// Top left
+	//{
+	//	surroundings.push_back(&m_terrainGeometry[rows[0]][cols[0] - 1]);
+	//	surroundings.push_back(&m_terrainGeometry[rows[0] - 1][cols[0] - 1]);
+	//	surroundings.push_back(&m_terrainGeometry[rows[0] - 1][cols[0]]);
+	//}
+	//// Top right
+	//{
+	//	surroundings.push_back(&m_terrainGeometry[rows[1] - 1][cols[1]]);
+	//	surroundings.push_back(&m_terrainGeometry[rows[1] - 1][cols[1] + 1]);
+	//	surroundings.push_back(&m_terrainGeometry[rows[1]][cols[1] + 1]);
+	//}
+	//// Bottom right
+	//{
+	//	surroundings.push_back(&m_terrainGeometry[rows[2]][cols[2] + 1]);
+	//	surroundings.push_back(&m_terrainGeometry[rows[2] + 1][cols[2] + 1]);
+	//	surroundings.push_back(&m_terrainGeometry[rows[2] + 1][cols[2]]);
+	//}
+	//// Bottom left
+	//{
+	//	surroundings.push_back(&m_terrainGeometry[rows[3] + 1][cols[3]]);
+	//	surroundings.push_back(&m_terrainGeometry[rows[3] + 1][cols[3] - 1]);
+	//	surroundings.push_back(&m_terrainGeometry[rows[3]][cols[3] - 1]);
 	//}
 	
 	// Switch between sculpt parameter
@@ -886,12 +934,12 @@ void DisplayChunk::SculptTerrain(int row, int column, TERRAIN_SCULPT sculpt, CON
 		}
 		break;
 		case CONSTRAINT::Y:
-		{
+		{				
 			// Increase position
-			m_terrainGeometry[row][column].position.y += m_scaleFactor;
-			m_terrainGeometry[row][column + 1].position.y += m_scaleFactor;
-			m_terrainGeometry[row + 1][column + 1].position.y += m_scaleFactor;
-			m_terrainGeometry[row + 1][column].position.y += m_scaleFactor;
+			//m_terrainGeometry[row][column].position.y += m_scaleFactor;
+			//m_terrainGeometry[row][column + 1].position.y += m_scaleFactor;
+			//m_terrainGeometry[row + 1][column + 1].position.y += m_scaleFactor;
+			//m_terrainGeometry[row + 1][column].position.y += m_scaleFactor;
 		}
 		break;
 		case CONSTRAINT::Z:
@@ -1054,24 +1102,24 @@ void DisplayChunk::SculptTerrain(int row, int column, TERRAIN_SCULPT sculpt, CON
 			// Y
 			{
 				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column].position.y >= position[0].y + m_scaleFactor) { m_terrainGeometry[row][column].position.y -= m_scaleFactor; }
+				if (m_terrainGeometry[row][column].position.y > position[0].y + 1.f) { m_terrainGeometry[row][column].position.y -= 1.f; }
 				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column].position.y < position[0].y - m_scaleFactor) { m_terrainGeometry[row][column].position.y += m_scaleFactor; }
+				else if (m_terrainGeometry[row][column].position.y < position[0].y - 1.f) { m_terrainGeometry[row][column].position.y += 1.f; }
 
 				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column + 1].position.y >= position[1].y + m_scaleFactor) { m_terrainGeometry[row][column + 1].position.y -= m_scaleFactor; }
+				if (m_terrainGeometry[row][column + 1].position.y > position[1].y + 1.f) { m_terrainGeometry[row][column + 1].position.y -= 1.f; }
 				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column + 1].position.y < position[1].y - m_scaleFactor) { m_terrainGeometry[row][column + 1].position.y += m_scaleFactor; }
+				else if (m_terrainGeometry[row][column + 1].position.y < position[1].y - 1.f) { m_terrainGeometry[row][column + 1].position.y += 1.f; }
 
 				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column + 1].position.y >= position[2].y + m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.y -= m_scaleFactor; }
+				if (m_terrainGeometry[row + 1][column + 1].position.y > position[2].y + 1.f) { m_terrainGeometry[row + 1][column + 1].position.y -= 1.f; }
 				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column + 1].position.y < position[2].y - m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.y += m_scaleFactor; }
+				else if (m_terrainGeometry[row + 1][column + 1].position.y < position[2].y - 1.f) { m_terrainGeometry[row + 1][column + 1].position.y += 1.f; }
 
 				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column].position.y >= position[3].y + m_scaleFactor) { m_terrainGeometry[row + 1][column].position.y -= m_scaleFactor; }
+				if (m_terrainGeometry[row + 1][column].position.y > position[3].y + 1.f) { m_terrainGeometry[row + 1][column].position.y -= m_scaleFactor; }
 				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column].position.y < position[3].y - m_scaleFactor) { m_terrainGeometry[row + 1][column].position.y += m_scaleFactor; }
+				else if (m_terrainGeometry[row + 1][column].position.y < position[3].y - 1.f) { m_terrainGeometry[row + 1][column].position.y += m_scaleFactor; }
 			}
 		}
 		break;

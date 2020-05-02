@@ -89,7 +89,7 @@ int MFCMain::Run()
 			std::wstring statusString = L"";
 
 			// Fill status string with selected object IDs
-			std::vector<int> IDs = m_toolSystem.getCurrentObjectSelectionID();
+			std::vector<int> IDs = m_toolSystem.getSelectedObjectIDs();
 			for (int i = 0; i < IDs.size(); ++i)
 			{
 				if (i != 0) { statusString += L", " + std::to_wstring(IDs[i]); }
@@ -222,8 +222,43 @@ void MFCMain::CheckDialogues()
 	// If light inspector is active
 	else if (m_lightDialogue.GetActive())
 	{	
-		// Update selected object (light)
-		m_toolSystem.SetSelectedObjectID(m_lightDialogue.GetSelectedLightID());
+		// If dialogue is requesting display list
+		if (m_lightDialogue.GetRequest())
+		{
+			// Reset request
+			m_lightDialogue.SetRequest(false);
+
+			// Update display list
+			m_lightDialogue.SetLightData(&m_toolSystem.GetSceneGraph(), &m_toolSystem.GetDisplayList());
+		}
+
+		// If should focus on a light
+		if (m_lightDialogue.GetFocus())
+		{
+			// Setup temp focus ID
+			int focusID = -1;
+			
+			// If more than one object is selected
+			if (m_lightDialogue.GetSelectedLightIDs().size() > 1)
+			{				
+				// Define object ID to focus on
+				focusID = m_lightDialogue.GetFocusDialogue()->GetSelectedIndex();												
+			}
+
+			// Else, if just one object is selected
+			else if (m_lightDialogue.GetSelectedLightIDs().size() == 1)
+			{
+				// Define object ID to focus on
+				focusID = m_lightDialogue.GetSelectedLightIDs()[0];
+			}			
+			
+			// Setup object ID to focus on
+			m_toolSystem.SetFocus(focusID);
+		}
+		else { m_toolSystem.SetFocus(-1); }
+	
+		// Update selected objects (light)
+		m_toolSystem.SetSelectedObjectIDs(m_lightDialogue.GetSelectedLightIDs());
 	
 		// If scene graph should be updated
 		if (m_lightDialogue.GetUpdate())
@@ -292,12 +327,16 @@ void MFCMain::CheckDialogues()
 			// Loop through lights
 			for (int i = 0; i < m_lightDialogue.GetLights().size(); ++i)
 			{
-				// If light matches currently selected
-				if (m_lightDialogue.GetLights()[i].m_ID == m_lightDialogue.GetSelectedLightID())
+				// Loop through selection
+				for (int j = 0; j < m_lightDialogue.GetSelectedLightIDs().size(); ++j)
 				{
-					// Update position
-					m_lightDialogue.UpdateLightPosition(m_toolSystem.GetLights()[i].GetPosition());
-				}
+					// If light matches currently selected
+					if (m_lightDialogue.GetLights()[i].m_ID == m_lightDialogue.GetSelectedLightIDs()[j])
+					{
+						// Update position
+						m_lightDialogue.UpdateLightPosition(m_toolSystem.GetLights()[i].GetPosition());
+					}
+				}				
 			}
 		}
 
@@ -570,6 +609,7 @@ void MFCMain::ToolBarRedo()
 void MFCMain::ToolBarLight()
 {
 	// Destroy other windows
+	///if (m_objectDialogue.IsWindowVisible())
 	m_objectDialogue.DestroyWindow();
 	m_spawnDialogue.DestroyWindow();
 	m_terrainDialogue.DestroyWindow();
@@ -580,7 +620,25 @@ void MFCMain::ToolBarLight()
 	m_lightDialogue.Create(IDD_DIALOG8);
 	m_lightDialogue.ShowWindow(SW_SHOW);
 	m_lightDialogue.SetActive(true);
-	m_lightDialogue.SetLightData(&m_toolSystem.GetSceneGraph(), &m_toolSystem.GetLights());
+	m_lightDialogue.SetLightData(&m_toolSystem.GetSceneGraph(), &m_toolSystem.GetDisplayList());
+	
+	// Setup temp light ID container
+	std::vector<int> IDs;
+
+	// Loop through currently selected objects
+	for (int i = 0; i < m_toolSystem.getSelectedObjectIDs().size(); ++i)
+	{
+		// If object is a light
+		if (m_toolSystem.GetSceneGraph()[m_toolSystem.getSelectedObjectIDs()[i]].m_type == OBJECT_TYPE::LIGHT)
+		{
+			// Add ID to container
+			IDs.push_back(m_toolSystem.GetSceneGraph()[m_toolSystem.getSelectedObjectIDs()[i]].ID);
+		}
+	}
+
+	// Set current selection
+	///m_lightDialogue.SetLightData(&m_toolSystem.GetLights(), IDs);
+	m_lightDialogue.SetSelection(IDs);
 }
 
 void MFCMain::ToolBarTerrain()

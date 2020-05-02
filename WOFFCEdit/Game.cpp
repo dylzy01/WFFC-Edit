@@ -24,6 +24,7 @@ Game::Game()
 	m_grid = false;
 	m_storeTerrainPosition = true;
 	m_storeObjectDetails = true;
+	m_fpsCount = m_fpsTrue = 0;
 }
 
 Game::~Game()
@@ -297,8 +298,7 @@ void Game::Render()
 
 	WCHAR   Buffer[256];
 
-	// Frames Per Second
-	std::wstring fps = L"FPS: " + std::to_wstring(int(1 / m_deltaTime));
+	std::wstring fps = L"FPS: " + std::to_wstring(int(m_timer.GetFramesPerSecond() / m_deltaTime) / 10);
 	m_font->DrawString(m_sprites.get(), fps.c_str(), XMFLOAT2(800, 10), Colors::Red);
 
 	m_sprites->End();
@@ -443,11 +443,14 @@ void Game::DrawDebug(int i)
 	m_deviceResources->PIXEndEvent();
 }
 
-std::vector<SceneObject> Game::SetupObjectTypes(std::vector<SceneObject> sceneGraph)
+std::vector<SceneObject> Game::SetupObjects(std::vector<SceneObject> sceneGraph)
 {
 	// Loop through scene graph
 	for (int i = 0; i < sceneGraph.size(); ++i)
 	{
+		// Set ID
+		///sceneGraph[i].ID = i;
+		
 		// Object isn't water
 		sceneGraph[i].m_isWater = false;
 
@@ -542,7 +545,7 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 	
 	// Update local scene graph
 	///m_sceneGraph = *sceneGraph;
-	m_sceneGraph = SetupObjectTypes(*sceneGraph);
+	m_sceneGraph = SetupObjects(*sceneGraph);
 	
 	auto device = m_deviceResources->GetD3DDevice();
 	auto context = m_deviceResources->GetD3DDeviceContext();
@@ -916,6 +919,34 @@ void Game::SetLights(std::vector<DisplayObject> lights)
 			}
 		}		
 	}
+}
+
+void Game::SetFocus(int ID)
+{
+	// If ID is valid
+	if (ID >= 0)
+	{
+		// Loop through display list
+		for (int i = 0; i < m_displayList.size(); ++i)
+		{
+			// If display object matches focus ID
+			if (m_displayList[i].m_ID == ID)
+			{
+				// Tell camera to focus
+				m_camera->SetFocus(true);
+
+				// Define object to focus on
+				m_camera->SetFocusObject(m_displayList[i]);
+			}
+		}
+	}
+	
+	// Else, if ID isn't valid
+	else
+	{
+		// Tell camera to stop focussing
+		m_camera->SetFocus(false);
+	}	
 }
 
 #ifdef DXTK_AUDIO

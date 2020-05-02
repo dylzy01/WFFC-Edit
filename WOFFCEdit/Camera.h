@@ -3,6 +3,7 @@
 
 #include "pch.h"
 #include "InputCommands.h"
+#include "DisplayObject.h"
 
 #define PI 3.1415
 
@@ -31,8 +32,9 @@ public:
 	DirectX::SimpleMath::Vector3 GetUp() { return m_up; }
 
 	// Setters
-	void SetLookAt(DirectX::SimpleMath::Vector3 lookAt) { m_lookAt = lookAt; SetLookingAtObject(true); }
-	void SetLookingAtObject(bool looking) { m_lookingAtObject = looking; }
+	void SetLookAt(DirectX::SimpleMath::Vector3 lookAt) { m_lookAt = lookAt; SetFocus(true); }
+	void SetFocus(bool focussing) { m_focussing = focussing; }
+	void SetFocusObject(DisplayObject object) { m_focusObject = object; }
 
 protected:
 	// Input
@@ -44,7 +46,11 @@ protected:
 	// Vectors
 	DirectX::SimpleMath::Vector3 m_up, m_lookAt, m_right, m_forward, m_position;
 
-	// Controllers
-	bool m_lookingAtObject = false;
+	// Rotation controllers
+	float m_centreX, m_centreY, m_deltaTime;
+
+	// Focus controllers
+	bool m_focussing = false;
+	DisplayObject m_focusObject;
 };
 

@@ -174,6 +174,7 @@
     <ClCompile Include="DeviceResources.cpp" />
     <ClCompile Include="DisplayChunk.cpp" />
     <ClCompile Include="DisplayObject.cpp" />
+    <ClCompile Include="FocusDialogue.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="LandscapeDialogue.cpp" />
     <ClCompile Include="LandscapeManager.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="DeviceResources.h" />
     <ClInclude Include="DisplayChunk.h" />
     <ClInclude Include="DisplayObject.h" />
+    <ClInclude Include="FocusDialogue.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="InputCommands.h" />
     <ClInclude Include="LandscapeDialogue.h" />

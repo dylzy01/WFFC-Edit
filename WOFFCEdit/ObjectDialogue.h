@@ -42,7 +42,7 @@ public:
 	bool GetObjectsSetup() { return m_objectSetup; }
 	float GetSnap() { if (m_snapTerrain) { return -1; } else if (m_snapValue) { return m_snapScale; } }
 	int GetSelection() { return m_selection; }
-	std::vector<SceneObject> GetSceneGraph() { return m_objects; }
+	std::vector<SceneObject> GetObjects() { return m_objects; }
 	OBJECT_FUNCTION GetFunction() { return m_function; }
 	CONSTRAINT GetConstraint() { return m_constraint; }
 	

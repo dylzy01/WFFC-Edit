@@ -170,6 +170,9 @@
     <ClCompile Include="ObjectDialogue.cpp">
       <Filter>MFC\Dialogues\Misc</Filter>
     </ClCompile>
+    <ClCompile Include="FocusDialogue.cpp">
+      <Filter>MFC\Dialogues</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -305,6 +308,9 @@
     </ClInclude>
     <ClInclude Include="ObjectDialogue.h">
       <Filter>MFC\Dialogues\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="FocusDialogue.h">
+      <Filter>MFC\Dialogues</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

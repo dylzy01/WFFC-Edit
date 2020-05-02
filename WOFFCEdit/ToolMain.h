@@ -19,7 +19,7 @@ public: //methods
 	~ToolMain() { SQLManager::Disconnect(); }
 
 	//onAction - These are the interface to MFC
-	std::vector<int>	getCurrentObjectSelectionID() { return m_selectedObjectIDs; }		//returns the selection numbers of currently selected objects so that It can be displayed.
+	std::vector<int>	getSelectedObjectIDs() { return m_selectedObjectIDs; }		//returns the selection numbers of currently selected objects so that It can be displayed.
 	std::vector<TERRAIN>	getCurrentTerrainSelection() { return m_selectedTerrains; }		//returns the currently selected chunk so it can be displayed
 	void				onActionInitialise(HWND handle, int width, int height);				//Passes through handle and hieght and width and initialises DirectX renderer and SQL LITE
 	void				onActionFocusCamera();
@@ -39,6 +39,7 @@ public: //methods
 	// Getters
 	EDITOR GetEditor() { return m_d3dRenderer.GetEditor(); } //return current editor
 	std::vector<DisplayObject> GetLights() { return m_d3dRenderer.GetLights(); }
+	std::vector<DisplayObject> GetDisplayList() { return m_d3dRenderer.GetDisplayList(); }
 	DisplayChunk* GetDisplayChunk() { return m_d3dRenderer.GetDisplayChunk(); }
 	std::vector<SceneObject> GetSceneGraph() { return m_d3dRenderer.GetSceneGraph(); }
 	InputCommands* GetInput() { return &m_toolInputCommands; }
@@ -121,8 +122,10 @@ public: //methods
 		m_selectedObjectIDs.push_back(ID); 
 		m_d3dRenderer.SetSelectedObjectIDs(m_selectedObjectIDs); 
 	}
+	void SetSelectedObjectIDs(std::vector<int> IDs) { m_selectedObjectIDs = IDs; m_d3dRenderer.SetSelectedObjectIDs(m_selectedObjectIDs); }
 	///void SetLights(std::pair<std::vector<Light*>, std::vector<int>>& lights) { m_lights = lights; }
 	void SetSelectedTerrain(TERRAIN& terrain) { m_selectedTerrain = terrain; }
+	void SetFocus(int ID) { m_d3dRenderer.SetFocus(ID); }
 
 public:	//variables
 	std::vector<SceneObject>    m_sceneGraph;	//our scenegraph storing all the objects in the current chunk

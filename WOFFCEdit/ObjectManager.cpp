@@ -265,9 +265,17 @@ void ObjectManager::Remove(std::vector<int> & IDs, std::vector<SceneObject> & sc
 			//	// Erase from renderer storage
 			//	m_game->RemoveLight(ID);
 			//}
-			
-			// Remove objects from database
-			SQLManager::RemoveObject(sceneGraph[IDs[i]]);			
+
+			// Loop through scene graph
+			for (int j = 0; j < sceneGraph.size(); ++j)
+			{
+				// If scene graph ID matches selected ID
+				if (sceneGraph[j].ID == IDs[i])
+				{
+					// Remove objects from database
+					SQLManager::RemoveObject(sceneGraph[j]);
+				}
+			}					
 		}	
 
 		// Clear all selected object IDs
@@ -416,71 +424,79 @@ void ObjectManager::Copy(std::vector<int> IDs, std::vector<SceneObject> sceneGra
 	// Loop through selected objects
 	for (int i = 0; i < IDs.size(); ++i)
 	{
-		// Setup temp scene object
-		SceneObject object;
-
-		// Define object values
+		// Loop through scene graph
+		for (int j = 0; j < sceneGraph.size(); ++j)
 		{
-			object.ID = sceneGraph.size();
-			object.chunk_ID = sceneGraph[IDs[i]].chunk_ID;
-			object.posX = sceneGraph[IDs[i]].posX + 5.f;
-			object.posY = sceneGraph[IDs[i]].posY;
-			object.posZ = sceneGraph[IDs[i]].posZ + 5.f;
-			object.rotX = sceneGraph[IDs[i]].rotX;
-			object.rotY = sceneGraph[IDs[i]].rotY;
-			object.rotZ = sceneGraph[IDs[i]].rotZ;
-			object.scaX = sceneGraph[IDs[i]].scaX;
-			object.scaY = sceneGraph[IDs[i]].scaY;
-			object.scaZ = sceneGraph[IDs[i]].scaZ;
-			object.render = sceneGraph[IDs[i]].render;
-			object.collectable = sceneGraph[IDs[i]].collectable;
-			object.collision_mesh = sceneGraph[IDs[i]].collision_mesh;
-			object.destructable = sceneGraph[IDs[i]].destructable;
-			object.health_amount = sceneGraph[IDs[i]].health_amount;
-			object.editor_render = sceneGraph[IDs[i]].editor_render;
-			object.editor_texture_vis = sceneGraph[IDs[i]].editor_texture_vis;
-			object.editor_normals_vis = sceneGraph[IDs[i]].editor_normals_vis;
-			object.editor_collision_vis = sceneGraph[IDs[i]].editor_collision_vis;
-			object.editor_pivot_vis = sceneGraph[IDs[i]].editor_pivot_vis;
-			object.pivotX = sceneGraph[IDs[i]].pivotX;
-			object.pivotY = sceneGraph[IDs[i]].pivotY;
-			object.pivotZ = sceneGraph[IDs[i]].pivotZ;
-			object.snapToGround = sceneGraph[IDs[i]].snapToGround;
-			object.AINode = sceneGraph[IDs[i]].AINode;
-			object.audio_path = sceneGraph[IDs[i]].audio_path;
-			object.volume = sceneGraph[IDs[i]].volume;
-			object.pitch = sceneGraph[IDs[i]].pitch;
-			object.pan = sceneGraph[IDs[i]].pan;
-			object.one_shot = sceneGraph[IDs[i]].one_shot;
-			object.play_on_init = sceneGraph[IDs[i]].play_on_init;
-			object.play_in_editor = sceneGraph[IDs[i]].play_in_editor;
-			object.min_dist = sceneGraph[IDs[i]].min_dist;
-			object.max_dist = sceneGraph[IDs[i]].max_dist;
-			object.camera = sceneGraph[IDs[i]].camera;
-			object.path_node = sceneGraph[IDs[i]].path_node;
-			object.path_node_start = sceneGraph[IDs[i]].path_node_start;
-			object.path_node_end = sceneGraph[IDs[i]].path_node_end;
-			object.parent_id = sceneGraph[IDs[i]].parent_id;
-			object.editor_wireframe = sceneGraph[IDs[i]].editor_wireframe;
-			object.light_type = sceneGraph[IDs[i]].light_type;
-			object.light_diffuse_r = sceneGraph[IDs[i]].light_diffuse_r;
-			object.light_diffuse_g = sceneGraph[IDs[i]].light_diffuse_g;
-			object.light_diffuse_b = sceneGraph[IDs[i]].light_diffuse_b;
-			object.light_specular_r = sceneGraph[IDs[i]].light_specular_r;
-			object.light_specular_g = sceneGraph[IDs[i]].light_specular_g;
-			object.light_specular_b = sceneGraph[IDs[i]].light_specular_b;
-			object.light_spot_cutoff = sceneGraph[IDs[i]].light_spot_cutoff;
-			object.light_constant = sceneGraph[IDs[i]].light_constant;
-			object.light_linear = sceneGraph[IDs[i]].light_linear;
-			object.light_quadratic = sceneGraph[IDs[i]].light_quadratic;
+			// If scene object ID matches selected ID
+			if (sceneGraph[j].ID == IDs[i])
+			{
+				// Setup temp scene object
+				SceneObject object;
 
-			object.m_isWater = sceneGraph[IDs[i]].m_isWater;
-			object.model_path = sceneGraph[IDs[i]].model_path;
-			object.tex_diffuse_path = sceneGraph[IDs[i]].tex_diffuse_path;
-		}
+				// Define object values
+				{
+					object.ID = sceneGraph.size();
+					object.chunk_ID = sceneGraph[j].chunk_ID;
+					object.posX = sceneGraph[j].posX + 5.f;
+					object.posY = sceneGraph[j].posY;
+					object.posZ = sceneGraph[j].posZ + 5.f;
+					object.rotX = sceneGraph[j].rotX;
+					object.rotY = sceneGraph[j].rotY;
+					object.rotZ = sceneGraph[j].rotZ;
+					object.scaX = sceneGraph[j].scaX;
+					object.scaY = sceneGraph[j].scaY;
+					object.scaZ = sceneGraph[j].scaZ;
+					object.render = sceneGraph[j].render;
+					object.collectable = sceneGraph[j].collectable;
+					object.collision_mesh = sceneGraph[j].collision_mesh;
+					object.destructable = sceneGraph[j].destructable;
+					object.health_amount = sceneGraph[j].health_amount;
+					object.editor_render = sceneGraph[j].editor_render;
+					object.editor_texture_vis = sceneGraph[j].editor_texture_vis;
+					object.editor_normals_vis = sceneGraph[j].editor_normals_vis;
+					object.editor_collision_vis = sceneGraph[j].editor_collision_vis;
+					object.editor_pivot_vis = sceneGraph[j].editor_pivot_vis;
+					object.pivotX = sceneGraph[j].pivotX;
+					object.pivotY = sceneGraph[j].pivotY;
+					object.pivotZ = sceneGraph[j].pivotZ;
+					object.snapToGround = sceneGraph[j].snapToGround;
+					object.AINode = sceneGraph[j].AINode;
+					object.audio_path = sceneGraph[j].audio_path;
+					object.volume = sceneGraph[j].volume;
+					object.pitch = sceneGraph[j].pitch;
+					object.pan = sceneGraph[j].pan;
+					object.one_shot = sceneGraph[j].one_shot;
+					object.play_on_init = sceneGraph[j].play_on_init;
+					object.play_in_editor = sceneGraph[j].play_in_editor;
+					object.min_dist = sceneGraph[j].min_dist;
+					object.max_dist = sceneGraph[j].max_dist;
+					object.camera = sceneGraph[j].camera;
+					object.path_node = sceneGraph[j].path_node;
+					object.path_node_start = sceneGraph[j].path_node_start;
+					object.path_node_end = sceneGraph[j].path_node_end;
+					object.parent_id = sceneGraph[j].parent_id;
+					object.editor_wireframe = sceneGraph[j].editor_wireframe;
+					object.light_type = sceneGraph[j].light_type;
+					object.light_diffuse_r = sceneGraph[j].light_diffuse_r;
+					object.light_diffuse_g = sceneGraph[j].light_diffuse_g;
+					object.light_diffuse_b = sceneGraph[j].light_diffuse_b;
+					object.light_specular_r = sceneGraph[j].light_specular_r;
+					object.light_specular_g = sceneGraph[j].light_specular_g;
+					object.light_specular_b = sceneGraph[j].light_specular_b;
+					object.light_spot_cutoff = sceneGraph[j].light_spot_cutoff;
+					object.light_constant = sceneGraph[j].light_constant;
+					object.light_linear = sceneGraph[j].light_linear;
+					object.light_quadratic = sceneGraph[j].light_quadratic;
 
-		// Add object to storage
-		m_objectsToCopy.push_back(object);		
+					object.m_isWater = sceneGraph[j].m_isWater;
+					object.model_path = sceneGraph[j].model_path;
+					object.tex_diffuse_path = sceneGraph[j].tex_diffuse_path;
+				}
+
+				// Add object to storage
+				m_objectsToCopy.push_back(object);
+			}
+		}			
 	}
 }
 

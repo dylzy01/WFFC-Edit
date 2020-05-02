@@ -1,6 +1,5 @@
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\vc141.pdb
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\vc141.idb
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\paintdialogue.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\objectspawndialogue.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\objectmanager.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\objecteditordialogue.obj
@@ -13,6 +12,7 @@ c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\light
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\landscapemanager.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\landscapedialogue.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\game.obj
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\focusdialogue.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\displayobject.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\displaychunk.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\deviceresources.obj
@@ -30,6 +30,7 @@ c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\terra
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\terrainpaintdialogue.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\terraindialogue.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\sqlmanager.obj
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\spawndialogue.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\shadermanager.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\selectdialogue.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\sculptdialogue.obj
@@ -37,6 +38,7 @@ c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\scene
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\scenemanager.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\mfcmain.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\pch.obj
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\paintdialogue.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\sqlite3.obj
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\blend_ps.cso
 c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\debug\blend_vs.cso

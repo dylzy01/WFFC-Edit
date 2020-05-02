@@ -63,12 +63,26 @@ void Camera::Update()
 	m_forward.y = sinP;
 	m_forward.z = cosP * -cosY;
 
-	// Look At
-	if (!m_lookingAtObject)
+	// If not focussing at an object
+	if (!m_focussing)
 	{
+		// Look At
 		m_lookAt.x = m_position.x + m_forward.x;
 		m_lookAt.y = m_position.y + m_forward.y;
 		m_lookAt.z = m_position.z + m_forward.z;
+	}
+
+	// Else, if focussing on an object
+	else
+	{
+		// Look At
+		m_lookAt.x = m_focusObject.GetPosition().x;/// + m_forward.x;
+		m_lookAt.y = m_focusObject.GetPosition().y;/// + m_forward.y;
+		m_lookAt.z = m_focusObject.GetPosition().z;/// + m_forward.z;
+
+		// Setup forward to be distance between object and camera position
+		m_forward = DirectX::SimpleMath::Vector3(m_focusObject.GetPosition() - m_position);
+		m_forward.Normalize();
 	}
 
 	// Up
@@ -83,6 +97,9 @@ void Camera::Update()
 void Camera::HandleInput(InputCommands * input, float deltaTime, float centre_x, float centre_y, POINT cursorPos)
 {
 	m_input = input;
+	m_deltaTime = deltaTime;
+	m_centreX = centre_x;
+	m_centreY = centre_y;
 
 	// Move up
 	if (m_input->E) {
@@ -120,10 +137,12 @@ void Camera::HandleInput(InputCommands * input, float deltaTime, float centre_x,
 		Update();
 	}
 
-	// Rotation
-	if (m_input->mouseWheel) {
-		TrackMouse(centre_x, centre_y, cursorPos, deltaTime);
-		Update();
+	// Rotation (if not focussing on an object)
+	if (!m_focussing) {
+		if (m_input->mouseWheel) {
+			TrackMouse(centre_x, centre_y, cursorPos, deltaTime);
+			Update();
+		}
 	}
 }
 
@@ -151,7 +170,15 @@ void Camera::MoveLeft(float deltaTime)
 
 	// Move camera left
 	temp = -m_speed * m_right;
-	m_position.operator+=(temp);
+	
+	// If not focussing
+	if (!m_focussing) { m_position.operator+=(temp); }
+
+	// Else, if focussing
+	else {
+		m_position.x += temp.x;
+		m_position.z += temp.z;
+	}
 }
 
 void Camera::MoveRight(float deltaTime)
@@ -160,7 +187,15 @@ void Camera::MoveRight(float deltaTime)
 
 	// Move camera right
 	temp = m_speed * m_right;
-	m_position.operator+=(temp);
+	
+	// If not focussing
+	if (!m_focussing) { m_position.operator+=(temp); }
+
+	// Else, if focussing
+	else {
+		m_position.x += temp.x;
+		m_position.z += temp.z;
+	}
 }
 
 void Camera::MoveForward(float deltaTime)

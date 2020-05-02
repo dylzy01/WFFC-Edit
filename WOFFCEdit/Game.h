@@ -87,6 +87,7 @@ public:
 	void SetTransform(int i, OBJECT_FUNCTION function, DirectX::SimpleMath::Vector3 vector);
 	void SetLights(std::vector<DisplayObject> lights);
 	void SetSceneObject(SceneObject object, int index) { m_sceneGraph[index] = object; RebuildDisplayList(&m_sceneGraph); }
+	void SetFocus(int ID);
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
@@ -105,7 +106,7 @@ private:
 	void XM_CALLCONV DrawGrid(DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
 	void DrawDebug(int i);
 
-	std::vector<SceneObject> SetupObjectTypes(std::vector<SceneObject> sceneGraph);
+	std::vector<SceneObject> SetupObjects(std::vector<SceneObject> sceneGraph);
 
 	// frame time
 	float								m_deltaTime;
@@ -129,6 +130,7 @@ private:
 	bool m_grid;							//grid rendering on / off
 	bool m_wireframe = false;				//wireframe on/off
 	bool m_toggleRight = false;				//object snap to mouse location on/off
+	int m_fpsCount, m_fpsTrue;
 
 	//mouse picking
 	std::vector<int> m_selectedObjectIDs;

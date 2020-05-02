@@ -7,6 +7,7 @@
 #include "Tools.h"
 #include "Light.h"
 #include "ObjectManager.h"
+#include "FocusDialogue.h"
 
 // LightDialogue dialog
 
@@ -19,25 +20,41 @@ public:
 	virtual ~LightDialogue() {}
 
 	// Pass in data pointers the class will operate on
-	void SetLightData(std::vector<SceneObject>* sceneGraph, std::vector<DisplayObject>* lights);
+	void SetLightData(std::vector<SceneObject>* m_sceneGraph, std::vector<DisplayObject>* displayList);
 
 	// Update current light with dialogue values
 	void Update(int index);
 
 	// Update current light position
 	void UpdateLightPosition(DirectX::XMFLOAT3 position);
-	
+
+	// Setup IDs of currently available lights
+	void SetupLights();
+
 	// Getters
 	bool GetActive() { return m_active; }
 	bool GetUpdate() { return m_update; }
 	bool GetTranslating() { return m_translating; }
-	int GetSelectedLightID() { if (m_boxID.GetCurSel() >= 0) { return m_lights[m_boxID.GetCurSel()].m_ID; } else { return -1; } }
+	bool GetLightSetup() { return m_lightSetup; }
+	bool GetRequest() { return m_requestDisplayList; }
+	bool GetFocus() { return m_focus; }
+	///int GetSelectedLightID() { if (m_boxID.GetCurSel() >= 0) { return m_lights[m_boxID.GetCurSel()].m_ID; } else { return -1; } }
+	std::vector<int> GetSelectedLightIDs() { return m_selection; }
 	std::vector<DisplayObject> GetLights() { return m_lights; }
 	CONSTRAINT GetConstraint() { return m_constraint; }
+	// Focus
+	bool GetFocusActive() { return m_focusDialogue.GetActive(); }
+	bool GetFocusID() { return m_focusDialogue.GetSelectedIndex(); }
+	FocusDialogue* GetFocusDialogue() { return &m_focusDialogue; }
 
 	// Setters
 	void SetActive(bool active) { m_active = active; }
 	void SetUpdate(bool update) { m_update = update; }
+	void SetSelection(std::vector<int> selection) { m_selection = selection; }
+	void SetRequest(bool request) { m_requestDisplayList = request; SetupLights(); }
+	// Focus
+	void SetFocusActive(bool active) { m_focusDialogue.SetActive(active); }
+	void SetFocusUpdate(bool update) { m_focusDialogue.SetUpdate(update); }
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -51,19 +68,28 @@ protected:
 
 	// Local storage 
 	std::vector<SceneObject> m_sceneGraph;
+	std::vector<DisplayObject> m_displayList;
 	std::vector<DisplayObject> m_lights;
+	std::vector<int> m_selection;
 
 	// Controllers
 	bool m_active;
 	bool m_update;
 	bool m_translating;
 	bool m_x, m_y, m_z;
+	bool m_internal = false;
+	bool m_requestDisplayList = false;
+	bool m_focus = false;
 	CONSTRAINT m_constraint;
+
+	// Focus modal
+	FocusDialogue m_focusDialogue;
 
 	DECLARE_MESSAGE_MAP()
 public:
 	// Control variables for more efficient uses of the boxes
-	CComboBox m_boxID, m_boxType, m_boxConst;
+	CListBox m_boxID;
+	CComboBox m_boxType, m_boxConst;
 	CEdit m_ePosX, m_ePosY, m_ePosZ;
 	CEdit m_eDirX, m_eDirY, m_eDirZ;
 	CEdit m_eDifR, m_eDifG, m_eDifB;
@@ -74,12 +100,14 @@ public:
 	float m_fDifR, m_fDifG, m_fDifB;
 	float m_fAmbR, m_fAmbG, m_fAmbB;
 	float m_fConstA, m_fLinA, m_fQuadA;
+	bool m_lightSetup = false;
 
 	// Message handlers
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnCbnSelchangeID();
 	afx_msg void OnCbnSelchangeType();
 	afx_msg void OnBnClickedEnable();
+	afx_msg void OnBnClickedFocus();
 	afx_msg void OnEnChangePosX();
 	afx_msg void OnEnChangePosY();
 	afx_msg void OnEnChangePosZ();
@@ -96,6 +124,8 @@ public:
 	afx_msg void OnEnChangeLinA();
 	afx_msg void OnEnChangeQuadA();
 	afx_msg void OnBnClickedSpawn();
+	afx_msg void OnBnClickedDelete();
+	afx_msg void OnBnClickedDuplicate();
 	afx_msg void OnBnClickedTranslate();
 	afx_msg void OnBnSelchangeConstraint();
 	afx_msg void OnBnClickedX();
@@ -104,15 +134,15 @@ public:
 
 private:
 	// Update light details
-	void UpdateType(int ID);
-	void UpdateEnabled(int ID);
-	void UpdatePosition(int ID);
-	void UpdateDirection(int ID);
-	void UpdateDiffuse(int ID);
-	void UpdateAmbient(int ID);
-	void UpdateConstA(int ID);
-	void UpdateLinA(int ID);
-	void UpdateQuadA(int ID);
+	void UpdateType();
+	void UpdateEnabled();
+	void UpdatePosition();
+	void UpdateDirection();
+	void UpdateDiffuse();
+	void UpdateAmbient();
+	void UpdateConstA();
+	void UpdateLinA();
+	void UpdateQuadA();
 	void UpdateSelectedConstraint();
 
 private:
