@@ -62,7 +62,7 @@ protected:
 	afx_msg void End();									// Kill the dialogue
 
 	// Local storage
-	std::vector<SceneObject>* m_sceneGraph;
+	std::vector<SceneObject> m_sceneGraph;
 	std::vector<SceneObject> m_objects;
 	std::vector<int> m_selectedObjectIDs;
 	

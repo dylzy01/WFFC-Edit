@@ -19,7 +19,7 @@ ObjectDialogue::ObjectDialogue(CWnd* pParent /*=nullptr*/)
 void ObjectDialogue::SetObjectData(std::vector<SceneObject>* sceneGraph)
 {
 	// Local storage of scene graph
-	m_sceneGraph = sceneGraph;
+	m_sceneGraph = *sceneGraph;
 	///m_objects = objects;
 
 	// Setup IDs of currently available objects
@@ -233,7 +233,7 @@ void ObjectDialogue::OnCbnSelchangeType()
 						///m_objects[j].m_type = (OBJECT_TYPE)type;
 
 						// Replace object with new type
-						ObjectManager::Replace(m_objects[j].ID, *m_sceneGraph, (OBJECT_TYPE)type);
+						ObjectManager::Replace(m_objects[j].ID, m_sceneGraph, (OBJECT_TYPE)type);
 						break;
 					}					
 				}
@@ -793,7 +793,7 @@ void ObjectDialogue::OnBnClickedDelete()
 	if (m_selectedObjectIDs.size() > 0)
 	{
 		// Remove objects from database storage
-		ObjectManager::Remove(m_selectedObjectIDs, *m_sceneGraph);
+		ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph);
 
 		m_requestSceneGraph = true;
 	}
@@ -806,10 +806,10 @@ void ObjectDialogue::OnBnClickedDuplicate()
 	if (m_selectedObjectIDs.size() > 0)
 	{
 		// Copy objects
-		ObjectManager::Copy(m_selectedObjectIDs, *m_sceneGraph);
+		ObjectManager::Copy(m_selectedObjectIDs, m_sceneGraph);
 
 		// Paste objects
-		ObjectManager::Paste(*m_sceneGraph);
+		ObjectManager::Paste(m_sceneGraph);
 
 		m_requestSceneGraph = true;
 	}
@@ -827,16 +827,16 @@ void ObjectDialogue::SetupObjects()
 	int count = 0;
 
 	// Loop through objects in scene graph
-	for (int i = 0; i < m_sceneGraph->size(); ++i)
+	for (int i = 0; i < m_sceneGraph.size(); ++i)
 	{
 		// If object isn't a light
-		if (m_sceneGraph->at(i).m_type != OBJECT_TYPE::LIGHT)
+		if (m_sceneGraph[i].m_type != OBJECT_TYPE::LIGHT)
 		{
 			// Add to local storage
-			m_objects.push_back(m_sceneGraph->at(i));
+			m_objects.push_back(m_sceneGraph[i]);
 
 			// Add entries to ID combo box
-			std::wstring idBoxEntry = std::to_wstring(m_sceneGraph->at(i).ID);
+			std::wstring idBoxEntry = std::to_wstring(m_sceneGraph[i].ID);
 			m_boxID.AddString(idBoxEntry.c_str());
 
 			// Increase count 
