@@ -35,7 +35,6 @@ enum class OBJECT_TYPE {
 	GRASS,
 	TREE_ONE,
 	TREE_TWO,
-	WATER,
 
 	// Misc,
 	CUBE,
@@ -44,6 +43,7 @@ enum class OBJECT_TYPE {
 
 	// Other
 	LIGHT,
+	WATER,
 	NA
 };
 

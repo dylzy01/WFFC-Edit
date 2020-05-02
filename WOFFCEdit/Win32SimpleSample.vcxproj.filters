@@ -164,7 +164,12 @@
     <ClCompile Include="SculptDialogue.cpp">
       <Filter>MFC\Dialogues\Misc</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectDialogue.cpp" />
+    <ClCompile Include="SpawnDialogue.cpp">
+      <Filter>MFC\Dialogues\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectDialogue.cpp">
+      <Filter>MFC\Dialogues\Misc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -295,7 +300,12 @@
     <ClInclude Include="SculptDialogue.h">
       <Filter>MFC\Dialogues\Misc</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectDialogue.h" />
+    <ClInclude Include="SpawnDialogue.h">
+      <Filter>MFC\Dialogues\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectDialogue.h">
+      <Filter>MFC\Dialogues\Misc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -361,6 +371,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="bitmap15.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="bitmap16.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

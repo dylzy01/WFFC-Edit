@@ -22,6 +22,7 @@
 #include "PaintDialogue.h"
 #include "SculptDialogue.h"
 #include "ObjectDialogue.h"
+#include "SpawnDialogue.h"
 
 class MFCMain : public CWinApp 
 {
@@ -51,6 +52,7 @@ private:
 	PaintDialogue		m_paintDialogue;
 	SculptDialogue		m_sculptDialogue;
 	ObjectDialogue		m_objectDialogue;
+	SpawnDialogue		m_spawnDialogue;
 
 	int m_width;		
 	int m_height;
@@ -75,6 +77,7 @@ private:
 	afx_msg void ToolBarPaint();
 	afx_msg void ToolBarSculpt();
 	afx_msg void ToolBarObject();
+	afx_msg void ToolBarSpawn();
 
 	DECLARE_MESSAGE_MAP()	// required macro for message map functionality  One per class
 };

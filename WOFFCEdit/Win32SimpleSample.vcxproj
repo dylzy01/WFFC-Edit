@@ -194,6 +194,7 @@
     <ClCompile Include="SculptDialogue.cpp" />
     <ClCompile Include="SelectDialogue.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
+    <ClCompile Include="SpawnDialogue.cpp" />
     <ClCompile Include="SQLManager.cpp" />
     <ClCompile Include="sqlite3.c" />
     <ClCompile Include="TerrainDialogue.cpp" />
@@ -237,6 +238,7 @@
     <ClInclude Include="SelectDialogue.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderManager.h" />
+    <ClInclude Include="SpawnDialogue.h" />
     <ClInclude Include="SQLManager.h" />
     <ClInclude Include="sqlite3.h" />
     <ClInclude Include="stdafx.h" />
@@ -271,6 +273,7 @@
     <Image Include="bitmap13.bmp" />
     <Image Include="bitmap14.bmp" />
     <Image Include="bitmap15.bmp" />
+    <Image Include="bitmap16.bmp" />
     <Image Include="bitmap2.bmp" />
     <Image Include="bitmap3.bmp" />
     <Image Include="bitmap4.bmp" />
