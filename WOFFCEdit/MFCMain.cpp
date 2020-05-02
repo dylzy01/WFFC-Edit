@@ -433,12 +433,60 @@ void MFCMain::CheckDialogues()
 	// Else, if object inspector is active
 	else if (m_objectDialogue.GetActive())
 	{
+		// If dialogue is requesting scene graph
+		if (m_objectDialogue.GetRequest())
+		{
+			// Reset request
+			m_objectDialogue.SetRequest(false);
+
+			// Setup temp objects
+			std::vector<SceneObject> objects;
+
+			// Loop through objects in scene graph
+			for (int i = 0; i < m_toolSystem.GetSceneGraph().size(); ++i)
+			{
+				// If object isn't a light
+				if (m_toolSystem.GetSceneGraph()[i].m_type != OBJECT_TYPE::LIGHT)
+				{
+					// Add to local storage
+					objects.push_back(m_toolSystem.GetSceneGraph()[i]);
+				}
+			}
+
+			// Update display list
+			m_objectDialogue.SetObjectData(&m_toolSystem.GetSceneGraph());
+		}
+
+		// If should focus on an object
+		if (m_objectDialogue.GetFocus())
+		{
+			// Setup temp focus ID
+			int focusID = -1;
+
+			// If more than one object is selected
+			if (m_objectDialogue.GetSelectedObjectIDs().size() > 1)
+			{
+				// Define object ID to focus on
+				focusID = m_objectDialogue.GetFocusDialogue()->GetSelectedIndex();
+			}
+
+			// Else, if just one object is selected
+			else if (m_objectDialogue.GetSelectedObjectIDs().size() == 1)
+			{
+				// Define object ID to focus on
+				focusID = m_objectDialogue.GetSelectedObjectIDs()[0];
+			}
+
+			// Setup object ID to focus on
+			m_toolSystem.SetFocus(focusID);
+		}
+		else { m_toolSystem.SetFocus(-1); }
+	
 		// If objects have been setup
 		if (m_objectDialogue.GetObjectsSetup())
 		{
 			// Update selected object
-			int ID = m_objectDialogue.GetSelectedObjectID();
-			m_toolSystem.SetSelectedObjectID(m_objectDialogue.GetSelectedObjectID());
+			m_toolSystem.SetSelectedObjectIDs(m_objectDialogue.GetSelectedObjectIDs());
 
 			// Set other modes to none
 			m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
@@ -454,6 +502,34 @@ void MFCMain::CheckDialogues()
 			// Set constraint
 			m_toolSystem.SetObjectConstraint(m_objectDialogue.GetConstraint());
 		}
+
+		// If scene graph should be updated
+		//if (m_objectDialogue.GetUpdate())
+		//{
+		//	// Reset update controller
+		//	m_objectDialogue.SetUpdate(false);
+
+		//	// Get edited objects
+		//	std::vector<SceneObject> objects = m_objectDialogue.GetObjects();
+
+		//	// Get scene graph
+		//	std::vector<SceneObject> sceneGraph = m_toolSystem.GetSceneGraph();
+
+		//	// Loop through scene graph
+		//	for (int i = 0; i < sceneGraph.size(); ++i)
+		//	{
+		//		// Loop through lights
+		//		for (int j = 0; j < objects.size(); ++j)
+		//		{
+		//			// If IDs match
+		//			if (objects[j].ID == sceneGraph[i].ID)
+		//			{
+		//				// Replace scene object with edited object
+		//				m_toolSystem.SetSceneObject(objects[j], i);
+		//			}				
+		//		}
+		//	}
+		//}
 	}
 
 	// Else, if spawn inspector is active
@@ -702,6 +778,22 @@ void MFCMain::ToolBarObject()
 	m_objectDialogue.Create(IDD_DIALOG12);
 	m_objectDialogue.ShowWindow(SW_SHOW);
 	m_objectDialogue.SetActive(true);
+
+	// Setup temp objects
+	std::vector<SceneObject> objects;
+	
+	// Loop through objects in scene graph
+	for (int i = 0; i < m_toolSystem.GetSceneGraph().size(); ++i)
+	{
+		// If object isn't a light
+		if (m_toolSystem.GetSceneGraph()[i].m_type != OBJECT_TYPE::LIGHT)
+		{
+			// Add to local storage
+			objects.push_back(m_toolSystem.GetSceneGraph()[i]);
+		}
+	}
+
+	// Set dialogue pointers
 	m_objectDialogue.SetObjectData(&m_toolSystem.GetSceneGraph());
 }
 

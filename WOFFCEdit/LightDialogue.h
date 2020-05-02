@@ -26,10 +26,7 @@ public:
 	void Update(int index);
 
 	// Update current light position
-	void UpdateLightPosition(DirectX::XMFLOAT3 position);
-
-	// Setup IDs of currently available lights
-	void SetupLights();
+	void UpdateLightPosition(DirectX::XMFLOAT3 position);	
 
 	// Getters
 	bool GetActive() { return m_active; }
@@ -38,23 +35,17 @@ public:
 	bool GetLightSetup() { return m_lightSetup; }
 	bool GetRequest() { return m_requestDisplayList; }
 	bool GetFocus() { return m_focus; }
-	///int GetSelectedLightID() { if (m_boxID.GetCurSel() >= 0) { return m_lights[m_boxID.GetCurSel()].m_ID; } else { return -1; } }
-	std::vector<int> GetSelectedLightIDs() { return m_selection; }
+	std::vector<int> GetSelectedLightIDs() { return m_selectedLightIDs; }
 	std::vector<DisplayObject> GetLights() { return m_lights; }
 	CONSTRAINT GetConstraint() { return m_constraint; }
 	// Focus
-	bool GetFocusActive() { return m_focusDialogue.GetActive(); }
-	bool GetFocusID() { return m_focusDialogue.GetSelectedIndex(); }
 	FocusDialogue* GetFocusDialogue() { return &m_focusDialogue; }
 
 	// Setters
 	void SetActive(bool active) { m_active = active; }
 	void SetUpdate(bool update) { m_update = update; }
-	void SetSelection(std::vector<int> selection) { m_selection = selection; }
+	void SetSelection(std::vector<int> selection) { m_selectedLightIDs = selection; }
 	void SetRequest(bool request) { m_requestDisplayList = request; SetupLights(); }
-	// Focus
-	void SetFocusActive(bool active) { m_focusDialogue.SetActive(active); }
-	void SetFocusUpdate(bool update) { m_focusDialogue.SetUpdate(update); }
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -70,7 +61,7 @@ protected:
 	std::vector<SceneObject> m_sceneGraph;
 	std::vector<DisplayObject> m_displayList;
 	std::vector<DisplayObject> m_lights;
-	std::vector<int> m_selection;
+	std::vector<int> m_selectedLightIDs;
 
 	// Controllers
 	bool m_active;
@@ -82,7 +73,7 @@ protected:
 	bool m_focus = false;
 	CONSTRAINT m_constraint;
 
-	// Focus modal
+	// Focus 
 	FocusDialogue m_focusDialogue;
 
 	DECLARE_MESSAGE_MAP()
@@ -133,6 +124,9 @@ public:
 	afx_msg void OnBnClickedZ();
 
 private:
+	// Setup IDs of currently available lights
+	void SetupLights();
+	
 	// Update light details
 	void UpdateType();
 	void UpdateEnabled();

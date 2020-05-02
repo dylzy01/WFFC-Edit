@@ -19,7 +19,8 @@ ObjectDialogue::ObjectDialogue(CWnd* pParent /*=nullptr*/)
 void ObjectDialogue::SetObjectData(std::vector<SceneObject>* sceneGraph)
 {
 	// Local storage of scene graph
-	m_sceneGraph = *sceneGraph;
+	m_sceneGraph = sceneGraph;
+	///m_objects = objects;
 
 	// Setup IDs of currently available objects
 	SetupObjects();
@@ -35,11 +36,12 @@ void ObjectDialogue::SetObjectData(std::vector<SceneObject>* sceneGraph)
 		typeBoxEntry = L"Boat";			m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Grass";		m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Palm Tree";	m_boxType.AddString(typeBoxEntry.c_str());
-		typeBoxEntry = L"Pine Tree";	m_boxType.AddString(typeBoxEntry.c_str());
-		typeBoxEntry = L"Water";		m_boxType.AddString(typeBoxEntry.c_str());
+		typeBoxEntry = L"Pine Tree";	m_boxType.AddString(typeBoxEntry.c_str());		
 		typeBoxEntry = L"Cube";			m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Cylinder";		m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Cone";			m_boxType.AddString(typeBoxEntry.c_str());
+		typeBoxEntry = L"Water";		m_boxType.AddString(typeBoxEntry.c_str());
+		typeBoxEntry = L"";				m_boxType.AddString(typeBoxEntry.c_str());
 	}
 
 	// Setup constraint types
@@ -66,18 +68,18 @@ void ObjectDialogue::SetObjectData(std::vector<SceneObject>* sceneGraph)
 // Update current object with dialogue values
 void ObjectDialogue::Update(int ID)
 {
-	m_selection = ID;
 	m_boxID.SetCurSel(ID);
-	UpdateType(ID);
-	UpdateScale(ID);
-	UpdateRotation(ID);
-	UpdatePosition(ID);
+	UpdateType();
+	UpdateScale();
+	UpdateRotation();
+	UpdatePosition();
 }
 
 void ObjectDialogue::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_COMBO1, m_boxID);
+	DDX_Control(pDX, IDC_LIST1, m_boxID);
+
 	DDX_Control(pDX, IDC_COMBO2, m_boxType);
 	DDX_Control(pDX, IDC_COMBO6, m_boxConst);
 
@@ -119,7 +121,7 @@ void ObjectDialogue::SetupCheckBoxes()
 BEGIN_MESSAGE_MAP(ObjectDialogue, CDialogEx)
 	ON_COMMAND(IDOK, &ObjectDialogue::End)
 	ON_BN_CLICKED(IDOK, &ObjectDialogue::OnBnClickedOk)
-	ON_CBN_SELCHANGE(IDC_COMBO1, &ObjectDialogue::OnCbnSelchangeID)
+	ON_CBN_SELCHANGE(IDC_LIST1, &ObjectDialogue::OnCbnSelchangeID)
 	ON_CBN_SELCHANGE(IDC_COMBO2, &ObjectDialogue::OnCbnSelchangeType)
 	ON_BN_CLICKED(IDC_CHECK1, &ObjectDialogue::OnBnClickedFocus)
 	ON_EN_CHANGE(IDC_EDIT1, &ObjectDialogue::OnEnChangeScaX)
@@ -164,19 +166,43 @@ void ObjectDialogue::OnBnClickedOk()
 void ObjectDialogue::OnCbnSelchangeID()
 {
 	// Store ID selection
-	m_selection = m_boxID.GetCurSel();
+	int ID = m_boxID.GetCurSel();
+
+	// Get text selection
+	CString current;
+	m_boxID.GetText(ID, current);
+
+	// Controller to check if selection exists
+	bool exists = false;
+
+	// Loop through selection
+	for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+	{
+		// If current already exists
+		if (m_selectedObjectIDs[i] == _ttoi(current))
+		{
+			// Inform remaining functionality the selection exists
+			exists = true;
+
+			// Remove from selection
+			m_selectedObjectIDs.erase(m_selectedObjectIDs.begin() + i);
+		}
+	}
+
+	// If selection doesn't exist, add to selection
+	if (!exists) { m_selectedObjectIDs.push_back(_ttoi(current)); }
 
 	// Update object type box
-	UpdateType(m_selection);
+	UpdateType();
 
 	// Update object scale boxes
-	UpdateScale(m_selection);
+	UpdateScale();
 
 	// Update object rotation boxes
-	UpdateRotation(m_selection);
+	UpdateRotation();
 	
 	// Update object position boxes
-	UpdatePosition(m_selection);
+	UpdatePosition();
 
 	// Tell MFC/ToolMain to update scene graph
 	m_update = true;
@@ -184,241 +210,417 @@ void ObjectDialogue::OnCbnSelchangeID()
 
 // Type has been changed
 void ObjectDialogue::OnCbnSelchangeType()
-{
-	// If selection is valid
-	if (m_boxID.GetCurSel() >= 0)
+{	
+	// If function has been called by user
+	if (!m_internal)
 	{
-		// Store type selection
-		int type = m_boxType.GetCurSel();
+		// If selection is valid
+		if (m_boxID.GetCurSel() >= 0)
+		{
+			// Loop through selected IDs
+			for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+			{
+				// Loop through objects
+				for (int j = 0; j < m_objects.size(); ++j)
+				{
+					// If object ID matches selected ID
+					if (m_objects[j].ID == m_selectedObjectIDs[i])
+					{
+						// Store type selection
+						int type = m_boxType.GetCurSel();
 
-		// Replace object with new type
-		ObjectManager::Replace(m_objects[m_boxID.GetCurSel()].ID, m_sceneGraph, (OBJECT_TYPE)type);
+						// Set object type
+						///m_objects[j].m_type = (OBJECT_TYPE)type;
 
-		// Tell MFC/ToolMain to update scene graph
-		m_update = true;
+						// Replace object with new type
+						ObjectManager::Replace(m_objects[j].ID, *m_sceneGraph, (OBJECT_TYPE)type);
+						break;
+					}					
+				}
+			}
+
+			// Tell MFC/ToolMain to update scene graph
+			m_update = true;
+		}
 	}
 }
 
 // Object should be focussed/unfocussed
 void ObjectDialogue::OnBnClickedFocus()
 {
-	m_focus = IsDlgButtonChecked(IDC_CHECK3);
+	m_focus = IsDlgButtonChecked(IDC_CHECK1);
 
-	// Tell MFC/ToolMain to update
-	m_update = true;
+	// If focus is checked
+	if (m_focus)
+	{
+		// If there's more than one object selected
+		if (m_selectedObjectIDs.size() > 1)
+		{
+			// Setup focus modal dialogue
+			m_focusDialogue.Create(IDD_DIALOG2);
+			m_focusDialogue.ShowWindow(SW_SHOW);
+			m_focusDialogue.SetActive(true);
+			m_focusDialogue.SetSelectData(&m_selectedObjectIDs);
+		}
+	}
 }
 
 // X scale has been changed
 void ObjectDialogue::OnEnChangeScaX()
 {
-	// If selection is valid
-	if (m_boxID.GetCurSel() >= 0)
+	// If function has been called by user
+	if (!m_internal)
 	{
-		// Store new X scale
-		CString string = _T("");
-		m_eScaX.GetWindowTextW(string);
+		// If selection is valid
+		if (m_boxID.GetCurSel() >= 0)
+		{
+			// Loop through selected IDs
+			for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+			{
+				// Loop through objects
+				for (int j = 0; j < m_objects.size(); ++j)
+				{
+					// If object ID matches selected ID
+					if (m_objects[j].ID == m_selectedObjectIDs[i])
+					{
+						// Store new X scale
+						CString string = _T("");
+						m_eScaX.GetWindowTextW(string);
 
-		// Convert to float
-		float scaX;
-		if (!string.IsEmpty()) { scaX = _ttof(string); }
-		else { scaX = m_objects.at(m_selection).scaX; }
+						// Convert to float
+						float scaX;
+						if (!string.IsEmpty()) { scaX = _ttof(string); }
+						else { scaX = m_objects[j].scaX; }
 
-		// Update X scale of object
-		m_objects.at(m_selection).scaX = scaX;
+						// Update X scale of object
+						m_objects[j].scaX = scaX;
 
-		// Tell MFC/ToolMain to update scene graph
-		m_update = true;
+						// Tell MFC/ToolMain to update scene graph
+						m_update = true;
+					}
+				}
+			}
+		}
 	}
-
-	// Add ID to vector
-	///std::vector<int> IDs;
-	///IDs.push_back(m_objectID);
-
-	// Update object scale
-	///ObjectManager::Transform(OBJECT_FUNCTION::SCALE, m_constraint, IDs, *m_sceneGraph);
 }
 
 // Y scale has been changed
 void ObjectDialogue::OnEnChangeScaY()
 {
-	// If selection is valid
-	if (m_boxID.GetCurSel() >= 0)
+	// If function has been called by user
+	if (!m_internal)
 	{
-		// Store new Y scale
-		CString string = _T("");
-		m_eScaY.GetWindowTextW(string);
+		// If selection is valid
+		if (m_boxID.GetCurSel() >= 0)
+		{
+			// Loop through selected IDs
+			for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+			{
+				// Loop through objects
+				for (int j = 0; j < m_objects.size(); ++j)
+				{
+					// If object ID matches selected ID
+					if (m_objects[j].ID == m_selectedObjectIDs[i])
+					{
+						// Store new Y scale
+						CString string = _T("");
+						m_eScaY.GetWindowTextW(string);
 
-		// Convert to float
-		float scaY;
-		if (!string.IsEmpty()) { scaY = _ttof(string); }
-		else { scaY = m_objects.at(m_selection).scaY; }
+						// Convert to float
+						float scaY;
+						if (!string.IsEmpty()) { scaY = _ttof(string); }
+						else { scaY = m_objects[j].scaY; }
 
-		// Update Y scale of object
-		m_objects.at(m_selection).scaY = scaY;
+						// Update Y scale of object
+						m_objects[j].scaY = scaY;
+						break;
+					}
+				}
+			}
 
-		// Tell MFC/ToolMain to update scene graph
-		m_update = true;
+			// Tell MFC/ToolMain to update scene graph
+			m_update = true;
+		}
 	}
 }
 
 // Z scale has been changed
 void ObjectDialogue::OnEnChangeScaZ()
 {
-	// If selection is valid
-	if (m_boxID.GetCurSel() >= 0)
+	// If function has been called by user
+	if (!m_internal)
 	{
-		// Store new Z scale
-		CString string = _T("");
-		m_eScaZ.GetWindowTextW(string);
+		// If selection is valid
+		if (m_boxID.GetCurSel() >= 0)
+		{
+			// Loop through selected IDs
+			for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+			{
+				// Loop through objects
+				for (int j = 0; j < m_objects.size(); ++j)
+				{
+					// If object ID matches selected ID
+					if (m_objects[j].ID == m_selectedObjectIDs[i])
+					{
+						// Store new Z scale
+						CString string = _T("");
+						m_eScaZ.GetWindowTextW(string);
 
-		// Convert to float
-		float scaZ;
-		if (!string.IsEmpty()) { scaZ = _ttof(string); }
-		else { scaZ = m_objects.at(m_selection).scaZ; }
+						// Convert to float
+						float scaZ;
+						if (!string.IsEmpty()) { scaZ = _ttof(string); }
+						else { scaZ = m_objects[j].scaZ; }
 
-		// Update Z scale of object
-		m_objects.at(m_selection).scaZ = scaZ;
+						// Update Z scale of object
+						m_objects[j].scaZ = scaZ;
+						break;
+					}
+				}
+			}
 
-		// Tell MFC/ToolMain to update scene graph
-		m_update = true;
+			// Tell MFC/ToolMain to update scene graph
+			m_update = true;
+		}
 	}
 }
 
 // X rotation has been changed
 void ObjectDialogue::OnEnChangeRotX()
 {
-	// If selection is valid
-	if (m_boxID.GetCurSel() >= 0)
+	// If function has been called by user
+	if (!m_internal)
 	{
-		// Store new X rotation
-		CString string = _T("");
-		m_eRotX.GetWindowTextW(string);
+		// If selection is valid
+		if (m_boxID.GetCurSel() >= 0)
+		{
+			// Loop through selected IDs
+			for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+			{
+				// Loop through objects
+				for (int j = 0; j < m_objects.size(); ++j)
+				{
+					// If object ID matches selected ID
+					if (m_objects[j].ID == m_selectedObjectIDs[i])
+					{
+						// Store new X rotation
+						CString string = _T("");
+						m_eRotX.GetWindowTextW(string);
 
-		// Convert to float
-		float rotX;
-		if (!string.IsEmpty()) { rotX = _ttof(string); }
-		else { rotX = m_objects.at(m_selection).rotX; }
+						// Convert to float
+						float rotX;
+						if (!string.IsEmpty()) { rotX = _ttof(string); }
+						else { rotX = m_objects[j].rotX; }
 
-		// Update X rotation of object
-		m_objects.at(m_selection).rotX = rotX;
+						// Update X rotation of object
+						m_objects[j].rotX = rotX;
+						break;
+					}
+				}
+			}
 
-		// Tell MFC/ToolMain to update scene graph
-		m_update = true;
+			// Tell MFC/ToolMain to update scene graph
+			m_update = true;
+		}
 	}
 }
 
 // Y rotation has been changed
 void ObjectDialogue::OnEnChangeRotY()
 {
-	// If selection is valid
-	if (m_boxID.GetCurSel() >= 0)
+	// If function has been called by user
+	if (!m_internal)
 	{
-		// Store new Y rotation
-		CString string = _T("");
-		m_eRotY.GetWindowTextW(string);
+		// If selection is valid
+		if (m_boxID.GetCurSel() >= 0)
+		{
+			// Loop through selected IDs
+			for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+			{
+				// Loop through objects
+				for (int j = 0; j < m_objects.size(); ++j)
+				{
+					// If object ID matches selected ID
+					if (m_objects[j].ID == m_selectedObjectIDs[i])
+					{
+						// Store new Y rotation
+						CString string = _T("");
+						m_eRotY.GetWindowTextW(string);
 
-		// Convert to float
-		float rotY;
-		if (!string.IsEmpty()) { rotY = _ttof(string); }
-		else { rotY = m_objects.at(m_selection).rotY; }
+						// Convert to float
+						float rotY;
+						if (!string.IsEmpty()) { rotY = _ttof(string); }
+						else { rotY = m_objects[j].rotY; }
 
-		// Update Y rotation of object
-		m_objects.at(m_selection).rotY = rotY;
+						// Update Y rotation of object
+						m_objects[j].rotY = rotY;
+						break;
+					}
+				}
+			}
 
-		// Tell MFC/ToolMain to update scene graph
-		m_update = true;
+			// Tell MFC/ToolMain to update scene graph
+			m_update = true;
+		}
 	}
 }
 
 // Z rotation has been changed
 void ObjectDialogue::OnEnChangeRotZ()
 {
-	// If selection is valid
-	if (m_boxID.GetCurSel() >= 0)
+	// If function has been called by user
+	if (!m_internal)
 	{
-		// Store new Z rotation
-		CString string = _T("");
-		m_eRotZ.GetWindowTextW(string);
+		// If selection is valid
+		if (m_boxID.GetCurSel() >= 0)
+		{
+			// Loop through selected IDs
+			for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+			{
+				// Loop through objects
+				for (int j = 0; j < m_objects.size(); ++j)
+				{
+					// If object ID matches selected ID
+					if (m_objects[j].ID == m_selectedObjectIDs[i])
+					{
+						// Store new Z rotation
+						CString string = _T("");
+						m_eRotZ.GetWindowTextW(string);
 
-		// Convert to float
-		float rotZ;
-		if (!string.IsEmpty()) { rotZ = _ttof(string); }
-		else { rotZ = m_objects.at(m_selection).rotZ; }
+						// Convert to float
+						float rotZ;
+						if (!string.IsEmpty()) { rotZ = _ttof(string); }
+						else { rotZ = m_objects[j].rotZ; }
 
-		// Update Z rotation of object
-		m_objects.at(m_selection).rotZ = rotZ;
+						// Update Z rotation of object
+						m_objects[j].rotZ = rotZ;
+						break;
+					}
+				}
+			}
 
-		// Tell MFC/ToolMain to update scene graph
-		m_update = true;
+			// Tell MFC/ToolMain to update scene graph
+			m_update = true;
+		}
 	}
 }
 
 // X position has been changed
 void ObjectDialogue::OnEnChangePosX()
 {
-	// If selection is valid
-	if (m_boxID.GetCurSel() >= 0)
+	// If function has been called by user
+	if (!m_internal)
 	{
-		// Store new X position
-		CString string = _T("");
-		m_ePosX.GetWindowTextW(string);
+		// If selection is valid
+		if (m_boxID.GetCurSel() >= 0)
+		{
+			// Loop through selected IDs
+			for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+			{
+				// Loop through objects
+				for (int j = 0; j < m_objects.size(); ++j)
+				{
+					// If object ID matches selected ID
+					if (m_objects[j].ID == m_selectedObjectIDs[i])
+					{
+						// Store new X position
+						CString string = _T("");
+						m_ePosX.GetWindowTextW(string);
 
-		// Convert to float
-		float posX;
-		if (!string.IsEmpty()) { posX = _ttof(string); }
-		else { posX = m_objects.at(m_selection).posX; }
+						// Convert to float
+						float posX;
+						if (!string.IsEmpty()) { posX = _ttof(string); }
+						else { posX = m_objects[j].posX; }
 
-		// Update X position of object
-		m_objects.at(m_selection).posX = posX;
+						// Update X position of object
+						m_objects[j].posX = posX;
+						break;
+					}
+				}
+			}
 
-		// Tell MFC/ToolMain to update scene graph
-		m_update = true;
+			// Tell MFC/ToolMain to update scene graph
+			m_update = true;
+		}
 	}
 }
 
 // Y position has been changed
 void ObjectDialogue::OnEnChangePosY()
 {
-	// If selection is valid
-	if (m_boxID.GetCurSel() >= 0)
+	// If function has been called by user
+	if (!m_internal)
 	{
-		// Store new Y position
-		CString string = _T("");
-		m_ePosY.GetWindowTextW(string);
+		// If selection is valid
+		if (m_boxID.GetCurSel() >= 0)
+		{
+			// Loop through selected IDs
+			for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+			{
+				// Loop through objects
+				for (int j = 0; j < m_objects.size(); ++j)
+				{
+					// If object ID matches selected ID
+					if (m_objects[j].ID == m_selectedObjectIDs[i])
+					{
+						// Store new Y position
+						CString string = _T("");
+						m_ePosY.GetWindowTextW(string);
 
-		// Convert to float
-		float posY;
-		if (!string.IsEmpty()) { posY = _ttof(string); }
-		else { posY = m_objects.at(m_selection).posY; }
+						// Convert to float
+						float posY;
+						if (!string.IsEmpty()) { posY = _ttof(string); }
+						else { posY = m_objects[j].posY; }
 
-		// Update Y position of object
-		m_objects.at(m_selection).posY = posY;
+						// Update Y position of object
+						m_objects[j].posY = posY;
+						break;
+					}
+				}
+			}
 
-		// Tell MFC/ToolMain to update scene graph
-		m_update = true;
+			// Tell MFC/ToolMain to update scene graph
+			m_update = true;
+		}
 	}
 }
 
 // Z position has been changed
 void ObjectDialogue::OnEnChangePosZ()
 {
-	// If selection is valid
-	if (m_boxID.GetCurSel() >= 0)
+	// If function has been called by user
+	if (!m_internal)
 	{
-		// Store new Z position
-		CString string = _T("");
-		m_ePosX.GetWindowTextW(string);
+		// If selection is valid
+		if (m_boxID.GetCurSel() >= 0)
+		{
+			// Loop through selected IDs
+			for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+			{
+				// Loop through objects
+				for (int j = 0; j < m_objects.size(); ++j)
+				{
+					// If object ID matches selected ID
+					if (m_objects[j].ID == m_selectedObjectIDs[i])
+					{
+						// Store new Z position
+						CString string = _T("");
+						m_ePosX.GetWindowTextW(string);
 
-		// Convert to float
-		float posZ;
-		if (!string.IsEmpty()) { posZ = _ttof(string); }
-		else { posZ = m_objects.at(m_selection).posZ; }
+						// Convert to float
+						float posZ;
+						if (!string.IsEmpty()) { posZ = _ttof(string); }
+						else { posZ = m_objects[j].posZ; }
 
-		// Update Z position of object
-		m_objects.at(m_selection).posZ = posZ;
+						// Update Z position of object
+						m_objects[j].posZ = posZ;
+						break;
+					}
+				}
+			}
 
-		// Tell MFC/ToolMain to update scene graph
-		m_update = true;
+			// Tell MFC/ToolMain to update scene graph
+			m_update = true;
+		}
 	}
 }
 
@@ -444,6 +646,8 @@ void ObjectDialogue::OnBnClickedScale()
 	}
 	break;
 	}
+
+	m_requestSceneGraph = true;
 }
 
 // Rotate transform has been selected
@@ -468,6 +672,8 @@ void ObjectDialogue::OnBnClickedRotate()
 	}
 	break;
 	}
+
+	m_requestSceneGraph = true;
 }
 
 // Translate transform has been selected
@@ -492,6 +698,8 @@ void ObjectDialogue::OnBnClickedTranslate()
 	}
 	break;
 	}
+
+	m_requestSceneGraph = true;
 }
 
 // X constraint has been selected
@@ -582,22 +790,12 @@ void ObjectDialogue::OnEnChangeSnapValue()
 void ObjectDialogue::OnBnClickedDelete()
 {
 	// If selection is valid
-	if (m_boxID.GetCurSel() >= 0)
+	if (m_selectedObjectIDs.size() > 0)
 	{
-		// Add object ID to vector
-		std::vector<int> IDs;
-		IDs.push_back(m_objects[m_boxID.GetCurSel()].ID);
+		// Remove objects from database storage
+		ObjectManager::Remove(m_selectedObjectIDs, *m_sceneGraph);
 
-		// Remove object from database storage
-		ObjectManager::Remove(IDs, m_sceneGraph, m_objects[m_boxID.GetCurSel()].ID);
-
-		// Remove object from local storage
-		///m_objects.erase(m_objects.begin() + m_boxID.GetCurSel());
-
-		// Drop down a selection
-		m_boxID.SetCurSel(m_boxID.GetCurSel() - 1);
-
-		SetupObjects();
+		m_requestSceneGraph = true;
 	}
 }
 
@@ -605,19 +803,15 @@ void ObjectDialogue::OnBnClickedDelete()
 void ObjectDialogue::OnBnClickedDuplicate()
 {
 	// If selection is valid
-	if (m_boxID.GetCurSel() >= 0)
+	if (m_selectedObjectIDs.size() > 0)
 	{
-		// Add object ID to vector
-		std::vector<int> IDs;
-		IDs.push_back(m_objects[m_boxID.GetCurSel()].ID);
+		// Copy objects
+		ObjectManager::Copy(m_selectedObjectIDs, *m_sceneGraph);
 
-		// Copy current object
-		ObjectManager::Copy(IDs, m_sceneGraph);
+		// Paste objects
+		ObjectManager::Paste(*m_sceneGraph);
 
-		// Paste current object
-		ObjectManager::Paste(m_sceneGraph);
-
-		SetupObjects();
+		m_requestSceneGraph = true;
 	}
 }
 
@@ -626,23 +820,23 @@ void ObjectDialogue::OnBnClickedDuplicate()
 // Setup IDs of currently available objects
 void ObjectDialogue::SetupObjects()
 {
-	m_objects.clear();
+	if (m_objects.size() != 0) { m_objects.clear(); }	
 	m_boxID.ResetContent();
 
 	// Count objects
 	int count = 0;
 
 	// Loop through objects in scene graph
-	for (int i = 0; i < m_sceneGraph.size(); ++i)
+	for (int i = 0; i < m_sceneGraph->size(); ++i)
 	{
 		// If object isn't a light
-		if (m_sceneGraph[i].m_type != OBJECT_TYPE::LIGHT)
+		if (m_sceneGraph->at(i).m_type != OBJECT_TYPE::LIGHT)
 		{
 			// Add to local storage
-			m_objects.push_back(m_sceneGraph[i]);
+			m_objects.push_back(m_sceneGraph->at(i));
 
 			// Add entries to ID combo box
-			std::wstring idBoxEntry = std::to_wstring(m_sceneGraph[i].ID);
+			std::wstring idBoxEntry = std::to_wstring(m_sceneGraph->at(i).ID);
 			m_boxID.AddString(idBoxEntry.c_str());
 
 			// Increase count 
@@ -712,70 +906,165 @@ void ObjectDialogue::Uncheck()
 	}
 }
 
-void ObjectDialogue::UpdateType(int ID)
+void ObjectDialogue::UpdateType()
 {
-	// Set object type	
-	m_boxType.SetCurSel((int)m_objects[ID].m_type);
+	// If only one object is selected
+	if (m_selectedObjectIDs.size() == 1)
+	{
+		// Loop through objects
+		for (int i = 0; i < m_objects.size(); ++i)
+		{
+			// If object ID matches selection
+			if (m_objects[i].ID == m_selectedObjectIDs[0])
+			{
+				// Set combo box
+				m_boxType.SetCurSel((int)m_objects[i].m_type);
+				break;
+			}
+		}
+	}
+
+	// Else, multiple objects are selected
+	else
+	{
+		// Setup & apply empty string
+		CString empty = "";
+		m_internal = true;
+		m_boxType.SetCurSel((int)OBJECT_TYPE::LIGHT);
+		m_internal = false;
+	}
 }
 
-void ObjectDialogue::UpdateScale(int ID)
+void ObjectDialogue::UpdateScale()
 {
-	// Store current scale
-	float x = m_objects[ID].scaX;
-	float y = m_objects[ID].scaY;
-	float z = m_objects[ID].scaZ;
+	// If only one object is selected
+	if (m_selectedObjectIDs.size() == 1)
+	{
+		// Loop through lights
+		for (int i = 0; i < m_objects.size(); ++i)
+		{
+			// If light ID matches selection
+			if (m_objects[i].ID == m_selectedObjectIDs[0])
+			{
+				// Store current scale
+				float x = m_objects[i].scaX;
+				float y = m_objects[i].scaY;
+				float z = m_objects[i].scaZ;
 
-	// Update X scale box
-	CString sX; sX.Format(L"%g", x);
-	m_eScaX.SetWindowTextW(sX);
+				// Update X scale box
+				CString sX; sX.Format(L"%g", x);
+				m_eScaX.SetWindowTextW(sX);
 
-	// Update Y scale box
-	CString sY; sY.Format(L"%g", y);
-	m_eScaY.SetWindowTextW(sY);
+				// Update Y scale box
+				CString sY; sY.Format(L"%g", y);
+				m_eScaY.SetWindowTextW(sY);
 
-	// Update Z scale box
-	CString sZ; sZ.Format(L"%g", z);
-	m_eScaZ.SetWindowTextW(sZ);
+				// Update Z scale box
+				CString sZ; sZ.Format(L"%g", z);
+				m_eScaZ.SetWindowTextW(sZ);
+			}
+		}
+	}
+
+	// Else, multiple objects are selected
+	else
+	{
+		// Setup & apply empty string
+		CString empty = "";
+		m_internal = true;
+		m_eScaX.SetWindowTextW(empty);
+		m_eScaY.SetWindowTextW(empty);
+		m_eScaZ.SetWindowTextW(empty);
+		m_internal = false;
+	}
 }
 
-void ObjectDialogue::UpdateRotation(int ID)
+void ObjectDialogue::UpdateRotation()
 {
-	// Store current rotation
-	float x = m_objects[ID].rotX;
-	float y = m_objects[ID].rotY;
-	float z = m_objects[ID].rotZ;
+	// If only one object is selected
+	if (m_selectedObjectIDs.size() == 1)
+	{
+		// Loop through lights
+		for (int i = 0; i < m_objects.size(); ++i)
+		{
+			// If light ID matches selection
+			if (m_objects[i].ID == m_selectedObjectIDs[0])
+			{
+				// Store current rotation
+				float x = m_objects[i].rotX;
+				float y = m_objects[i].rotY;
+				float z = m_objects[i].rotZ;
 
-	// Update X rotation box
-	CString sX; sX.Format(L"%g", x);
-	m_eRotX.SetWindowTextW(sX);
+				// Update X rotation box
+				CString sX; sX.Format(L"%g", x);
+				m_eRotX.SetWindowTextW(sX);
 
-	// Update Y rotation box
-	CString sY; sY.Format(L"%g", y);
-	m_eRotY.SetWindowTextW(sY);
+				// Update Y rotation box
+				CString sY; sY.Format(L"%g", y);
+				m_eRotY.SetWindowTextW(sY);
 
-	// Update Z rotation box
-	CString sZ; sZ.Format(L"%g", z);
-	m_eRotZ.SetWindowTextW(sZ);
+				// Update Z rotation box
+				CString sZ; sZ.Format(L"%g", z);
+				m_eRotZ.SetWindowTextW(sZ);
+			}
+		}
+	}
+
+	// Else, multiple objects are selected
+	else
+	{
+		// Setup & apply empty string
+		CString empty = "";
+		m_internal = true;
+		m_eRotX.SetWindowTextW(empty);
+		m_eRotY.SetWindowTextW(empty);
+		m_eRotZ.SetWindowTextW(empty);
+		m_internal = false;
+	}
 }
 
-void ObjectDialogue::UpdatePosition(int ID)
+void ObjectDialogue::UpdatePosition()
 {
-	// Store current position
-	float x = m_objects[ID].posX;
-	float y = m_objects[ID].posY;
-	float z = m_objects[ID].posZ;
+	// If only one object is selected
+	if (m_selectedObjectIDs.size() == 1)
+	{
+		// Loop through lights
+		for (int i = 0; i < m_objects.size(); ++i)
+		{
+			// If light ID matches selection
+			if (m_objects[i].ID == m_selectedObjectIDs[0])
+			{
+				// Store current position
+				float x = m_objects[i].posX;
+				float y = m_objects[i].posY;
+				float z = m_objects[i].posZ;
 
-	// Update X position box
-	CString sX; sX.Format(L"%g", x);
-	m_ePosX.SetWindowTextW(sX);
+				// Update X position box
+				CString sX; sX.Format(L"%g", x);
+				m_ePosX.SetWindowTextW(sX);
 
-	// Update Y position box
-	CString sY; sY.Format(L"%g", y);
-	m_ePosY.SetWindowTextW(sY);
+				// Update Y position box
+				CString sY; sY.Format(L"%g", y);
+				m_ePosY.SetWindowTextW(sY);
 
-	// Update Z position box
-	CString sZ; sZ.Format(L"%g", z);
-	m_ePosZ.SetWindowTextW(sZ);
+				// Update Z position box
+				CString sZ; sZ.Format(L"%g", z);
+				m_ePosZ.SetWindowTextW(sZ);
+			}
+		}
+	}
+
+	// Else, multiple objects are selected
+	else
+	{
+		// Setup & apply empty string
+		CString empty = "";
+		m_internal = true;
+		m_ePosX.SetWindowTextW(empty);
+		m_ePosY.SetWindowTextW(empty);
+		m_ePosZ.SetWindowTextW(empty);
+		m_internal = false;
+	}
 }
 
 void ObjectDialogue::UpdateSelectedConstraint()

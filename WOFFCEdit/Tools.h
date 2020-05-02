@@ -41,9 +41,9 @@ enum class OBJECT_TYPE {
 	CYLINDER,
 	CONE,
 
-	// Other
-	LIGHT,
+	// Other	
 	WATER,
+	LIGHT,
 	NA
 };
 
