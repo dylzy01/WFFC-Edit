@@ -7,17 +7,22 @@ Game * MouseManager::m_game;
 InputCommands * MouseManager::m_input;
 
 // Picking a single object
-int MouseManager::PickObject()
+int MouseManager::PickObject(PICK_TYPE type)
 {
-	// Return picked object
-	return ObjectIntersection(RayTrace(m_input->mousePos));
+	// Switch between picking type
+	switch (type)
+	{
+	case PICK_TYPE::ANY: return AnyIntersection(RayTrace(m_input->mousePos)); break;
+	case PICK_TYPE::OBJECT: return ObjectIntersection(RayTrace(m_input->mousePos)); break;
+	case PICK_TYPE::LIGHT: return LightIntersection(RayTrace(m_input->mousePos)); break;
+	}
 }
 
 // Picking multiple objects
-void MouseManager::PickMultipleObjects(std::vector<int> & selectedIDs, bool select)
+void MouseManager::PickMultipleObjects(std::vector<int> & selectedIDs, PICK_TYPE type, bool select)
 {
-	// Setup temp
-	int temp = PickObject();
+	// Setup temp ID
+	int temp = PickObject(type);
 
 	// If an object has been selected
 	if (temp != -1)
@@ -163,8 +168,8 @@ DirectX::SimpleMath::Ray MouseManager::RayTrace(DirectX::SimpleMath::Vector2 pos
 	return DirectX::SimpleMath::Ray(origin, direction);
 }
 
-// Check if ray trace intersects an object
-int MouseManager::ObjectIntersection(DirectX::SimpleMath::Ray ray)
+// Check if ray trace intersects any object
+int MouseManager::AnyIntersection(DirectX::SimpleMath::Ray ray)
 {
 	// Define controllers
 	int ID = -1;
@@ -175,10 +180,10 @@ int MouseManager::ObjectIntersection(DirectX::SimpleMath::Ray ray)
 
 	// Loop through all objects
 	for (int i = 0; i < m_game->GetDisplayList().size(); ++i)
-	{
+	{		
 		// Loop through all meshes
 		for (int j = 0; j < m_game->GetDisplayList()[i].m_model->meshes.size(); ++j)
-		{			
+		{
 			// If current object intersects ray trace
 			if (m_game->GetDisplayList()[i].m_model->meshes[j]->boundingBox.Intersects(ray.position, ray.direction, pickedDistance))
 			{
@@ -203,7 +208,111 @@ int MouseManager::ObjectIntersection(DirectX::SimpleMath::Ray ray)
 					// Store current distance
 					storedDistance = pickedDistance;
 				}
-			}			
+			}
+		}		
+	}
+
+	// Return intersected object ID
+	return ID;
+}
+
+// Check if ray trace intersects an object
+int MouseManager::ObjectIntersection(DirectX::SimpleMath::Ray ray)
+{
+	// Define controllers
+	int ID = -1;
+	float distance = 10000.f, pickedDistance = 0.f, storedDistance = 1.f;
+	bool firstPick = true;
+	DirectX::SimpleMath::Vector3 one = ray.position;
+	DirectX::SimpleMath::Vector3 two = ray.position + (ray.direction * distance);
+
+	// Loop through all objects
+	for (int i = 0; i < m_game->GetDisplayList().size(); ++i)
+	{
+		// If current object is NOT a light
+		if (m_game->GetDisplayList()[i].m_objectType != OBJECT_TYPE::LIGHT)
+		{
+			// Loop through all meshes
+			for (int j = 0; j < m_game->GetDisplayList()[i].m_model->meshes.size(); ++j)
+			{
+				// If current object intersects ray trace
+				if (m_game->GetDisplayList()[i].m_model->meshes[j]->boundingBox.Intersects(ray.position, ray.direction, pickedDistance))
+				{
+					// If object is first picked
+					if (firstPick)
+					{
+						// Setup ID to return
+						ID = i;
+
+						// Store current distance
+						storedDistance = pickedDistance;
+
+						// Reset controller
+						firstPick = false;
+					}
+					// Else, if a closer object has been intersected
+					else if (pickedDistance < storedDistance)
+					{
+						// Setup ID to return
+						ID = i;
+
+						// Store current distance
+						storedDistance = pickedDistance;
+					}
+				}
+			}
+		}
+	}
+
+	// Return intersected object ID
+	return ID;
+}
+
+// Check if ray trace intersects a light
+int MouseManager::LightIntersection(DirectX::SimpleMath::Ray ray)
+{
+	// Define controllers
+	int ID = -1;
+	float distance = 10000.f, pickedDistance = 0.f, storedDistance = 1.f;
+	bool firstPick = true;
+	DirectX::SimpleMath::Vector3 one = ray.position;
+	DirectX::SimpleMath::Vector3 two = ray.position + (ray.direction * distance);
+
+	// Loop through all objects
+	for (int i = 0; i < m_game->GetDisplayList().size(); ++i)
+	{
+		// If current object IS a light
+		if (m_game->GetDisplayList()[i].m_objectType == OBJECT_TYPE::LIGHT)
+		{
+			// Loop through all meshes
+			for (int j = 0; j < m_game->GetDisplayList()[i].m_model->meshes.size(); ++j)
+			{
+				// If current object intersects ray trace
+				if (m_game->GetDisplayList()[i].m_model->meshes[j]->boundingBox.Intersects(ray.position, ray.direction, pickedDistance))
+				{
+					// If object is first picked
+					if (firstPick)
+					{
+						// Setup ID to return
+						ID = i;
+
+						// Store current distance
+						storedDistance = pickedDistance;
+
+						// Reset controller
+						firstPick = false;
+					}
+					// Else, if a closer object has been intersected
+					else if (pickedDistance < storedDistance)
+					{
+						// Setup ID to return
+						ID = i;
+
+						// Store current distance
+						storedDistance = pickedDistance;
+					}
+				}
+			}
 		}
 	}
 

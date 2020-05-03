@@ -61,13 +61,9 @@ public:
 	void BuildDisplayList(std::vector<SceneObject> * sceneGraph); //note vector passed by reference 
 	void RebuildDisplayList(std::vector<SceneObject> * sceneGraph); //note vector passed by reference 
 	void BuildDisplayChunk(ChunkObject *sceneChunk, std::vector<DirectX::SimpleMath::Vector2> location = { { 0.f, 0.f } });
-	void ReplaceObjects(std::vector<int> IDs, std::vector<SceneObject> * sceneGraph);
 	void SaveDisplayChunk();	//saves geometry et al
 	void ClearDisplayList();
 	void SaveDisplayList();	
-
-	// Lights
-	void RemoveLight(int ID);
 
 	// Getters
 	std::shared_ptr<DX::DeviceResources> GetDeviceResources() { return m_deviceResources; }
@@ -101,7 +97,6 @@ private:
 
 	void CreateDeviceDependentResources();
 	void CreateWindowSizeDependentResources();
-	void CreateObjects();
 
 	void XM_CALLCONV DrawGrid(DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
 	void DrawDebug(int i);

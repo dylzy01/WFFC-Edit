@@ -207,7 +207,7 @@ void ToolMain::Tick(MSG *msg)
 			if (m_toolInputCommands.CTRL)
 			{				
 				// Remove an object
-				ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph, MouseManager::PickObject());				
+				ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph, MouseManager::PickObject(PICK_TYPE::ANY));				
 			}
 
 			// Else, if not
@@ -219,11 +219,7 @@ void ToolMain::Tick(MSG *msg)
 				else { lightType = LIGHT_TYPE::NA; }
 
 				// Create object at picking point
-				ObjectManager::SpawnObject(m_objectType, MouseManager::PickSpawn(), m_sceneGraph, (int)lightType);
-
-				// Update scene graph
-				///m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
-			}						
+				ObjectManager::SpawnObject(m_objectType, MouseManager::PickSpawn(), m_sceneGraph, (int)lightType);			}						
 		}
 		break;
 		case EDITOR::OBJECT_FUNCTION:
@@ -238,14 +234,14 @@ void ToolMain::Tick(MSG *msg)
 					if (m_toolInputCommands.SHIFT)
 					{
 						// Select multiple objects
-						MouseManager::PickMultipleObjects(m_selectedObjectIDs, true);						
+						MouseManager::PickMultipleObjects(m_selectedObjectIDs, PICK_TYPE::OBJECT, true);
 					}
 
 					// Else, if control key is pressed
 					else if (m_toolInputCommands.CTRL)
 					{
 						// Deselect multiple objects
-						MouseManager::PickMultipleObjects(m_selectedObjectIDs, false);			
+						MouseManager::PickMultipleObjects(m_selectedObjectIDs, PICK_TYPE::OBJECT, false);
 					}
 
 					// Else, if not
@@ -253,8 +249,11 @@ void ToolMain::Tick(MSG *msg)
 					{
 						// Select a single object
 						m_selectedObjectIDs.clear();
-						m_selectedObjectIDs.push_back(MouseManager::PickObject());
+						m_selectedObjectIDs.push_back(MouseManager::PickObject(PICK_TYPE::OBJECT));
 					}	
+
+					// There's been a new selection
+					m_newSelection = true;
 
 					// Reset picking controller
 					m_toolInputCommands.pickOnce = false;
@@ -301,6 +300,42 @@ void ToolMain::Tick(MSG *msg)
 				{					
 					// Transform lights
 					ObjectManager::Transform(OBJECT_FUNCTION::TRANSLATE, m_objectConstraint, m_selectedObjectIDs, m_sceneGraph);
+				}
+			}
+
+			// Else, must be selecting
+			else
+			{
+				// If allowed to pick
+				if (m_toolInputCommands.pickOnce)
+				{
+					// If shift key is pressed
+					if (m_toolInputCommands.SHIFT)
+					{
+						// Select multiple lights
+						MouseManager::PickMultipleObjects(m_selectedObjectIDs, PICK_TYPE::LIGHT, true);
+					}
+
+					// Else, if control key is pressed
+					else if (m_toolInputCommands.CTRL)
+					{
+						// Deselect multiple lights
+						MouseManager::PickMultipleObjects(m_selectedObjectIDs, PICK_TYPE::LIGHT, false);
+					}
+
+					// Else, if not
+					else
+					{
+						// Select a single light
+						m_selectedObjectIDs.clear();
+						m_selectedObjectIDs.push_back(MouseManager::PickObject(PICK_TYPE::LIGHT));
+					}
+
+					// There's been a new selection
+					m_newSelection = true;
+
+					// Reset picking controller
+					m_toolInputCommands.pickOnce = false;
 				}
 			}
 		}
@@ -432,6 +467,16 @@ void ToolMain::UpdateInput(MSG * msg)
 	// V key to paste an object
 	if (m_keyArray['V']) { m_toolInputCommands.V = true; }
 	else { m_toolInputCommands.V = false; }
+}
+
+bool ToolMain::GetNewSelection()
+{
+	if (m_newSelection) 
+	{
+		m_newSelection = false;
+		return true;
+	}
+	else { return false; }
 }
 
 void ToolMain::SaveDisplayList(std::vector<DisplayObject> displayList)

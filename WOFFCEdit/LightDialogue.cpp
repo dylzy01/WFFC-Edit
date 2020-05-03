@@ -45,19 +45,17 @@ void LightDialogue::SetLightData(std::vector<DisplayObject>* displayList)
 		constBoxEntry = L"XZ";			m_boxConst.AddString(constBoxEntry.c_str());
 		constBoxEntry = L"YZ";			m_boxConst.AddString(constBoxEntry.c_str());
 	}
-
-	// Display first light
-	///if (m_lights.size() != 0) { Update(0); }	
-
+	
 	// Set constraint to display N/A
 	m_boxConst.SetCurSel(0);
 
 	SetupCheckBoxes();
 }
 
-void LightDialogue::Update(int index)
+void LightDialogue::Update(int ID)
 {
-	m_boxID.SetCurSel(index);
+	// If ID is valid
+	if (ID != -1) { m_boxID.SetCurSel(ID); }
 	UpdateType();
 	UpdateEnabled();
 	UpdatePosition();
@@ -234,8 +232,8 @@ void LightDialogue::OnCbnSelchangeID()
 	// Update attenuation boxes
 	UpdateConstA(); UpdateLinA(); UpdateQuadA();
 
-	// Tell MFC/ToolMain to update scene graph
-	m_update = true;
+	// Tell MFC/ToolMain to update scene graph & selected objects
+	m_update = m_select = true;
 }
 
 // Type has been changed
@@ -1025,37 +1023,15 @@ void LightDialogue::OnEnChangeQuadA()
 // Delete has been selected
 void LightDialogue::OnBnClickedDelete()
 {
-	// If selection is valid
-	if (m_selectedLightIDs.size() > 0)
-	{
-		// Remove objects from database storage
-		///ObjectManager::Remove(m_selectedLightIDs, *m_sceneGraph);
-
-		///m_requestDisplayList = true;
-
-		m_delete = true;
-
-		///m_selectedLightIDs.clear();
-	}
+	// Delete if selection is valid
+	m_delete = m_resetLights = (m_selectedLightIDs.size() > 0);
 }
+
 // Duplicate has been selected
 void LightDialogue::OnBnClickedDuplicate()
 {	
-	// If selection is valid
-	if (m_selectedLightIDs.size() != 0)
-	{		
-		// Copy objects
-		///ObjectManager::Copy(m_selectedLightIDs, *m_sceneGraph);
-
-		// Paste objects
-		///ObjectManager::Paste(*m_sceneGraph);
-
-		///m_requestDisplayList = true;
-
-		///SetupLights();
-
-		m_duplicate = true;
-	}
+	// Duplicate if selection is valid
+	m_duplicate = m_resetLights = (m_selectedLightIDs.size() != 0);
 }
 
 // Translate has been selected
@@ -1505,7 +1481,7 @@ void LightDialogue::UpdateSelectedConstraint()
 
 void LightDialogue::SetupLights()
 {
-	m_selectedLightIDs.clear();
+	if (m_resetLights) { m_selectedLightIDs.clear(); m_resetLights = false; }
 	m_lights.clear();
 	m_boxID.ResetContent();
 

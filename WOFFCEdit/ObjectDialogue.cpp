@@ -56,9 +56,6 @@ void ObjectDialogue::SetObjectData(std::vector<SceneObject>* sceneGraph)
 		constBoxEntry = L"YZ";			m_boxConst.AddString(constBoxEntry.c_str());
 	}
 
-	// Display first object
-	if (m_objects.size() != 0) { Update(0); }
-
 	// Set constraint to display N/A
 	m_boxConst.SetCurSel(0);
 
@@ -68,7 +65,8 @@ void ObjectDialogue::SetObjectData(std::vector<SceneObject>* sceneGraph)
 // Update current object with dialogue values
 void ObjectDialogue::Update(int ID)
 {
-	m_boxID.SetCurSel(ID);
+	// If ID is valid
+	if (ID != -1) { m_boxID.SetCurSel(ID); }
 	UpdateType();
 	UpdateScale();
 	UpdateRotation();
@@ -204,8 +202,8 @@ void ObjectDialogue::OnCbnSelchangeID()
 	// Update object position boxes
 	UpdatePosition();
 
-	// Tell MFC/ToolMain to update scene graph
-	m_update = true;
+	// Tell MFC/ToolMain to update scene graph & selected objects
+	m_update = m_select = true;
 }
 
 // Type has been changed
@@ -213,35 +211,27 @@ void ObjectDialogue::OnCbnSelchangeType()
 {	
 	// If function has been called by user
 	if (!m_internal)
-	{
-		// If selection is valid
-		if (m_boxID.GetCurSel() >= 0)
+	{		
+		// Loop through selected IDs
+		for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
 		{
-			// Loop through selected IDs
-			for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+			// Loop through objects
+			for (int j = 0; j < m_objects.size(); ++j)
 			{
-				// Loop through objects
-				for (int j = 0; j < m_objects.size(); ++j)
+				// If object ID matches selected ID
+				if (m_objects[j].ID == m_selectedObjectIDs[i])
 				{
-					// If object ID matches selected ID
-					if (m_objects[j].ID == m_selectedObjectIDs[i])
-					{
-						// Store type selection
-						int type = m_boxType.GetCurSel();
+					// Store type selection
+					int type = m_boxType.GetCurSel();
 
-						// Set object type
-						///m_objects[j].m_type = (OBJECT_TYPE)type;
-
-						// Replace object with new type
-						ObjectManager::Replace(m_objects[j].ID, m_sceneGraph, (OBJECT_TYPE)type);
-						break;
-					}					
-				}
+					// Set object type
+					m_objects[j].m_type = (OBJECT_TYPE)type;
+				}					
 			}
-
-			// Tell MFC/ToolMain to update scene graph
-			m_update = true;
 		}
+
+		// Tell MFC/ToolMain to update scene graph
+		m_update = true;		
 	}
 }
 
@@ -790,29 +780,14 @@ void ObjectDialogue::OnEnChangeSnapValue()
 void ObjectDialogue::OnBnClickedDelete()
 {
 	// If selection is valid
-	if (m_selectedObjectIDs.size() > 0)
-	{
-		// Remove objects from database storage
-		ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph);
-
-		m_requestSceneGraph = true;
-	}
+	m_delete = m_resetObjects = (m_selectedObjectIDs.size() > 0);
 }
 
 // Duplicate has been selected
 void ObjectDialogue::OnBnClickedDuplicate()
 {
 	// If selection is valid
-	if (m_selectedObjectIDs.size() > 0)
-	{
-		// Copy objects
-		ObjectManager::Copy(m_selectedObjectIDs, m_sceneGraph);
-
-		// Paste objects
-		ObjectManager::Paste(m_sceneGraph);
-
-		m_requestSceneGraph = true;
-	}
+	m_duplicate = m_resetObjects = (m_selectedObjectIDs.size() != 0);
 }
 
 // Update remaining object details when one is changed //////////////////////////////////////////////
@@ -820,7 +795,8 @@ void ObjectDialogue::OnBnClickedDuplicate()
 // Setup IDs of currently available objects
 void ObjectDialogue::SetupObjects()
 {
-	if (m_objects.size() != 0) { m_objects.clear(); }	
+	if (m_resetObjects) { m_selectedObjectIDs.clear(); m_resetObjects = false; }
+	m_objects.clear();	
 	m_boxID.ResetContent();
 
 	// Count objects
@@ -830,13 +806,13 @@ void ObjectDialogue::SetupObjects()
 	for (int i = 0; i < m_sceneGraph.size(); ++i)
 	{
 		// If object isn't a light
-		if (m_sceneGraph[i].m_type != OBJECT_TYPE::LIGHT)
+		if (m_sceneGraph.at(i).m_type != OBJECT_TYPE::LIGHT)
 		{
 			// Add to local storage
-			m_objects.push_back(m_sceneGraph[i]);
+			m_objects.push_back(m_sceneGraph.at(i));
 
 			// Add entries to ID combo box
-			std::wstring idBoxEntry = std::to_wstring(m_sceneGraph[i].ID);
+			std::wstring idBoxEntry = std::to_wstring(m_sceneGraph.at(i).ID);
 			m_boxID.AddString(idBoxEntry.c_str());
 
 			// Increase count 

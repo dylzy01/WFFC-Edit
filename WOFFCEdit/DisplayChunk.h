@@ -36,6 +36,8 @@ public:
 
 	// Painting
 	void PaintTerrain(int row, int column, TERRAIN_PAINT paint);
+	void PaintBlend(int row, int column, TERRAIN_PAINT paint);
+	void PaintOpaque(int row, int column, TERRAIN_PAINT paint);
 	void OverwritePaint(int row, int column, TERRAIN_PAINT paint);
 	void PaintOverBlended(TERRAIN_PAINT paint, std::pair<int, int> index);
 
@@ -47,6 +49,7 @@ public:
 	DirectX::VertexPositionNormalTexture GetGeometry(int row, int column) { return m_terrainGeometry[row][column]; }
 	TERRAIN_PAINT GetPaint(int row, int column);
 	float GetScaleFactor() { return m_scaleFactor; }
+	bool GetBlend() { return m_blend; }
 	
 	// Setters
 	void SetSelected(bool selected, int row, int column);

@@ -63,8 +63,6 @@ void Game::Initialize(HWND window, int width, int height)
 
 	GetClientRect(m_window, &m_screenDimensions);
 
-	CreateObjects();
-
 #ifdef DXTK_AUDIO
     // Create DirectXTK for Audio objects
     AUDIO_ENGINE_FLAGS eflags = AudioEngine_Default;
@@ -301,20 +299,27 @@ void Game::Render()
 	std::wstring fps = L"FPS: " + std::to_wstring(int(m_timer.GetFramesPerSecond() / m_deltaTime) / 10);
 	m_font->DrawString(m_sprites.get(), fps.c_str(), XMFLOAT2(800, 10), Colors::Red);
 
-	m_sprites->End();
-	
+	m_sprites->End();	
+
 	// Coordinate system	
 	if (m_displayList.size() != 0)
 	{
 		// Loop through selected objects
 		for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
 		{
-			// If selected object ID is valid
-			///if (m_selectedObjectIDs[i] != -1)
-			if (m_selectedObjectIDs[i] >= 0 && m_selectedObjectIDs[i] <= 100);
+			// If selected object ID is within range and valid
+			if (m_selectedObjectIDs[i] >= 0 && m_selectedObjectIDs[i] <= 100 && m_selectedObjectIDs[i] != -1);
 			{
-				// Draw bounding box & local axes
-				///DrawDebug(m_selectedObjectIDs[i]);
+				// Loop through display list
+				for (int j = 0; j < m_displayList.size(); ++j)
+				{
+					// If IDs match
+					if (m_selectedObjectIDs[i] == m_displayList[j].m_ID)
+					{
+						// Draw bounding box & local axes
+						DrawDebug(j);
+					}
+				}				
 			}
 		}
 	}
@@ -409,12 +414,15 @@ void Game::DrawDebug(int i)
 	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
 	context->OMSetDepthStencilState(m_states->DepthNone(), 0);
 	context->RSSetState(m_states->CullNone());
+	m_batchEffect->SetWorld(m_world);
+	m_batchEffect->SetView(m_view);
+	m_batchEffect->SetProjection(m_projection);
 
 	m_batchEffect->Apply(context);
 
 	context->IASetInputLayout(m_batchInputLayout.Get());
 
-	m_batch->Begin();
+	m_batch->Begin();	
 
 	// Bounding box
 	for (int j = 0; j < m_displayList[i].m_model->meshes.size(); ++j)
@@ -447,10 +455,7 @@ std::vector<SceneObject> Game::SetupObjects(std::vector<SceneObject> sceneGraph)
 {
 	// Loop through scene graph
 	for (int i = 0; i < sceneGraph.size(); ++i)
-	{
-		// Set ID
-		///sceneGraph[i].ID = i;
-		
+	{		
 		// Object isn't water
 		sceneGraph[i].m_isWater = false;
 
@@ -652,7 +657,7 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y *= newDisplayObject.m_scale.y;
 			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.z *= newDisplayObject.m_scale.z;
 			newDisplayObject.m_model->meshes[j]->boundingBox.Center = newDisplayObject.m_position;
-			newDisplayObject.m_model->meshes[j]->boundingBox.Center.y += newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y;
+			///newDisplayObject.m_model->meshes[j]->boundingBox.Center.y += newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y;
 		}	
 		
 		// Add object to list
@@ -757,7 +762,7 @@ void Game::RebuildDisplayList(std::vector<SceneObject>* sceneGraph)
 			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y *= newDisplayObject.m_scale.y;
 			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.z *= newDisplayObject.m_scale.z;
 			newDisplayObject.m_model->meshes[j]->boundingBox.Center = newDisplayObject.m_position;
-			newDisplayObject.m_model->meshes[j]->boundingBox.Center.y += newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y;
+			///newDisplayObject.m_model->meshes[j]->boundingBox.Center.y += newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y;
 		}		
 
 		// Add object to list
@@ -804,21 +809,6 @@ void Game::SaveDisplayList()
 	}
 }
 
-void Game::RemoveLight(int ID)
-{
-	// Loop through lights
-	//for (int i = 0; i < m_lights.first.size(); ++i)
-	//{
-	//	// If light ID matches parameter ID
-	//	if (m_lights.second[i] == ID)
-	//	{			
-	//		// Erase light from vector
-	//		m_lights.first.erase(m_lights.first.begin() + i);
-	//		m_lights.second.erase(m_lights.second.begin() + i);
-	//	}
-	//}
-}
-
 std::vector<DisplayObject> Game::GetLights()
 {
 	// Setup temp container
@@ -848,6 +838,11 @@ void Game::SetTransform(int i, OBJECT_FUNCTION function, DirectX::SimpleMath::Ve
 	{
 		// Update object scale
 		m_displayList[i].m_scale = vector;		
+
+		// Update object bounding box scale
+		m_displayList[i].m_model->meshes[0]->boundingBox.Extents.x = vector.x;
+		m_displayList[i].m_model->meshes[0]->boundingBox.Extents.y = vector.y;
+		m_displayList[i].m_model->meshes[0]->boundingBox.Extents.z = vector.z;
 	}
 	break;
 	case OBJECT_FUNCTION::ROTATE: 
@@ -857,50 +852,24 @@ void Game::SetTransform(int i, OBJECT_FUNCTION function, DirectX::SimpleMath::Ve
 		
 		// Update object rotation
 		m_displayList[i].m_orientation = vector;
-				
-		// Loop through lights
-		//for (int j = 0; j < m_lights.first.size(); ++j)
-		//{
-		//	// If light ID matches object ID
-		//	if (m_lights.second[j] == i)
-		//	{
-		//		// Store object orientaiton & normalize for light direction
-		//		DirectX::SimpleMath::Vector3 direction = m_displayList[i].m_orientation;
-		//		direction.Normalize();
-
-		//		// Update light direction
-		//		m_lights.first[j]->SetDirection(direction);
-		//	}
-		//}
 	}
 	break;
 	case OBJECT_FUNCTION::TRANSLATE: 
 	{
 		// Update object translation
 		m_displayList[i].m_position = vector;	
-
-		// Loop through lights
-		//for (int j = 0; j < m_lights.first.size(); ++j)
-		//{
-		//	// If light ID matches object ID
-		//	if (m_lights.second[j] == i)
-		//	{
-		//		// Update light position				
-		//		m_lights.first[j]->SetPosition(m_displayList[i].m_position);
-		//	}
-		//}
 	}
 	break;
 	}
 
 	// Update object bounding box scale
-	m_displayList[i].m_model->meshes[0]->boundingBox.Extents.x = m_displayList[i].m_scale.x * 2.15f;
-	m_displayList[i].m_model->meshes[0]->boundingBox.Extents.y = m_displayList[i].m_scale.y * 2.625f;
-	m_displayList[i].m_model->meshes[0]->boundingBox.Extents.z = m_displayList[i].m_scale.z * 2.15f;
+	///m_displayList[i].m_model->meshes[0]->boundingBox.Extents.x *= m_displayList[i].m_scale.x;/// * 2.15f;
+	///m_displayList[i].m_model->meshes[0]->boundingBox.Extents.y *= m_displayList[i].m_scale.y;/// * 2.625f;
+	///m_displayList[i].m_model->meshes[0]->boundingBox.Extents.z *= m_displayList[i].m_scale.z;/// * 2.15f;
 
 	// Update object bounding box translation
 	m_displayList[i].m_model->meshes[0]->boundingBox.Center = m_displayList[i].m_position;
-	m_displayList[i].m_model->meshes[0]->boundingBox.Center.y += m_displayList[i].m_model->meshes[0]->boundingBox.Extents.y;
+	///m_displayList[i].m_model->meshes[0]->boundingBox.Center.y += m_displayList[i].m_model->meshes[0]->boundingBox.Extents.y;
 }
 
 void Game::SetLights(std::vector<DisplayObject> lights)
@@ -1045,10 +1014,6 @@ void Game::CreateWindowSizeDependentResources()
 	
 	/*m_screenCentre.x = (float)size.right / 2;
 	m_screenCentre.y = (float)size.bottom / 2;*/
-}
-
-void Game::CreateObjects()
-{
 }
 
 void Game::OnDeviceLost()

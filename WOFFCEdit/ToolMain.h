@@ -8,7 +8,7 @@
 
 #include "MouseManager.h"
 #include "ObjectManager.h"
-#include "LandscapeManager.h"
+#include "TerrainManager.h"
 #include "SceneManager.h"
 #include "Light.h"
 
@@ -43,6 +43,7 @@ public: //methods
 	DisplayChunk* GetDisplayChunk() { return m_d3dRenderer.GetDisplayChunk(); }
 	std::vector<SceneObject> GetSceneGraph() { return m_d3dRenderer.GetSceneGraph(); }
 	InputCommands* GetInput() { return &m_toolInputCommands; }
+	bool GetNewSelection();
 
 	// Setters
 	void SetWireframe(bool wireframe) { m_d3dRenderer.SetWireframe(wireframe); }
@@ -164,6 +165,7 @@ private:	//variables
 	// Mouse movement
 	bool m_mouseR, m_mouseL;
 
-	// Toggle controllers
+	// Controllers
 	bool m_lDown = false, m_rDown = false;
+	bool m_newSelection = false;
 };

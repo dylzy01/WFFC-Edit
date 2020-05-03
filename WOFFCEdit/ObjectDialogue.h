@@ -22,12 +22,8 @@ public:
 	// Pass in data pointers the class will operate on
 	void SetObjectData(std::vector<SceneObject>* sceneGraph);
 
-	// Update selected object
-	///void UpdateSelection(int ID) { m_selection = ID; }
-	///void UpdateSelection(std::vector<int> IDs) { m_selectedObjects = IDs; }
-
 	// Update current object with dialogue values
-	void Update(int ID);
+	void Update(int ID = -1);
 
 	// Getters
 	bool GetActive() { return m_active; }
@@ -37,6 +33,9 @@ public:
 	bool GetObjectsSetup() { return m_objectSetup; }
 	bool GetRequest() { return m_requestSceneGraph; }
 	float GetSnap() { if (m_snapTerrain) { return -1; } else if (m_snapValue) { return m_snapScale; } }
+	bool GetDelete() { return m_delete; }
+	bool GetDuplicate() { return m_duplicate; }
+	bool GetSelect() { return m_select; }
 	std::vector<int> GetSelectedObjectIDs() { return m_selectedObjectIDs; }
 	std::vector<SceneObject> GetObjects() { return m_objects; }
 	OBJECT_FUNCTION GetFunction() { return m_function; }
@@ -50,6 +49,9 @@ public:
 	void SetTransforming(bool transforming) { m_transforming = transforming; }
 	void SetSelectedObjects(std::vector<int> IDs) { m_selectedObjectIDs = IDs; }
 	void SetRequest(bool request) { m_requestSceneGraph = request; SetupObjects(); }
+	void SetDelete(bool del) { m_delete = del; m_requestSceneGraph = !del; }
+	void SetDuplicate(bool dup) { m_duplicate = dup; m_requestSceneGraph = !dup; }
+	void SetSelect(bool select) { m_select = select; }
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -77,6 +79,9 @@ protected:
 	bool m_internal = false;
 	bool m_requestSceneGraph = false;
 	float m_snapScale;
+	bool m_delete = false, m_duplicate = false;
+	bool m_select = false;
+	bool m_resetObjects = false;
 	///int m_selection;	
 	OBJECT_FUNCTION m_function;
 	CONSTRAINT m_constraint;

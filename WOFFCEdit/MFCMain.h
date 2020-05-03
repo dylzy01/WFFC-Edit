@@ -36,6 +36,10 @@ private:
 	void CheckDialogues();
 	void UpdateLights();
 	void UpdateObjects();
+	void UpdateSpawn();
+	void UpdateTerrain();
+	void UpdatePaint();
+	void UpdateSculpt();
 
 	CMyFrame * m_frame;	//handle to the frame where all our UI is
 	HWND m_toolHandle;	//Handle to the MFC window

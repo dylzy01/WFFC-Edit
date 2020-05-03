@@ -112,309 +112,23 @@ int MFCMain::Run()
 
 void MFCMain::CheckDialogues()
 {
-	// If object editor is active
-	if (m_objectEditorDialogue.GetActive())
-	{
-		// Set other modes to none
-		m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
-		m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
-		m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
-		
-		// Set tool editor
-		m_toolSystem.SetEditor(EDITOR::OBJECT_FUNCTION);
-
-		// Set transform mode
-		m_toolSystem.SetObjectFunction(m_objectEditorDialogue.GetFunction());
-
-		// If x and y constraints are selected
-		if (m_objectEditorDialogue.GetConstraintX() && m_objectEditorDialogue.GetConstraintY()) { m_toolSystem.SetObjectConstraint(CONSTRAINT::XY); }
-
-		// Else, if x and z constraints are selected
-		else if (m_objectEditorDialogue.GetConstraintX() && m_objectEditorDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(CONSTRAINT::XZ); }
-
-		// Else, if y and z constraints are selected
-		else if (m_objectEditorDialogue.GetConstraintY() && m_objectEditorDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(CONSTRAINT::YZ); }
-
-		// Else, if only x constraint is selected
-		else if (m_objectEditorDialogue.GetConstraintX()) { m_toolSystem.SetObjectConstraint(CONSTRAINT::X); }
-
-		// Else, if only y constraint is selected
-		else if (m_objectEditorDialogue.GetConstraintY()) { m_toolSystem.SetObjectConstraint(CONSTRAINT::Y); }
-
-		// Else, if only z constraint is selected
-		else if (m_objectEditorDialogue.GetConstraintZ()) { m_toolSystem.SetObjectConstraint(CONSTRAINT::Z); }
-
-		// Else, if no constraints are selected
-		else { m_toolSystem.SetObjectConstraint(CONSTRAINT::NA); }
-	}
-	
-	// Else, if object spawner is active
-	else if (m_objectSpawnDialogue.GetActive())
-	{
-		// Set other modes to none
-		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
-		m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
-		m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
-		
-		// Set tool editor
-		m_toolSystem.SetEditor(EDITOR::OBJECT_SPAWN);
-
-		// Set spawn mode
-		m_toolSystem.SetObjectSpawn(m_objectSpawnDialogue.GetSpawn());
-	}
-
-	// Else, if terrain sculpter is active
-	else if (m_terrainSculptDialogue.GetActive())
-	{
-		// Set other modes to none
-		m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
-		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
-		m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
-		
-		// Set tool editor
-		m_toolSystem.SetEditor(EDITOR::SCULPT_FREELY);
-
-		// Set sculpt mode
-		m_toolSystem.SetTerrainSculpt(m_terrainSculptDialogue.GetSculpt());
-
-		// If x and y constraints are selected
-		if (m_terrainSculptDialogue.GetConstraintX() && m_terrainSculptDialogue.GetConstraintY()) { m_toolSystem.SetTerrainConstraint(CONSTRAINT::XY); }
-
-		// Else, if x and z constraints are selected
-		else if (m_terrainSculptDialogue.GetConstraintX() && m_terrainSculptDialogue.GetConstraintZ()) { m_toolSystem.SetTerrainConstraint(CONSTRAINT::XZ); }
-
-		// Else, if y and z constraints are selected
-		else if (m_terrainSculptDialogue.GetConstraintY() && m_terrainSculptDialogue.GetConstraintZ()) { m_toolSystem.SetTerrainConstraint(CONSTRAINT::YZ); }
-
-		// Else, if only x constraint is selected
-		else if (m_terrainSculptDialogue.GetConstraintX()) { m_toolSystem.SetTerrainConstraint(CONSTRAINT::X); }
-
-		// Else, if only y constraint is selected
-		else if (m_terrainSculptDialogue.GetConstraintY()) { m_toolSystem.SetTerrainConstraint(CONSTRAINT::Y); }
-
-		// Else, if only z constraint is selected
-		else if (m_terrainSculptDialogue.GetConstraintZ()) { m_toolSystem.SetTerrainConstraint(CONSTRAINT::Z); }
-
-		// Else, if no constraints are selected
-		else { m_toolSystem.SetTerrainConstraint(CONSTRAINT::NA); }
-	}
-
-	// Else, if terrain painter is active
-	else if (m_terrainPaintDialogue.GetActive())
-	{
-		// Set other modes to none
-		m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
-		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
-		m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
-		
-		// Set tool editor
-		m_toolSystem.SetEditor(EDITOR::TERRAIN_PAINT);
-
-		// Set paint mode
-		m_toolSystem.SetTerrainPaint(m_terrainPaintDialogue.GetPaint());
-	}
-
-	
-	
-	
-	
-	
 	// If light inspector is active
-	else if (m_lightDialogue.GetActive()) { UpdateLights(); }
-	
-
-	// Else, if terrain inspector is active
-	else if (m_terrainDialogue.GetActive())
-	{
-		// If right mouse is pressed
-		if (m_toolSystem.GetInput()->mouseRight)
-		{
-			// If the user isn't sculpting
-			if (!m_terrainDialogue.GetSculpting())
-			{
-				// Set tool editor to none
-				m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
-				
-				// Get current terrain selection
-				TERRAIN terrain = MouseManager::PickTerrain();
-
-				// If terrain has been intersected
-				if (terrain.intersect)
-				{
-					// Update dialogue data
-					m_terrainDialogue.UpdateTerrain(terrain.row, terrain.column);
-					m_terrainDialogue.SetTerrain(terrain);
-				}				
-			}
-
-			// Else, the user is sculpting
-			else
-			{
-				// Set tool editor
-				m_toolSystem.SetEditor(EDITOR::SCULPT_SINGLE);
-				
-				// Update tool selected terrain to match dialogue
-				TERRAIN temp = m_terrainDialogue.GetTerrain();
-				m_toolSystem.SetSelectedTerrain(m_terrainDialogue.GetTerrain());
-
-				// Set sculpt mode
-				m_toolSystem.SetTerrainSculpt(m_terrainDialogue.GetSculpt());
-
-				// Set constraint
-				m_toolSystem.SetTerrainConstraint(m_terrainDialogue.GetConstraint());
-			}			
-		}
-	}
-
-	// Else, if paint inspector is active
-	else if (m_paintDialogue.GetActive())
-	{
-		// Set other modes to none
-		m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
-		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
-		m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
-	
-		// Set tool editor
-		m_toolSystem.SetEditor(EDITOR::TERRAIN_PAINT);
-
-		// Set paint mode
-		m_toolSystem.SetTerrainPaint(m_paintDialogue.GetPaint());
-	}
-
-	// Else, if sculpt inspector is active
-	else if (m_sculptDialogue.GetActive())
-	{
-		// Set other modes to none
-		m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
-		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
-		m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
-
-		// Set tool editor
-		m_toolSystem.SetEditor(EDITOR::SCULPT_FREELY);
-
-		// Set sculpt mode
-		m_toolSystem.SetTerrainSculpt(m_sculptDialogue.GetSculpt());
-
-		// Set constraint
-		m_toolSystem.SetTerrainConstraint(m_sculptDialogue.GetConstraint());
-	}
+	if (m_lightDialogue.GetActive()) { UpdateLights(); }	
 
 	// Else, if object inspector is active
-	else if (m_objectDialogue.GetActive())
-	{
-		// If dialogue is requesting scene graph
-		if (m_objectDialogue.GetRequest())
-		{
-			// Reset request
-			m_objectDialogue.SetRequest(false);
-
-			// Setup temp objects
-			std::vector<SceneObject> objects;
-
-			// Loop through objects in scene graph
-			for (int i = 0; i < m_toolSystem.GetSceneGraph().size(); ++i)
-			{
-				// If object isn't a light
-				if (m_toolSystem.GetSceneGraph()[i].m_type != OBJECT_TYPE::LIGHT)
-				{
-					// Add to local storage
-					objects.push_back(m_toolSystem.GetSceneGraph()[i]);
-				}
-			}
-
-			// Update display list
-			m_objectDialogue.SetObjectData(&m_toolSystem.GetSceneGraph());
-		}
-
-		// If should focus on an object
-		if (m_objectDialogue.GetFocus())
-		{
-			// Setup temp focus ID
-			int focusID = -1;
-
-			// If more than one object is selected
-			if (m_objectDialogue.GetSelectedObjectIDs().size() > 1)
-			{
-				// Define object ID to focus on
-				focusID = m_objectDialogue.GetFocusDialogue()->GetSelectedIndex();
-			}
-
-			// Else, if just one object is selected
-			else if (m_objectDialogue.GetSelectedObjectIDs().size() == 1)
-			{
-				// Define object ID to focus on
-				focusID = m_objectDialogue.GetSelectedObjectIDs()[0];
-			}
-
-			// Setup object ID to focus on
-			m_toolSystem.SetFocus(focusID);
-		}
-		else { m_toolSystem.SetFocus(-1); }
-	
-		// If objects have been setup
-		if (m_objectDialogue.GetObjectsSetup())
-		{
-			// Update selected object
-			m_toolSystem.SetSelectedObjectIDs(m_objectDialogue.GetSelectedObjectIDs());
-
-			// Set other modes to none
-			m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
-			m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
-			m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
-
-			// Set tool editor
-			m_toolSystem.SetEditor(EDITOR::OBJECT_FUNCTION);
-
-			// Set object function
-			m_toolSystem.SetObjectFunction(m_objectDialogue.GetFunction());
-
-			// Set constraint
-			m_toolSystem.SetObjectConstraint(m_objectDialogue.GetConstraint());
-		}
-
-		// If scene graph should be updated
-		//if (m_objectDialogue.GetUpdate())
-		//{
-		//	// Reset update controller
-		//	m_objectDialogue.SetUpdate(false);
-
-		//	// Get edited objects
-		//	std::vector<SceneObject> objects = m_objectDialogue.GetObjects();
-
-		//	// Get scene graph
-		//	std::vector<SceneObject> sceneGraph = m_toolSystem.GetSceneGraph();
-
-		//	// Loop through scene graph
-		//	for (int i = 0; i < sceneGraph.size(); ++i)
-		//	{
-		//		// Loop through lights
-		//		for (int j = 0; j < objects.size(); ++j)
-		//		{
-		//			// If IDs match
-		//			if (objects[j].ID == sceneGraph[i].ID)
-		//			{
-		//				// Replace scene object with edited object
-		//				m_toolSystem.SetSceneObject(objects[j], i);
-		//			}				
-		//		}
-		//	}
-		//}
-	}
+	else if (m_objectDialogue.GetActive()) { UpdateObjects(); }
 
 	// Else, if spawn inspector is active
-	else if (m_spawnDialogue.GetActive())
-	{
-		// Set other modes to none
-		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
-		m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
-		m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
+	else if (m_spawnDialogue.GetActive()) { UpdateSpawn(); }
 
-		// Set tool editor
-		m_toolSystem.SetEditor(EDITOR::OBJECT_SPAWN);
+	// Else, if terrain inspector is active
+	else if (m_terrainDialogue.GetActive()) { UpdateTerrain(); }
 
-		// Set spawn mode
-		m_toolSystem.SetObjectSpawn(m_spawnDialogue.GetSpawnType());
-	}
+	// Else, if paint inspector is active
+	else if (m_paintDialogue.GetActive()) { UpdatePaint(); }	
+
+	// Else, if sculpt inspector is active
+	else if (m_sculptDialogue.GetActive()) { UpdateSculpt(); }	
 	
 	// Else, if no dialogues are active
 	else
@@ -435,6 +149,21 @@ void MFCMain::CheckDialogues()
 
 void MFCMain::UpdateLights()
 {
+	// Set tool editor mode
+	m_toolSystem.SetEditor(EDITOR::LIGHTS);
+	
+	// If ToolMain selected objects (lights) should be updated
+	if (m_lightDialogue.GetSelect()) { m_toolSystem.SetSelectedObjectIDs(m_lightDialogue.GetSelectedLightIDs()); }
+	// Else, update dialogue selected objects (lights)
+	else { m_lightDialogue.SetSelectedLightIDs(m_toolSystem.GetSelectedObjectIDs()); }
+	
+	// If there's been a new selection
+	if (m_toolSystem.GetNewSelection())
+	{
+		// Update dialogue entries to match selected light
+		m_lightDialogue.Update();
+	}
+	
 	// If dialogue is requesting display list
 	if (m_lightDialogue.GetRequest())
 	{
@@ -468,10 +197,7 @@ void MFCMain::UpdateLights()
 		// Setup object ID to focus on
 		m_toolSystem.SetFocus(focusID);
 	}
-	else { m_toolSystem.SetFocus(-1); }
-
-	// Update selected objects (light)
-	m_toolSystem.SetSelectedObjectIDs(m_lightDialogue.GetSelectedLightIDs());
+	else { m_toolSystem.SetFocus(-1); }	
 
 	// If scene graph should be updated
 	if (m_lightDialogue.GetUpdate())
@@ -524,13 +250,33 @@ void MFCMain::UpdateLights()
 		// Reset update controller
 		m_lightDialogue.SetUpdate(false);
 	}
+	
+	// If light is being deleted
+	if (m_lightDialogue.GetDelete())
+	{
+		// Remove objects from database storage
+		ObjectManager::Remove(m_lightDialogue.GetSelectedLightIDs(), m_toolSystem.GetSceneGraph());
 
+		// Reset controller 
+		m_lightDialogue.SetDelete(false);
+	}
+
+	// Else, if light is being duplicated
+	else if (m_lightDialogue.GetDuplicate())
+	{
+		// Copy objects
+		ObjectManager::Copy(m_lightDialogue.GetSelectedLightIDs(), m_toolSystem.GetSceneGraph());
+
+		// Paste objects
+		ObjectManager::Paste(m_toolSystem.GetSceneGraph());
+
+		// Reset controller
+		m_lightDialogue.SetDuplicate(false);
+	}
+	
 	// Else, if light is being translated
 	else if (m_lightDialogue.GetTranslating())
 	{
-		// Set tool editor
-		m_toolSystem.SetEditor(EDITOR::LIGHTS);
-
 		// Set transform mode
 		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::TRANSLATE);
 
@@ -551,53 +297,217 @@ void MFCMain::UpdateLights()
 				}
 			}
 		}
+	}
+	// Else, must be selecting lights
+	else
+	{
+		// Set transform mode
+		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::SELECT);
 
-		// Update light scene graph
-		///m_lightDialogue.SetSceneGraph(&m_toolSystem.GetSceneGraph());
+		// Set constraint
+		m_toolSystem.SetObjectConstraint(m_lightDialogue.GetConstraint());
+	}	
+}
+
+void MFCMain::UpdateObjects()
+{
+	// If ToolMain selected objects should be updated
+	if (m_objectDialogue.GetSelect()) { m_toolSystem.SetSelectedObjectIDs(m_objectDialogue.GetSelectedObjectIDs()); }
+	// Else, update dialogue selected objects
+	else { m_objectDialogue.SetSelectedObjects(m_toolSystem.GetSelectedObjectIDs()); }
+	
+	// If there's been a new selection
+	if (m_toolSystem.GetNewSelection())
+	{
+		// Update dialogue entries to match selected object
+		m_objectDialogue.Update();
+	}
+	
+	// If dialogue is requesting scene graph
+	if (m_objectDialogue.GetRequest())
+	{
+		// Update scene graph
+		m_objectDialogue.SetObjectData(&m_toolSystem.GetSceneGraph());
+		
+		// Reset request
+		m_objectDialogue.SetRequest(false);
 	}
 
-	// Else, if light is being deleted
-	else if (m_lightDialogue.GetDelete())
+	// If should focus on an object
+	if (m_objectDialogue.GetFocus())
+	{
+		// Setup temp focus ID
+		int focusID = -1;
+
+		// If more than one object is selected
+		if (m_objectDialogue.GetSelectedObjectIDs().size() > 1)
+		{
+			// Define object ID to focus on
+			focusID = m_objectDialogue.GetFocusDialogue()->GetSelectedIndex();
+		}
+
+		// Else, if just one object is selected
+		else if (m_objectDialogue.GetSelectedObjectIDs().size() == 1)
+		{
+			// Define object ID to focus on
+			focusID = m_objectDialogue.GetSelectedObjectIDs()[0];
+		}
+
+		// Setup object ID to focus on
+		m_toolSystem.SetFocus(focusID);
+	}
+	else { m_toolSystem.SetFocus(-1); }
+	
+	// If objects have been setup
+	if (m_objectDialogue.GetObjectsSetup())
+	{
+		// Update selected object
+		m_toolSystem.SetSelectedObjectIDs(m_objectDialogue.GetSelectedObjectIDs());
+
+		// Set other modes to none
+		m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
+		m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
+		m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
+
+		// Set tool editor
+		m_toolSystem.SetEditor(EDITOR::OBJECT_FUNCTION);
+
+		// Set object function
+		m_toolSystem.SetObjectFunction(m_objectDialogue.GetFunction());
+
+		// Set constraint
+		m_toolSystem.SetObjectConstraint(m_objectDialogue.GetConstraint());
+	}
+
+	// If scene graph should be updated
+	if (m_objectDialogue.GetUpdate())
+	{
+		// Get edited objects
+		std::vector<SceneObject> objects = m_objectDialogue.GetObjects();
+
+		// Get scene graph
+		std::vector<SceneObject> sceneGraph = m_toolSystem.GetSceneGraph();
+				
+		// Loop through objects
+		for (int i = 0; i < objects.size(); ++i)
+		{
+			// Replace object type through database
+			ObjectManager::Replace(objects[i].ID, sceneGraph, objects[i].m_type);				
+		}	
+
+		// Reset update controller
+		m_objectDialogue.SetUpdate(false);
+	}
+
+	// If object is being deleted
+	if (m_objectDialogue.GetDelete())
 	{
 		// Remove objects from database storage
-		ObjectManager::Remove(m_lightDialogue.GetSelectedLightIDs(), m_toolSystem.GetSceneGraph());
-
-		// Update selected objects
-		///m_toolSystem.SetSelectedObjectIDs(m_lightDialogue.GetSelectedLightIDs());
+		ObjectManager::Remove(m_objectDialogue.GetSelectedObjectIDs(), m_toolSystem.GetSceneGraph());
 
 		// Reset controller 
-		m_lightDialogue.SetDelete(false);
+		m_objectDialogue.SetDelete(false);
 	}
 
-	// Else, if light is being duplicated
-	else if (m_lightDialogue.GetDuplicate())
+	// Else, if object is being duplicated
+	else if (m_objectDialogue.GetDuplicate())
 	{
 		// Copy objects
-		ObjectManager::Copy(m_lightDialogue.GetSelectedLightIDs(), m_toolSystem.GetSceneGraph());
+		ObjectManager::Copy(m_objectDialogue.GetSelectedObjectIDs(), m_toolSystem.GetSceneGraph());
 
 		// Paste objects
 		ObjectManager::Paste(m_toolSystem.GetSceneGraph());
 
 		// Reset controller
-		m_lightDialogue.SetDuplicate(false);
-	}
-
-	// Else, reset editor
-	else
-	{
-		// Set tool editor
-		m_toolSystem.SetEditor(EDITOR::NA);
-
-		// Set transform mode
-		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
-
-		// Set constraint
-		m_toolSystem.SetObjectConstraint(CONSTRAINT::NA);
+		m_objectDialogue.SetDuplicate(false);
 	}
 }
 
-void MFCMain::UpdateObjects()
+void MFCMain::UpdateSpawn()
 {
+	// Set other modes to none
+	m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
+	m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
+	m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
+
+	// Set tool editor
+	m_toolSystem.SetEditor(EDITOR::OBJECT_SPAWN);
+
+	// Set spawn mode
+	m_toolSystem.SetObjectSpawn(m_spawnDialogue.GetSpawnType());
+}
+
+void MFCMain::UpdateTerrain()
+{
+	// If right mouse is pressed
+	if (m_toolSystem.GetInput()->mouseRight)
+	{
+		// If the user isn't sculpting
+		if (!m_terrainDialogue.GetSculpting())
+		{
+			// Set tool editor to none
+			m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
+
+			// Get current terrain selection
+			TERRAIN terrain = MouseManager::PickTerrain();
+
+			// If terrain has been intersected
+			if (terrain.intersect)
+			{
+				// Update dialogue data
+				m_terrainDialogue.UpdateTerrain(terrain.row, terrain.column);
+				m_terrainDialogue.SetTerrain(terrain);
+			}
+		}
+
+		// Else, the user is sculpting
+		else
+		{
+			// Set tool editor
+			m_toolSystem.SetEditor(EDITOR::SCULPT_SINGLE);
+
+			// Update tool selected terrain to match dialogue
+			TERRAIN temp = m_terrainDialogue.GetTerrain();
+			m_toolSystem.SetSelectedTerrain(m_terrainDialogue.GetTerrain());
+
+			// Set sculpt mode
+			m_toolSystem.SetTerrainSculpt(m_terrainDialogue.GetSculpt());
+
+			// Set constraint
+			m_toolSystem.SetTerrainConstraint(m_terrainDialogue.GetConstraint());
+		}
+	}
+}
+
+void MFCMain::UpdatePaint()
+{
+	// Set other modes to none
+	m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
+	m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
+	m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
+
+	// Set tool editor
+	m_toolSystem.SetEditor(EDITOR::TERRAIN_PAINT);
+
+	// Set paint mode
+	m_toolSystem.SetTerrainPaint(m_paintDialogue.GetPaint());
+}
+
+void MFCMain::UpdateSculpt()
+{
+	// Set other modes to none
+	m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
+	m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
+	m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
+
+	// Set tool editor
+	m_toolSystem.SetEditor(EDITOR::SCULPT_FREELY);
+
+	// Set sculpt mode
+	m_toolSystem.SetTerrainSculpt(m_sculptDialogue.GetSculpt());
+
+	// Set constraint
+	m_toolSystem.SetTerrainConstraint(m_sculptDialogue.GetConstraint());
 }
 
 void MFCMain::MenuFileQuit()
@@ -750,7 +660,7 @@ void MFCMain::ToolBarLight()
 
 	// Set current selection
 	///m_lightDialogue.SetLightData(&m_toolSystem.GetLights(), IDs);
-	m_lightDialogue.SetSelection(IDs);
+	m_lightDialogue.SetSelectedLightIDs(IDs);
 }
 
 void MFCMain::ToolBarTerrain()
@@ -814,22 +724,6 @@ void MFCMain::ToolBarObject()
 	m_objectDialogue.Create(IDD_DIALOG12);
 	m_objectDialogue.ShowWindow(SW_SHOW);
 	m_objectDialogue.SetActive(true);
-
-	// Setup temp objects
-	std::vector<SceneObject> objects;
-	
-	// Loop through objects in scene graph
-	for (int i = 0; i < m_toolSystem.GetSceneGraph().size(); ++i)
-	{
-		// If object isn't a light
-		if (m_toolSystem.GetSceneGraph()[i].m_type != OBJECT_TYPE::LIGHT)
-		{
-			// Add to local storage
-			objects.push_back(m_toolSystem.GetSceneGraph()[i]);
-		}
-	}
-
-	// Set dialogue pointers
 	m_objectDialogue.SetObjectData(&m_toolSystem.GetSceneGraph());
 }
 

@@ -108,6 +108,12 @@ enum class LIGHT_TYPE {
 	SPOT = 3
 };
 
+enum class PICK_TYPE {
+	ANY,
+	OBJECT,
+	LIGHT
+};
+
 struct TERRAIN {
 	int row, column, ID;
 	bool intersect = false;

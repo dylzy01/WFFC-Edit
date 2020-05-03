@@ -24,7 +24,7 @@ public:
 	void SetLightData(std::vector<DisplayObject>* displayList);
 
 	// Update current light with dialogue values
-	void Update(int index);
+	void Update(int ID = -1);
 
 	// Update current light position
 	void UpdateLightPosition(DirectX::XMFLOAT3 position);	
@@ -38,6 +38,7 @@ public:
 	bool GetFocus() { return m_focus; }
 	bool GetDelete() { return m_delete; }
 	bool GetDuplicate() { return m_duplicate; }
+	bool GetSelect() { return m_select; }
 	std::vector<int> GetSelectedLightIDs() { return m_selectedLightIDs; }
 	std::vector<DisplayObject> GetLights() { return m_lights; }
 	CONSTRAINT GetConstraint() { return m_constraint; }
@@ -47,11 +48,12 @@ public:
 	// Setters
 	void SetActive(bool active) { m_active = active; }
 	void SetUpdate(bool update) { m_update = update; }
-	void SetSelection(std::vector<int> selection) { m_selectedLightIDs = selection; }
+	void SetSelectedLightIDs(std::vector<int> selection) { m_selectedLightIDs = selection; }
 	void SetRequest(bool request) { m_requestDisplayList = request; SetupLights(); }
 	///void SetSceneGraph(std::vector<SceneObject>* sceneGraph) { m_sceneGraph = sceneGraph; }
 	void SetDelete(bool del) { m_delete = del; m_requestDisplayList = !del; }
 	void SetDuplicate(bool dup) { m_duplicate = dup; m_requestDisplayList = !dup; }
+	void SetSelect(bool select) { m_select = select; }
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -64,7 +66,6 @@ protected:
 	afx_msg void End();									// Kill the dialogue
 
 	// Local storage 
-	///std::vector<SceneObject>* m_sceneGraph;
 	std::vector<DisplayObject> m_displayList;
 	std::vector<DisplayObject> m_lights;
 	std::vector<int> m_selectedLightIDs;
@@ -78,6 +79,8 @@ protected:
 	bool m_requestDisplayList = false;
 	bool m_focus = false;
 	bool m_delete = false, m_duplicate = false;
+	bool m_select = false;
+	bool m_resetLights = false;
 	CONSTRAINT m_constraint;
 
 	// Focus 
