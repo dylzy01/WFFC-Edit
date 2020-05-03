@@ -7,6 +7,7 @@
 
 #include "SQLManager.h"
 #include "MouseManager.h"
+#include "SceneManager.h"
 
 class ObjectManager
 {

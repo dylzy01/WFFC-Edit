@@ -16,10 +16,10 @@ LightDialogue::LightDialogue(CWnd* pParent /*=nullptr*/)
 	
 }
 
-void LightDialogue::SetLightData(std::vector<SceneObject>* sceneGraph, std::vector<DisplayObject>* displayList)
+void LightDialogue::SetLightData(std::vector<DisplayObject>* displayList)
 {
 	// Local storage
-	m_sceneGraph = *sceneGraph;
+	//m_sceneGraph = sceneGraph;
 	m_displayList = *displayList;
 
 	// Setup IDs of currently available lights
@@ -1022,13 +1022,6 @@ void LightDialogue::OnEnChangeQuadA()
 	}
 }
 
-// Spawn has been selected
-void LightDialogue::OnBnClickedSpawn()
-{
-	// Spawn a light
-	ObjectManager::SpawnObject(OBJECT_TYPE::LIGHT, MouseManager::GetBasicSpawn(), m_sceneGraph, m_boxType.GetCurSel(), GetDiffuse(), GetConstA(), GetLinA(), GetQuadA());
-}
-
 // Delete has been selected
 void LightDialogue::OnBnClickedDelete()
 {
@@ -1036,35 +1029,32 @@ void LightDialogue::OnBnClickedDelete()
 	if (m_selectedLightIDs.size() > 0)
 	{
 		// Remove objects from database storage
-		ObjectManager::Remove(m_selectedLightIDs, m_sceneGraph);
+		///ObjectManager::Remove(m_selectedLightIDs, *m_sceneGraph);
 
-		// Drop down selection
-		///m_boxID.SetCurSel(m_boxID.GetCurSel() - 1);
+		///m_requestDisplayList = true;
 
-		m_requestDisplayList = true;
+		m_delete = true;
 
-		///SetupLights();
+		///m_selectedLightIDs.clear();
 	}
 }
-
 // Duplicate has been selected
 void LightDialogue::OnBnClickedDuplicate()
-{
+{	
 	// If selection is valid
 	if (m_selectedLightIDs.size() != 0)
-	{
+	{		
 		// Copy objects
-		ObjectManager::Copy(m_selectedLightIDs, m_sceneGraph);
+		///ObjectManager::Copy(m_selectedLightIDs, *m_sceneGraph);
 
 		// Paste objects
-		ObjectManager::Paste(m_sceneGraph);
+		///ObjectManager::Paste(*m_sceneGraph);
 
-		// Jump up selection
-		///m_boxID.SetCurSel(m_boxID.GetCurSel() + 1);
-
-		m_requestDisplayList = true;
+		///m_requestDisplayList = true;
 
 		///SetupLights();
+
+		m_duplicate = true;
 	}
 }
 
@@ -1072,6 +1062,29 @@ void LightDialogue::OnBnClickedDuplicate()
 void LightDialogue::OnBnClickedTranslate()
 {
 	m_translating = IsDlgButtonChecked(IDC_CHECK2);
+
+	// Switch between translating
+	switch (m_translating)
+	{
+	case true:
+	{
+		// Disable delete button
+		GetDlgItem(IDC_BUTTON1)->EnableWindow(false);
+
+		// Disable duplicate button
+		GetDlgItem(IDC_BUTTON2)->EnableWindow(false);
+	}
+	break;
+	case false:
+	{
+		// Enable delete button
+		GetDlgItem(IDC_BUTTON1)->EnableWindow(true);
+
+		// Disable duplicate button
+		GetDlgItem(IDC_BUTTON2)->EnableWindow(true);
+	}
+	break;
+	}
 }
 
 // Constraint mode has been changed
@@ -1492,6 +1505,7 @@ void LightDialogue::UpdateSelectedConstraint()
 
 void LightDialogue::SetupLights()
 {
+	m_selectedLightIDs.clear();
 	m_lights.clear();
 	m_boxID.ResetContent();
 

@@ -8,6 +8,7 @@
 #include "Light.h"
 #include "ObjectManager.h"
 #include "FocusDialogue.h"
+#include "SceneManager.h"
 
 // LightDialogue dialog
 
@@ -20,7 +21,7 @@ public:
 	virtual ~LightDialogue() {}
 
 	// Pass in data pointers the class will operate on
-	void SetLightData(std::vector<SceneObject>* m_sceneGraph, std::vector<DisplayObject>* displayList);
+	void SetLightData(std::vector<DisplayObject>* displayList);
 
 	// Update current light with dialogue values
 	void Update(int index);
@@ -35,6 +36,8 @@ public:
 	bool GetLightSetup() { return m_lightSetup; }
 	bool GetRequest() { return m_requestDisplayList; }
 	bool GetFocus() { return m_focus; }
+	bool GetDelete() { return m_delete; }
+	bool GetDuplicate() { return m_duplicate; }
 	std::vector<int> GetSelectedLightIDs() { return m_selectedLightIDs; }
 	std::vector<DisplayObject> GetLights() { return m_lights; }
 	CONSTRAINT GetConstraint() { return m_constraint; }
@@ -46,6 +49,9 @@ public:
 	void SetUpdate(bool update) { m_update = update; }
 	void SetSelection(std::vector<int> selection) { m_selectedLightIDs = selection; }
 	void SetRequest(bool request) { m_requestDisplayList = request; SetupLights(); }
+	///void SetSceneGraph(std::vector<SceneObject>* sceneGraph) { m_sceneGraph = sceneGraph; }
+	void SetDelete(bool del) { m_delete = del; m_requestDisplayList = !del; }
+	void SetDuplicate(bool dup) { m_duplicate = dup; m_requestDisplayList = !dup; }
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -58,7 +64,7 @@ protected:
 	afx_msg void End();									// Kill the dialogue
 
 	// Local storage 
-	std::vector<SceneObject> m_sceneGraph;
+	///std::vector<SceneObject>* m_sceneGraph;
 	std::vector<DisplayObject> m_displayList;
 	std::vector<DisplayObject> m_lights;
 	std::vector<int> m_selectedLightIDs;
@@ -71,6 +77,7 @@ protected:
 	bool m_internal = false;
 	bool m_requestDisplayList = false;
 	bool m_focus = false;
+	bool m_delete = false, m_duplicate = false;
 	CONSTRAINT m_constraint;
 
 	// Focus 
@@ -114,7 +121,6 @@ public:
 	afx_msg void OnEnChangeConstA();
 	afx_msg void OnEnChangeLinA();
 	afx_msg void OnEnChangeQuadA();
-	afx_msg void OnBnClickedSpawn();
 	afx_msg void OnBnClickedDelete();
 	afx_msg void OnBnClickedDuplicate();
 	afx_msg void OnBnClickedTranslate();

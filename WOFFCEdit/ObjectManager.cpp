@@ -234,6 +234,9 @@ bool ObjectManager::SpawnObject(OBJECT_TYPE objectType, DirectX::SimpleMath::Vec
 
 	// Rebuild display list
 	m_game->BuildDisplayList(&sceneGraph);	
+
+	// Save current state
+	///SceneManager::SetSceneGraph(&sceneGraph);
 }
 
 // Remove an object from scene graph & database
@@ -296,6 +299,9 @@ void ObjectManager::Remove(std::vector<int> & IDs, std::vector<SceneObject> & sc
 
 	// Overwrite selected objects list
 	m_selectedObjectIDs = IDs;
+
+	// Save current state
+	SceneManager::SetSceneGraph(&sceneGraph);
 }
 
 // Temporarily store details of all objects
@@ -333,6 +339,9 @@ void ObjectManager::Transform(OBJECT_FUNCTION function, CONSTRAINT constraint, s
 	case OBJECT_FUNCTION::ROTATE: Rotate(constraint, IDs, sceneGraph); break;
 	case OBJECT_FUNCTION::TRANSLATE: Translate(constraint, IDs, sceneGraph); break;
 	}
+
+	// Save current state
+	SceneManager::SetSceneGraph(&sceneGraph);
 }
 
 // Copy details of selected objects & remove from database
@@ -349,7 +358,7 @@ void ObjectManager::Cut(std::vector<int> & IDs, std::vector<SceneObject> & scene
 
 		// Define object values
 		{
-			object.ID = sceneGraph.size();
+			object.ID = IDs[i];
 			object.chunk_ID = sceneGraph[IDs[i]].chunk_ID;
 			object.posX = sceneGraph[IDs[i]].posX;
 			object.posY = sceneGraph[IDs[i]].posY;
@@ -518,6 +527,9 @@ void ObjectManager::Paste(std::vector<SceneObject> & sceneGraph)
 		// Rebuild display list
 		m_game->BuildDisplayList(&sceneGraph);
 	}
+
+	// Save current state
+	SceneManager::SetSceneGraph(&sceneGraph);
 }
 
 // Replace the model of an object
@@ -757,6 +769,9 @@ bool ObjectManager::Replace(int ID, std::vector<SceneObject>& sceneGraph, OBJECT
 
 	// Rebuild display list
 	m_game->BuildDisplayList(&sceneGraph);
+
+	// Save current state
+	SceneManager::SetSceneGraph(&sceneGraph);
 
 	return true;
 }

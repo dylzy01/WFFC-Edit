@@ -101,6 +101,9 @@ void ToolMain::onActionLoad()
 
 	// Build the renderable chunk
 	m_d3dRenderer.BuildDisplayChunk(&m_chunk);
+
+	// Save current state
+	SceneManager::SetSceneGraph(&m_sceneGraph);
 }
 
 void ToolMain::onActionSave()
@@ -136,16 +139,26 @@ void ToolMain::onActionDeleteObjects()
 
 void ToolMain::onActionUndo()
 {
-	m_sceneGraph = SceneManager::Undo();
+	std::pair<std::vector<SceneObject>, bool> temp = SceneManager::Undo();
 
-	m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+	// If successful
+	if (temp.second)
+	{
+		m_sceneGraph = temp.first;
+		m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+	}
 }
 
 void ToolMain::onActionRedo()
 {
-	m_sceneGraph = SceneManager::Redo();
+	std::pair<std::vector<SceneObject>, bool> temp = SceneManager::Redo();
 
-	m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+	// If successful
+	if (temp.second)
+	{
+		m_sceneGraph = temp.first;
+		m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+	}
 }
 
 void ToolMain::Tick(MSG *msg)
@@ -158,6 +171,9 @@ void ToolMain::Tick(MSG *msg)
 		//add to scenegraph							//done
 		//resend scenegraph to Direct X renderer	//done
 
+	// Get updated scene graph
+	m_sceneGraph = m_d3dRenderer.GetSceneGraph();
+		
 	// If mouse right has been pressed & mouse position is different from stored
 	if (m_toolInputCommands.mouseRight &&
 		m_toolInputCommands.mousePosPrevious != m_toolInputCommands.mousePos)
@@ -357,6 +373,8 @@ void ToolMain::UpdateInput(MSG * msg)
 		SceneManager::SetSceneGraph(&m_sceneGraph);
 		///SaveDisplayList(m_d3dRenderer.GetDisplayList());
 		m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+		SceneManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk());
+		///SceneManager::QuickSave();
 		break;
 
 	case WM_MBUTTONDOWN:

@@ -15,12 +15,13 @@ public:
 
 	// Save current world state (scene graph + chunk)
 	static void Save();
+	static void QuickSave();
 
 	// Undo to previous world state
-	static std::vector<SceneObject> Undo();
+	static std::pair<std::vector<SceneObject>, bool> Undo();
 
 	// Redo to proceeding world state
-	static std::vector<SceneObject> Redo();
+	static std::pair<std::vector<SceneObject>, bool> Redo();
 	 
 	// Setters
 	static void SetGame(Game * game) { m_game = game; }

@@ -89,7 +89,7 @@ int MFCMain::Run()
 			std::wstring statusString = L"";
 
 			// Fill status string with selected object IDs
-			std::vector<int> IDs = m_toolSystem.getSelectedObjectIDs();
+			std::vector<int> IDs = m_toolSystem.GetSelectedObjectIDs();
 			for (int i = 0; i < IDs.size(); ++i)
 			{
 				if (i != 0) { statusString += L", " + std::to_wstring(IDs[i]); }
@@ -220,139 +220,8 @@ void MFCMain::CheckDialogues()
 	
 	
 	// If light inspector is active
-	else if (m_lightDialogue.GetActive())
-	{	
-		// If dialogue is requesting display list
-		if (m_lightDialogue.GetRequest())
-		{
-			// Reset request
-			m_lightDialogue.SetRequest(false);
-
-			// Update display list
-			m_lightDialogue.SetLightData(&m_toolSystem.GetSceneGraph(), &m_toolSystem.GetDisplayList());
-		}
-
-		// If should focus on a light
-		if (m_lightDialogue.GetFocus())
-		{
-			// Setup temp focus ID
-			int focusID = -1;
-			
-			// If more than one object is selected
-			if (m_lightDialogue.GetSelectedLightIDs().size() > 1)
-			{				
-				// Define object ID to focus on
-				focusID = m_lightDialogue.GetFocusDialogue()->GetSelectedIndex();												
-			}
-
-			// Else, if just one object is selected
-			else if (m_lightDialogue.GetSelectedLightIDs().size() == 1)
-			{
-				// Define object ID to focus on
-				focusID = m_lightDialogue.GetSelectedLightIDs()[0];
-			}			
-			
-			// Setup object ID to focus on
-			m_toolSystem.SetFocus(focusID);
-		}
-		else { m_toolSystem.SetFocus(-1); }
+	else if (m_lightDialogue.GetActive()) { UpdateLights(); }
 	
-		// Update selected objects (light)
-		m_toolSystem.SetSelectedObjectIDs(m_lightDialogue.GetSelectedLightIDs());
-	
-		// If scene graph should be updated
-		if (m_lightDialogue.GetUpdate())
-		{
-			// Reset update controller
-			m_lightDialogue.SetUpdate(false);
-
-			// Get edited lights
-			std::vector<DisplayObject> lights = m_lightDialogue.GetLights();
-
-			// Get scene graph
-			std::vector<SceneObject> sceneGraph = m_toolSystem.GetSceneGraph();
-
-			// Loop through scene graph
-			for (int i = 0; i < sceneGraph.size(); ++i)
-			{
-				// Loop through lights
-				for (int j = 0; j < lights.size(); ++j)
-				{
-					// If scene graph ID matches light ID
-					if (sceneGraph[i].ID == lights[j].m_ID)
-					{
-						// Store current scene object
-						SceneObject object = sceneGraph[i];						
-						
-						// Setup object details from matching light
-						{
-							object.light_diffuse_r = lights[j].GetDiffuse().x;
-							object.light_diffuse_g = lights[j].GetDiffuse().y;
-							object.light_diffuse_b = lights[j].GetDiffuse().z;
-							object.posX = lights[j].GetPosition().x;
-							object.posY = lights[j].GetPosition().y;
-							object.posZ = lights[j].GetPosition().z;
-							object.rotX = lights[j].GetDirection().x;
-							object.rotY = lights[j].GetDirection().y;
-							object.rotZ = lights[j].GetDirection().z;
-							object.light_type = (int)lights[j].GetLightType();
-							object.light_constant = lights[j].GetConstantAttenuation();
-							object.light_linear = lights[j].GetLinearAttenuation();
-							object.light_quadratic = lights[j].GetQuadraticAttenuation();
-							object.enabled = lights[j].GetEnabled();
-							object.ambR = lights[j].GetAmbient().x;
-							object.ambG = lights[j].GetAmbient().y;
-							object.ambB = lights[j].GetAmbient().z;
-						}
-
-						// Replace scene object with new light	
-						m_toolSystem.SetSceneObject(object, i);
-					}
-				}
-			}
-		}
-
-		// Else, if light is being translated
-		else if (m_lightDialogue.GetTranslating())
-		{
-			// Set tool editor
-			m_toolSystem.SetEditor(EDITOR::LIGHTS);
-
-			// Set transform mode
-			m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::TRANSLATE);
-
-			// Set constraint
-			m_toolSystem.SetObjectConstraint(m_lightDialogue.GetConstraint());	
-
-			// Loop through lights
-			for (int i = 0; i < m_lightDialogue.GetLights().size(); ++i)
-			{
-				// Loop through selection
-				for (int j = 0; j < m_lightDialogue.GetSelectedLightIDs().size(); ++j)
-				{
-					// If light matches currently selected
-					if (m_lightDialogue.GetLights()[i].m_ID == m_lightDialogue.GetSelectedLightIDs()[j])
-					{
-						// Update position
-						m_lightDialogue.UpdateLightPosition(m_toolSystem.GetLights()[i].GetPosition());
-					}
-				}				
-			}
-		}
-
-		// Else, reset editor
-		else
-		{
-			// Set tool editor
-			m_toolSystem.SetEditor(EDITOR::NA);
-
-			// Set transform mode
-			m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
-
-			// Set constraint
-			m_toolSystem.SetObjectConstraint(CONSTRAINT::NA);
-		}
-	}
 
 	// Else, if terrain inspector is active
 	else if (m_terrainDialogue.GetActive())
@@ -564,6 +433,173 @@ void MFCMain::CheckDialogues()
 	}
 }
 
+void MFCMain::UpdateLights()
+{
+	// If dialogue is requesting display list
+	if (m_lightDialogue.GetRequest())
+	{
+		// Update display list
+		m_lightDialogue.SetLightData(&m_toolSystem.GetDisplayList());
+
+		// Reset controller
+		m_lightDialogue.SetRequest(false);
+	}
+
+	// If should focus on a light
+	if (m_lightDialogue.GetFocus())
+	{
+		// Setup temp focus ID
+		int focusID = -1;
+
+		// If more than one object is selected
+		if (m_lightDialogue.GetSelectedLightIDs().size() > 1)
+		{
+			// Define object ID to focus on
+			focusID = m_lightDialogue.GetFocusDialogue()->GetSelectedIndex();
+		}
+
+		// Else, if just one object is selected
+		else if (m_lightDialogue.GetSelectedLightIDs().size() == 1)
+		{
+			// Define object ID to focus on
+			focusID = m_lightDialogue.GetSelectedLightIDs()[0];
+		}
+
+		// Setup object ID to focus on
+		m_toolSystem.SetFocus(focusID);
+	}
+	else { m_toolSystem.SetFocus(-1); }
+
+	// Update selected objects (light)
+	m_toolSystem.SetSelectedObjectIDs(m_lightDialogue.GetSelectedLightIDs());
+
+	// If scene graph should be updated
+	if (m_lightDialogue.GetUpdate())
+	{
+		// Get edited lights
+		std::vector<DisplayObject> lights = m_lightDialogue.GetLights();
+
+		// Get scene graph
+		std::vector<SceneObject> sceneGraph = m_toolSystem.GetSceneGraph();
+
+		// Loop through scene graph
+		for (int i = 0; i < sceneGraph.size(); ++i)
+		{
+			// Loop through lights
+			for (int j = 0; j < lights.size(); ++j)
+			{
+				// If scene graph ID matches light ID
+				if (sceneGraph[i].ID == lights[j].m_ID)
+				{
+					// Store current scene object
+					SceneObject object = sceneGraph[i];
+
+					// Setup object details from matching light
+					{
+						object.light_diffuse_r = lights[j].GetDiffuse().x;
+						object.light_diffuse_g = lights[j].GetDiffuse().y;
+						object.light_diffuse_b = lights[j].GetDiffuse().z;
+						object.posX = lights[j].GetPosition().x;
+						object.posY = lights[j].GetPosition().y;
+						object.posZ = lights[j].GetPosition().z;
+						object.rotX = lights[j].GetDirection().x;
+						object.rotY = lights[j].GetDirection().y;
+						object.rotZ = lights[j].GetDirection().z;
+						object.light_type = (int)lights[j].GetLightType();
+						object.light_constant = lights[j].GetConstantAttenuation();
+						object.light_linear = lights[j].GetLinearAttenuation();
+						object.light_quadratic = lights[j].GetQuadraticAttenuation();
+						object.enabled = lights[j].GetEnabled();
+						object.ambR = lights[j].GetAmbient().x;
+						object.ambG = lights[j].GetAmbient().y;
+						object.ambB = lights[j].GetAmbient().z;
+					}
+
+					// Replace scene object with new light	
+					m_toolSystem.SetSceneObject(object, i);
+				}
+			}
+		}
+
+		// Reset update controller
+		m_lightDialogue.SetUpdate(false);
+	}
+
+	// Else, if light is being translated
+	else if (m_lightDialogue.GetTranslating())
+	{
+		// Set tool editor
+		m_toolSystem.SetEditor(EDITOR::LIGHTS);
+
+		// Set transform mode
+		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::TRANSLATE);
+
+		// Set constraint
+		m_toolSystem.SetObjectConstraint(m_lightDialogue.GetConstraint());
+
+		// Loop through lights
+		for (int i = 0; i < m_lightDialogue.GetLights().size(); ++i)
+		{
+			// Loop through selection
+			for (int j = 0; j < m_lightDialogue.GetSelectedLightIDs().size(); ++j)
+			{
+				// If light matches currently selected
+				if (m_lightDialogue.GetLights()[i].m_ID == m_lightDialogue.GetSelectedLightIDs()[j])
+				{
+					// Update position
+					m_lightDialogue.UpdateLightPosition(m_toolSystem.GetLights()[i].GetPosition());
+				}
+			}
+		}
+
+		// Update light scene graph
+		///m_lightDialogue.SetSceneGraph(&m_toolSystem.GetSceneGraph());
+	}
+
+	// Else, if light is being deleted
+	else if (m_lightDialogue.GetDelete())
+	{
+		// Remove objects from database storage
+		ObjectManager::Remove(m_lightDialogue.GetSelectedLightIDs(), m_toolSystem.GetSceneGraph());
+
+		// Update selected objects
+		///m_toolSystem.SetSelectedObjectIDs(m_lightDialogue.GetSelectedLightIDs());
+
+		// Reset controller 
+		m_lightDialogue.SetDelete(false);
+	}
+
+	// Else, if light is being duplicated
+	else if (m_lightDialogue.GetDuplicate())
+	{
+		// Copy objects
+		ObjectManager::Copy(m_lightDialogue.GetSelectedLightIDs(), m_toolSystem.GetSceneGraph());
+
+		// Paste objects
+		ObjectManager::Paste(m_toolSystem.GetSceneGraph());
+
+		// Reset controller
+		m_lightDialogue.SetDuplicate(false);
+	}
+
+	// Else, reset editor
+	else
+	{
+		// Set tool editor
+		m_toolSystem.SetEditor(EDITOR::NA);
+
+		// Set transform mode
+		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
+
+		// Set constraint
+		m_toolSystem.SetObjectConstraint(CONSTRAINT::NA);
+	}
+}
+
+void MFCMain::UpdateObjects()
+{
+}
+
 void MFCMain::MenuFileQuit()
 {
 	//will post message to the message thread that will exit the application normally
@@ -696,19 +732,19 @@ void MFCMain::ToolBarLight()
 	m_lightDialogue.Create(IDD_DIALOG8);
 	m_lightDialogue.ShowWindow(SW_SHOW);
 	m_lightDialogue.SetActive(true);
-	m_lightDialogue.SetLightData(&m_toolSystem.GetSceneGraph(), &m_toolSystem.GetDisplayList());
+	m_lightDialogue.SetLightData(&m_toolSystem.GetDisplayList());
 	
 	// Setup temp light ID container
 	std::vector<int> IDs;
 
 	// Loop through currently selected objects
-	for (int i = 0; i < m_toolSystem.getSelectedObjectIDs().size(); ++i)
+	for (int i = 0; i < m_toolSystem.GetSelectedObjectIDs().size(); ++i)
 	{
 		// If object is a light
-		if (m_toolSystem.GetSceneGraph()[m_toolSystem.getSelectedObjectIDs()[i]].m_type == OBJECT_TYPE::LIGHT)
+		if (m_toolSystem.GetSceneGraph()[m_toolSystem.GetSelectedObjectIDs()[i]].m_type == OBJECT_TYPE::LIGHT)
 		{
 			// Add ID to container
-			IDs.push_back(m_toolSystem.GetSceneGraph()[m_toolSystem.getSelectedObjectIDs()[i]].ID);
+			IDs.push_back(m_toolSystem.GetSceneGraph()[m_toolSystem.GetSelectedObjectIDs()[i]].ID);
 		}
 	}
 

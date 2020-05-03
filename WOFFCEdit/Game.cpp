@@ -304,20 +304,20 @@ void Game::Render()
 	m_sprites->End();
 	
 	// Coordinate system	
-	//if (m_displayList.size() != 0)
-	//{
-	//	// Loop through selected objects
-	//	for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
-	//	{
-	//		// If selected object ID is valid
-	//		///if (m_selectedObjectIDs[i] != -1)
-	//		if (m_selectedObjectIDs[i] >= 0 && m_selectedObjectIDs[i] <= 100);
-	//		{
-	//			// Draw bounding box & local axes
-	//			///DrawDebug(m_selectedObjectIDs[i]);
-	//		}
-	//	}
-	//}
+	if (m_displayList.size() != 0)
+	{
+		// Loop through selected objects
+		for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+		{
+			// If selected object ID is valid
+			///if (m_selectedObjectIDs[i] != -1)
+			if (m_selectedObjectIDs[i] >= 0 && m_selectedObjectIDs[i] <= 100);
+			{
+				// Draw bounding box & local axes
+				///DrawDebug(m_selectedObjectIDs[i]);
+			}
+		}
+	}
 
     m_deviceResources->Present();
 }

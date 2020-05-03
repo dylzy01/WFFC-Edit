@@ -19,7 +19,7 @@ public: //methods
 	~ToolMain() { SQLManager::Disconnect(); }
 
 	//onAction - These are the interface to MFC
-	std::vector<int>	getSelectedObjectIDs() { return m_selectedObjectIDs; }		//returns the selection numbers of currently selected objects so that It can be displayed.
+	std::vector<int>	GetSelectedObjectIDs() { return m_selectedObjectIDs; }		//returns the selection numbers of currently selected objects so that It can be displayed.
 	std::vector<TERRAIN>	getCurrentTerrainSelection() { return m_selectedTerrains; }		//returns the currently selected chunk so it can be displayed
 	void				onActionInitialise(HWND handle, int width, int height);				//Passes through handle and hieght and width and initialises DirectX renderer and SQL LITE
 	void				onActionFocusCamera();
