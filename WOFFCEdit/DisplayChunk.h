@@ -57,6 +57,10 @@ public:
 	void SetPlateau(bool plateau) { m_plateau = plateau; }
 	void SetScaleFactor(float scale) { m_scaleFactor = scale; }
 
+	// Save
+	void SaveGeometryPositions(int count);
+	void ReadGeometryPositions(int count);
+
 private:
 	DirectX::VertexPositionNormalTexture m_terrainGeometry[TERRAINRESOLUTION][TERRAINRESOLUTION];
 	BYTE m_heightMap[TERRAINRESOLUTION*TERRAINRESOLUTION];
@@ -70,10 +74,13 @@ private:
 	// Painting
 	TERRAIN_PAINT RemoveDuplicates(int row, int column, TERRAIN_PAINT paint = TERRAIN_PAINT::NA);
 	void CheckSurroundings(int row, int column, TERRAIN_PAINT paint);
+
+	// Saving/Loading
 	void SavePaint(std::string path, std::vector<std::pair<int, int>> vector);
 	void ReadPaints(std::string path, std::vector<std::pair<int, int>> &vector);
 	void ReadAllPaints();
-	void SaveAllPaints();
+	void SaveAllPaints();	
+	
 
 	// Drawing
 	void DrawTerrain(std::vector<std::pair<int, int>> terrain);

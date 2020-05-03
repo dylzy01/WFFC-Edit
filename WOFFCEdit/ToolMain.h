@@ -168,4 +168,5 @@ private:	//variables
 	// Controllers
 	bool m_lDown = false, m_rDown = false;
 	bool m_newSelection = false;
+	bool m_sculpting = false;
 };

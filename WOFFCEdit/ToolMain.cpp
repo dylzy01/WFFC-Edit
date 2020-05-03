@@ -56,16 +56,16 @@ void ToolMain::onActionInitialise(HWND handle, int width, int height)
 	TerrainManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk());
 	TerrainManager::StorePosition(true);
 
-	// Set static scene manager game & display chunk
-	SceneManager::SetGame(&m_d3dRenderer);
-	SceneManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk());
-
 	// Estable database connection
 	if (SQLManager::Connect()) { TRACE("Database connection: fail"); }
 	else { TRACE("Database connection: success"); }
 
 	// Load data from database
 	onActionLoad();
+
+	// Set static scene manager game & display chunk
+	SceneManager::SetGame(&m_d3dRenderer);
+	SceneManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk(), true);
 }
 
 void ToolMain::onActionLoad()
@@ -139,25 +139,45 @@ void ToolMain::onActionDeleteObjects()
 
 void ToolMain::onActionUndo()
 {
-	std::pair<std::vector<SceneObject>, bool> temp = SceneManager::Undo();
-
-	// If successful
-	if (temp.second)
+	// Scene objects
+	std::pair<std::vector<SceneObject>, bool> object = SceneManager::UndoObjects();
+	if (object.second)
 	{
-		m_sceneGraph = temp.first;
+		m_sceneGraph = object.first;
 		m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+	}	
+
+	// Terrain geometry	
+	bool terrain = SceneManager::UndoGeometry();
+	
+	// If both were unsuccessful
+	if (!object.second && !terrain) { MessageBox(NULL, L"There's nothing to undo!", L"Hey there!", MB_OK); }
+	else
+	{
+		// Reduce count if possible
+		SceneManager::ReduceCount();
 	}
 }
 
 void ToolMain::onActionRedo()
 {
-	std::pair<std::vector<SceneObject>, bool> temp = SceneManager::Redo();
-
-	// If successful
-	if (temp.second)
+	// Scene objects	
+	std::pair<std::vector<SceneObject>, bool> object = SceneManager::RedoObjects();
+	if (object.second)
 	{
-		m_sceneGraph = temp.first;
+		m_sceneGraph = object.first;
 		m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+	}	
+
+	// Terrain geometry	
+	bool terrain = SceneManager::RedoGeometry();
+	
+	// If both were unsuccessful
+	if (!object.second && !terrain)	{ MessageBox(NULL, L"There's nothing to redo!", L"Hey there!", MB_OK); }
+	else 
+	{
+		// Increase count if possible
+		SceneManager::IncreaseCount();
 	}
 }
 
@@ -282,12 +302,16 @@ void ToolMain::Tick(MSG *msg)
 		{
 			// Sculpt terrain
 			TerrainManager::Sculpt(m_selectedTerrain, m_terrainFunction, m_terrainConstraint);
+
+			m_sculpting = true;
 		}
 		break;
 		case EDITOR::SCULPT_SINGLE:
 		{
 			// Sculpt selected terrain
 			TerrainManager::Sculpt(m_selectedTerrain, m_terrainFunction, m_terrainConstraint, true);
+
+			m_sculpting = true;
 		}
 		break;
 		case EDITOR::LIGHTS:
@@ -404,12 +428,18 @@ void ToolMain::UpdateInput(MSG * msg)
 
 	case WM_RBUTTONUP:
 		m_rDown = m_toolInputCommands.mouseRight = m_toolInputCommands.mouseDrag = false;
-		TerrainManager::StorePosition(true);
-		SceneManager::SetSceneGraph(&m_sceneGraph);
+		TerrainManager::StorePosition(true);		
 		///SaveDisplayList(m_d3dRenderer.GetDisplayList());
-		m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
-		SceneManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk());
+		m_d3dRenderer.BuildDisplayList(&m_sceneGraph);		
 		///SceneManager::QuickSave();
+		if (!m_sculpting)
+		{
+			SceneManager::SetSceneGraph(&m_sceneGraph);
+		}
+		else if (m_sculpting) {
+			m_sculpting = false;
+			SceneManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk());
+		}
 		break;
 
 	case WM_MBUTTONDOWN:

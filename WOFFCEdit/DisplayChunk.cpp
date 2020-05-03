@@ -1176,10 +1176,10 @@ void DisplayChunk::SculptTerrain(int row, int column, TERRAIN_SCULPT sculpt, CON
 		case CONSTRAINT::Y:
 		{				
 			// Increase position
-			//m_terrainGeometry[row][column].position.y += m_scaleFactor;
-			//m_terrainGeometry[row][column + 1].position.y += m_scaleFactor;
-			//m_terrainGeometry[row + 1][column + 1].position.y += m_scaleFactor;
-			//m_terrainGeometry[row + 1][column].position.y += m_scaleFactor;
+			m_terrainGeometry[row][column].position.y += m_scaleFactor;
+			m_terrainGeometry[row][column + 1].position.y += m_scaleFactor;
+			m_terrainGeometry[row + 1][column + 1].position.y += m_scaleFactor;
+			m_terrainGeometry[row + 1][column].position.y += m_scaleFactor;
 		}
 		break;
 		case CONSTRAINT::Z:
@@ -2899,27 +2899,6 @@ void DisplayChunk::ReadPaints(std::string path, std::vector<std::pair<int, int>>
 		std::stringstream ss(line);
 
 		lines.push_back(line);
-
-		//// Keep track of current geometry
-		//int ID = 0;
-
-		//// Extract each integer
-		//while (ss >> val)
-		//{
-		//	// Add current integer to vector
-		//	vector.at(ID).first = val;
-
-		//	// If next token is a point, ignore and carry on
-		//	if (ss.peek() == ',') { ss.ignore(); }
-		//	else 
-		//	{
-		//		// Add next integer
-		//		vector.at(ID).second = val;
-		//	}
-
-		//	// If next token isn't a comma, add both integers together
-		//	if (ss.peek() != ',') {  }
-		//}
 	}
 	
 	// Loop through lines
@@ -2966,43 +2945,175 @@ void DisplayChunk::ReadPaints(std::string path, std::vector<std::pair<int, int>>
 void DisplayChunk::ReadAllPaints()
 {
 	// Basic paints
-	ReadPaints("database/CSV/grass.csv", m_grass);
-	ReadPaints("database/CSV/dirt.csv", m_dirt);
-	ReadPaints("database/CSV/sand.csv", m_sand);
-	ReadPaints("database/CSV/stone.csv", m_stone);
-	ReadPaints("database/CSV/snow.csv", m_snow);
-
-	// Blend paints
-	ReadPaints("database/CSV/grassDirt.csv", m_grassDirt);
-	ReadPaints("database/CSV/grassSand.csv", m_grassSand);
-	ReadPaints("database/CSV/grassStone.csv", m_grassStone);
-	ReadPaints("database/CSV/grassSnow.csv", m_grassSnow);
-	ReadPaints("database/CSV/dirtSand.csv", m_dirtSand);
-	ReadPaints("database/CSV/dirtStone.csv", m_dirtStone);
-	ReadPaints("database/CSV/dirtSnow.csv", m_dirtSnow);
-	ReadPaints("database/CSV/sandStone.csv", m_sandStone);
-	ReadPaints("database/CSV/sandSnow.csv", m_sandSnow);
-	ReadPaints("database/CSV/stoneSnow.csv", m_stoneSnow);
+	ReadPaints("database/CSV/Paint/grass.csv", m_grass);
+	ReadPaints("database/CSV/Paint/dirt.csv", m_dirt);
+	ReadPaints("database/CSV/Paint/sand.csv", m_sand);
+	ReadPaints("database/CSV/Paint/stone.csv", m_stone);
+	ReadPaints("database/CSV/Paint/snow.csv", m_snow);
+							 
+	// Blend paints			 
+	ReadPaints("database/CSV/Paint/grassDirt.csv", m_grassDirt);
+	ReadPaints("database/CSV/Paint/grassSand.csv", m_grassSand);
+	ReadPaints("database/CSV/Paint/grassStone.csv", m_grassStone);
+	ReadPaints("database/CSV/Paint/grassSnow.csv", m_grassSnow);
+	ReadPaints("database/CSV/Paint/dirtSand.csv", m_dirtSand);
+	ReadPaints("database/CSV/Paint/dirtStone.csv", m_dirtStone);
+	ReadPaints("database/CSV/Paint/dirtSnow.csv", m_dirtSnow);
+	ReadPaints("database/CSV/Paint/sandStone.csv", m_sandStone);
+	ReadPaints("database/CSV/Paint/sandSnow.csv", m_sandSnow);
+	ReadPaints("database/CSV/Paint/stoneSnow.csv", m_stoneSnow);
 }
 
 void DisplayChunk::SaveAllPaints()
 {
-	SavePaint("database/CSV/grass.csv", m_grass);
-	SavePaint("database/CSV/dirt.csv", m_dirt);
-	SavePaint("database/CSV/sand.csv", m_sand);
-	SavePaint("database/CSV/stone.csv", m_stone);
-	SavePaint("database/CSV/snow.csv", m_snow);
-						
-	SavePaint("database/CSV/grassDirt.csv", m_grassDirt);
-	SavePaint("database/CSV/grassSand.csv", m_grassSand);
-	SavePaint("database/CSV/grassStone.csv", m_grassStone);
-	SavePaint("database/CSV/grassSnow.csv", m_grassSnow);
-	SavePaint("database/CSV/dirtSand.csv", m_dirtSand);
-	SavePaint("database/CSV/dirtStone.csv", m_dirtStone);
-	SavePaint("database/CSV/dirtSnow.csv", m_dirtSnow);
-	SavePaint("database/CSV/sandStone.csv", m_sandStone);
-	SavePaint("database/CSV/sandSnow.csv", m_sandSnow);
-	SavePaint("database/CSV/stoneSnow.csv", m_stoneSnow);
+	// Basic paints
+	SavePaint("database/CSV/Paint/grass.csv", m_grass);
+	SavePaint("database/CSV/Paint/dirt.csv", m_dirt);
+	SavePaint("database/CSV/Paint/sand.csv", m_sand);
+	SavePaint("database/CSV/Paint/stone.csv", m_stone);
+	SavePaint("database/CSV/Paint/snow.csv", m_snow);
+					
+	// Blend paints
+	SavePaint("database/CSV/Paint/grassDirt.csv", m_grassDirt);
+	SavePaint("database/CSV/Paint/grassSand.csv", m_grassSand);
+	SavePaint("database/CSV/Paint/grassStone.csv", m_grassStone);
+	SavePaint("database/CSV/Paint/grassSnow.csv", m_grassSnow);
+	SavePaint("database/CSV/Paint/dirtSand.csv", m_dirtSand);
+	SavePaint("database/CSV/Paint/dirtStone.csv", m_dirtStone);
+	SavePaint("database/CSV/Paint/dirtSnow.csv", m_dirtSnow);
+	SavePaint("database/CSV/Paint/sandStone.csv", m_sandStone);
+	SavePaint("database/CSV/Paint/sandSnow.csv", m_sandSnow);
+	SavePaint("database/CSV/Paint/stoneSnow.csv", m_stoneSnow);
+}
+
+void DisplayChunk::SaveGeometryPositions(int count)
+{
+	// Create output filestream object
+	std::ofstream file("database/CSV/Geometry/geometry_" + std::to_string(count) + ".csv");
+
+	// Store all current positions of geometry
+	for (int i = 0; i < TERRAINRESOLUTION; ++i)
+	{
+		for (int j = 0; j < TERRAINRESOLUTION; ++j)
+		{
+			// Store XYZ
+			file << m_terrainGeometry[i][j].position.x << ",";
+			file << m_terrainGeometry[i][j].position.y << ",";
+			file << m_terrainGeometry[i][j].position.z << "\n";
+		}
+	}
+
+	// Close file
+	file.close();
+}
+
+void DisplayChunk::ReadGeometryPositions(int count)
+{
+	// Initialise empty 2D vector the size of terrain
+	XMFLOAT3 positions[TERRAINRESOLUTION*TERRAINRESOLUTION];
+	
+	// Create input filestream
+	std::ifstream file("database/CSV/Geometry/geometry_" + std::to_string(count) + ".csv");	
+
+	std::vector<std::string> lines;
+	std::string line;
+	int val;
+
+	// Read data, line by line
+	while (std::getline(file, line))
+	{
+		// Create stringstream of current line
+		std::stringstream ss(line);
+
+		lines.push_back(line);
+	}
+
+	// Loop through lines
+	for (int i = 0; i < lines.size(); ++i)
+	{
+		std::string one, two, three;
+		bool firstComma = false, secondComma = false, complete = false;
+		bool firstNeg = false, secondNeg = false, thirdNeg = false;
+
+		// Loop through individual line size
+		for (int j = 0; j < lines[i].size(); ++j)
+		{
+			// If there hasn't been the first comma
+			if (!firstComma)
+			{
+				// If token isn't a comma or a hyphen
+				if (lines[i][j] != ',' && lines[i][j] != '-')
+				{
+					// Add to temp
+					one += lines[i][j];
+				}
+
+				// Else, if token is a hyphen
+				else if (lines[i][j] == '-') { firstNeg = true; }
+
+				// Else, if token is a comma
+				else if (lines[i][j] == ',') { firstComma = true; }
+			}
+
+			// If there has been the first comma			
+			else if (!secondComma && firstComma)
+			{
+				// If token isn't a comma or a hyphen
+				if (lines[i][j] != ',' && lines[i][j] != '-')
+				{
+					// Add to temp
+					two += lines[i][j];
+				}
+
+				// Else, if token is a hyphen
+				else if (lines[i][j] == '-') { secondNeg = true; }
+
+				// Else, if token is a comma
+				else if (lines[i][j] == ',') { secondComma = true; }
+			}
+
+			// If there has been the second comma
+			else if (secondComma && lines[i][j] != ',')
+			{
+				// If token isn't a hyphen
+				if (lines[i][j] != '-')
+				{
+					// Add to temp
+					three += lines[i][j];
+				}
+
+				// Else, if token is a hyphen
+				else if (lines[i][j] == '-') { thirdNeg = true; }
+			}			
+		}
+		
+		// Setup empty 1D vector from positions
+		float posX, posY, posZ;
+		posX = std::stof(one);
+		posY = std::stof(two);
+		posZ = std::stof(three);
+		if (firstNeg) { posX = -posX; }
+		if (secondNeg) { posY = -posY; }
+		if (thirdNeg) { posZ = -posZ; }
+		XMFLOAT3 pos{ posX, posY, posZ };
+
+		// Add to storage
+		positions[i] = pos;		
+	}
+
+	// Loop through terrain
+	int index;
+	for (int i = 0; i < TERRAINRESOLUTION; ++i)
+	{
+		for (int j = 0; j < TERRAINRESOLUTION; ++j)
+		{
+			index = (TERRAINRESOLUTION * i) + j;			
+			// Replace terrain positions with data
+			m_terrainGeometry[i][j].position = positions[index];
+		}
+	}
+
+	GenerateHeightmap();
 }
 
 void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResources, std::vector<DisplayObject> lights)
@@ -3114,7 +3225,7 @@ void DisplayChunk::CalculateTerrainNormals()
 
 			m_terrainGeometry[i][j].normal = normalVector;	//set the normal for this point based on our result
 		}
-	}
+	}	
 }
 
 bool DisplayChunk::FindInVector(int & index, std::vector<std::pair<int, int>> vector, std::pair<int, int> terrain)
