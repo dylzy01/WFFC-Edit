@@ -6,6 +6,8 @@ std::vector<SceneObject> * SceneManager::m_sceneGraph;
 std::vector<std::vector<SceneObject>> SceneManager::m_objectHistory;
 std::vector<int> SceneManager::m_history;
 int SceneManager::m_count = 0;
+int SceneManager::m_timer = 0;
+bool SceneManager::m_autosave = false;
 
 // Save current world state (scene graph + chunk)
 void SceneManager::Save()
@@ -90,4 +92,39 @@ bool SceneManager::Redo()
 	}
 
 	return false;
+}
+
+// Handle autosave timer
+void SceneManager::Autosave()
+{
+	// Display autosave on/off
+	m_game->AutosaveOnOff(m_autosave);
+	
+	// If autosave is on
+	if (m_autosave)
+	{
+		// Increase timer
+		m_timer++;
+
+		// If counter reaches target
+		if (m_timer >= 300)
+		{
+			// Trigger save
+			QuickSave();
+
+			// Reset timer
+			m_timer = 0;
+			m_game->DisplayAutosaveTime(false, 0);
+		}
+
+		// Else, if counter reaches 10 seconds left
+		else if (m_timer >= 200)
+		{
+			// Calculate time remaining
+			int time = (300 - m_timer) / 10;
+
+			// Display autosave counter
+			m_game->DisplayAutosaveTime(true, time);
+		}
+	}
 }

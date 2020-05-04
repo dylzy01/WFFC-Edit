@@ -9,20 +9,14 @@
 #include "resource.h"
 #include "MFCFrame.h"
 
-#include "SelectDialogue.h"
-#include "LandscapeDialogue.h"
-
-#include "ObjectEditorDialogue.h"
-#include "ObjectSpawnDialogue.h"
-#include "TerrainSculptDialogue.h"
-#include "TerrainPaintDialogue.h"
-
 #include "LightDialogue.h"
 #include "TerrainDialogue.h"
 #include "PaintDialogue.h"
 #include "SculptDialogue.h"
 #include "ObjectDialogue.h"
 #include "SpawnDialogue.h"
+
+#include "SceneManager.h"
 
 class MFCMain : public CWinApp 
 {
@@ -46,14 +40,6 @@ private:
 	ToolMain m_toolSystem;	//Instance of Tool System that we interface to. 
 	CRect m_windowRect;	//Window area rectangle. 
 
-	SelectDialogue m_toolSelectDialogue;			//for modeless dialogue, declare it here
-	LandscapeDialogue m_toolLandscapeDialogue;
-
-	ObjectEditorDialogue m_objectEditorDialogue;
-	ObjectSpawnDialogue m_objectSpawnDialogue;
-	TerrainSculptDialogue m_terrainSculptDialogue;
-	TerrainPaintDialogue m_terrainPaintDialogue;
-
 	LightDialogue		m_lightDialogue;
 	TerrainDialogue		m_terrainDialogue;
 	PaintDialogue		m_paintDialogue;
@@ -67,16 +53,11 @@ private:
 	//Interface funtions for menu and toolbar etc requires
 	afx_msg void MenuFileQuit();
 	afx_msg void MenuFileSaveTerrain();
-	afx_msg void MenuEditSelect();
-	afx_msg void MenuEditEditorLandscape();
 	afx_msg void MenuEditWireframeOn();
 	afx_msg void MenuEditWireframeOff();
+	afx_msg void MenuEditAutosaveOn();
+	afx_msg void MenuEditAutosaveOff();
 	afx_msg	void ToolBarSave();
-	afx_msg void ToolBarObjectSpawn();
-	afx_msg void ToolBarObjectSelect();
-	afx_msg void ToolBarObjectDelete();
-	afx_msg void ToolBarTerrainSculpt();
-	afx_msg void ToolBarTerrainPaint();
 	afx_msg void ToolBarUndo();
 	afx_msg void ToolBarRedo();
 	afx_msg void ToolBarLight();

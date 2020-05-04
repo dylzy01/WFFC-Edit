@@ -63,9 +63,8 @@ void ToolMain::onActionInitialise(HWND handle, int width, int height)
 	// Load data from database
 	onActionLoad();
 
-	// Set static scene manager game & display chunk
+	// Set static scene manager game, scene graph & display chunk
 	SceneManager::SetGame(&m_d3dRenderer);
-	///SceneManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk(), true);
 	SceneManager::SetScene(&m_sceneGraph, m_d3dRenderer.GetDisplayChunk());
 }
 
@@ -107,21 +106,6 @@ void ToolMain::onActionLoad()
 void ToolMain::onActionSave()
 {	
 	SceneManager::Save();
-	
-	// Update scene graph
-	///m_sceneGraph = m_d3dRenderer.GetSceneGraph();
-	//m_d3dRenderer.SaveDisplayList();
-	//
-	//// Save terrain
-	//m_d3dRenderer.SaveDisplayChunk();
-	//
-	//// Database query to delete all records from objects table
-	//SQLManager::SendQuery("DELETE FROM Objects", true);
-	//SQLManager::SetObjectStep();
-
-	//// Save new scene graph
-	//if (SQLManager::SaveObjects(m_d3dRenderer.GetSceneGraph())) { MessageBox(NULL, L"World Saved", L"Notification", MB_OK); }
-	//else { MessageBox(NULL, L"World Failed to Save", L"Notification", MB_OK); }
 }
 
 void ToolMain::onActionSaveTerrain()
@@ -137,49 +121,11 @@ void ToolMain::onActionDeleteObjects()
 
 void ToolMain::onActionUndo()
 {
-	// Scene objects
-	//std::pair<std::vector<SceneObject>, bool> object = SceneManager::UndoObjects();
-	//if (object.second)
-	//{
-	//	m_sceneGraph = object.first;
-	//	m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
-	//}	
-
-	//// Terrain geometry	
-	//bool terrain = SceneManager::UndoGeometry();
-	//
-	//// If both were unsuccessful
-	//if (!object.second && !terrain) { MessageBox(NULL, L"There's nothing to undo!", L"Hey there!", MB_OK); }
-	//else
-	//{
-	//	// Reduce count if possible
-	//	SceneManager::DecreaseCount();
-	//}
-
 	if (!SceneManager::Undo()) { MessageBox(NULL, L"There's nothing to undo!", L"Hey there!", MB_OK); }
 }
 
 void ToolMain::onActionRedo()
 {
-	// Scene objects	
-	//std::pair<std::vector<SceneObject>, bool> object = SceneManager::RedoObjects();
-	//if (object.second)
-	//{
-	//	m_sceneGraph = object.first;
-	//	m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
-	//}	
-
-	//// Terrain geometry	
-	//bool terrain = SceneManager::RedoGeometry();
-	//
-	//// If both were unsuccessful
-	//if (!object.second && !terrain)	{ MessageBox(NULL, L"There's nothing to redo!", L"Hey there!", MB_OK); }
-	//else 
-	//{
-	//	// Increase count if possible
-	//	SceneManager::IncreaseCount();
-	//}
-
 	if (!SceneManager::Redo()) { MessageBox(NULL, L"There's nothing to redo!", L"Hey there!", MB_OK); }
 }
 
@@ -374,6 +320,9 @@ void ToolMain::Tick(MSG *msg)
 
 	//Renderer Update Call
 	m_d3dRenderer.Tick(&m_toolInputCommands);
+
+	// If should autosave
+	SceneManager::Autosave();
 }
 
 void ToolMain::UpdateInput(MSG * msg)

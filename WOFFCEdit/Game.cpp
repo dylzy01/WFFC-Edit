@@ -297,7 +297,16 @@ void Game::Render()
 	WCHAR   Buffer[256];
 
 	std::wstring fps = L"FPS: " + std::to_wstring(int(m_timer.GetFramesPerSecond() / m_deltaTime) / 10);
-	m_font->DrawString(m_sprites.get(), fps.c_str(), XMFLOAT2(800, 10), Colors::Red);
+	m_font->DrawString(m_sprites.get(), fps.c_str(), XMFLOAT2(800, m_screenDimensions.top + 10), Colors::Red);
+
+	// Show autosave
+	std::wstring as = L"";
+	if (!m_autosaveTimer) { 
+		if (m_autosave) { as = L"Autosave ON"; }
+		else { as = L"Autosave OFF"; }		
+	}		
+	else if (m_autosaveTimer) { as = L"Autosave in: " + std::to_wstring(m_autosaveCount); }
+	m_font->DrawString(m_sprites.get(), as.c_str(), XMFLOAT2(10, m_screenDimensions.bottom - 40), Colors::Red);
 
 	m_sprites->End();	
 
@@ -631,24 +640,6 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 		newDisplayObject.m_light_quadratic = sceneGraph->at(i).light_quadratic;
 		newDisplayObject.SetAmbient(XMFLOAT4{ 0.2f, 0.2f, 0.2f, 1.f });
 		newDisplayObject.SetEnabled(true);
-			
-		// If object is a light
-		///if (sceneGraph->at(i).light_type != 0)
-		//if (newDisplayObject.GetLightType() != LIGHT_TYPE::NA)
-		{
-			//XMFLOAT4 diffuse = { sceneGraph->at(i).light_diffuse_r, sceneGraph->at(i).light_diffuse_g, sceneGraph->at(i).light_diffuse_b, 1.f };
-			//XMFLOAT4 ambient = { 0.2f, 0.2f, 0.2f, 1.f };
-			//XMFLOAT3 position = { sceneGraph->at(i).posX, sceneGraph->at(i).posY, sceneGraph->at(i).posZ };
-			///DirectX::SimpleMath::Vector3 direction = { sceneGraph->at(i).rotX, sceneGraph->at(i).rotY, sceneGraph->at(i).rotZ };
-			//XMFLOAT3 direction = { 0.f, 1.f, 0.f };
-			//float constantAttenuation = sceneGraph->at(i).light_constant;
-			//float linearAttenuation = sceneGraph->at(i).light_linear;
-			//float quadraticAttenuation = sceneGraph->at(i).light_quadratic;
-			//LIGHT_TYPE type = (LIGHT_TYPE)sceneGraph->at(i).light_type;
-			//bool enabled = sceneGraph->at(i).enabled;
-			//m_lights.first.push_back(new Light(diffuse, ambient, position, direction, constantAttenuation, linearAttenuation, quadraticAttenuation, type, enabled));
-			//m_lights.second.push_back(sceneGraph->at(i).ID);
-		}
 
 		// Set bounding box		
 		for (int j = 0; j < newDisplayObject.m_model->meshes.size(); ++j)
@@ -862,14 +853,8 @@ void Game::SetTransform(int i, OBJECT_FUNCTION function, DirectX::SimpleMath::Ve
 	break;
 	}
 
-	// Update object bounding box scale
-	///m_displayList[i].m_model->meshes[0]->boundingBox.Extents.x *= m_displayList[i].m_scale.x;/// * 2.15f;
-	///m_displayList[i].m_model->meshes[0]->boundingBox.Extents.y *= m_displayList[i].m_scale.y;/// * 2.625f;
-	///m_displayList[i].m_model->meshes[0]->boundingBox.Extents.z *= m_displayList[i].m_scale.z;/// * 2.15f;
-
 	// Update object bounding box translation
 	m_displayList[i].m_model->meshes[0]->boundingBox.Center = m_displayList[i].m_position;
-	///m_displayList[i].m_model->meshes[0]->boundingBox.Center.y += m_displayList[i].m_model->meshes[0]->boundingBox.Extents.y;
 }
 
 void Game::SetLights(std::vector<DisplayObject> lights)

@@ -5,16 +5,11 @@
 BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_FILE_QUIT, &MFCMain::MenuFileQuit)
 	ON_COMMAND(ID_FILE_SAVETERRAIN, &MFCMain::MenuFileSaveTerrain)
-	ON_COMMAND(ID_EDIT_SELECT, &MFCMain::MenuEditSelect)
-	ON_COMMAND(ID_EDITOR_LANDSCAPEEDITOR, &MFCMain::MenuEditEditorLandscape)
 	ON_COMMAND(ID_WIREFRAME_ON, &MFCMain::MenuEditWireframeOn)
 	ON_COMMAND(ID_WIREFRAME_OFF, &MFCMain::MenuEditWireframeOff)
+	ON_COMMAND(ID_AUTOSAVE_ON, &MFCMain::MenuEditAutosaveOn)
+	ON_COMMAND(ID_AUTOSAVE_OFF, &MFCMain::MenuEditAutosaveOff)
 	ON_COMMAND(ID_BUTTON40001,	&MFCMain::ToolBarSave)
-	ON_COMMAND(ID_BUTTON40055, &MFCMain::ToolBarObjectSelect)
-	///ON_COMMAND(ID_BUTTON40050, &MFCMain::ToolBarObjectSpawn)
-	ON_COMMAND(ID_BUTTON40059, &MFCMain::ToolBarObjectDelete)
-	ON_COMMAND(ID_BUTTON40052, &MFCMain::ToolBarTerrainSculpt)
-	ON_COMMAND(ID_BUTTON40048, &MFCMain::ToolBarTerrainPaint)
 	ON_COMMAND(ID_BUTTON40053, &MFCMain::ToolBarUndo)
 	ON_COMMAND(ID_BUTTON40054, &MFCMain::ToolBarRedo)
 	ON_COMMAND(ID_BUTTON40060, &MFCMain::ToolBarLight)
@@ -521,26 +516,6 @@ void MFCMain::MenuFileSaveTerrain()
 	m_toolSystem.onActionSaveTerrain();
 }
 
-void MFCMain::MenuEditSelect()
-{
-	//SelectDialogue m_ToolSelectDialogue(NULL, &m_ToolSystem.m_sceneGraph);		//create our dialoguebox //modal constructor
-	//m_ToolSelectDialogue.DoModal();	// start it up modal
-
-	//modeless dialogue must be declared in the class.   If we do local it will go out of scope instantly and destroy itself
-	m_toolSelectDialogue.Create(IDD_DIALOG1);	//Start up modeless
-	m_toolSelectDialogue.ShowWindow(SW_SHOW);	//show modeless
-	///m_ToolSelectDialogue.SetObjectData(&m_ToolSystem.m_sceneGraph, &m_ToolSystem.m_selectedObject);
-	m_toolSelectDialogue.SetObjectData(&m_toolSystem.m_sceneGraph, &m_toolSystem.m_selectedObjectIDs);
-}
-
-void MFCMain::MenuEditEditorLandscape()
-{
-	// Create & display dialogue window
-	m_toolLandscapeDialogue.Create(IDD_DIALOG3);
-	m_toolLandscapeDialogue.ShowWindow(SW_SHOW);
-	m_toolLandscapeDialogue.SetActive(true);
-}
-
 void MFCMain::MenuEditWireframeOn()
 {
 	m_toolSystem.SetWireframe(true);
@@ -551,71 +526,20 @@ void MFCMain::MenuEditWireframeOff()
 	m_toolSystem.SetWireframe(false);
 }
 
+void MFCMain::MenuEditAutosaveOn()
+{
+	SceneManager::SetAutosave(true);
+}
+
+void MFCMain::MenuEditAutosaveOff()
+{
+	SceneManager::SetAutosave(false);
+}
+
 void MFCMain::ToolBarSave()
 {	
 	m_toolSystem.onActionSaveTerrain();
 	m_toolSystem.onActionSave();	
-}
-
-void MFCMain::ToolBarObjectSpawn()
-{
-	// Destroy other windows
-	m_objectEditorDialogue.DestroyWindow();
-	m_terrainSculptDialogue.DestroyWindow();
-	m_terrainPaintDialogue.DestroyWindow();
-	m_lightDialogue.DestroyWindow();
-
-	// Create & display dialogue window
-	m_objectSpawnDialogue.Create(IDD_DIALOG4);
-	m_objectSpawnDialogue.ShowWindow(SW_SHOW);
-	m_objectSpawnDialogue.SetActive(true);
-}
-
-void MFCMain::ToolBarObjectSelect()
-{
-	// Destroy other windows
-	m_objectSpawnDialogue.DestroyWindow();
-	m_terrainSculptDialogue.DestroyWindow();
-	m_terrainPaintDialogue.DestroyWindow();
-	m_lightDialogue.DestroyWindow();
-
-	// Create & display dialogue window
-	m_objectEditorDialogue.Create(IDD_DIALOG7);
-	m_objectEditorDialogue.ShowWindow(SW_SHOW);
-	m_objectEditorDialogue.SetActive(true);
-}
-
-void MFCMain::ToolBarObjectDelete()
-{
-	m_toolSystem.onActionDeleteObjects();
-}
-
-void MFCMain::ToolBarTerrainSculpt()
-{
-	// Destroy other windows
-	m_objectEditorDialogue.DestroyWindow();
-	m_objectSpawnDialogue.DestroyWindow();
-	m_terrainPaintDialogue.DestroyWindow();
-	m_lightDialogue.DestroyWindow();
-	
-	// Create & display dialogue window
-	m_terrainSculptDialogue.Create(IDD_DIALOG5);
-	m_terrainSculptDialogue.ShowWindow(SW_SHOW);
-	m_terrainSculptDialogue.SetActive(true);
-}
-
-void MFCMain::ToolBarTerrainPaint()
-{
-	// Destroy other windows
-	m_objectEditorDialogue.DestroyWindow();
-	m_objectSpawnDialogue.DestroyWindow();
-	m_terrainSculptDialogue.DestroyWindow();
-	m_lightDialogue.DestroyWindow();
-	
-	// Create & display dialogue window
-	m_terrainPaintDialogue.Create(IDD_DIALOG6);
-	m_terrainPaintDialogue.ShowWindow(SW_SHOW);
-	m_terrainPaintDialogue.SetActive(true);
 }
 
 void MFCMain::ToolBarUndo()

@@ -169,4 +169,5 @@ private:	//variables
 	bool m_lDown = false, m_rDown = false;
 	bool m_newSelection = false;
 	bool m_sculpting = false;
+	int m_counter = 0;
 };

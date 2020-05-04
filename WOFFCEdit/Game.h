@@ -64,6 +64,8 @@ public:
 	void SaveDisplayChunk();	//saves geometry et al
 	void ClearDisplayList();
 	void SaveDisplayList();	
+	void AutosaveOnOff(bool onOff) { m_autosave = onOff; }
+	void DisplayAutosaveTime(bool display, int count) { m_autosaveTimer = display; m_autosaveCount = count; }
 
 	// Getters
 	std::shared_ptr<DX::DeviceResources> GetDeviceResources() { return m_deviceResources; }
@@ -126,6 +128,9 @@ private:
 	bool m_wireframe = false;				//wireframe on/off
 	bool m_toggleRight = false;				//object snap to mouse location on/off
 	int m_fpsCount, m_fpsTrue;
+	bool m_autosave = false;
+	bool m_autosaveTimer = false;
+	int m_autosaveCount = 0;
 
 	//mouse picking
 	std::vector<int> m_selectedObjectIDs;

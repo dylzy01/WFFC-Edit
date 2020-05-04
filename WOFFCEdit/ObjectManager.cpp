@@ -234,9 +234,6 @@ bool ObjectManager::SpawnObject(OBJECT_TYPE objectType, DirectX::SimpleMath::Vec
 
 	// Rebuild display list
 	m_game->BuildDisplayList(&sceneGraph);	
-
-	// Save current state
-	///SceneManager::SetSceneGraph(&sceneGraph);
 }
 
 // Remove an object from scene graph & database
@@ -244,14 +241,7 @@ void ObjectManager::Remove(std::vector<int> & IDs, std::vector<SceneObject> & sc
 {			
 	// If ID has been specified
 	if (ID != -1)
-	{
-		// If object is a light
-		//if (sceneGraph[ID].light_type != 0)
-		//{
-		//	// Erase from renderer storage
-		//	m_game->RemoveLight(ID);
-		//}
-		
+	{		
 		// Remove object from database
 		SQLManager::RemoveObject(sceneGraph[ID]);		
 	}
@@ -262,13 +252,6 @@ void ObjectManager::Remove(std::vector<int> & IDs, std::vector<SceneObject> & sc
 		// Loop through selected objects
 		for (int i = 0; i < IDs.size(); ++i)
 		{
-			// If object is a light
-			//if (sceneGraph[IDs[i]].light_type != 0)
-			//{
-			//	// Erase from renderer storage
-			//	m_game->RemoveLight(ID);
-			//}
-
 			// Loop through scene graph
 			for (int j = 0; j < sceneGraph.size(); ++j)
 			{
@@ -301,7 +284,6 @@ void ObjectManager::Remove(std::vector<int> & IDs, std::vector<SceneObject> & sc
 	m_selectedObjectIDs = IDs;
 
 	// Save current state
-	///SceneManager::SetSceneGraph(&sceneGraph);
 	SceneManager::SetScene(&sceneGraph, m_game->GetDisplayChunk());
 }
 
@@ -342,7 +324,6 @@ void ObjectManager::Transform(OBJECT_FUNCTION function, CONSTRAINT constraint, s
 	}
 
 	// Save current state
-	///SceneManager::SetSceneGraph(&sceneGraph);
 	SceneManager::SetScene(&sceneGraph, m_game->GetDisplayChunk());
 }
 
@@ -531,7 +512,6 @@ void ObjectManager::Paste(std::vector<SceneObject> & sceneGraph)
 	}
 
 	// Save current state
-	///SceneManager::SetSceneGraph(&sceneGraph);
 	SceneManager::SetScene(&sceneGraph, m_game->GetDisplayChunk());
 }
 
@@ -551,17 +531,6 @@ bool ObjectManager::Replace(int ID, std::vector<SceneObject>& sceneGraph, OBJECT
 
 	// If light count is above limit, don't continue
 	if (count >= 10) { return false; }
-	
-	// If object is a light
-	//if (objectType == OBJECT_TYPE::LIGHT)
-	//{
-	//	// If active lights is above limit
-	//	if (m_game->GetLights().first.size() >= 10)
-	//	{
-	//		// Prevent object addition
-	//		return false;
-	//	}
-	//}
 
 	// Loop through scene graph
 	for (int i = 0; i < sceneGraph.size(); ++i)
@@ -774,7 +743,6 @@ bool ObjectManager::Replace(int ID, std::vector<SceneObject>& sceneGraph, OBJECT
 	m_game->BuildDisplayList(&sceneGraph);
 
 	// Save current state
-	///SceneManager::SetSceneGraph(&sceneGraph);
 	SceneManager::SetScene(&sceneGraph, m_game->GetDisplayChunk());
 
 	return true;
