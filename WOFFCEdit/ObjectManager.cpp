@@ -301,7 +301,8 @@ void ObjectManager::Remove(std::vector<int> & IDs, std::vector<SceneObject> & sc
 	m_selectedObjectIDs = IDs;
 
 	// Save current state
-	SceneManager::SetSceneGraph(&sceneGraph);
+	///SceneManager::SetSceneGraph(&sceneGraph);
+	SceneManager::SetScene(&sceneGraph, m_game->GetDisplayChunk());
 }
 
 // Temporarily store details of all objects
@@ -341,7 +342,8 @@ void ObjectManager::Transform(OBJECT_FUNCTION function, CONSTRAINT constraint, s
 	}
 
 	// Save current state
-	SceneManager::SetSceneGraph(&sceneGraph);
+	///SceneManager::SetSceneGraph(&sceneGraph);
+	SceneManager::SetScene(&sceneGraph, m_game->GetDisplayChunk());
 }
 
 // Copy details of selected objects & remove from database
@@ -529,7 +531,8 @@ void ObjectManager::Paste(std::vector<SceneObject> & sceneGraph)
 	}
 
 	// Save current state
-	SceneManager::SetSceneGraph(&sceneGraph);
+	///SceneManager::SetSceneGraph(&sceneGraph);
+	SceneManager::SetScene(&sceneGraph, m_game->GetDisplayChunk());
 }
 
 // Replace the model of an object
@@ -771,7 +774,8 @@ bool ObjectManager::Replace(int ID, std::vector<SceneObject>& sceneGraph, OBJECT
 	m_game->BuildDisplayList(&sceneGraph);
 
 	// Save current state
-	SceneManager::SetSceneGraph(&sceneGraph);
+	///SceneManager::SetSceneGraph(&sceneGraph);
+	SceneManager::SetScene(&sceneGraph, m_game->GetDisplayChunk());
 
 	return true;
 }

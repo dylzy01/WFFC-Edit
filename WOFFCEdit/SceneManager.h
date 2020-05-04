@@ -18,61 +18,45 @@ public:
 	static void QuickSave();
 
 	// Undo to previous world state
-	static std::pair<std::vector<SceneObject>, bool>	UndoObjects();
-	static bool											UndoGeometry();
+	static bool	Undo();
 
 	// Redo to proceeding world state
-	static std::pair<std::vector<SceneObject>, bool>	RedoObjects();
-	static bool											RedoGeometry();
+	static bool Redo();
 
 	// Reduce current history count if possible
-	static void ReduceCount() {
-		if (m_count != 1) { m_count--; }
+	static bool DecreaseCount() {
+		if (m_count != 1) { m_count--; return true; }
+		else { return false; }
 	}
 
 	// Increase current history count if possible
-	static void IncreaseCount() {
-		if (m_count != m_history.size() - 1) { m_count++; m_max = false; }
-		else { m_max = true; }
+	static bool IncreaseCount() {
+		if (m_count != m_history.size()) { m_count++; return true; }
+		else { return false; }
 	}
-
-	// Getters
-	static bool IsMax() { return m_max; }
 	 
 	// Setters
 	static void SetGame(Game * game) { m_game = game; }
-	static void SetSceneGraph(std::vector<SceneObject> * sceneGraph, bool first = false) {
+	static void SetScene(std::vector<SceneObject>* sceneGraph, DisplayChunk* chunk) {			
+		// Update scene graph
 		m_sceneGraph = sceneGraph;
 		m_objectHistory.push_back(*sceneGraph);
-		m_objectHistoryID++;
 
-		//if (!first) {
-			m_history.push_back(true);
-			m_count++;
-		//}
-	}
-	static void SetDisplayChunk(DisplayChunk * chunk, bool first = false) {
+		// Update display chunk
 		m_displayChunk = chunk;
-		m_displayChunk->SaveGeometryPositions(m_geometryFileCount);
-		m_geometryHistoryID++;
-		m_geometryFileCount++;
+		m_displayChunk->SaveGeometryPositions(m_count);
 
-		//if (!first) {
-			m_history.push_back(false);
-			m_count++;
-		//}
+		// Update history
+		m_history.push_back(m_count);
+		m_count++;
 	}
 
 private:
 	static Game * m_game;
-	static std::vector<SceneObject> * m_sceneGraph;
-	static std::vector<std::vector<SceneObject>> m_objectHistory;
-	static int m_objectHistoryID;
-	static int m_geometryHistoryID;
-	static int m_geometryFileCount;
 	static DisplayChunk * m_displayChunk;
+	static std::vector<SceneObject> * m_sceneGraph;
+	static std::vector<std::vector<SceneObject>> m_objectHistory;	
+	static std::vector<int> m_history;
 	static int m_count;
-	static std::vector<bool> m_history;
-	static bool m_max;
 };
 

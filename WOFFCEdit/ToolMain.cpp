@@ -65,7 +65,8 @@ void ToolMain::onActionInitialise(HWND handle, int width, int height)
 
 	// Set static scene manager game & display chunk
 	SceneManager::SetGame(&m_d3dRenderer);
-	SceneManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk(), true);
+	///SceneManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk(), true);
+	SceneManager::SetScene(&m_sceneGraph, m_d3dRenderer.GetDisplayChunk());
 }
 
 void ToolMain::onActionLoad()
@@ -101,9 +102,6 @@ void ToolMain::onActionLoad()
 
 	// Build the renderable chunk
 	m_d3dRenderer.BuildDisplayChunk(&m_chunk);
-
-	// Save current state
-	SceneManager::SetSceneGraph(&m_sceneGraph);
 }
 
 void ToolMain::onActionSave()
@@ -140,45 +138,49 @@ void ToolMain::onActionDeleteObjects()
 void ToolMain::onActionUndo()
 {
 	// Scene objects
-	std::pair<std::vector<SceneObject>, bool> object = SceneManager::UndoObjects();
-	if (object.second)
-	{
-		m_sceneGraph = object.first;
-		m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
-	}	
+	//std::pair<std::vector<SceneObject>, bool> object = SceneManager::UndoObjects();
+	//if (object.second)
+	//{
+	//	m_sceneGraph = object.first;
+	//	m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+	//}	
 
-	// Terrain geometry	
-	bool terrain = SceneManager::UndoGeometry();
-	
-	// If both were unsuccessful
-	if (!object.second && !terrain) { MessageBox(NULL, L"There's nothing to undo!", L"Hey there!", MB_OK); }
-	else
-	{
-		// Reduce count if possible
-		SceneManager::ReduceCount();
-	}
+	//// Terrain geometry	
+	//bool terrain = SceneManager::UndoGeometry();
+	//
+	//// If both were unsuccessful
+	//if (!object.second && !terrain) { MessageBox(NULL, L"There's nothing to undo!", L"Hey there!", MB_OK); }
+	//else
+	//{
+	//	// Reduce count if possible
+	//	SceneManager::DecreaseCount();
+	//}
+
+	if (!SceneManager::Undo()) { MessageBox(NULL, L"There's nothing to undo!", L"Hey there!", MB_OK); }
 }
 
 void ToolMain::onActionRedo()
 {
 	// Scene objects	
-	std::pair<std::vector<SceneObject>, bool> object = SceneManager::RedoObjects();
-	if (object.second)
-	{
-		m_sceneGraph = object.first;
-		m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
-	}	
+	//std::pair<std::vector<SceneObject>, bool> object = SceneManager::RedoObjects();
+	//if (object.second)
+	//{
+	//	m_sceneGraph = object.first;
+	//	m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+	//}	
 
-	// Terrain geometry	
-	bool terrain = SceneManager::RedoGeometry();
-	
-	// If both were unsuccessful
-	if (!object.second && !terrain)	{ MessageBox(NULL, L"There's nothing to redo!", L"Hey there!", MB_OK); }
-	else 
-	{
-		// Increase count if possible
-		SceneManager::IncreaseCount();
-	}
+	//// Terrain geometry	
+	//bool terrain = SceneManager::RedoGeometry();
+	//
+	//// If both were unsuccessful
+	//if (!object.second && !terrain)	{ MessageBox(NULL, L"There's nothing to redo!", L"Hey there!", MB_OK); }
+	//else 
+	//{
+	//	// Increase count if possible
+	//	SceneManager::IncreaseCount();
+	//}
+
+	if (!SceneManager::Redo()) { MessageBox(NULL, L"There's nothing to redo!", L"Hey there!", MB_OK); }
 }
 
 void ToolMain::Tick(MSG *msg)
@@ -432,14 +434,15 @@ void ToolMain::UpdateInput(MSG * msg)
 		///SaveDisplayList(m_d3dRenderer.GetDisplayList());
 		m_d3dRenderer.BuildDisplayList(&m_sceneGraph);		
 		///SceneManager::QuickSave();
-		if (!m_sculpting)
+		/*if (!m_sculpting)
 		{
 			SceneManager::SetSceneGraph(&m_sceneGraph);
 		}
 		else if (m_sculpting) {
 			m_sculpting = false;
 			SceneManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk());
-		}
+		}*/
+		SceneManager::SetScene(&m_sceneGraph, m_d3dRenderer.GetDisplayChunk());
 		break;
 
 	case WM_MBUTTONDOWN:
