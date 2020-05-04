@@ -153,14 +153,20 @@ void ToolMain::Tick(MSG *msg)
 	// If CTRL is pressed
 	if (m_toolInputCommands.CTRL)
 	{
-		// If X is pressed (cut)
-		if (m_toolInputCommands.X) { ObjectManager::Cut(m_selectedObjectIDs, m_sceneGraph); }
+		// If X is pressed (cut) (reset key)
+		if (m_toolInputCommands.X) { m_toolInputCommands.X = false; ObjectManager::Cut(m_selectedObjectIDs, m_sceneGraph); }
 			
-		// If C is pressed (copy)
-		else if (m_toolInputCommands.C) { ObjectManager::Copy(m_selectedObjectIDs, m_sceneGraph); }
+		// If C is pressed (copy) (reset key)
+		else if (m_toolInputCommands.C) { m_toolInputCommands.C = false; ObjectManager::Copy(m_selectedObjectIDs, m_sceneGraph); }
 
-		// If V is pressed (paste)
-		else if (m_toolInputCommands.V) { ObjectManager::Paste(m_sceneGraph); }
+		// If V is pressed (paste) (reset key)
+		else if (m_toolInputCommands.V) { m_toolInputCommands.V = false; ObjectManager::Paste(m_sceneGraph); }
+
+		// If Z is pressed (undo) (reset key)
+		else if (m_toolInputCommands.Z) { SceneManager::Undo(); }
+		
+		// If Y is pressed (redo) (reset key)
+		else if (m_toolInputCommands.Y) { SceneManager::Redo(); }
 	}	
 		
 	// If right mouse button is pressed
@@ -250,16 +256,12 @@ void ToolMain::Tick(MSG *msg)
 		{
 			// Sculpt terrain
 			TerrainManager::Sculpt(m_selectedTerrain, m_terrainFunction, m_terrainConstraint);
-
-			m_sculpting = true;
 		}
 		break;
 		case EDITOR::SCULPT_SINGLE:
 		{
 			// Sculpt selected terrain
 			TerrainManager::Sculpt(m_selectedTerrain, m_terrainFunction, m_terrainConstraint, true);
-
-			m_sculpting = true;
 		}
 		break;
 		case EDITOR::LIGHTS:
@@ -378,19 +380,9 @@ void ToolMain::UpdateInput(MSG * msg)
 		break;
 
 	case WM_RBUTTONUP:
-		m_rDown = m_toolInputCommands.mouseRight = m_toolInputCommands.mouseDrag = false;
-		TerrainManager::StorePosition(true);		
-		///SaveDisplayList(m_d3dRenderer.GetDisplayList());
-		m_d3dRenderer.BuildDisplayList(&m_sceneGraph);		
-		///SceneManager::QuickSave();
-		/*if (!m_sculpting)
-		{
-			SceneManager::SetSceneGraph(&m_sceneGraph);
-		}
-		else if (m_sculpting) {
-			m_sculpting = false;
-			SceneManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk());
-		}*/
+		m_rDown = m_toolInputCommands.mouseRight = m_toolInputCommands.mouseDrag = false;				
+		m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+		TerrainManager::StorePosition(true);				
 		SceneManager::SetScene(&m_sceneGraph, m_d3dRenderer.GetDisplayChunk());
 		break;
 
@@ -406,49 +398,47 @@ void ToolMain::UpdateInput(MSG * msg)
 	//here we update all the actual app functionality that we want.  This information will either be used int toolmain, or sent down to the renderer (Camera movement etc
 
 	// W key to move forward
-	if (m_keyArray['W']) { m_toolInputCommands.W = true; }
-	else { m_toolInputCommands.W = false; }
+	m_toolInputCommands.W = (m_keyArray['W']);
 
 	// S key to move backward
-	if (m_keyArray['S']) { m_toolInputCommands.S = true; }
-	else { m_toolInputCommands.S = false; }
+	m_toolInputCommands.S = (m_keyArray['S']);
 
 	// A key to strafe left
-	if (m_keyArray['A']) { m_toolInputCommands.A = true; }
-	else { m_toolInputCommands.A = false; }
+	m_toolInputCommands.A = (m_keyArray['A']);
 
 	// D key to strafe right
-	if (m_keyArray['D']) { m_toolInputCommands.D = true; }
-	else { m_toolInputCommands.D = false; }
+	m_toolInputCommands.D = (m_keyArray['D']);
 
 	// E key to move upward
-	if (m_keyArray['E']) { m_toolInputCommands.E = true; }
-	else { m_toolInputCommands.E = false; }
+	m_toolInputCommands.E = (m_keyArray['E']);
 
 	// Q key to move downward
-	if (m_keyArray['Q']) { m_toolInputCommands.Q = true; }
-	else { m_toolInputCommands.Q = false; }
+	m_toolInputCommands.Q = (m_keyArray['Q']);
 
 	// SHIFT key to select more than one object
-	if (m_keyArray[(int)VK_SHIFT]) { m_toolInputCommands.SHIFT = true; }
-	else { m_toolInputCommands.SHIFT = false; } 	
+	m_toolInputCommands.SHIFT = (m_keyArray[(int)VK_SHIFT]);
 
 	// CTRL key to delete objects rather than spawning via mouseRight
 	// CTRL key to cut, copy or paste an object via X,C,V
-	if (m_keyArray[(int)VK_CONTROL]) { m_toolInputCommands.CTRL = true; }
-	else { m_toolInputCommands.CTRL = false; }
+	// CTRL key to undo or redo via Z,Y
+	m_toolInputCommands.CTRL = (m_keyArray[(int)VK_CONTROL]);
 
 	// X key to cut an object
-	if (m_keyArray['X']) { m_toolInputCommands.X = true; }
-	else { m_toolInputCommands.X = false; }
+	m_toolInputCommands.X = (m_keyArray['X']);
 
 	// C key to copy an object
-	if (m_keyArray['C']) { m_toolInputCommands.C = true; }
-	else { m_toolInputCommands.C = false; }
+	m_toolInputCommands.C = (m_keyArray['C']);
 
 	// V key to paste an object
-	if (m_keyArray['V']) { m_toolInputCommands.V = true; }
-	else { m_toolInputCommands.V = false; }
+	m_toolInputCommands.V = (m_keyArray['V']);
+
+	// Z key to undo
+	m_toolInputCommands.Z = (m_keyArray['Z']);
+
+	// Y key to redo
+	m_toolInputCommands.Y = (m_keyArray['Y']);
+
+	m_doOnce = (m_toolInputCommands.Z || m_toolInputCommands.Y);
 }
 
 bool ToolMain::GetNewSelection()

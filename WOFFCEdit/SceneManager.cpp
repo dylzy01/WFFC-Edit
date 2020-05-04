@@ -49,7 +49,7 @@ bool SceneManager::Undo()
 	if (m_history.size() > 0)
 	{	
 		// If count is valid
-		if (m_count != m_history.size() + 1)
+		if (m_count < m_history.size() + 1)
 		{
 			// Decrease count if possible
 			if (DecreaseCount())
@@ -75,7 +75,7 @@ bool SceneManager::Redo()
 	if (m_history.size() > 0)
 	{		
 		// If count is valid
-		if (m_count != m_history.size() + 1)
+		if (m_count < m_history.size() + 1)
 		{
 			// Increase count if possible
 			if (IncreaseCount())
