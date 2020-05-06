@@ -4,9 +4,9 @@ Game * ObjectManager::m_game;
 InputCommands * ObjectManager::m_input;
 std::vector<int> ObjectManager::m_selectedObjectIDs;
 std::vector<SceneObject> ObjectManager::m_objectsToCopy;
-std::vector<DirectX::SimpleMath::Vector3> ObjectManager::m_storedObjectScales;
-std::vector<DirectX::SimpleMath::Vector3> ObjectManager::m_storedObjectRotations;
-std::vector<DirectX::SimpleMath::Vector3> ObjectManager::m_storedObjectTranslations;
+std::vector<std::pair<DirectX::SimpleMath::Vector3, int>> ObjectManager::m_storedObjectScales;
+std::vector<std::pair<DirectX::SimpleMath::Vector3, int>> ObjectManager::m_storedObjectRotations;
+std::vector<std::pair<DirectX::SimpleMath::Vector3, int>> ObjectManager::m_storedObjectTranslations;
 
 // Spawn an object at a location & add to database
 bool ObjectManager::SpawnObject(OBJECT_TYPE objectType, DirectX::SimpleMath::Vector3 position,
@@ -304,10 +304,18 @@ void ObjectManager::Store(std::vector<int> IDs)
 		// If selected ID isn't -1
 		if (m_selectedObjectIDs[i] >= 0)
 		{
-			// Add selected object details to storage
-			m_storedObjectScales.push_back(m_game->GetDisplayList()[m_selectedObjectIDs[i]].m_scale);
-			m_storedObjectRotations.push_back(m_game->GetDisplayList()[m_selectedObjectIDs[i]].m_orientation);
-			m_storedObjectTranslations.push_back(m_game->GetDisplayList()[m_selectedObjectIDs[i]].m_position);
+			// Loop through display list
+			for (int j = 0; j < m_game->GetDisplayList().size(); ++j)
+			{
+				// Check if current ID matches object ID
+				if (m_selectedObjectIDs[i] == m_game->GetDisplayList()[j].m_ID)
+				{					
+					// Add selected object details to storage
+					m_storedObjectScales.push_back(std::pair<DirectX::SimpleMath::Vector3, int>(m_game->GetDisplayList()[j].m_scale, j));
+					m_storedObjectRotations.push_back(std::pair<DirectX::SimpleMath::Vector3, int>(m_game->GetDisplayList()[j].m_orientation, j));
+					m_storedObjectTranslations.push_back(std::pair<DirectX::SimpleMath::Vector3, int>(m_game->GetDisplayList()[j].m_position, j));
+				}
+			}			
 		}
 	}
 }
@@ -322,9 +330,6 @@ void ObjectManager::Transform(OBJECT_FUNCTION function, CONSTRAINT constraint, s
 	case OBJECT_FUNCTION::ROTATE: Rotate(constraint, IDs, sceneGraph); break;
 	case OBJECT_FUNCTION::TRANSLATE: Translate(constraint, IDs, sceneGraph); break;
 	}
-
-	// Save current state
-	SceneManager::SetScene(&sceneGraph, m_game->GetDisplayChunk());
 }
 
 // Copy details of selected objects & remove from database
@@ -412,81 +417,109 @@ void ObjectManager::Copy(std::vector<int> IDs, std::vector<SceneObject> sceneGra
 {
 	// Clear current objects to copy
 	m_objectsToCopy.clear();
+
+	// Fetch available IDs
+	std::vector<int> availableIDs = GetAvailableIDs(IDs, sceneGraph);
+
+	// Controller
+	bool match = false;
 	
 	// Loop through selected objects
 	for (int i = 0; i < IDs.size(); ++i)
 	{
+		// Reset controller
+		match = false;
+
 		// Loop through scene graph
 		for (int j = 0; j < sceneGraph.size(); ++j)
 		{
-			// If scene object ID matches selected ID
-			if (sceneGraph[j].ID == IDs[i])
+			// If there hasn't already been a match
+			if (!match)
 			{
-				// Setup temp scene object
-				SceneObject object;
-
-				// Define object values
+				// If scene object ID matches selected ID
+				if (sceneGraph[j].ID == IDs[i])
 				{
-					object.ID = sceneGraph.size();
-					object.chunk_ID = sceneGraph[j].chunk_ID;
-					object.posX = sceneGraph[j].posX + 5.f;
-					object.posY = sceneGraph[j].posY;
-					object.posZ = sceneGraph[j].posZ + 5.f;
-					object.rotX = sceneGraph[j].rotX;
-					object.rotY = sceneGraph[j].rotY;
-					object.rotZ = sceneGraph[j].rotZ;
-					object.scaX = sceneGraph[j].scaX;
-					object.scaY = sceneGraph[j].scaY;
-					object.scaZ = sceneGraph[j].scaZ;
-					object.render = sceneGraph[j].render;
-					object.collectable = sceneGraph[j].collectable;
-					object.collision_mesh = sceneGraph[j].collision_mesh;
-					object.destructable = sceneGraph[j].destructable;
-					object.health_amount = sceneGraph[j].health_amount;
-					object.editor_render = sceneGraph[j].editor_render;
-					object.editor_texture_vis = sceneGraph[j].editor_texture_vis;
-					object.editor_normals_vis = sceneGraph[j].editor_normals_vis;
-					object.editor_collision_vis = sceneGraph[j].editor_collision_vis;
-					object.editor_pivot_vis = sceneGraph[j].editor_pivot_vis;
-					object.pivotX = sceneGraph[j].pivotX;
-					object.pivotY = sceneGraph[j].pivotY;
-					object.pivotZ = sceneGraph[j].pivotZ;
-					object.snapToGround = sceneGraph[j].snapToGround;
-					object.AINode = sceneGraph[j].AINode;
-					object.audio_path = sceneGraph[j].audio_path;
-					object.volume = sceneGraph[j].volume;
-					object.pitch = sceneGraph[j].pitch;
-					object.pan = sceneGraph[j].pan;
-					object.one_shot = sceneGraph[j].one_shot;
-					object.play_on_init = sceneGraph[j].play_on_init;
-					object.play_in_editor = sceneGraph[j].play_in_editor;
-					object.min_dist = sceneGraph[j].min_dist;
-					object.max_dist = sceneGraph[j].max_dist;
-					object.camera = sceneGraph[j].camera;
-					object.path_node = sceneGraph[j].path_node;
-					object.path_node_start = sceneGraph[j].path_node_start;
-					object.path_node_end = sceneGraph[j].path_node_end;
-					object.parent_id = sceneGraph[j].parent_id;
-					object.editor_wireframe = sceneGraph[j].editor_wireframe;
-					object.light_type = sceneGraph[j].light_type;
-					object.light_diffuse_r = sceneGraph[j].light_diffuse_r;
-					object.light_diffuse_g = sceneGraph[j].light_diffuse_g;
-					object.light_diffuse_b = sceneGraph[j].light_diffuse_b;
-					object.light_specular_r = sceneGraph[j].light_specular_r;
-					object.light_specular_g = sceneGraph[j].light_specular_g;
-					object.light_specular_b = sceneGraph[j].light_specular_b;
-					object.light_spot_cutoff = sceneGraph[j].light_spot_cutoff;
-					object.light_constant = sceneGraph[j].light_constant;
-					object.light_linear = sceneGraph[j].light_linear;
-					object.light_quadratic = sceneGraph[j].light_quadratic;
+					// Update controller
+					match = true;
 
-					object.m_isWater = sceneGraph[j].m_isWater;
-					object.model_path = sceneGraph[j].model_path;
-					object.tex_diffuse_path = sceneGraph[j].tex_diffuse_path;
+					// Setup temp scene object
+					SceneObject object;
+
+					// Check available IDs container is valid
+					if (availableIDs.size() > 0 && availableIDs[0] < sceneGraph.size())
+					{
+						// Set new object ID to first available ID
+						object.ID = availableIDs[0];
+
+						// Clear available ID from vector
+						availableIDs.erase(availableIDs.begin());
+					}
+
+					// Else, set new object ID as scene graph size
+					else { object.ID = sceneGraph.size(); }
+
+					// Define remaining object values
+					{
+						object.chunk_ID = sceneGraph[j].chunk_ID;
+						object.posX = sceneGraph[j].posX + 5.f;
+						object.posY = sceneGraph[j].posY;
+						object.posZ = sceneGraph[j].posZ + 5.f;
+						object.rotX = sceneGraph[j].rotX;
+						object.rotY = sceneGraph[j].rotY;
+						object.rotZ = sceneGraph[j].rotZ;
+						object.scaX = sceneGraph[j].scaX;
+						object.scaY = sceneGraph[j].scaY;
+						object.scaZ = sceneGraph[j].scaZ;
+						object.render = sceneGraph[j].render;
+						object.collectable = sceneGraph[j].collectable;
+						object.collision_mesh = sceneGraph[j].collision_mesh;
+						object.destructable = sceneGraph[j].destructable;
+						object.health_amount = sceneGraph[j].health_amount;
+						object.editor_render = sceneGraph[j].editor_render;
+						object.editor_texture_vis = sceneGraph[j].editor_texture_vis;
+						object.editor_normals_vis = sceneGraph[j].editor_normals_vis;
+						object.editor_collision_vis = sceneGraph[j].editor_collision_vis;
+						object.editor_pivot_vis = sceneGraph[j].editor_pivot_vis;
+						object.pivotX = sceneGraph[j].pivotX;
+						object.pivotY = sceneGraph[j].pivotY;
+						object.pivotZ = sceneGraph[j].pivotZ;
+						object.snapToGround = sceneGraph[j].snapToGround;
+						object.AINode = sceneGraph[j].AINode;
+						object.audio_path = sceneGraph[j].audio_path;
+						object.volume = sceneGraph[j].volume;
+						object.pitch = sceneGraph[j].pitch;
+						object.pan = sceneGraph[j].pan;
+						object.one_shot = sceneGraph[j].one_shot;
+						object.play_on_init = sceneGraph[j].play_on_init;
+						object.play_in_editor = sceneGraph[j].play_in_editor;
+						object.min_dist = sceneGraph[j].min_dist;
+						object.max_dist = sceneGraph[j].max_dist;
+						object.camera = sceneGraph[j].camera;
+						object.path_node = sceneGraph[j].path_node;
+						object.path_node_start = sceneGraph[j].path_node_start;
+						object.path_node_end = sceneGraph[j].path_node_end;
+						object.parent_id = sceneGraph[j].parent_id;
+						object.editor_wireframe = sceneGraph[j].editor_wireframe;
+						object.light_type = sceneGraph[j].light_type;
+						object.light_diffuse_r = sceneGraph[j].light_diffuse_r;
+						object.light_diffuse_g = sceneGraph[j].light_diffuse_g;
+						object.light_diffuse_b = sceneGraph[j].light_diffuse_b;
+						object.light_specular_r = sceneGraph[j].light_specular_r;
+						object.light_specular_g = sceneGraph[j].light_specular_g;
+						object.light_specular_b = sceneGraph[j].light_specular_b;
+						object.light_spot_cutoff = sceneGraph[j].light_spot_cutoff;
+						object.light_constant = sceneGraph[j].light_constant;
+						object.light_linear = sceneGraph[j].light_linear;
+						object.light_quadratic = sceneGraph[j].light_quadratic;
+
+						object.m_isWater = sceneGraph[j].m_isWater;
+						object.model_path = sceneGraph[j].model_path;
+						object.tex_diffuse_path = sceneGraph[j].tex_diffuse_path;
+					}
+
+					// Add object to storage
+					m_objectsToCopy.push_back(object);
 				}
-
-				// Add object to storage
-				m_objectsToCopy.push_back(object);
 			}
 		}			
 	}
@@ -497,10 +530,7 @@ void ObjectManager::Paste(std::vector<SceneObject> & sceneGraph)
 {
 	// Loop through objects to copy
 	for (int i = 0; i < m_objectsToCopy.size(); ++i)
-	{
-		// Update object ID
-		m_objectsToCopy[i].ID = sceneGraph.size();
-		
+	{		
 		// Add new object to database
 		SQLManager::AddObject(m_objectsToCopy[i]);
 
@@ -760,84 +790,92 @@ void ObjectManager::Scale(CONSTRAINT constraint, std::vector<int> IDs, std::vect
 		// If ID is valid
 		if (m_selectedObjectIDs[i] >= 0)
 		{
-			// Get scale from mouse position
-			DirectX::SimpleMath::Vector3 scale = GetScale(i);
-
-			// Switch between object constraint
-			switch (constraint)
+			// Loop through scene graph
+			for (int j = 0; j < sceneGraph.size(); ++j)
 			{
-			case CONSTRAINT::X:
-			{
-				// Scale selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].scaX = scale.x;
+				// If selected ID matches object ID
+				if (m_selectedObjectIDs[i] == sceneGraph[j].ID)
+				{
+					// Get scale from mouse position
+					DirectX::SimpleMath::Vector3 scale = GetScale(j);
 
-				// Setup for game transform			
-				scale.y = sceneGraph[m_selectedObjectIDs[i]].scaY;
-				scale.z = sceneGraph[m_selectedObjectIDs[i]].scaZ;
-			}
-			break;
-			case CONSTRAINT::Y:
-			{
-				// Scale selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].scaY = scale.y;
+					// Switch between object constraint
+					switch (constraint)
+					{
+					case CONSTRAINT::X:
+					{
+						// Scale selected object based on mouse drag
+						sceneGraph[j].scaX = scale.x;
 
-				// Setup for game transform			
-				scale.x = sceneGraph[m_selectedObjectIDs[i]].scaX;
-				scale.z = sceneGraph[m_selectedObjectIDs[i]].scaZ;
-			}
-			break;
-			case CONSTRAINT::Z:
-			{
-				// Scale selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].scaZ = scale.z;
+						// Setup for game transform			
+						scale.y = sceneGraph[j].scaY;
+						scale.z = sceneGraph[j].scaZ;
+					}
+					break;
+					case CONSTRAINT::Y:
+					{
+						// Scale selected object based on mouse drag
+						sceneGraph[j].scaY = scale.y;
 
-				// Setup for game transform			
-				scale.x = sceneGraph[m_selectedObjectIDs[i]].scaX;
-				scale.y = sceneGraph[m_selectedObjectIDs[i]].scaY;
-			}
-			break;
-			case CONSTRAINT::XY:
-			{
-				// Scale selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].scaX = scale.x;
-				sceneGraph[m_selectedObjectIDs[i]].scaY = scale.y;
+						// Setup for game transform			
+						scale.x = sceneGraph[j].scaX;
+						scale.z = sceneGraph[j].scaZ;
+					}
+					break;
+					case CONSTRAINT::Z:
+					{
+						// Scale selected object based on mouse drag
+						sceneGraph[j].scaZ = scale.z;
 
-				// Setup for game transform			
-				scale.z = sceneGraph[m_selectedObjectIDs[i]].scaZ;
-			}
-			break;
-			case CONSTRAINT::XZ:
-			{
-				// Scale selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].scaX = scale.x;
-				sceneGraph[m_selectedObjectIDs[i]].scaZ = scale.z;
+						// Setup for game transform			
+						scale.x = sceneGraph[j].scaX;
+						scale.y = sceneGraph[j].scaY;
+					}
+					break;
+					case CONSTRAINT::XY:
+					{
+						// Scale selected object based on mouse drag
+						sceneGraph[j].scaX = scale.x;
+						sceneGraph[j].scaY = scale.y;
 
-				// Setup for game transform			
-				scale.y = sceneGraph[m_selectedObjectIDs[i]].scaY;
-			}
-			break;
-			case CONSTRAINT::YZ:
-			{
-				// Scale selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].scaY = scale.y;
-				sceneGraph[m_selectedObjectIDs[i]].scaZ = scale.z;
+						// Setup for game transform			
+						scale.z = sceneGraph[j].scaZ;
+					}
+					break;
+					case CONSTRAINT::XZ:
+					{
+						// Scale selected object based on mouse drag
+						sceneGraph[j].scaX = scale.x;
+						sceneGraph[j].scaZ = scale.z;
 
-				// Setup for game transform			
-				scale.x = sceneGraph[m_selectedObjectIDs[i]].scaX;
-			}
-			break;
-			case CONSTRAINT::NA:
-			{
-				// Scale selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].scaX = scale.x;
-				sceneGraph[m_selectedObjectIDs[i]].scaY = scale.y;
-				sceneGraph[m_selectedObjectIDs[i]].scaZ = scale.z;
-			}
-			break;
-			}
+						// Setup for game transform			
+						scale.y = sceneGraph[j].scaY;
+					}
+					break;
+					case CONSTRAINT::YZ:
+					{
+						// Scale selected object based on mouse drag
+						sceneGraph[j].scaY = scale.y;
+						sceneGraph[j].scaZ = scale.z;
 
-			// Apply game transform
-			m_game->SetTransform(m_selectedObjectIDs[i], OBJECT_FUNCTION::SCALE, scale);
+						// Setup for game transform			
+						scale.x = sceneGraph[j].scaX;
+					}
+					break;
+					case CONSTRAINT::NA:
+					{
+						// Scale selected object based on mouse drag
+						sceneGraph[j].scaX = scale.x;
+						sceneGraph[j].scaY = scale.y;
+						sceneGraph[j].scaZ = scale.z;
+					}
+					break;
+					}
+
+					// Apply game transform
+					m_game->SetTransform(j, OBJECT_FUNCTION::SCALE, scale);
+				}
+			}
 		}
 	}
 }
@@ -854,84 +892,92 @@ void ObjectManager::Rotate(CONSTRAINT constraint, std::vector<int> IDs, std::vec
 		// If ID is valid
 		if (m_selectedObjectIDs[i] >= 0)
 		{
-			// Get rotation from mouse position
-			DirectX::SimpleMath::Vector3 rotate = GetRotation(i);
-
-			// Switch between object constraint
-			switch (constraint)
+			// Loop through scene graph
+			for (int j = 0; j < sceneGraph.size(); ++j)
 			{
-			case CONSTRAINT::X:
-			{
-				// Rotate selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].rotX = rotate.x;
+				// If selected ID matches object ID
+				if (m_selectedObjectIDs[i] == sceneGraph[j].ID)
+				{
+					// Get rotation from mouse position
+					DirectX::SimpleMath::Vector3 rotate = GetRotation(j);
 
-				// Setup for game transform			
-				rotate.y = sceneGraph[m_selectedObjectIDs[i]].rotY;
-				rotate.z = sceneGraph[m_selectedObjectIDs[i]].rotZ;
-			}
-			break;
-			case CONSTRAINT::Y:
-			{
-				// Rotate selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].rotY = rotate.y;
+					// Switch between object constraint
+					switch (constraint)
+					{
+					case CONSTRAINT::X:
+					{
+						// Rotate selected object based on mouse drag
+						sceneGraph[j].rotX = rotate.x;
 
-				// Setup for game transform			
-				rotate.x = sceneGraph[m_selectedObjectIDs[i]].rotX;
-				rotate.z = sceneGraph[m_selectedObjectIDs[i]].rotZ;
-			}
-			break;
-			case CONSTRAINT::Z:
-			{
-				// Rotate selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].rotZ = rotate.z;
+						// Setup for game transform			
+						rotate.y = sceneGraph[j].rotY;
+						rotate.z = sceneGraph[j].rotZ;
+					}
+					break;
+					case CONSTRAINT::Y:
+					{
+						// Rotate selected object based on mouse drag
+						sceneGraph[j].rotY = rotate.y;
 
-				// Setup for game transform			
-				rotate.x = sceneGraph[m_selectedObjectIDs[i]].rotX;
-				rotate.y = sceneGraph[m_selectedObjectIDs[i]].rotY;
-			}
-			break;
-			case CONSTRAINT::XY:
-			{
-				// Rotate selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].rotX = rotate.x;
-				sceneGraph[m_selectedObjectIDs[i]].rotY = rotate.y;
+						// Setup for game transform			
+						rotate.x = sceneGraph[j].rotX;
+						rotate.z = sceneGraph[j].rotZ;
+					}
+					break;
+					case CONSTRAINT::Z:
+					{
+						// Rotate selected object based on mouse drag
+						sceneGraph[j].rotZ = rotate.z;
 
-				// Setup for game transform			
-				rotate.z = sceneGraph[m_selectedObjectIDs[i]].rotZ;
-			}
-			break;
-			case CONSTRAINT::XZ:
-			{
-				// Rotate selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].rotX = rotate.x;
-				sceneGraph[m_selectedObjectIDs[i]].rotZ = rotate.z;
+						// Setup for game transform			
+						rotate.x = sceneGraph[j].rotX;
+						rotate.y = sceneGraph[j].rotY;
+					}
+					break;
+					case CONSTRAINT::XY:
+					{
+						// Rotate selected object based on mouse drag
+						sceneGraph[j].rotX = rotate.x;
+						sceneGraph[j].rotY = rotate.y;
 
-				// Setup for game transform			
-				rotate.y = sceneGraph[m_selectedObjectIDs[i]].rotY;
-			}
-			break;
-			case CONSTRAINT::YZ:
-			{
-				// Rotate selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].rotY = rotate.y;
-				sceneGraph[m_selectedObjectIDs[i]].rotZ = rotate.z;
+						// Setup for game transform			
+						rotate.z = sceneGraph[j].rotZ;
+					}
+					break;
+					case CONSTRAINT::XZ:
+					{
+						// Rotate selected object based on mouse drag
+						sceneGraph[j].rotX = rotate.x;
+						sceneGraph[j].rotZ = rotate.z;
 
-				// Setup for game transform			
-				rotate.x = sceneGraph[m_selectedObjectIDs[i]].rotX;
-			}
-			break;
-			case CONSTRAINT::NA:
-			{
-				// Rotate selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].rotX = rotate.x;
-				sceneGraph[m_selectedObjectIDs[i]].rotY = rotate.y;
-				sceneGraph[m_selectedObjectIDs[i]].rotZ = rotate.z;
-			}
-			break;
-			}
+						// Setup for game transform			
+						rotate.y = sceneGraph[j].rotY;
+					}
+					break;
+					case CONSTRAINT::YZ:
+					{
+						// Rotate selected object based on mouse drag
+						sceneGraph[j].rotY = rotate.y;
+						sceneGraph[j].rotZ = rotate.z;
 
-			// Apply game transform
-			m_game->SetTransform(m_selectedObjectIDs[i], OBJECT_FUNCTION::ROTATE, rotate);
+						// Setup for game transform			
+						rotate.x = sceneGraph[j].rotX;
+					}
+					break;
+					case CONSTRAINT::NA:
+					{
+						// Rotate selected object based on mouse drag
+						sceneGraph[j].rotX = rotate.x;
+						sceneGraph[j].rotY = rotate.y;
+						sceneGraph[j].rotZ = rotate.z;
+					}
+					break;
+					}
+
+					// Apply game transform
+					m_game->SetTransform(j, OBJECT_FUNCTION::ROTATE, rotate);
+				}
+			}
 		}
 	}
 }
@@ -948,96 +994,104 @@ void ObjectManager::Translate(CONSTRAINT constraint, std::vector<int> IDs, std::
 		// If ID is valid
 		if (m_selectedObjectIDs[i] >= 0)
 		{
-			// Get translation from mouse position
-			DirectX::SimpleMath::Vector3 translate = GetTranslation(i);
-
-			// Switch between object constraint
-			switch (constraint)
+			// Loop through scene graph
+			for (int j = 0; j < sceneGraph.size(); ++j)
 			{
-			case CONSTRAINT::X:
-			{
-				// Translate selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].posX = translate.x;
+				// If selected ID matches object ID
+				if (m_selectedObjectIDs[i] == sceneGraph[j].ID)
+				{
+					// Get translation from mouse position
+					DirectX::SimpleMath::Vector3 translate = GetTranslation(j);
 
-				// Setup for game transform			
-				translate.y = sceneGraph[m_selectedObjectIDs[i]].posY;
-				translate.z = sceneGraph[m_selectedObjectIDs[i]].posZ;
-			}
-			break;
-			case CONSTRAINT::Y:
-			{
-				// Translate selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].posY = translate.y;
+					// Switch between object constraint
+					switch (constraint)
+					{
+					case CONSTRAINT::X:
+					{
+						// Translate selected object based on mouse drag
+						sceneGraph[j].posX = translate.x;
 
-				// Setup for game transform			
-				translate.x = sceneGraph[m_selectedObjectIDs[i]].posX;
-				translate.z = sceneGraph[m_selectedObjectIDs[i]].posZ;
-			}
-			break;
-			case CONSTRAINT::Z:
-			{
-				// Translate selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].posZ = translate.z;
+						// Setup for game transform			
+						translate.y = sceneGraph[j].posY;
+						translate.z = sceneGraph[j].posZ;
+					}
+					break;
+					case CONSTRAINT::Y:
+					{
+						// Translate selected object based on mouse drag
+						sceneGraph[j].posY = translate.y;
 
-				// Setup for game transform			
-				translate.x = sceneGraph[m_selectedObjectIDs[i]].posX;
-				translate.y = sceneGraph[m_selectedObjectIDs[i]].posY;
-			}
-			break;
-			case CONSTRAINT::XY:
-			{
-				// Translate selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].posX = translate.x;
-				sceneGraph[m_selectedObjectIDs[i]].posY = translate.y;
+						// Setup for game transform			
+						translate.x = sceneGraph[j].posX;
+						translate.z = sceneGraph[j].posZ;
+					}
+					break;
+					case CONSTRAINT::Z:
+					{
+						// Translate selected object based on mouse drag
+						sceneGraph[j].posZ = translate.z;
 
-				// Setup for game transform			
-				translate.z = sceneGraph[m_selectedObjectIDs[i]].posZ;
-			}
-			break;
-			case CONSTRAINT::XZ:
-			{
-				// Translate selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].posX = translate.x;
-				sceneGraph[m_selectedObjectIDs[i]].posZ = translate.z;
+						// Setup for game transform			
+						translate.x = sceneGraph[j].posX;
+						translate.y = sceneGraph[j].posY;
+					}
+					break;
+					case CONSTRAINT::XY:
+					{
+						// Translate selected object based on mouse drag
+						sceneGraph[j].posX = translate.x;
+						sceneGraph[j].posY = translate.y;
 
-				// Setup for game transform			
-				translate.y = sceneGraph[m_selectedObjectIDs[i]].posY;
-			}
-			break;
-			case CONSTRAINT::YZ:
-			{
-				// Translate selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].posY = translate.y;
-				sceneGraph[m_selectedObjectIDs[i]].posZ = translate.z;
+						// Setup for game transform			
+						translate.z = sceneGraph[j].posZ;
+					}
+					break;
+					case CONSTRAINT::XZ:
+					{
+						// Translate selected object based on mouse drag
+						sceneGraph[j].posX = translate.x;
+						sceneGraph[j].posZ = translate.z;
 
-				// Setup for game transform
-				translate.x = sceneGraph[m_selectedObjectIDs[i]].posX;
-			}
-			break;
-			case CONSTRAINT::NA:
-			{
-				// Translate selected object based on mouse drag
-				sceneGraph[m_selectedObjectIDs[i]].posX = translate.x;
-				sceneGraph[m_selectedObjectIDs[i]].posY = translate.y;
-				sceneGraph[m_selectedObjectIDs[i]].posZ = translate.z;
-			}
-			break;
-			}
+						// Setup for game transform			
+						translate.y = sceneGraph[j].posY;
+					}
+					break;
+					case CONSTRAINT::YZ:
+					{
+						// Translate selected object based on mouse drag
+						sceneGraph[j].posY = translate.y;
+						sceneGraph[j].posZ = translate.z;
 
-			// Apply game transform
-			m_game->SetTransform(m_selectedObjectIDs[i], OBJECT_FUNCTION::TRANSLATE, translate);
+						// Setup for game transform
+						translate.x = sceneGraph[j].posX;
+					}
+					break;
+					case CONSTRAINT::NA:
+					{
+						// Translate selected object based on mouse drag
+						sceneGraph[j].posX = translate.x;
+						sceneGraph[j].posY = translate.y;
+						sceneGraph[j].posZ = translate.z;
+					}
+					break;
+					}
+
+					// Apply game transform
+					m_game->SetTransform(j, OBJECT_FUNCTION::TRANSLATE, translate);
+				}
+			}			
 		}
 	}
 }
 
 // Get scale for object manipulation via mouse drag
-DirectX::SimpleMath::Vector3 ObjectManager::GetScale(int ID)
+DirectX::SimpleMath::Vector3 ObjectManager::GetScale(int index)
 {
 	// Temp storage 
 	DirectX::SimpleMath::Vector2 previous = m_input->mousePosPrevious;
 	DirectX::SimpleMath::Vector2 current = m_input->mousePos;
-	DirectX::SimpleMath::Vector3 object = m_game->GetDisplayList()[m_selectedObjectIDs[ID]].m_position;
-	DirectX::SimpleMath::Vector3 s = m_game->GetDisplayList()[m_selectedObjectIDs[ID]].m_scale;
+	DirectX::SimpleMath::Vector3 object = m_game->GetDisplayList()[index].m_position;
+	DirectX::SimpleMath::Vector3 s = m_game->GetDisplayList()[index].m_scale;
 
 	// Setup previous & current ray traces
 	DirectX::SimpleMath::Ray pre = MouseManager::RayTrace(previous);
@@ -1061,9 +1115,19 @@ DirectX::SimpleMath::Vector3 ObjectManager::GetScale(int ID)
 
 	// Setup temp scale
 	DirectX::SimpleMath::Vector3 scale;
-	scale.x = m_storedObjectScales[ID].x + (pickingC.x - pickingP.x);
-	scale.y = m_storedObjectScales[ID].y + (pickingC.y - pickingP.y);
-	scale.z = m_storedObjectScales[ID].z + (pickingC.z - pickingP.z);
+
+	// Loop through stored scale
+	for (int i = 0; i < m_storedObjectScales.size(); ++i)
+	{
+		// If indexes math
+		if (m_storedObjectScales[i].second == index)
+		{
+			// Define manipulated translation
+			scale.x = m_storedObjectScales[i].first.x + (pickingC.x - pickingP.x);
+			scale.y = m_storedObjectScales[i].first.y + (pickingC.y - pickingP.y);
+			scale.z = m_storedObjectScales[i].first.z + (pickingC.z - pickingP.z);
+		}
+	}
 
 	// If scale is below minimum scale
 	if (scale.x < .1f) { scale.x = .1f; }
@@ -1075,12 +1139,12 @@ DirectX::SimpleMath::Vector3 ObjectManager::GetScale(int ID)
 }
 
 // Get rotation for object manipulation via mouse drag
-DirectX::SimpleMath::Vector3 ObjectManager::GetRotation(int ID)
+DirectX::SimpleMath::Vector3 ObjectManager::GetRotation(int index)
 {
 	// Temp storage 
 	DirectX::SimpleMath::Vector2 previous = m_input->mousePosPrevious;
 	DirectX::SimpleMath::Vector2 current = m_input->mousePos;
-	DirectX::SimpleMath::Vector3 object = m_game->GetDisplayList()[m_selectedObjectIDs[ID]].m_position;
+	DirectX::SimpleMath::Vector3 object = m_game->GetDisplayList()[index].m_position;
 
 	// Setup previous & current ray traces
 	DirectX::SimpleMath::Ray pre = MouseManager::RayTrace(previous);
@@ -1104,21 +1168,31 @@ DirectX::SimpleMath::Vector3 ObjectManager::GetRotation(int ID)
 
 	// Setup temp rotation
 	DirectX::SimpleMath::Vector3 rotate;
-	rotate.x = m_storedObjectRotations[ID].x + (pickingC.x - pickingP.x) * 50.f;
-	rotate.y = m_storedObjectRotations[ID].y + (pickingC.y - pickingP.y) * 50.f;
-	rotate.z = m_storedObjectRotations[ID].z + (pickingC.z - pickingP.z) * 50.f;
+
+	// Loop through stored rotations
+	for (int i = 0; i < m_storedObjectRotations.size(); ++i)
+	{
+		// If indexes math
+		if (m_storedObjectRotations[i].second == index)
+		{
+			// Define manipulated rotation
+			rotate.x = m_storedObjectRotations[i].first.x + (pickingC.x - pickingP.x) * 50.f;
+			rotate.y = m_storedObjectRotations[i].first.y + (pickingC.y - pickingP.y) * 50.f;
+			rotate.z = m_storedObjectRotations[i].first.z + (pickingC.z - pickingP.z) * 50.f;
+		}
+	}
 
 	// Return manipulated rotation
 	return rotate;
 }
 
 // Get translation for object manipulation via mouse drag
-DirectX::SimpleMath::Vector3 ObjectManager::GetTranslation(int ID)
+DirectX::SimpleMath::Vector3 ObjectManager::GetTranslation(int index)
 {
 	// Temp storage 
 	DirectX::SimpleMath::Vector2 previous = m_input->mousePosPrevious;
 	DirectX::SimpleMath::Vector2 current = m_input->mousePos;
-	DirectX::SimpleMath::Vector3 object = m_game->GetDisplayList()[m_selectedObjectIDs[ID]].m_position;
+	DirectX::SimpleMath::Vector3 object = m_game->GetDisplayList()[index].m_position;
 
 	// Setup previous & current ray traces
 	DirectX::SimpleMath::Ray pre = MouseManager::RayTrace(previous);
@@ -1142,10 +1216,50 @@ DirectX::SimpleMath::Vector3 ObjectManager::GetTranslation(int ID)
 
 	// Setup temp translation
 	DirectX::SimpleMath::Vector3 position;
-	position.x = m_storedObjectTranslations[ID].x + (pickingC.x - pickingP.x);
-	position.y = m_storedObjectTranslations[ID].y + (pickingC.y - pickingP.y);
-	position.z = m_storedObjectTranslations[ID].z + (pickingC.z - pickingP.z);
+
+	// Loop through stored translations
+	for (int i = 0; i < m_storedObjectTranslations.size(); ++i)
+	{
+		// If indexes math
+		if (m_storedObjectTranslations[i].second == index)
+		{
+			// Define manipulated translation
+			position.x = m_storedObjectTranslations[i].first.x + (pickingC.x - pickingP.x);
+			position.y = m_storedObjectTranslations[i].first.y + (pickingC.y - pickingP.y);
+			position.z = m_storedObjectTranslations[i].first.z + (pickingC.z - pickingP.z);
+		}
+	}	
 
 	// Return manipulated translation
 	return position;
+}
+
+// Check scene graph for available IDs
+std::vector<int> ObjectManager::GetAvailableIDs(std::vector<int> IDs, std::vector<SceneObject> & sceneGraph)
+{
+	// Setup containers
+	std::vector<int> availableIDs;
+	std::vector<int> allIDs;
+		
+	// Loop through scene graph
+	for (int i = 0; i < sceneGraph.size(); ++i)
+	{
+		// Add current object IDs to allIDs
+		allIDs.push_back(sceneGraph[i].ID);		
+	}	
+
+	// Loop through scene graph
+	for (int i = 0; i < sceneGraph.size(); ++i)
+	{		
+		// Search for current index in IDs
+		if (std::find(allIDs.begin(), allIDs.end(), i) != allIDs.end()) {}
+		else 
+		{
+			// If not found, add current index to available IDs
+			availableIDs.push_back(i);
+		}		
+	}
+
+	// Return container
+	return availableIDs;
 }

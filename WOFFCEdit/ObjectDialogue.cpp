@@ -20,7 +20,6 @@ void ObjectDialogue::SetObjectData(std::vector<SceneObject>* sceneGraph)
 {
 	// Local storage of scene graph
 	m_sceneGraph = *sceneGraph;
-	///m_objects = objects;
 
 	// Setup IDs of currently available objects
 	SetupObjects();
@@ -55,9 +54,6 @@ void ObjectDialogue::SetObjectData(std::vector<SceneObject>* sceneGraph)
 		constBoxEntry = L"XZ";			m_boxConst.AddString(constBoxEntry.c_str());
 		constBoxEntry = L"YZ";			m_boxConst.AddString(constBoxEntry.c_str());
 	}
-
-	// Set constraint to display N/A
-	m_boxConst.SetCurSel(0);
 
 	SetupCheckBoxes();
 }
@@ -637,7 +633,11 @@ void ObjectDialogue::OnBnClickedScale()
 	break;
 	}
 
+	// Request updated scene graph from ToolMain
 	m_requestSceneGraph = true;
+
+	// Update constraint text description
+	UpdateSelectedConstraint();
 }
 
 // Rotate transform has been selected
@@ -663,7 +663,11 @@ void ObjectDialogue::OnBnClickedRotate()
 	break;
 	}
 
+	// Request updated scene graph from ToolMain
 	m_requestSceneGraph = true;
+
+	// Update constraint text description
+	UpdateSelectedConstraint();
 }
 
 // Translate transform has been selected
@@ -689,7 +693,11 @@ void ObjectDialogue::OnBnClickedTranslate()
 	break;
 	}
 
+	// Request updated scene graph from ToolMain
 	m_requestSceneGraph = true;
+
+	// Update constraint text description
+	UpdateSelectedConstraint();
 }
 
 // X constraint has been selected

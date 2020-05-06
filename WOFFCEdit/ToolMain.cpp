@@ -150,25 +150,25 @@ void ToolMain::Tick(MSG *msg)
 		m_toolInputCommands.mouseDrag = true;
 	}
 
-	// If DEL is pressed (deleted selected objects) (reset key)
-	if (m_toolInputCommands.DEL) { m_toolInputCommands.DEL = false; ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph); }
+	// If DEL is pressed, deleted selected objects
+	if (m_toolInputCommands.DEL) { ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph); }
 		
 	// If CTRL is pressed
 	if (m_toolInputCommands.CTRL)
 	{
-		// If X is pressed (cut) (reset key)
-		if (m_toolInputCommands.X) { m_toolInputCommands.X = false; ObjectManager::Cut(m_selectedObjectIDs, m_sceneGraph); }
+		// If X is pressed, cut selected objects
+		if (m_toolInputCommands.X) { ObjectManager::Cut(m_selectedObjectIDs, m_sceneGraph); }
 			
-		// If C is pressed (copy) (reset key)
-		else if (m_toolInputCommands.C) { m_toolInputCommands.C = false; ObjectManager::Copy(m_selectedObjectIDs, m_sceneGraph); }
+		// If C is pressed, copy selected objects
+		else if (m_toolInputCommands.C) { ObjectManager::Copy(m_selectedObjectIDs, m_sceneGraph); }
 
-		// If V is pressed (paste) (reset key)
-		else if (m_toolInputCommands.V) { m_toolInputCommands.V = false; ObjectManager::Paste(m_sceneGraph); }
+		// If V is pressed, paste selected objects
+		else if (m_toolInputCommands.V) { ObjectManager::Paste(m_sceneGraph); }
 
-		// If Z is pressed (undo) (reset key)
+		// If Z is pressed, undo last action
 		else if (m_toolInputCommands.Z) { SceneManager::Undo(); }
 		
-		// If Y is pressed (redo) (reset key)
+		// If Y is pressed, redo next action
 		else if (m_toolInputCommands.Y) { SceneManager::Redo(); }
 	}	
 		

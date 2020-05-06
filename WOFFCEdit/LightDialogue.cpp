@@ -19,7 +19,6 @@ LightDialogue::LightDialogue(CWnd* pParent /*=nullptr*/)
 void LightDialogue::SetLightData(std::vector<DisplayObject>* displayList)
 {
 	// Local storage
-	//m_sceneGraph = sceneGraph;
 	m_displayList = *displayList;
 
 	// Setup IDs of currently available lights
@@ -45,9 +44,6 @@ void LightDialogue::SetLightData(std::vector<DisplayObject>* displayList)
 		constBoxEntry = L"XZ";			m_boxConst.AddString(constBoxEntry.c_str());
 		constBoxEntry = L"YZ";			m_boxConst.AddString(constBoxEntry.c_str());
 	}
-	
-	// Set constraint to display N/A
-	m_boxConst.SetCurSel(0);
 
 	SetupCheckBoxes();
 }
@@ -1061,6 +1057,9 @@ void LightDialogue::OnBnClickedTranslate()
 	}
 	break;
 	}
+
+	// Update constraint text description
+	UpdateSelectedConstraint();
 }
 
 // Constraint mode has been changed
@@ -1091,6 +1090,7 @@ void LightDialogue::OnBnClickedX()
 	// Switch between checked/unchecked
 	m_x = IsDlgButtonChecked(IDC_CHECK23);
 
+	// Update constraint text description
 	UpdateSelectedConstraint();
 }
 

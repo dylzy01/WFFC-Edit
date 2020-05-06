@@ -820,7 +820,7 @@ std::vector<DisplayObject> Game::GetLights()
 	return lights;
 }
 
-void Game::SetTransform(int i, OBJECT_FUNCTION function, DirectX::SimpleMath::Vector3 vector)
+void Game::SetTransform(int index, OBJECT_FUNCTION function, DirectX::SimpleMath::Vector3 vector)
 {
 	// Switch between functions
 	switch (function)
@@ -828,33 +828,33 @@ void Game::SetTransform(int i, OBJECT_FUNCTION function, DirectX::SimpleMath::Ve
 	case OBJECT_FUNCTION::SCALE: 
 	{
 		// Update object scale
-		m_displayList[i].m_scale = vector;		
+		m_displayList[index].m_scale = vector;		
 
 		// Update object bounding box scale
-		m_displayList[i].m_model->meshes[0]->boundingBox.Extents.x = vector.x;
-		m_displayList[i].m_model->meshes[0]->boundingBox.Extents.y = vector.y;
-		m_displayList[i].m_model->meshes[0]->boundingBox.Extents.z = vector.z;
+		m_displayList[index].m_model->meshes[0]->boundingBox.Extents.x = vector.x;
+		m_displayList[index].m_model->meshes[0]->boundingBox.Extents.y = vector.y;
+		m_displayList[index].m_model->meshes[0]->boundingBox.Extents.z = vector.z;
 	}
 	break;
 	case OBJECT_FUNCTION::ROTATE: 
 	{		
 		// If object is a light, normalise vector
-		if (m_displayList[i].m_objectType == OBJECT_TYPE::LIGHT) { vector.Normalize(); }
+		if (m_displayList[index].m_objectType == OBJECT_TYPE::LIGHT) { vector.Normalize(); }
 		
 		// Update object rotation
-		m_displayList[i].m_orientation = vector;
+		m_displayList[index].m_orientation = vector;
 	}
 	break;
 	case OBJECT_FUNCTION::TRANSLATE: 
 	{
 		// Update object translation
-		m_displayList[i].m_position = vector;	
+		m_displayList[index].m_position = vector;	
 	}
 	break;
 	}
 
 	// Update object bounding box translation
-	m_displayList[i].m_model->meshes[0]->boundingBox.Center = m_displayList[i].m_position;
+	m_displayList[index].m_model->meshes[0]->boundingBox.Center = m_displayList[index].m_position;
 }
 
 void Game::SetLights(std::vector<DisplayObject> lights)

@@ -52,7 +52,6 @@ private:
 	
 	//Interface funtions for menu and toolbar etc requires
 	afx_msg void MenuFileQuit();
-	afx_msg void MenuFileSaveTerrain();
 	afx_msg void MenuEditWireframeOn();
 	afx_msg void MenuEditWireframeOff();
 	afx_msg void MenuEditAutosaveOn();

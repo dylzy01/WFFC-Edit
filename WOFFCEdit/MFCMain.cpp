@@ -4,7 +4,6 @@
 
 BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_FILE_QUIT, &MFCMain::MenuFileQuit)
-	ON_COMMAND(ID_FILE_SAVETERRAIN, &MFCMain::MenuFileSaveTerrain)
 	ON_COMMAND(ID_WIREFRAME_ON, &MFCMain::MenuEditWireframeOn)
 	ON_COMMAND(ID_WIREFRAME_OFF, &MFCMain::MenuEditWireframeOff)
 	ON_COMMAND(ID_AUTOSAVE_ON, &MFCMain::MenuEditAutosaveOn)
@@ -141,6 +140,8 @@ void MFCMain::CheckDialogues()
 		m_toolSystem.ClearSelected();
 	}
 }
+
+// Update via individual dialogue functions /////////////////////////////
 
 void MFCMain::UpdateLights()
 {
@@ -511,10 +512,7 @@ void MFCMain::MenuFileQuit()
 	PostQuitMessage(0);
 }
 
-void MFCMain::MenuFileSaveTerrain()
-{
-	m_toolSystem.onActionSaveTerrain();
-}
+// Message handlers (menu) //////////////////////////////////////////////
 
 void MFCMain::MenuEditWireframeOn()
 {
@@ -535,6 +533,8 @@ void MFCMain::MenuEditAutosaveOff()
 {
 	SceneManager::SetAutosave(false);
 }
+
+// Message handlers (toolbar) ///////////////////////////////////////////
 
 void MFCMain::ToolBarSave()
 {	
