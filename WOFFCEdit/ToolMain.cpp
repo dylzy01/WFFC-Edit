@@ -149,6 +149,9 @@ void ToolMain::Tick(MSG *msg)
 		// Mouse has been dragged
 		m_toolInputCommands.mouseDrag = true;
 	}
+
+	// If DEL is pressed (deleted selected objects) (reset key)
+	if (m_toolInputCommands.DEL) { m_toolInputCommands.DEL = false; ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph); }
 		
 	// If CTRL is pressed
 	if (m_toolInputCommands.CTRL)
@@ -414,6 +417,9 @@ void ToolMain::UpdateInput(MSG * msg)
 
 	// Q key to move downward
 	m_toolInputCommands.Q = (m_keyArray['Q']);
+
+	// DEL key to delete selected objects
+	m_toolInputCommands.DEL = (m_keyArray[(int)VK_DELETE]);
 
 	// SHIFT key to select more than one object
 	m_toolInputCommands.SHIFT = (m_keyArray[(int)VK_SHIFT]);

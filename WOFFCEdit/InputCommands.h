@@ -16,6 +16,7 @@ struct InputCommands
 	bool mouseDrag;
 	bool pickOnce, storeOnce, toggle;
 	bool escape;
+	bool DEL;
 	bool SHIFT;
 	bool CTRL;
 	bool X, C, V, Z, Y;

@@ -191,7 +191,7 @@ int MouseManager::AnyIntersection(DirectX::SimpleMath::Ray ray)
 				if (firstPick)
 				{
 					// Setup ID to return
-					ID = i;
+					ID = m_game->GetDisplayList()[i].m_ID;
 
 					// Store current distance
 					storedDistance = pickedDistance;
@@ -203,7 +203,7 @@ int MouseManager::AnyIntersection(DirectX::SimpleMath::Ray ray)
 				else if (pickedDistance < storedDistance)
 				{
 					// Setup ID to return
-					ID = i;
+					ID = m_game->GetDisplayList()[i].m_ID;
 
 					// Store current distance
 					storedDistance = pickedDistance;
@@ -242,7 +242,7 @@ int MouseManager::ObjectIntersection(DirectX::SimpleMath::Ray ray)
 					if (firstPick)
 					{
 						// Setup ID to return
-						ID = i;
+						ID = m_game->GetDisplayList()[i].m_ID;
 
 						// Store current distance
 						storedDistance = pickedDistance;
@@ -254,7 +254,7 @@ int MouseManager::ObjectIntersection(DirectX::SimpleMath::Ray ray)
 					else if (pickedDistance < storedDistance)
 					{
 						// Setup ID to return
-						ID = i;
+						ID = m_game->GetDisplayList()[i].m_ID;
 
 						// Store current distance
 						storedDistance = pickedDistance;
@@ -294,7 +294,7 @@ int MouseManager::LightIntersection(DirectX::SimpleMath::Ray ray)
 					if (firstPick)
 					{
 						// Setup ID to return
-						ID = i;
+						ID = m_game->GetDisplayList()[i].m_ID;
 
 						// Store current distance
 						storedDistance = pickedDistance;
@@ -306,7 +306,7 @@ int MouseManager::LightIntersection(DirectX::SimpleMath::Ray ray)
 					else if (pickedDistance < storedDistance)
 					{
 						// Setup ID to return
-						ID = i;
+						ID = m_game->GetDisplayList()[i].m_ID;
 
 						// Store current distance
 						storedDistance = pickedDistance;
