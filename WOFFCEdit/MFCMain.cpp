@@ -85,7 +85,7 @@ int MFCMain::Run()
 			std::wstring statusString = L"";
 
 			// Fill status string with selected object IDs
-			std::vector<int> IDs = m_toolSystem.GetSelectedObjectIDs();
+			std::vector<int> IDs = m_toolSystem.GetSelectedIDs();
 			for (int i = 0; i < IDs.size(); ++i)
 			{
 				if (i != 0) { statusString += L", " + std::to_wstring(IDs[i]); }
@@ -181,6 +181,74 @@ void MFCMain::UpdateLoad()
 
 void MFCMain::UpdateLights()
 {
+	// If dialogue needs updated data
+	if (m_lightDialogue.GetRequest())
+	{
+		// Send updated data
+		m_lightDialogue.SetLightData(&m_toolSystem.GetSceneGraph(), m_toolSystem.GetSelectedIDs());
+
+		// Reset controller
+		m_lightDialogue.SetRequest(false);
+	}
+	
+	// If ToolMain selected objects should be updated
+	if (m_lightDialogue.GetSelect()) { m_toolSystem.SetSelectedObjectIDs(m_lightDialogue.GetSelectedIDs()); }
+	// Else, update dialogue selected objects
+	else { m_lightDialogue.SetSelectedIDs(m_toolSystem.GetSelectedIDs()); }
+
+	// If there's been a new selection
+	if (m_toolSystem.GetNewSelection())
+	{
+		// Update dialogue entries to match selected object
+		m_lightDialogue.Update();
+	}
+
+	// If should focus on an object
+	if (m_lightDialogue.GetFocus())
+	{
+		// Setup temp focus ID
+		int focusID = -1;
+
+		// If more than one object is selected
+		if (m_toolSystem.GetSelectedIDs().size() > 1)
+		{
+			// Define object ID to focus on
+			focusID = m_lightDialogue.GetFocusDialogue()->GetSelectedIndex();
+		}
+
+		// Else, if just one object is selected
+		else if (m_toolSystem.GetSelectedIDs().size() == 1)
+		{
+			// Define object ID to focus on
+			focusID = m_toolSystem.GetSelectedIDs()[0];
+		}
+
+		// Setup object ID to focus on
+		m_toolSystem.SetFocus(focusID);
+	}
+	else { m_toolSystem.SetFocus(-1); }
+
+	// If constraint isn't up-to-date
+	if (m_toolSystem.GetConstraint() != m_lightDialogue.GetConstraint())
+	{
+		// Set constraint
+		m_toolSystem.SetObjectConstraint(m_lightDialogue.GetConstraint());
+	}
+	
+	// If light function isn't up-to-date
+	if (m_toolSystem.GetObjectFunction() != m_lightDialogue.GetFunction())
+	{
+		// Set light function
+		m_toolSystem.SetObjectFunction(m_lightDialogue.GetFunction());
+	}
+
+	// If constraint isn't up-to-date
+	if (m_toolSystem.GetConstraint() != m_lightDialogue.GetConstraint())
+	{
+		// Set constraint
+		m_toolSystem.SetObjectConstraint(m_lightDialogue.GetConstraint());
+	}
+	
 	// Set tool editor mode
 	//m_toolSystem.SetEditor(EDITOR::LIGHTS);
 	//
@@ -344,10 +412,20 @@ void MFCMain::UpdateLights()
 
 void MFCMain::UpdateObjects()
 {		
+	// If dialogue needs updated data
+	if (m_objectDialogue.GetRequest()) 
+	{
+		// Send updated data
+		m_objectDialogue.SetObjectData(&m_toolSystem.GetSceneGraph(), m_toolSystem.GetSelectedIDs());
+		
+		// Reset controller
+		m_objectDialogue.SetRequest(false);
+	}
+	
 	// If ToolMain selected objects should be updated
 	if (m_objectDialogue.GetSelect()) { m_toolSystem.SetSelectedObjectIDs(m_objectDialogue.GetSelectedIDs()); }
 	// Else, update dialogue selected objects
-	else { m_objectDialogue.SetSelectedIDs(m_toolSystem.GetSelectedObjectIDs()); }
+	else { m_objectDialogue.SetSelectedIDs(m_toolSystem.GetSelectedIDs()); }
 
 	// If there's been a new selection
 	if (m_toolSystem.GetNewSelection())
@@ -364,7 +442,7 @@ void MFCMain::UpdateObjects()
 
 		// If more than one object is selected
 		///if (m_objectDialogue.GetSelectedObjectIDs().size() > 1)
-		if (m_toolSystem.GetSelectedObjectIDs().size() > 1)
+		if (m_toolSystem.GetSelectedIDs().size() > 1)
 		{
 			// Define object ID to focus on
 			focusID = m_objectDialogue.GetFocusDialogue()->GetSelectedIndex();
@@ -372,10 +450,10 @@ void MFCMain::UpdateObjects()
 
 		// Else, if just one object is selected
 		///else if (m_objectDialogue.GetSelectedObjectIDs().size() == 1)
-		else if (m_toolSystem.GetSelectedObjectIDs().size() == 1)
+		else if (m_toolSystem.GetSelectedIDs().size() == 1)
 		{
 			// Define object ID to focus on
-			focusID = m_toolSystem.GetSelectedObjectIDs()[0];
+			focusID = m_toolSystem.GetSelectedIDs()[0];
 		}
 
 		// Setup object ID to focus on
@@ -822,6 +900,14 @@ void MFCMain::ToolBarRedo()
 
 void MFCMain::ToolBarLight()
 {
+	// Set other modes to none
+	m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
+	m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
+	m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
+
+	// Set tool editor
+	m_toolSystem.SetEditor(EDITOR::LIGHTS);
+	
 	// Destroy other windows
 	CheckDialogues(DIALOGUE_TYPE::LIGHT);
 
@@ -829,25 +915,26 @@ void MFCMain::ToolBarLight()
 	if (!m_light) { m_lightDialogue.Create(IDD_DIALOG8); m_light = true; }
 	m_lightDialogue.ShowWindow(SW_SHOW);
 	m_lightDialogue.SetActive(true);
-	m_lightDialogue.SetLightData(&m_toolSystem.GetDisplayList());
+	///m_lightDialogue.SetLightData(&m_toolSystem.GetDisplayList());
+	m_lightDialogue.SetLightData(&m_toolSystem.GetSceneGraph(), m_toolSystem.GetSelectedIDs());
 	
 	// Setup temp light ID container
-	std::vector<int> IDs;
+	//std::vector<int> IDs;
 
-	// Loop through currently selected objects
-	for (int i = 0; i < m_toolSystem.GetSelectedObjectIDs().size(); ++i)
-	{
-		// If object is a light
-		if (m_toolSystem.GetSceneGraph()[m_toolSystem.GetSelectedObjectIDs()[i]].m_type == OBJECT_TYPE::LIGHT)
-		{
-			// Add ID to container
-			IDs.push_back(m_toolSystem.GetSceneGraph()[m_toolSystem.GetSelectedObjectIDs()[i]].ID);
-		}
-	}
+	//// Loop through currently selected objects
+	//for (int i = 0; i < m_toolSystem.GetSelectedObjectIDs().size(); ++i)
+	//{
+	//	// If object is a light
+	//	if (m_toolSystem.GetSceneGraph()[m_toolSystem.GetSelectedObjectIDs()[i]].m_type == OBJECT_TYPE::LIGHT)
+	//	{
+	//		// Add ID to container
+	//		IDs.push_back(m_toolSystem.GetSceneGraph()[m_toolSystem.GetSelectedObjectIDs()[i]].ID);
+	//	}
+	//}
 
-	// Set current selection
-	///m_lightDialogue.SetLightData(&m_toolSystem.GetLights(), IDs);
-	m_lightDialogue.SetSelectedLightIDs(IDs);
+	//// Set current selection
+	/////m_lightDialogue.SetLightData(&m_toolSystem.GetLights(), IDs);
+	//m_lightDialogue.SetSelectedLightIDs(IDs);
 }
 
 void MFCMain::ToolBarObject()
@@ -867,7 +954,7 @@ void MFCMain::ToolBarObject()
 	if (!m_object) { m_objectDialogue.Create(IDD_DIALOG12); m_object = true; }
 	m_objectDialogue.ShowWindow(SW_SHOW);
 	m_objectDialogue.SetActive(true);
-	m_objectDialogue.SetObjectData(&m_toolSystem.GetSceneGraph(), m_toolSystem.GetSelectedObjectIDs());
+	m_objectDialogue.SetObjectData(&m_toolSystem.GetSceneGraph(), m_toolSystem.GetSelectedIDs());
 	///m_objectDialogue.SetToolSystem(&m_toolSystem);
 }
 

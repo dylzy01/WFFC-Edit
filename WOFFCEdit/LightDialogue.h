@@ -7,8 +7,9 @@
 #include "Tools.h"
 #include "Light.h"
 #include "ObjectManager.h"
-#include "FocusDialogue.h"
 #include "SceneManager.h"
+#include "FocusDialogue.h"
+
 
 // LightDialogue dialog
 
@@ -22,6 +23,7 @@ public:
 
 	// Pass in data pointers the class will operate on
 	void SetLightData(std::vector<DisplayObject>* displayList);
+	void SetLightData(std::vector<SceneObject>* sceneGraph, std::vector<int> selectedIDs);
 
 	// Update current light with dialogue values
 	void Update(int ID = -1);
@@ -34,13 +36,11 @@ public:
 	bool GetUpdate() { return m_update; }
 	bool GetTranslating() { return m_translating; }
 	bool GetLightSetup() { return m_lightSetup; }
-	bool GetRequest() { return m_requestDisplayList; }
 	bool GetFocus() { return m_focus; }
-	bool GetDelete() { return m_delete; }
-	bool GetDuplicate() { return m_duplicate; }
 	bool GetSelect() { return m_select; }
-	std::vector<int> GetSelectedLightIDs() { return m_selectedLightIDs; }
-	std::vector<DisplayObject> GetLights() { return m_lights; }
+	bool GetRequest() { return m_request; }
+	std::vector<int> GetSelectedIDs() { return m_selectedIDs; }
+	OBJECT_FUNCTION GetFunction() { return m_function; }
 	CONSTRAINT GetConstraint() { return m_constraint; }
 	// Focus
 	FocusDialogue* GetFocusDialogue() { return &m_focusDialogue; }
@@ -48,12 +48,9 @@ public:
 	// Setters
 	void SetActive(bool active) { m_active = active; }
 	void SetUpdate(bool update) { m_update = update; }
-	void SetSelectedLightIDs(std::vector<int> selection) { m_selectedLightIDs = selection; }
-	void SetRequest(bool request) { m_requestDisplayList = request; SetupLights(); }
-	///void SetSceneGraph(std::vector<SceneObject>* sceneGraph) { m_sceneGraph = sceneGraph; }
-	void SetDelete(bool del) { m_delete = del; m_requestDisplayList = !del; }
-	void SetDuplicate(bool dup) { m_duplicate = dup; m_requestDisplayList = !dup; }
+	void SetSelectedIDs(std::vector<int> selection) { m_selectedIDs = selection; }
 	void SetSelect(bool select) { m_select = select; }
+	void SetRequest(bool request) { m_request = request; }
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -66,9 +63,9 @@ protected:
 	afx_msg void End();									// Kill the dialogue
 
 	// Local storage 
-	std::vector<DisplayObject> m_displayList;
-	std::vector<DisplayObject> m_lights;
-	std::vector<int> m_selectedLightIDs;
+	std::vector<SceneObject>* m_sceneGraph;
+	std::vector<SceneObject>* m_lights;
+	std::vector<int> m_selectedIDs;
 
 	// Controllers
 	bool m_active;
@@ -76,11 +73,11 @@ protected:
 	bool m_translating;
 	bool m_x, m_y, m_z;
 	bool m_internal = false;
-	bool m_requestDisplayList = false;
 	bool m_focus = false;
-	bool m_delete = false, m_duplicate = false;
 	bool m_select = false;
 	bool m_resetLights = false;
+	bool m_request = false;
+	OBJECT_FUNCTION m_function;
 	CONSTRAINT m_constraint;
 
 	// Focus 
@@ -150,6 +147,9 @@ private:
 	
 	// Reset all variables
 	void Reset();
+
+	// Update object in scene graph
+	void UpdateLight(SceneObject object);
 
 private:
 	// Getters

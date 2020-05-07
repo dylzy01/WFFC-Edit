@@ -19,7 +19,7 @@ LightDialogue::LightDialogue(CWnd* pParent /*=nullptr*/)
 void LightDialogue::SetLightData(std::vector<DisplayObject>* displayList)
 {
 	// Local storage
-	m_displayList = *displayList;
+	///m_displayList = *displayList;
 
 	// Setup IDs of currently available lights
 	SetupLights();	
@@ -48,10 +48,61 @@ void LightDialogue::SetLightData(std::vector<DisplayObject>* displayList)
 	SetupCheckBoxes();
 }
 
+void LightDialogue::SetLightData(std::vector<SceneObject>* sceneGraph, std::vector<int> selectedIDs)
+{
+	// Local storage
+	m_sceneGraph = sceneGraph;
+	m_selectedIDs = selectedIDs;
+
+	// Local storage of lights
+	m_lights = new std::vector<SceneObject>();
+
+	// Loop through scene graph
+	for (int i = 0; i < sceneGraph->size(); ++i)
+	{
+		// If object is a light
+		if (sceneGraph->at(i).m_type == OBJECT_TYPE::LIGHT)
+		{
+			// Add to storage
+			m_lights->push_back(sceneGraph->at(i));
+		}
+	}
+
+	// Setup IDs of currently available lights
+	SetupLights();
+
+	// Setup light types
+	{
+		std::wstring typeBoxEntry;
+		typeBoxEntry = L"";			m_boxType.AddString(typeBoxEntry.c_str());
+		typeBoxEntry = L"Directional";	m_boxType.AddString(typeBoxEntry.c_str());
+		typeBoxEntry = L"Point";		m_boxType.AddString(typeBoxEntry.c_str());
+		typeBoxEntry = L"Spot";			m_boxType.AddString(typeBoxEntry.c_str());
+	}
+
+	// Setup constraint types
+	{
+		std::wstring constBoxEntry;
+		constBoxEntry = L"N/A";			m_boxConst.AddString(constBoxEntry.c_str());
+		constBoxEntry = L"X";			m_boxConst.AddString(constBoxEntry.c_str());
+		constBoxEntry = L"Y";			m_boxConst.AddString(constBoxEntry.c_str());
+		constBoxEntry = L"Z";			m_boxConst.AddString(constBoxEntry.c_str());
+		constBoxEntry = L"XY";			m_boxConst.AddString(constBoxEntry.c_str());
+		constBoxEntry = L"XZ";			m_boxConst.AddString(constBoxEntry.c_str());
+		constBoxEntry = L"YZ";			m_boxConst.AddString(constBoxEntry.c_str());
+	}
+
+	// Update tool controllers
+	m_function = OBJECT_FUNCTION::SELECT;
+	m_constraint = CONSTRAINT::NA;
+	Update();
+}
+
 void LightDialogue::Update(int ID)
 {
 	// If ID is valid
 	if (ID != -1) { m_boxID.SetCurSel(ID); }
+	else if (m_selectedIDs.size() == 1) { m_boxID.SetCurSel(0); }
 	UpdateType();
 	UpdateEnabled();
 	UpdatePosition();
@@ -66,16 +117,18 @@ void LightDialogue::Update(int ID)
 void LightDialogue::UpdateLightPosition(DirectX::XMFLOAT3 position)
 {
 	// Loop through current selection
-	for (int i = 0; i < m_selectedLightIDs.size(); ++i)
+	for (int i = 0; i < m_selectedIDs.size(); ++i)
 	{
 		// Loop through lights
-		for (int j = 0; j < m_lights.size(); ++j)
+		for (int j = 0; j < m_lights->size(); ++j)
 		{
 			// If light ID matches selection
-			if (m_lights[j].m_ID == m_selectedLightIDs[i])
+			if (m_lights->at(j).ID == m_selectedIDs[i])
 			{
 				// Set current light position
-				m_lights[j].SetPosition(position);
+				m_lights->at(j).posX = position.x;
+				m_lights->at(j).posY = position.y;
+				m_lights->at(j).posZ = position.z;
 				break;
 			}
 		}
@@ -192,21 +245,21 @@ void LightDialogue::OnCbnSelchangeID()
 	bool exists = false;
 	
 	// Loop through selection
-	for (int i = 0; i < m_selectedLightIDs.size(); ++i)
+	for (int i = 0; i < m_selectedIDs.size(); ++i)
 	{
 		// If current already exists
-		if (m_selectedLightIDs[i] == _ttoi(current))
+		if (m_selectedIDs[i] == _ttoi(current))
 		{
 			// Inform remaining functionality the selection exists
 			exists = true;
 			
 			// Remove from selection
-			m_selectedLightIDs.erase(m_selectedLightIDs.begin() + i);
+			m_selectedIDs.erase(m_selectedIDs.begin() + i);
 		}
 	}
 
 	// If selection doesn't exist, add to selection
-	if (!exists) { m_selectedLightIDs.push_back(_ttoi(current)); }
+	if (!exists) { m_selectedIDs.push_back(_ttoi(current)); }
 	
 	// Update light type box
 	UpdateType();
@@ -246,26 +299,29 @@ void LightDialogue::OnCbnSelchangeType()
 		if (ID >= 0)
 		{
 			// Loop through selected IDs
-			for (int i = 0; i < m_selectedLightIDs.size(); ++i)
+			for (int i = 0; i < m_selectedIDs.size(); ++i)
 			{
 				// Loop through lights
-				for (int j = 0; j < m_lights.size(); ++j)
+				for (int j = 0; j < m_lights->size(); ++j)
 				{
 					// If light ID matches selection
-					if (m_lights[j].m_ID == m_selectedLightIDs[i])
+					if (m_lights->at(j).ID == m_selectedIDs[i])
 					{
 						// Store type selection
 						int type = m_boxType.GetCurSel();
 
-						// Set new light type
-						m_lights[j].SetLightType((LIGHT_TYPE)type);
+						// If type is different from current type
+						if (m_lights->at(j).light_type != type)
+						{
+							// Set new light type
+							m_lights->at(j).light_type = type;
+							UpdateLight(m_lights->at(j));
+						}						
+						
 						break;
 					}
 				}
 			}
-
-			// Tell MFC/ToolMain to update scene graph
-			m_update = true;
 		}
 	}
 }
@@ -283,16 +339,16 @@ void LightDialogue::OnBnClickedEnable()
 		if (ID >= 0)
 		{
 			// Loop through selected IDs
-			for (int i = 0; i < m_selectedLightIDs.size(); ++i)
+			for (int i = 0; i < m_selectedIDs.size(); ++i)
 			{
 				// Loop through lights
-				for (int j = 0; j < m_lights.size(); ++j)
+				for (int j = 0; j < m_lights->size(); ++j)
 				{
 					// If light ID matches selection
-					if (m_lights[j].m_ID == m_selectedLightIDs[i])
+					if (m_lights->at(j).ID == m_selectedIDs[i])
 					{
 						// Set light enabled/disabled
-						m_lights[j].SetEnabled(IsDlgButtonChecked(IDC_CHECK1));
+						m_lights->at(j).enabled = IsDlgButtonChecked(IDC_CHECK1);
 						break;
 					}
 				}
@@ -314,13 +370,13 @@ void LightDialogue::OnBnClickedFocus()
 	if (m_focus)
 	{
 		// If there's more than one object selected
-		if (m_selectedLightIDs.size() > 1)
+		if (m_selectedIDs.size() > 1)
 		{
 			// Setup focus modal dialogue
 			m_focusDialogue.Create(IDD_DIALOG2);
 			m_focusDialogue.ShowWindow(SW_SHOW);
 			m_focusDialogue.SetActive(true);
-			m_focusDialogue.SetFocusData(&m_selectedLightIDs);
+			m_focusDialogue.SetFocusData(&m_selectedIDs);
 		}
 	}	
 }
@@ -338,13 +394,13 @@ void LightDialogue::OnEnChangePosX()
 		if (ID >= 0)
 		{
 			// Loop through selected IDs
-			for (int i = 0; i < m_selectedLightIDs.size(); ++i)
+			for (int i = 0; i < m_selectedIDs.size(); ++i)
 			{
 				// Loop through lights
-				for (int j = 0; j < m_lights.size(); ++j)
+				for (int j = 0; j < m_lights->size(); ++j)
 				{
 					// If light ID matches selection
-					if (m_lights[j].m_ID == m_selectedLightIDs[i])
+					if (m_lights->at(j).ID == m_selectedIDs[i])
 					{
 						// Store new X position
 						CString string = _T("");
@@ -353,10 +409,15 @@ void LightDialogue::OnEnChangePosX()
 						// Convert to float
 						float posX;
 						if (!string.IsEmpty()) { posX = _ttof(string); }
-						else { posX = m_lights[j].GetPosition().x; }
+						else { posX = m_lights->at(j).posX; }
 
-						// Update X position of light
-						m_lights[j].SetPositionX(posX);
+						// If position is different from current position
+						if (m_lights->at(j).posX != posX)
+						{
+							// Update X position of light
+							m_lights->at(j).posX = posX;
+							UpdateLight(m_lights->at(j));
+						}						
 
 						break;
 					}
@@ -382,13 +443,13 @@ void LightDialogue::OnEnChangePosY()
 		if (ID >= 0)
 		{
 			// Loop through selected IDs
-			for (int i = 0; i < m_selectedLightIDs.size(); ++i)
+			for (int i = 0; i < m_selectedIDs.size(); ++i)
 			{
 				// Loop through lights
-				for (int j = 0; j < m_lights.size(); ++j)
+				for (int j = 0; j < m_lights->size(); ++j)
 				{
 					// If light ID matches selection
-					if (m_lights[j].m_ID == m_selectedLightIDs[i])
+					if (m_lights->at(j).ID == m_selectedIDs[i])
 					{
 						// Store new Y position
 						CString string = _T("");
@@ -397,10 +458,15 @@ void LightDialogue::OnEnChangePosY()
 						// Convert to float
 						float posY;
 						if (!string.IsEmpty()) { posY = _ttof(string); }
-						else { posY = m_lights[j].GetPosition().y; }
+						else { posY = m_lights->at(j).posY; }
 
-						// Update Y position of light
-						m_lights[j].SetPositionY(posY);
+						// If position is different from current position
+						if (m_lights->at(j).posY != posY)
+						{
+							// Update Y position of light
+							m_lights->at(j).posY = posY;
+							UpdateLight(m_lights->at(j));
+						}
 
 						break;
 					}
@@ -426,13 +492,13 @@ void LightDialogue::OnEnChangePosZ()
 		if (ID >= 0)
 		{
 			// Loop through selected IDs
-			for (int i = 0; i < m_selectedLightIDs.size(); ++i)
+			for (int i = 0; i < m_selectedIDs.size(); ++i)
 			{
 				// Loop through lights
-				for (int j = 0; j < m_lights.size(); ++j)
+				for (int j = 0; j < m_lights->size(); ++j)
 				{
 					// If light ID matches selection
-					if (m_lights[j].m_ID == m_selectedLightIDs[i])
+					if (m_lights->at(j).ID == m_selectedIDs[i])
 					{
 						// Store new Z position
 						CString string = _T("");
@@ -441,10 +507,15 @@ void LightDialogue::OnEnChangePosZ()
 						// Convert to float
 						float posZ;
 						if (!string.IsEmpty()) { posZ = _ttof(string); }
-						else { posZ = m_lights[j].GetPosition().z; }
+						else { posZ = m_lights->at(j).posZ; }
 
-						// Update Z position of light
-						m_lights[j].SetPositionZ(posZ);
+						// If position is different from current position
+						if (m_lights->at(j).posZ != posZ)
+						{
+							// Update Z position of light
+							m_lights->at(j).posZ = posZ;
+							UpdateLight(m_lights->at(j));
+						}
 
 						break;
 					}
@@ -470,13 +541,13 @@ void LightDialogue::OnEnChangeDirX()
 		if (ID >= 0)
 		{
 			// Loop through selected IDs
-			for (int i = 0; i < m_selectedLightIDs.size(); ++i)
+			for (int i = 0; i < m_selectedIDs.size(); ++i)
 			{
 				// Loop through lights
-				for (int j = 0; j < m_lights.size(); ++j)
+				for (int j = 0; j < m_lights->size(); ++j)
 				{
 					// If light ID matches selection
-					if (m_lights[j].m_ID == m_selectedLightIDs[i])
+					if (m_lights->at(j).ID == m_selectedIDs[i])
 					{
 						// Store new X direction
 						CString string = _T("");
@@ -485,14 +556,15 @@ void LightDialogue::OnEnChangeDirX()
 						// Convert to float
 						float dirX;
 						if (!string.IsEmpty()) { dirX = _ttof(string); }
-						else { dirX = m_lights[j].GetDirection().x; }
+						else { dirX = m_lights->at(j).rotX; }
 
-						// Store as vector & normalize
-						///DirectX::SimpleMath::Vector3 direction = { dirX, 1.f, 1.f };
-						///direction.Normalize();
-
-						// Update X direction of light
-						m_lights[j].SetDirectionX(dirX);
+						// If direction is different from current direction
+						if (m_lights->at(j).rotX != dirX)
+						{
+							// Update X direction of light
+							m_lights->at(j).rotX = dirX;
+							UpdateLight(m_lights->at(j));
+						}
 
 						break;
 					}
@@ -518,13 +590,13 @@ void LightDialogue::OnEnChangeDirY()
 		if (ID >= 0)
 		{
 			// Loop through selected IDs
-			for (int i = 0; i < m_selectedLightIDs.size(); ++i)
+			for (int i = 0; i < m_selectedIDs.size(); ++i)
 			{
 				// Loop through lights
-				for (int j = 0; j < m_lights.size(); ++j)
+				for (int j = 0; j < m_lights->size(); ++j)
 				{
 					// If light ID matches selection
-					if (m_lights[j].m_ID == m_selectedLightIDs[i])
+					if (m_lights->at(j).ID == m_selectedIDs[i])
 					{
 						// Store new Y direction
 						CString string = _T("");
@@ -533,14 +605,15 @@ void LightDialogue::OnEnChangeDirY()
 						// Convert to float
 						float dirY;
 						if (!string.IsEmpty()) { dirY = _ttof(string); }
-						else { dirY = m_lights[j].GetDirection().y; }
+						else { dirY = m_lights->at(j).rotY; }
 
-						// Store as vector & normalize
-						///DirectX::SimpleMath::Vector3 direction = { 1.f, dirY, 1.f };
-						///direction.Normalize();
-
-						// Update Y direction of light
-						m_lights[j].SetDirectionY(dirY);
+						// If direction is different from current direction
+						if (m_lights->at(j).rotY != dirY)
+						{
+							// Update Y direction of light
+							m_lights->at(j).rotY = dirY;
+							UpdateLight(m_lights->at(j));
+						}
 
 						break;
 					}
@@ -566,13 +639,13 @@ void LightDialogue::OnEnChangeDirZ()
 		if (ID >= 0)
 		{
 			// Loop through selected IDs
-			for (int i = 0; i < m_selectedLightIDs.size(); ++i)
+			for (int i = 0; i < m_selectedIDs.size(); ++i)
 			{
 				// Loop through lights
-				for (int j = 0; j < m_lights.size(); ++j)
+				for (int j = 0; j < m_lights->size(); ++j)
 				{
 					// If light ID matches selection
-					if (m_lights[j].m_ID == m_selectedLightIDs[i])
+					if (m_lights->at(j).ID == m_selectedIDs[i])
 					{
 						// Store new Z direction
 						CString string = _T("");
@@ -581,14 +654,15 @@ void LightDialogue::OnEnChangeDirZ()
 						// Convert to float
 						float dirZ;
 						if (!string.IsEmpty()) { dirZ = _ttof(string); }
-						else { dirZ = m_lights[j].GetDirection().z; }
+						else { dirZ = m_lights->at(j).rotZ; }
 
-						// Store as vector & normalize
-						///DirectX::SimpleMath::Vector3 direction = { 1.f, 1.f, dirZ };
-						///direction.Normalize();
-
-						// Update Z direction of light
-						m_lights[j].SetDirectionZ(dirZ);
+						// If direction is different from current direction
+						if (m_lights->at(j).rotZ != dirZ)
+						{
+							// Update Z direction of light
+							m_lights->at(j).rotZ = dirZ;
+							UpdateLight(m_lights->at(j));
+						}
 
 						break;
 					}
@@ -614,13 +688,13 @@ void LightDialogue::OnEnChangeDifR()
 		if (ID >= 0)
 		{
 			// Loop through selected IDs
-			for (int i = 0; i < m_selectedLightIDs.size(); ++i)
+			for (int i = 0; i < m_selectedIDs.size(); ++i)
 			{
 				// Loop through lights
-				for (int j = 0; j < m_lights.size(); ++j)
+				for (int j = 0; j < m_lights->size(); ++j)
 				{
 					// If light ID matches selection
-					if (m_lights[j].m_ID == m_selectedLightIDs[i])
+					if (m_lights->at(j).ID == m_selectedIDs[i])
 					{
 						// Store new R diffuse
 						CString string = _T("");
@@ -629,10 +703,15 @@ void LightDialogue::OnEnChangeDifR()
 						// Convert to float
 						float difR;
 						if (!string.IsEmpty()) { difR = _ttof(string); }
-						else { difR = m_lights[j].GetDiffuse().x; }
+						else { difR = m_lights->at(j).light_diffuse_r; }
 
-						// Update R diffuse of light
-						m_lights[j].SetDiffuseR(difR);
+						// If diffuse is different from current diffuse
+						if (m_lights->at(j).light_diffuse_r != difR)
+						{
+							// Update R diffuse of light
+							m_lights->at(j).light_diffuse_r = difR;
+							UpdateLight(m_lights->at(j));
+						}
 
 						break;
 					}
@@ -658,13 +737,13 @@ void LightDialogue::OnEnChangeDifG()
 		if (ID >= 0)
 		{
 			// Loop through selected IDs
-			for (int i = 0; i < m_selectedLightIDs.size(); ++i)
+			for (int i = 0; i < m_selectedIDs.size(); ++i)
 			{
 				// Loop through lights
-				for (int j = 0; j < m_lights.size(); ++j)
+				for (int j = 0; j < m_lights->size(); ++j)
 				{
 					// If light ID matches selection
-					if (m_lights[j].m_ID == m_selectedLightIDs[i])
+					if (m_lights->at(j).ID == m_selectedIDs[i])
 					{
 						// Store new G diffuse
 						CString string = _T("");
@@ -673,10 +752,15 @@ void LightDialogue::OnEnChangeDifG()
 						// Convert to float
 						float difG;
 						if (!string.IsEmpty()) { difG = _ttof(string); }
-						else { difG = m_lights[j].GetDiffuse().y; }
+						else { difG = m_lights->at(j).light_diffuse_g; }
 
-						// Update G diffuse of light
-						m_lights[j].SetDiffuseG(difG);
+						// If diffuse is different from current diffuse
+						if (m_lights->at(j).light_diffuse_g != difG)
+						{
+							// Update G diffuse of light
+							m_lights->at(j).light_diffuse_g = difG;
+							UpdateLight(m_lights->at(j));
+						}
 
 						break;
 					}
@@ -702,13 +786,13 @@ void LightDialogue::OnEnChangeDifB()
 		if (ID >= 0)
 		{
 			// Loop through selected IDs
-			for (int i = 0; i < m_selectedLightIDs.size(); ++i)
+			for (int i = 0; i < m_selectedIDs.size(); ++i)
 			{
 				// Loop through lights
-				for (int j = 0; j < m_lights.size(); ++j)
+				for (int j = 0; j < m_lights->size(); ++j)
 				{
 					// If light ID matches selection
-					if (m_lights[j].m_ID == m_selectedLightIDs[i])
+					if (m_lights->at(j).ID == m_selectedIDs[i])
 					{
 						// Store new B diffuse
 						CString string = _T("");
@@ -717,10 +801,15 @@ void LightDialogue::OnEnChangeDifB()
 						// Convert to float
 						float difB;
 						if (!string.IsEmpty()) { difB = _ttof(string); }
-						else { difB = m_lights[j].GetDiffuse().z; }
+						else { difB = m_lights->at(j).light_diffuse_b; }
 
-						// Update B diffuse of light
-						m_lights[j].SetDiffuseB(difB);
+						// If diffuse is different from current diffuse
+						if (m_lights->at(j).light_diffuse_b != difB)
+						{
+							// Update B diffuse of light
+							m_lights->at(j).light_diffuse_b = difB;
+							UpdateLight(m_lights->at(j));
+						}
 
 						break;
 					}
@@ -746,13 +835,13 @@ void LightDialogue::OnEnChangeAmbR()
 		if (ID >= 0)
 		{
 			// Loop through selected IDs
-			for (int i = 0; i < m_selectedLightIDs.size(); ++i)
+			for (int i = 0; i < m_selectedIDs.size(); ++i)
 			{
 				// Loop through lights
-				for (int j = 0; j < m_lights.size(); ++j)
+				for (int j = 0; j < m_lights->size(); ++j)
 				{
 					// If light ID matches selection
-					if (m_lights[j].m_ID == m_selectedLightIDs[i])
+					if (m_lights->at(j).ID == m_selectedIDs[i])
 					{
 						// Store new R ambient
 						CString string = _T("");
@@ -761,7 +850,7 @@ void LightDialogue::OnEnChangeAmbR()
 						// Convert to float
 						float ambR;
 						if (!string.IsEmpty()) { ambR = _ttof(string); }
-						else { ambR = m_lights[j].GetAmbient().x; }
+						else { ambR = m_lights->at(j).ambR; }
 						/*if (ambR >= 4.f) { ambR /= 50.f; }
 						else if (ambR >= 3.f) { ambR /= 40.f; }
 						else if (ambR >= 2.f) { ambR /= 30.f; }
@@ -769,8 +858,13 @@ void LightDialogue::OnEnChangeAmbR()
 						else if (ambR >= 0.f) { ambR /= 10.f; }*/
 						ambR /= 10.f;
 
-						// Update R ambient of light
-						m_lights[j].SetAmbientR(ambR);
+						// If ambient is different from current ambient
+						if (m_lights->at(j).ambR != ambR)
+						{
+							// Update R ambient of light
+							m_lights->at(j).ambR = ambR;
+							UpdateLight(m_lights->at(j));
+						}
 
 						break;
 					}
@@ -796,13 +890,13 @@ void LightDialogue::OnEnChangeAmbG()
 		if (ID >= 0)
 		{
 			// Loop through selected IDs
-			for (int i = 0; i < m_selectedLightIDs.size(); ++i)
+			for (int i = 0; i < m_selectedIDs.size(); ++i)
 			{
 				// Loop through lights
-				for (int j = 0; j < m_lights.size(); ++j)
+				for (int j = 0; j < m_lights->size(); ++j)
 				{
 					// If light ID matches selection
-					if (m_lights[j].m_ID == m_selectedLightIDs[i])
+					if (m_lights->at(j).ID == m_selectedIDs[i])
 					{
 						// Store new G ambient
 						CString string = _T("");
@@ -811,7 +905,7 @@ void LightDialogue::OnEnChangeAmbG()
 						// Convert to float
 						float ambG;
 						if (!string.IsEmpty()) { ambG = _ttof(string); }
-						else { ambG = m_lights[j].GetAmbient().y; }
+						else { ambG = m_lights->at(j).ambG; }
 						/*if (ambG >= 4.f) { ambG /= 50.f; }
 						else if (ambG >= 3.f) { ambG /= 40.f; }
 						else if (ambG >= 2.f) { ambG /= 30.f; }
@@ -819,8 +913,13 @@ void LightDialogue::OnEnChangeAmbG()
 						else if (ambG >= 0.f) { ambG /= 10.f; }*/
 						ambG /= 10.f;
 
-						// Update G ambient of light
-						m_lights[j].SetAmbientG(ambG);
+						// If ambient is different from current ambient
+						if (m_lights->at(j).ambG != ambG)
+						{
+							// Update G ambient of light
+							m_lights->at(j).ambG = ambG;
+							UpdateLight(m_lights->at(j));
+						}
 
 						break;
 					}
@@ -846,13 +945,13 @@ void LightDialogue::OnEnChangeAmbB()
 		if (ID >= 0)
 		{
 			// Loop through selected IDs
-			for (int i = 0; i < m_selectedLightIDs.size(); ++i)
+			for (int i = 0; i < m_selectedIDs.size(); ++i)
 			{
 				// Loop through lights
-				for (int j = 0; j < m_lights.size(); ++j)
+				for (int j = 0; j < m_lights->size(); ++j)
 				{
 					// If light ID matches selection
-					if (m_lights[j].m_ID == m_selectedLightIDs[i])
+					if (m_lights->at(j).ID == m_selectedIDs[i])
 					{
 						// Store new B ambient
 						CString string = _T("");
@@ -861,7 +960,7 @@ void LightDialogue::OnEnChangeAmbB()
 						// Convert to float
 						float ambB;
 						if (!string.IsEmpty()) { ambB = _ttof(string); }
-						else { ambB = m_lights[j].GetAmbient().z; }
+						else { ambB = m_lights->at(j).ambB; }
 						/*if (ambB >= 4.f) { ambB /= 50.f; }
 						else if (ambB >= 3.f) { ambB /= 40.f; }
 						else if (ambB >= 2.f) { ambB /= 30.f; }
@@ -869,8 +968,13 @@ void LightDialogue::OnEnChangeAmbB()
 						else if (ambB >= 0.f) { ambB /= 10.f; }*/
 						ambB /= 10.f;
 
-						// Update B ambient of light
-						m_lights[j].SetAmbientG(ambB);
+						// If ambient is different from current ambient
+						if (m_lights->at(j).ambB != ambB)
+						{
+							// Update B ambient of light
+							m_lights->at(j).ambB = ambB;
+							UpdateLight(m_lights->at(j));
+						}
 
 						break;
 					}
@@ -896,13 +1000,13 @@ void LightDialogue::OnEnChangeConstA()
 		if (ID >= 0)
 		{
 			// Loop through selected IDs
-			for (int i = 0; i < m_selectedLightIDs.size(); ++i)
+			for (int i = 0; i < m_selectedIDs.size(); ++i)
 			{
 				// Loop through lights
-				for (int j = 0; j < m_lights.size(); ++j)
+				for (int j = 0; j < m_lights->size(); ++j)
 				{
 					// If light ID matches selection
-					if (m_lights[j].m_ID == m_selectedLightIDs[i])
+					if (m_lights->at(j).ID == m_selectedIDs[i])
 					{
 						// Store new constant attenuation
 						CString string = _T("");
@@ -911,10 +1015,15 @@ void LightDialogue::OnEnChangeConstA()
 						// Convert to float
 						float constA;
 						if (!string.IsEmpty()) { constA = _ttof(string); }
-						else { constA = m_lights[j].GetConstantAttenuation(); }
+						else { constA = m_lights->at(j).light_constant; }
 
-						// Update constant attenuation of light
-						m_lights[j].SetConstantAttenuation(constA);
+						// If constant attenuation is different from current constant attenuation
+						if (m_lights->at(j).light_constant != constA)
+						{
+							// Update constant attenuation of light
+							m_lights->at(j).light_constant = constA;
+							UpdateLight(m_lights->at(j));
+						}
 
 						break;
 					}
@@ -940,13 +1049,13 @@ void LightDialogue::OnEnChangeLinA()
 		if (ID >= 0)
 		{
 			// Loop through selected IDs
-			for (int i = 0; i < m_selectedLightIDs.size(); ++i)
+			for (int i = 0; i < m_selectedIDs.size(); ++i)
 			{
 				// Loop through lights
-				for (int j = 0; j < m_lights.size(); ++j)
+				for (int j = 0; j < m_lights->size(); ++j)
 				{
 					// If light ID matches selection
-					if (m_lights[j].m_ID == m_selectedLightIDs[i])
+					if (m_lights->at(j).ID == m_selectedIDs[i])
 					{
 						// Store new linear attenuation
 						CString string = _T("");
@@ -955,11 +1064,16 @@ void LightDialogue::OnEnChangeLinA()
 						// Convert to float
 						float linA;
 						if (!string.IsEmpty()) { linA = _ttof(string); }
-						else { linA = m_lights[j].GetLinearAttenuation(); }
+						else { linA = m_lights->at(j).light_linear; }
 						///linA /= 10.f;
 
-						// Update linear attenuation of light
-						m_lights[j].SetLinearAttenuation(linA);
+						// If linear attenuation is different from current constant attenuation
+						if (m_lights->at(j).light_linear != linA)
+						{
+							// Update linear attenuation of light
+							m_lights->at(j).light_linear = linA;
+							UpdateLight(m_lights->at(j));
+						}
 
 						break;
 					}
@@ -985,13 +1099,13 @@ void LightDialogue::OnEnChangeQuadA()
 		if (ID >= 0)
 		{
 			// Loop through selected IDs
-			for (int i = 0; i < m_selectedLightIDs.size(); ++i)
+			for (int i = 0; i < m_selectedIDs.size(); ++i)
 			{
 				// Loop through lights
-				for (int j = 0; j < m_lights.size(); ++j)
+				for (int j = 0; j < m_lights->size(); ++j)
 				{
 					// If light ID matches selection
-					if (m_lights[j].m_ID == m_selectedLightIDs[i])
+					if (m_lights->at(j).ID == m_selectedIDs[i])
 					{
 						// Store new quadratic attenuation
 						CString string = _T("");
@@ -1000,11 +1114,16 @@ void LightDialogue::OnEnChangeQuadA()
 						// Convert to float
 						float quadA;
 						if (!string.IsEmpty()) { quadA = _ttof(string); }
-						else { quadA = m_lights[j].GetQuadraticAttenuation(); }
+						else { quadA = m_lights->at(j).light_quadratic; }
 						///quadA /= 100.f;
 
-						// Update quadratic attenuation of light
-						m_lights[j].SetQuadraticAttenuation(quadA);
+						// If quadratic attenuation is different from current constant attenuation
+						if (m_lights->at(j).light_quadratic != quadA)
+						{
+							// Update quadratic attenuation of light
+							m_lights->at(j).light_quadratic = quadA;
+							UpdateLight(m_lights->at(j));
+						}
 
 						break;
 					}
@@ -1020,24 +1139,39 @@ void LightDialogue::OnEnChangeQuadA()
 // Delete has been selected
 void LightDialogue::OnBnClickedDelete()
 {
-	// Delete if selection is valid
-	m_delete = m_resetLights = (m_selectedLightIDs.size() > 0);
+	// If selection is valid
+	if (m_selectedIDs.size() > 0)
+	{
+		// Remove lights from database storage
+		ObjectManager::Remove(m_selectedIDs);
+
+		// Request updated scene graph
+		m_request = true;
+	}
 }
 
 // Duplicate has been selected
 void LightDialogue::OnBnClickedDuplicate()
 {	
-	// Duplicate if selection is valid
-	m_duplicate = m_resetLights = (m_selectedLightIDs.size() != 0);
+	// If selection is valid
+	if (m_selectedIDs.size() != 0)
+	{
+		// Copy lights
+		ObjectManager::Copy(m_selectedIDs);
+
+		// Paste lights
+		ObjectManager::Paste();
+
+		// Request updated scene graph
+		m_request = true;
+	}
 }
 
 // Translate has been selected
 void LightDialogue::OnBnClickedTranslate()
 {
-	m_translating = IsDlgButtonChecked(IDC_CHECK2);
-
 	// Switch between translating
-	switch (m_translating)
+	switch (IsDlgButtonChecked(IDC_CHECK2))
 	{
 	case true:
 	{
@@ -1046,6 +1180,9 @@ void LightDialogue::OnBnClickedTranslate()
 
 		// Disable duplicate button
 		GetDlgItem(IDC_BUTTON2)->EnableWindow(false);
+
+		// Update function
+		m_function = OBJECT_FUNCTION::TRANSLATE;
 	}
 	break;
 	case false:
@@ -1055,6 +1192,9 @@ void LightDialogue::OnBnClickedTranslate()
 
 		// Disable duplicate button
 		GetDlgItem(IDC_BUTTON2)->EnableWindow(true);
+
+		// Update function
+		m_function = OBJECT_FUNCTION::SELECT;
 	}
 	break;
 	}
@@ -1118,16 +1258,16 @@ void LightDialogue::OnBnClickedZ()
 void LightDialogue::UpdateType()
 {
 	// If only one object is selected
-	if (m_selectedLightIDs.size() == 1)
+	if (m_selectedIDs.size() == 1)
 	{
 		// Loop through lights
-		for (int i = 0; i < m_lights.size(); ++i)
+		for (int i = 0; i < m_lights->size(); ++i)
 		{
 			// If light ID matches selection
-			if (m_lights[i].m_ID == m_selectedLightIDs[0])
+			if (m_lights->at(i).ID == m_selectedIDs[0])
 			{
 				// Set combo box
-				m_boxType.SetCurSel((int)m_lights[i].GetLightType());
+				m_boxType.SetCurSel(m_lights->at(i).light_type);
 				break;
 			}
 		}		
@@ -1147,16 +1287,16 @@ void LightDialogue::UpdateType()
 void LightDialogue::UpdateEnabled()
 {
 	// If only one object is selected
-	if (m_selectedLightIDs.size() == 1)
+	if (m_selectedIDs.size() == 1)
 	{
 		// Loop through lights
-		for (int i = 0; i < m_lights.size(); ++i)
+		for (int i = 0; i < m_lights->size(); ++i)
 		{
 			// If light ID matches selection
-			if (m_lights[i].m_ID == m_selectedLightIDs[0])
+			if (m_lights->at(i).ID == m_selectedIDs[0])
 			{
 				// Set enabled check box to match light 
-				CheckDlgButton(IDC_CHECK1, m_lights[i].GetEnabled());
+				CheckDlgButton(IDC_CHECK1, m_lights->at(i).enabled);
 				break;
 			}
 		}
@@ -1176,16 +1316,16 @@ void LightDialogue::UpdateEnabled()
 void LightDialogue::UpdatePosition()
 {
 	// If only one object is selected
-	if (m_selectedLightIDs.size() == 1)
+	if (m_selectedIDs.size() == 1)
 	{
 		// Loop through lights
-		for (int i = 0; i < m_lights.size(); ++i)
+		for (int i = 0; i < m_lights->size(); ++i)
 		{
 			// If light ID matches selection
-			if (m_lights[i].m_ID == m_selectedLightIDs[0])
+			if (m_lights->at(i).ID == m_selectedIDs[0])
 			{
 				// Store current position
-				XMFLOAT3 position = m_lights[i].GetPosition();
+				XMFLOAT3 position = { m_lights->at(i).posX, m_lights->at(i).posY, m_lights->at(i).posZ };
 
 				// Update X position box
 				CString sX; sX.Format(L"%g", position.x);
@@ -1220,16 +1360,16 @@ void LightDialogue::UpdatePosition()
 void LightDialogue::UpdateDirection()
 {
 	// If only one object is selected
-	if (m_selectedLightIDs.size() == 1)
+	if (m_selectedIDs.size() == 1)
 	{
 		// Loop through lights
-		for (int i = 0; i < m_lights.size(); ++i)
+		for (int i = 0; i < m_lights->size(); ++i)
 		{
 			// If light ID matches selection
-			if (m_lights[i].m_ID == m_selectedLightIDs[0])
+			if (m_lights->at(i).ID == m_selectedIDs[0])
 			{
 				// Store current direction
-				XMFLOAT3 direction = m_lights[i].GetDirection();
+				XMFLOAT3 direction = { m_lights->at(i).rotX, m_lights->at(i).rotY, m_lights->at(i).rotZ };
 
 				// Update X direction box
 				CString sX; sX.Format(L"%g", direction.x);
@@ -1263,16 +1403,16 @@ void LightDialogue::UpdateDirection()
 void LightDialogue::UpdateDiffuse()
 {
 	// If only one object is selected
-	if (m_selectedLightIDs.size() == 1)
+	if (m_selectedIDs.size() == 1)
 	{
 		// Loop through lights
-		for (int i = 0; i < m_lights.size(); ++i)
+		for (int i = 0; i < m_lights->size(); ++i)
 		{
 			// If light ID matches selection
-			if (m_lights[i].m_ID == m_selectedLightIDs[0])
+			if (m_lights->at(i).ID == m_selectedIDs[0])
 			{
 				// Store current diffuse
-				XMFLOAT4 diffuse = m_lights[i].GetDiffuse();
+				XMFLOAT3 diffuse = { m_lights->at(i).light_diffuse_r, m_lights->at(i).light_diffuse_g, m_lights->at(i).light_diffuse_b };
 
 				// Update R diffuse box
 				CString sR; sR.Format(L"%g", diffuse.x);
@@ -1307,16 +1447,16 @@ void LightDialogue::UpdateDiffuse()
 void LightDialogue::UpdateAmbient()
 {
 	// If only one object is selected
-	if (m_selectedLightIDs.size() == 1)
+	if (m_selectedIDs.size() == 1)
 	{
 		// Loop through lights
-		for (int i = 0; i < m_lights.size(); ++i)
+		for (int i = 0; i < m_lights->size(); ++i)
 		{
 			// If light ID matches selection
-			if (m_lights[i].m_ID == m_selectedLightIDs[0])
+			if (m_lights->at(i).ID == m_selectedIDs[0])
 			{
 				// Store current ambient
-				XMFLOAT4 ambient = m_lights[i].GetAmbient();
+				XMFLOAT3 ambient = { m_lights->at(i).ambR, m_lights->at(i).ambG, m_lights->at(i).ambB };
 
 				// Update R ambient box
 				CString sR; sR.Format(L"%g", ambient.x);
@@ -1351,16 +1491,16 @@ void LightDialogue::UpdateAmbient()
 void LightDialogue::UpdateConstA()
 {
 	// If only one object is selected
-	if (m_selectedLightIDs.size() == 1)
+	if (m_selectedIDs.size() == 1)
 	{
 		// Loop through lights
-		for (int i = 0; i < m_lights.size(); ++i)
+		for (int i = 0; i < m_lights->size(); ++i)
 		{
 			// If light ID matches selection
-			if (m_lights[i].m_ID == m_selectedLightIDs[0])
+			if (m_lights->at(i).ID == m_selectedIDs[0])
 			{
 				// Store current constant attenuation
-				float constA = m_lights[i].GetConstantAttenuation();
+				float constA = m_lights->at(i).light_constant;
 
 				// Update constant attenuation box
 				CString sA; sA.Format(L"%g", constA);
@@ -1385,16 +1525,16 @@ void LightDialogue::UpdateConstA()
 void LightDialogue::UpdateLinA()
 {
 	// If only one object is selected
-	if (m_selectedLightIDs.size() == 1)
+	if (m_selectedIDs.size() == 1)
 	{
 		// Loop through lights
-		for (int i = 0; i < m_lights.size(); ++i)
+		for (int i = 0; i < m_lights->size(); ++i)
 		{
 			// If light ID matches selection
-			if (m_lights[i].m_ID == m_selectedLightIDs[0])
+			if (m_lights->at(i).ID == m_selectedIDs[0])
 			{
 				// Store current linear attenuation
-				float linA = m_lights[i].GetLinearAttenuation();
+				float linA = m_lights->at(i).light_linear;
 
 				// Update linear attenuation box
 				CString sA; sA.Format(L"%g", linA);
@@ -1419,16 +1559,16 @@ void LightDialogue::UpdateLinA()
 void LightDialogue::UpdateQuadA()
 {
 	// If only one object is selected
-	if (m_selectedLightIDs.size() == 1)
+	if (m_selectedIDs.size() == 1)
 	{
 		// Loop through lights
-		for (int i = 0; i < m_lights.size(); ++i)
+		for (int i = 0; i < m_lights->size(); ++i)
 		{
 			// If light ID matches selection
-			if (m_lights[i].m_ID == m_selectedLightIDs[0])
+			if (m_lights->at(i).ID == m_selectedIDs[0])
 			{
 				// Store current quadratic attenuation
-				float quadA = m_lights[i].GetQuadraticAttenuation();
+				float quadA = m_lights->at(i).light_quadratic;
 
 				// Update linear attenuation box
 				CString sA; sA.Format(L"%g", quadA);
@@ -1488,38 +1628,34 @@ void LightDialogue::Reset()
 	m_constraint = CONSTRAINT::NA;
 }
 
+void LightDialogue::UpdateLight(SceneObject object)
+{
+	// Replace object through database
+	ObjectManager::ReplaceObject(object);
+}
+
 void LightDialogue::SetupLights()
 {
-	if (m_resetLights) { m_selectedLightIDs.clear(); m_resetLights = false; }
-	m_lights.clear();
+	m_internal = true;
+	
+	if (m_resetLights) { m_selectedIDs.clear(); m_resetLights = false; }
 	m_boxID.ResetContent();
 
-	// Count lights
-	int count = 0;
-
-	// Loop through scene graph
-	for (int i = 0; i < m_displayList.size(); ++i)
+	// Loop through lights in scene graph
+	for (int i = 0; i < m_lights->size(); ++i)
 	{
-		// If object is a light
-		if (m_displayList.at(i).m_objectType == OBJECT_TYPE::LIGHT)
-		{
-			// Add to local storage
-			m_lights.push_back(m_displayList.at(i));
-			
-			// Add entries to ID list box
-			std::wstring idBoxEntry = std::to_wstring(m_displayList.at(i).m_ID);
-			m_boxID.AddString(idBoxEntry.c_str());
-
-			// Increase count
-			count++;
-		}
+		// Add entries to ID list box
+		std::wstring idBoxEntry = std::to_wstring(m_lights->at(i).ID);
+		m_boxID.AddString(idBoxEntry.c_str());
 	}
 
 	// Setup total lights in scene
-	std::wstring totalLights = std::to_wstring(count);
+	std::wstring totalLights = std::to_wstring(m_lights->size());
 	SetDlgItemText(IDC_STATIC3, totalLights.c_str());
 
 	m_lightSetup = true;
+
+	m_internal = false;
 }
 
 XMFLOAT3 LightDialogue::GetPosition()

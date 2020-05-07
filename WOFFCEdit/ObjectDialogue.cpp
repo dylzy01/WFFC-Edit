@@ -22,20 +22,6 @@ void ObjectDialogue::SetObjectData(std::vector<SceneObject>* sceneGraph, std::ve
 	m_sceneGraph = sceneGraph;
 	m_selectedIDs = selectedIDs;
 
-	// Local storage of objects
-	m_objects = new std::vector<SceneObject>();
-
-	// Loop through scene graph
-	for (int i = 0; i < sceneGraph->size(); ++i)
-	{
-		// If object isn't a light
-		if (sceneGraph->at(i).m_type != OBJECT_TYPE::LIGHT)
-		{
-			// Add to storage
-			m_objects->push_back(sceneGraph->at(i));
-		}
-	}
-
 	// Setup IDs of currently available objects
 	SetupObjects();
 
@@ -83,7 +69,7 @@ void ObjectDialogue::SetToolSystem(ToolMain * toolSystem)
 	// Local storage
 	m_toolSystem = toolSystem;
 	m_sceneGraph = &toolSystem->GetSceneGraph();
-	m_selectedIDs = toolSystem->GetSelectedObjectIDs();
+	m_selectedIDs = toolSystem->GetSelectedIDs();
 
 	// Local storage of objects
 	m_objects = new std::vector<SceneObject>();
@@ -296,8 +282,15 @@ void ObjectDialogue::OnCbnSelchangeType()
 					// Store type selection
 					int type = m_boxType.GetCurSel();
 
-					// Replace object type
-					ObjectManager::ReplaceType(m_objects->at(j).ID, (OBJECT_TYPE)type);
+					// If type is different from current type
+					if (m_objects->at(j).m_type != (OBJECT_TYPE)type)
+					{
+						// Replace object type
+						m_objects->at(j).m_type = (OBJECT_TYPE)type;
+						UpdateObject(m_objects->at(j));
+					}
+					
+					break;
 				}					
 			}
 		}		
@@ -836,6 +829,9 @@ void ObjectDialogue::OnBnClickedDelete()
 	{
 		// Remove objects from database storage
 		ObjectManager::Remove(m_selectedIDs);
+
+		// Request updated scene graph
+		m_request = true;
 	}
 }
 
@@ -849,7 +845,10 @@ void ObjectDialogue::OnBnClickedDuplicate()
 		ObjectManager::Copy(m_selectedIDs);
 
 		// Paste objects
-		ObjectManager::Paste();
+		ObjectManager::Paste();	
+
+		// Request updated scene graph
+		m_request = true;
 	}
 }
 
@@ -859,6 +858,20 @@ void ObjectDialogue::OnBnClickedDuplicate()
 void ObjectDialogue::SetupObjects()
 {
 	m_internal = true;
+	
+	// Local storage of objects
+	m_objects = new std::vector<SceneObject>();
+
+	// Loop through scene graph
+	for (int i = 0; i < m_sceneGraph->size(); ++i)
+	{
+		// If object isn't a light
+		if (m_sceneGraph->at(i).m_type != OBJECT_TYPE::LIGHT)
+		{
+			// Add to storage
+			m_objects->push_back(m_sceneGraph->at(i));
+		}
+	}
 	
 	if (m_resetObjects) { m_selectedIDs.clear(); m_resetObjects = false; }	
 	m_boxID.ResetContent();

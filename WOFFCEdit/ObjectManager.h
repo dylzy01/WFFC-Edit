@@ -20,7 +20,7 @@ public:
 		int lightType = NULL, XMFLOAT3 diffuse = { NULL, NULL, NULL }, float constA = NULL, float linA = NULL, float quadA = NULL);
 
 	// Remove an object from scene graph & database
-	static void Remove(std::vector<int> & IDs, int ID = -1);
+	static std::vector<SceneObject> Remove(std::vector<int> & IDs, int ID = -1);
 
 	// Temporarily store details of all selected objects
 	static void Store(std::vector<int> IDs);
@@ -36,10 +36,10 @@ public:
 	static void Copy(std::vector<int> IDs);
 
 	// Create new objects from copied
-	static void Paste();
+	static std::vector<SceneObject> Paste();
 
 	// Replace the type of an object
-	static bool ReplaceType(int ID, OBJECT_TYPE objectType,
+	static bool ReplaceType(SceneObject object,
 		int lightType = NULL, XMFLOAT3 diffuse = { NULL, NULL, NULL }, float constA = NULL, float linA = NULL, float quadA = NULL);
 
 	// Replace an entire object

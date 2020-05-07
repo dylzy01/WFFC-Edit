@@ -31,7 +31,7 @@ SelectDialogue::~SelectDialogue()
 {
 }
 
-///pass through pointers to the data in the tool we want to manipulate
+//pass through pointers to the data in the tool we want to manipulate
 ///void SelectDialogue::SetObjectData(std::vector<SceneObject>* SceneGraph, int * selection)
 void SelectDialogue::SetObjectData(std::vector<SceneObject>* SceneGraph, std::vector<int> * selection)
 {

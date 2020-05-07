@@ -240,7 +240,7 @@ bool ObjectManager::SpawnObject(OBJECT_TYPE objectType, DirectX::SimpleMath::Vec
 }
 
 // Remove an object from scene graph & database
-void ObjectManager::Remove(std::vector<int> & IDs, int ID)
+std::vector<SceneObject> ObjectManager::Remove(std::vector<int> & IDs, int ID)
 {			
 	// Store game scene graph
 	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();
@@ -291,6 +291,8 @@ void ObjectManager::Remove(std::vector<int> & IDs, int ID)
 
 	// Save current state
 	SceneManager::SetScene(&sceneGraph, m_game->GetDisplayChunk());
+
+	return m_game->GetSceneGraph();
 }
 
 // Temporarily store details of all objects
@@ -541,7 +543,7 @@ void ObjectManager::Copy(std::vector<int> IDs)
 }
 
 // Create new objects from copied
-void ObjectManager::Paste()
+std::vector<SceneObject> ObjectManager::Paste()
 {
 	// Store game scene graph
 	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();
@@ -561,10 +563,12 @@ void ObjectManager::Paste()
 
 	// Save current state
 	SceneManager::SetScene(&sceneGraph, m_game->GetDisplayChunk());
+
+	return m_game->GetSceneGraph();
 }
 
 // Replace the type of an object
-bool ObjectManager::ReplaceType(int ID, OBJECT_TYPE objectType,
+bool ObjectManager::ReplaceType(SceneObject object,
 	int lightType, XMFLOAT3 diffuse, float constA, float linA, float quadA)
 {
 	// Store game scene graph
@@ -589,15 +593,16 @@ bool ObjectManager::ReplaceType(int ID, OBJECT_TYPE objectType,
 	for (int i = 0; i < sceneGraph.size(); ++i)
 	{
 		// If IDs match
-		if (sceneGraph[i].ID == ID)
+		if (sceneGraph[i].ID == object.ID)
 		{
 			// Remove object from database
 			SQLManager::RemoveObject(sceneGraph[i]);
 
 			// Setup replacement object
 			SceneObject replacement = GetReplacement(sceneGraph[i]);
-			replacement.m_type = objectType;
-			if (objectType == OBJECT_TYPE::LIGHT) { replacement.light_type = lightType; }
+
+			// Handle light type
+			if (object.m_type == OBJECT_TYPE::LIGHT) { replacement.light_type = lightType; }
 			else { replacement.light_type = 0; }
 
 			// Add new object to database
