@@ -151,8 +151,8 @@ void ShaderManager::SetProjection(DirectX::SimpleMath::Matrix * projection)
 DisplayObject ShaderManager::GetLight()
 {
 	// Setup details
-	DirectX::XMFLOAT4 diffuse = { 0.f, 0.f, 0.f, 0.f };
-	DirectX::XMFLOAT4 ambient = { 0.f, 0.f, 0.f, 0.f };
+	DirectX::XMFLOAT3 diffuse = { 0.f, 0.f, 0.f };
+	DirectX::XMFLOAT3 ambient = { 0.f, 0.f, 0.f };
 	DirectX::XMFLOAT3 position = { 0.f, 0.f, 0.f };
 	DirectX::XMFLOAT3 direction = { 0.f, 0.f, 0.f };
 	float constA = 0.f, linA = 0.f, quadA = 0.f;

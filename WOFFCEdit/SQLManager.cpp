@@ -72,9 +72,9 @@ SceneObject SQLManager::CreateObject()
 	object.light_diffuse_r = sqlite3_column_double(m_resultObject, 46);
 	object.light_diffuse_g = sqlite3_column_double(m_resultObject, 47);
 	object.light_diffuse_b = sqlite3_column_double(m_resultObject, 48);
-	object.light_specular_r = sqlite3_column_double(m_resultObject, 49);
-	object.light_specular_g = sqlite3_column_double(m_resultObject, 50);
-	object.light_specular_b = sqlite3_column_double(m_resultObject, 51);
+	object.light_ambient_r = sqlite3_column_double(m_resultObject, 49);
+	object.light_ambient_g = sqlite3_column_double(m_resultObject, 50);
+	object.light_ambient_b = sqlite3_column_double(m_resultObject, 51);
 	object.light_spot_cutoff = sqlite3_column_double(m_resultObject, 52);
 	object.light_constant = sqlite3_column_double(m_resultObject, 53);
 	object.light_linear = sqlite3_column_double(m_resultObject, 54);
@@ -175,9 +175,9 @@ bool SQLManager::AddObject(SceneObject object)
 			<< object.light_diffuse_r << ","
 			<< object.light_diffuse_g << ","
 			<< object.light_diffuse_b << ","
-			<< object.light_specular_r << ","
-			<< object.light_specular_g << ","
-			<< object.light_specular_b << ","
+			<< object.light_ambient_r << ","
+			<< object.light_ambient_g << ","
+			<< object.light_ambient_b << ","
 			<< object.light_spot_cutoff << ","
 			<< object.light_constant << ","
 			<< object.light_linear << ","
@@ -280,9 +280,9 @@ bool SQLManager::SaveObjects(std::vector<SceneObject> sceneGraph)
 			<< sceneGraph.at(i).light_diffuse_r << ","
 			<< sceneGraph.at(i).light_diffuse_g << ","
 			<< sceneGraph.at(i).light_diffuse_b << ","
-			<< sceneGraph.at(i).light_specular_r << ","
-			<< sceneGraph.at(i).light_specular_g << ","
-			<< sceneGraph.at(i).light_specular_b << ","
+			<< sceneGraph.at(i).light_ambient_r << ","
+			<< sceneGraph.at(i).light_ambient_g << ","
+			<< sceneGraph.at(i).light_ambient_b << ","
 			<< sceneGraph.at(i).light_spot_cutoff << ","
 			<< sceneGraph.at(i).light_constant << ","
 			<< sceneGraph.at(i).light_linear << ","

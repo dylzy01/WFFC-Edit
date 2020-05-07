@@ -418,4 +418,11 @@ void SculptDialogue::Reset()
 {
 	m_active = m_x = m_y = m_z = false;
 	m_scale = 1.f;
+
+	CheckDlgButton(IDC_CHECK2, false);
+	CheckDlgButton(IDC_CHECK14, false);
+	CheckDlgButton(IDC_CHECK15, false);
+	CheckDlgButton(IDC_CHECK9, false);
+	CheckDlgButton(IDC_CHECK17, false);
+	CheckDlgButton(IDC_CHECK18, false);
 }

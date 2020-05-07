@@ -102,10 +102,9 @@ enum class SHADER_TYPE {
 };
 
 enum class LIGHT_TYPE {
-	NA = 0,
-	DIRECTIONAL = 1,
-	POINT = 2,
-	SPOT = 3
+	DIRECTIONAL = 0,
+	POINT = 1,
+	NA = 2
 };
 
 enum class PICK_TYPE {

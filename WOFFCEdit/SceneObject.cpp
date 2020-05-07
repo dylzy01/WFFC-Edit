@@ -43,7 +43,7 @@ SceneObject::SceneObject()
 	name ="";
 	light_type = 1;
 	light_diffuse_r = 1;	light_diffuse_g = 1;	light_diffuse_b = 1;
-	light_specular_r = 1;	light_specular_g = 1;	light_specular_b = 1;
+	light_ambient_r = 1;	light_ambient_g = 1;	light_ambient_b = 1;
 	light_spot_cutoff = 1;
 	light_constant = 1;
 	light_linear = 1;

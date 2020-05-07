@@ -13,7 +13,8 @@ IMPLEMENT_DYNAMIC(ObjectDialogue, CDialogEx)
 ObjectDialogue::ObjectDialogue(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG12, pParent)
 {
-	
+	m_function = OBJECT_FUNCTION::SELECT;
+	m_constraint = CONSTRAINT::NA;
 }
 
 void ObjectDialogue::SetObjectData(std::vector<SceneObject>* sceneGraph, std::vector<int> selectedIDs)
@@ -58,9 +59,7 @@ void ObjectDialogue::SetObjectData(std::vector<SceneObject>* sceneGraph, std::ve
 
 	SetupCheckBoxes();
 
-	// Update tool controllers
-	m_function = OBJECT_FUNCTION::SELECT;
-	m_constraint = CONSTRAINT::NA;
+	// Update tool controllers	
 	Update();
 }
 
@@ -177,27 +176,35 @@ BEGIN_MESSAGE_MAP(ObjectDialogue, CDialogEx)
 	ON_COMMAND(IDOK, &ObjectDialogue::End)
 	ON_COMMAND(IDCANCEL, &ObjectDialogue::End)
 	ON_BN_CLICKED(IDOK, &ObjectDialogue::OnBnClickedOk)
+
 	ON_CBN_SELCHANGE(IDC_LIST1, &ObjectDialogue::OnCbnSelchangeID)
 	ON_CBN_SELCHANGE(IDC_COMBO2, &ObjectDialogue::OnCbnSelchangeType)
 	ON_BN_CLICKED(IDC_CHECK1, &ObjectDialogue::OnBnClickedFocus)
+
 	ON_EN_CHANGE(IDC_EDIT1, &ObjectDialogue::OnEnChangeScaX)
 	ON_EN_CHANGE(IDC_EDIT2, &ObjectDialogue::OnEnChangeScaY)
 	ON_EN_CHANGE(IDC_EDIT3, &ObjectDialogue::OnEnChangeScaZ)
+
 	ON_EN_CHANGE(IDC_EDIT4, &ObjectDialogue::OnEnChangeRotX)
 	ON_EN_CHANGE(IDC_EDIT5, &ObjectDialogue::OnEnChangeRotY)
 	ON_EN_CHANGE(IDC_EDIT6, &ObjectDialogue::OnEnChangeRotZ)
+
 	ON_EN_CHANGE(IDC_EDIT7, &ObjectDialogue::OnEnChangePosX)
 	ON_EN_CHANGE(IDC_EDIT8, &ObjectDialogue::OnEnChangePosY)
 	ON_EN_CHANGE(IDC_EDIT9, &ObjectDialogue::OnEnChangePosZ)
+
 	ON_BN_CLICKED(IDC_CHECK26, &ObjectDialogue::OnBnClickedScale)
 	ON_BN_CLICKED(IDC_CHECK27, &ObjectDialogue::OnBnClickedRotate)
 	ON_BN_CLICKED(IDC_CHECK28, &ObjectDialogue::OnBnClickedTranslate)
+
 	ON_BN_CLICKED(IDC_CHECK23, &ObjectDialogue::OnBnClickedX)
 	ON_BN_CLICKED(IDC_CHECK24, &ObjectDialogue::OnBnClickedY)
 	ON_BN_CLICKED(IDC_CHECK25, &ObjectDialogue::OnBnClickedZ)
+
 	ON_BN_CLICKED(IDC_CHECK4, &ObjectDialogue::OnBnClickedSnapTerrain)
 	ON_BN_CLICKED(IDC_CHECK5, &ObjectDialogue::OnBnClickedSnapValue)
 	ON_EN_CHANGE(IDC_EDIT10, &ObjectDialogue::OnEnChangeSnapValue)
+
 	ON_BN_CLICKED(IDC_BUTTON1, &ObjectDialogue::OnBnClickedDelete)
 	ON_BN_CLICKED(IDC_BUTTON2, &ObjectDialogue::OnBnClickedDuplicate)
 END_MESSAGE_MAP()
@@ -287,7 +294,7 @@ void ObjectDialogue::OnCbnSelchangeType()
 					{
 						// Replace object type
 						m_objects->at(j).m_type = (OBJECT_TYPE)type;
-						UpdateObject(m_objects->at(j));
+						ObjectManager::ReplaceType(m_objects->at(j));
 					}
 					
 					break;
@@ -344,8 +351,14 @@ void ObjectDialogue::OnEnChangeScaX()
 						if (!string.IsEmpty()) { scaX = _ttof(string); }
 						else { scaX = m_objects->at(j).scaX; }
 
-						// Update X scale of object
-						m_objects->at(j).scaX = scaX;
+						// If scale is different from current scale
+						if (m_objects->at(j).scaX != scaX)
+						{
+							// Update X scale of object
+							m_objects->at(j).scaX = scaX;
+							UpdateObject(m_objects->at(j));
+						}
+
 						break;
 					}
 				}
@@ -381,8 +394,14 @@ void ObjectDialogue::OnEnChangeScaY()
 						if (!string.IsEmpty()) { scaY = _ttof(string); }
 						else { scaY = m_objects->at(j).scaY; }
 
-						// Update Y scale of object
-						m_objects->at(j).scaY = scaY;
+						// If scale is different from current scale
+						if (m_objects->at(j).scaY != scaY)
+						{
+							// Update Y scale of object
+							m_objects->at(j).scaY = scaY;
+							UpdateObject(m_objects->at(j));
+						}
+
 						break;
 					}
 				}
@@ -418,8 +437,14 @@ void ObjectDialogue::OnEnChangeScaZ()
 						if (!string.IsEmpty()) { scaZ = _ttof(string); }
 						else { scaZ = m_objects->at(j).scaZ; }
 
-						// Update Z scale of object
-						m_objects->at(j).scaZ = scaZ;
+						// If scale is different from current scale
+						if (m_objects->at(j).scaZ != scaZ)
+						{
+							// Update Z scale of object
+							m_objects->at(j).scaZ = scaZ;
+							UpdateObject(m_objects->at(j));
+						}
+
 						break;
 					}
 				}
@@ -455,8 +480,14 @@ void ObjectDialogue::OnEnChangeRotX()
 						if (!string.IsEmpty()) { rotX = _ttof(string); }
 						else { rotX = m_objects->at(j).rotX; }
 
-						// Update X rotation of object
-						m_objects->at(j).rotX = rotX;
+						// If rotation is different from current rotation
+						if (m_objects->at(j).rotX != rotX)
+						{
+							// Update X rotation of object
+							m_objects->at(j).rotX = rotX;
+							UpdateObject(m_objects->at(j));
+						}
+
 						break;
 					}
 				}
@@ -492,8 +523,14 @@ void ObjectDialogue::OnEnChangeRotY()
 						if (!string.IsEmpty()) { rotY = _ttof(string); }
 						else { rotY = m_objects->at(j).rotY; }
 
-						// Update Y rotation of object
-						m_objects->at(j).rotY = rotY;
+						// If rotation is different from current rotation
+						if (m_objects->at(j).rotY != rotY)
+						{
+							// Update Y rotation of object
+							m_objects->at(j).rotY = rotY;
+							UpdateObject(m_objects->at(j));
+						}
+
 						break;
 					}
 				}
@@ -529,8 +566,14 @@ void ObjectDialogue::OnEnChangeRotZ()
 						if (!string.IsEmpty()) { rotZ = _ttof(string); }
 						else { rotZ = m_objects->at(j).rotZ; }
 
-						// Update Z rotation of object
-						m_objects->at(j).rotZ = rotZ;
+						// If rotation is different from current rotation
+						if (m_objects->at(j).rotZ != rotZ)
+						{
+							// Update Z rotation of object
+							m_objects->at(j).rotZ = rotZ;
+							UpdateObject(m_objects->at(j));
+						}
+
 						break;
 					}
 				}
@@ -566,8 +609,14 @@ void ObjectDialogue::OnEnChangePosX()
 						if (!string.IsEmpty()) { posX = _ttof(string); }
 						else { posX = m_objects->at(j).posX; }
 
-						// Update X position of object
-						m_objects->at(j).posX = posX;
+						// If position is different from current position
+						if (m_objects->at(j).posX != posX)
+						{
+							// Update X position of object
+							m_objects->at(j).posX = posX;
+							UpdateObject(m_objects->at(j));
+						}
+
 						break;
 					}
 				}
@@ -646,8 +695,14 @@ void ObjectDialogue::OnEnChangePosZ()
 						if (!string.IsEmpty()) { posZ = _ttof(string); }
 						else { posZ = m_objects->at(j).posZ; }
 
-						// Update Z position of object
-						m_objects->at(j).posZ = posZ;
+						// If position is different from current position
+						if (m_objects->at(j).posZ != posZ)
+						{
+							// Update Z position of object
+							m_objects->at(j).posZ = posZ;
+							UpdateObject(m_objects->at(j));
+						}
+
 						break;
 					}
 				}
@@ -1163,6 +1218,14 @@ void ObjectDialogue::Reset()
 		m_x = m_y = m_z = m_snapTerrain = m_snapValue =
 		m_resetObjects = false;
 
-	m_function = OBJECT_FUNCTION::NA;
+	m_function = OBJECT_FUNCTION::SELECT;
 	m_constraint = CONSTRAINT::NA;
+
+
+	CheckDlgButton(IDC_CHECK26, false);
+	CheckDlgButton(IDC_CHECK27, false);
+	CheckDlgButton(IDC_CHECK28, false);
+	CheckDlgButton(IDC_CHECK23, false);
+	CheckDlgButton(IDC_CHECK24, false);
+	CheckDlgButton(IDC_CHECK25, false);
 }

@@ -1155,6 +1155,21 @@ void SpawnDialogue::Uncheck()
 
 void SpawnDialogue::Reset()
 {
-	m_active = m_update = false;
+	m_active = false;
 	m_spawner = OBJECT_TYPE::NA;
+
+	CheckDlgButton(IDC_CHECK26, false);
+	CheckDlgButton(IDC_CHECK27, false);
+	CheckDlgButton(IDC_CHECK28, false);
+	CheckDlgButton(IDC_CHECK29, false);
+	CheckDlgButton(IDC_CHECK30, false);
+	CheckDlgButton(IDC_CHECK31, false);
+	CheckDlgButton(IDC_CHECK32, false);
+	CheckDlgButton(IDC_CHECK33, false);
+	CheckDlgButton(IDC_CHECK34, false);
+	CheckDlgButton(IDC_CHECK35, false);
+	CheckDlgButton(IDC_CHECK36, false);
+	CheckDlgButton(IDC_CHECK37, false);
+	CheckDlgButton(IDC_CHECK38, false);
+	CheckDlgButton(IDC_CHECK39, false);
 }

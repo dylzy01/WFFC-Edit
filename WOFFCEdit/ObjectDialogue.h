@@ -32,8 +32,20 @@ public:
 	bool GetFocus() { return m_focus; }
 	bool GetTransforming() { return m_transforming; }
 	bool GetObjectsSetup() { return m_objectSetup; }
-	bool GetSelect() { return m_select; }
-	bool GetRequest() { return m_request; }
+	bool GetSelect() { 
+		if (m_select) {
+			m_select = false;
+			return true;
+		}
+		else { return false; }
+	}
+	bool GetRequest() { 
+		if (m_request) {
+			m_request = false;
+			return true;
+		}
+		else { return false; }
+	}
 	float GetSnap() { if (m_snapTerrain) { return -1; } else if (m_snapValue) { return m_snapScale; } }
 	std::vector<int> GetSelectedIDs() { return m_selectedIDs; }
 	OBJECT_FUNCTION GetFunction() { return m_function; }
@@ -43,9 +55,8 @@ public:
 	
 	// Setters
 	void SetActive(bool active) { m_active = active; }
-	void SetRequest(bool request) { m_request = request; }
 	void SetTransforming(bool transforming) { m_transforming = transforming; }
-	void SetSelectedIDs(std::vector<int> selectedIDs) { m_selectedIDs = selectedIDs; }
+	void SetSelectedIDs(std::vector<int> selectedIDs) { m_selectedIDs = selectedIDs; }	
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME

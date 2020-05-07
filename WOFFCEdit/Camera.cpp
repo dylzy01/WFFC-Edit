@@ -101,47 +101,51 @@ void Camera::HandleInput(InputCommands * input, float deltaTime, float centre_x,
 	m_centreX = centre_x;
 	m_centreY = centre_y;
 
-	// Move up
-	if (m_input->E) {
-		MoveUp(deltaTime);
-		Update();
-	}
-
-	// Move down
-	if (m_input->Q) {
-		MoveDown(deltaTime);
-		Update();
-	}
-
-	// Left
-	if (m_input->A) {
-		MoveLeft(deltaTime);
-		Update();
-	}
-
-	// Right
-	if (m_input->D) {
-		MoveRight(deltaTime);
-		Update();
-	}
-
-	// Forward
-	if (m_input->W) {
-		MoveForward(deltaTime);
-		Update();
-	}
-
-	// Backward
-	if (m_input->S) {
-		MoveBackward(deltaTime);
-		Update();
-	}
-
-	// Rotation (if not focussing on an object)
-	if (!m_focussing) {
-		if (m_input->mouseWheel) {
-			TrackMouse(centre_x, centre_y, cursorPos, deltaTime);
+	// If CTRL isn't pressed
+	if (!m_input->CTRL) 
+	{
+		// Move up
+		if (m_input->E) {
+			MoveUp(deltaTime);
 			Update();
+		}
+
+		// Move down
+		if (m_input->Q) {
+			MoveDown(deltaTime);
+			Update();
+		}
+
+		// Left
+		if (m_input->A) {
+			MoveLeft(deltaTime);
+			Update();
+		}
+
+		// Right
+		if (m_input->D) {
+			MoveRight(deltaTime);
+			Update();
+		}
+
+		// Forward
+		if (m_input->W) {
+			MoveForward(deltaTime);
+			Update();
+		}
+
+		// Backward
+		if (m_input->S) {
+			MoveBackward(deltaTime);
+			Update();
+		}
+
+		// Rotation (if not focussing on an object)
+		if (!m_focussing) {
+			if (m_input->mouseWheel) {
+				TrackMouse(centre_x, centre_y, cursorPos, deltaTime);
+				Update();
+			}
 		}
 	}
 }

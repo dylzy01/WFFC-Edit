@@ -514,4 +514,11 @@ void TerrainDialogue::Reset()
 {
 	m_active = m_sculpting = m_x = m_y = m_z = false;
 	m_scale = 1.f;
+
+	CheckDlgButton(IDC_CHECK2, false);
+	CheckDlgButton(IDC_CHECK15, false);
+	CheckDlgButton(IDC_CHECK16, false);
+	CheckDlgButton(IDC_CHECK10, false);
+	CheckDlgButton(IDC_CHECK18, false);
+	CheckDlgButton(IDC_CHECK19, false);
 }

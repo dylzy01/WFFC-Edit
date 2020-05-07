@@ -45,7 +45,7 @@ public:
 	std::string name;
 	int light_type;
 	float light_diffuse_r, light_diffuse_g, light_diffuse_b;
-	float light_specular_r, light_specular_g, light_specular_b;
+	float light_ambient_r, light_ambient_g, light_ambient_b;
 	float light_spot_cutoff;
 	float light_constant;
 	float light_linear;
@@ -56,6 +56,5 @@ public:
 	OBJECT_TYPE m_type;
 	int ID;
 	int enabled;
-	float ambR, ambG, ambB;
 };
 

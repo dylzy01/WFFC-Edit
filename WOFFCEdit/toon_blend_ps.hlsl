@@ -60,7 +60,7 @@ float4 GenerateLight(float3 normal, float3 position3D)
         float dis = length(dir);
         
         // Setup diffuse colour
-        float diffuse = Lights[i].diffuseColour;
+        float4 diffuse = Lights[i].diffuseColour;
         
         // Apply different lighting based on type
         if (Lights[i].type == 2 || Lights[i].type == 3)

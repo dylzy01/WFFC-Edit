@@ -33,12 +33,23 @@ public:
 
 	// Getters
 	bool GetActive() { return m_active; }
-	bool GetUpdate() { return m_update; }
 	bool GetTranslating() { return m_translating; }
 	bool GetLightSetup() { return m_lightSetup; }
 	bool GetFocus() { return m_focus; }
-	bool GetSelect() { return m_select; }
-	bool GetRequest() { return m_request; }
+	bool GetSelect() { 
+		if (m_select) {
+			m_select = false;
+			return true;
+		}
+		else { return false; }
+	}
+	bool GetRequest() { 
+		if (m_request) {
+			m_request = false;
+			return true;
+		}
+		else { return false; }
+	}
 	std::vector<int> GetSelectedIDs() { return m_selectedIDs; }
 	OBJECT_FUNCTION GetFunction() { return m_function; }
 	CONSTRAINT GetConstraint() { return m_constraint; }
@@ -47,10 +58,7 @@ public:
 
 	// Setters
 	void SetActive(bool active) { m_active = active; }
-	void SetUpdate(bool update) { m_update = update; }
 	void SetSelectedIDs(std::vector<int> selection) { m_selectedIDs = selection; }
-	void SetSelect(bool select) { m_select = select; }
-	void SetRequest(bool request) { m_request = request; }
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -69,7 +77,6 @@ protected:
 
 	// Controllers
 	bool m_active;
-	bool m_update;
 	bool m_translating;
 	bool m_x, m_y, m_z;
 	bool m_internal = false;

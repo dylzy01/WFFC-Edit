@@ -443,4 +443,11 @@ void PaintDialogue::Reset()
 {
 	m_active = m_surround = m_blend = false;
 	m_paint = TERRAIN_PAINT::NA;
+
+	CheckDlgButton(IDC_CHECK2, false);
+	CheckDlgButton(IDC_CHECK14, false);
+	CheckDlgButton(IDC_CHECK15, false);
+	CheckDlgButton(IDC_CHECK18, false);
+	CheckDlgButton(IDC_CHECK17, false);
+	CheckDlgButton(IDC_CHECK3, false);
 }

@@ -83,7 +83,6 @@ public:
 	void SetSelectedObjectIDs(std::vector<int> selectedObjectIDs) { m_selectedObjectIDs = selectedObjectIDs; }
 	void SetDisplayList(DisplayObject object, int i) { m_displayList[i] = object; }
 	void SetTransform(int i, OBJECT_FUNCTION function, DirectX::SimpleMath::Vector3 vector);
-	void SetLights(std::vector<DisplayObject> lights);
 	void SetSceneObject(SceneObject object, int index) { m_sceneGraph[index] = object; RebuildDisplayList(&m_sceneGraph); }
 	void SetFocus(int ID);
 
@@ -103,7 +102,7 @@ private:
 	void XM_CALLCONV DrawGrid(DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
 	void DrawDebug(int i);
 
-	std::vector<SceneObject> SetupObjects(std::vector<SceneObject> sceneGraph);
+	std::vector<SceneObject> DefineObjects(std::vector<SceneObject> sceneGraph);
 
 	// frame time
 	float								m_deltaTime;

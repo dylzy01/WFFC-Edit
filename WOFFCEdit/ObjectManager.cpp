@@ -16,28 +16,20 @@ bool ObjectManager::SpawnObject(OBJECT_TYPE objectType, DirectX::SimpleMath::Vec
 	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();
 	
 	// Count lights
-	int count = 0;
-	for (int i = 0; i < sceneGraph.size(); ++i)
+	if (objectType == OBJECT_TYPE::LIGHT)
 	{
-		if (sceneGraph[i].m_type == OBJECT_TYPE::LIGHT)
+		int count = 0;
+		for (int i = 0; i < sceneGraph.size(); ++i)
 		{
-			count++;
+			if (sceneGraph[i].m_type == OBJECT_TYPE::LIGHT)
+			{
+				count++;
+			}
 		}
-	}
 
-	// If light count is above limit, don't continue
-	if (count >= 10) { return false; }
-	
-	// If object is a light
-	//if (objectType == OBJECT_TYPE::LIGHT)
-	//{
-	//	// If active lights is above limit
-	//	if (m_game->GetLights().first.size() >= 10)
-	//	{
-	//		// Prevent object addition
-	//		return false;
-	//	}
-	//}
+		// If light count is above limit, don't continue
+		if (count >= 10) { return false; }
+	}
 		
 	// Setup temp object
 	SceneObject object;
@@ -87,17 +79,17 @@ bool ObjectManager::SpawnObject(OBJECT_TYPE objectType, DirectX::SimpleMath::Vec
 		object.editor_wireframe = false;
 
 		object.light_type = lightType;
-		///object.light_type = 3;
-		object.light_diffuse_r = 2.f;
-		object.light_diffuse_g = 3.f;
-		object.light_diffuse_b = 4.f;
+		object.light_type = 1;
+		object.light_diffuse_r = 100.f;
+		object.light_diffuse_g = 100.f;
+		object.light_diffuse_b = 100.f;
 		object.light_constant = 1.f;
 		object.light_linear = 0.f;
 		object.light_quadratic = 1.f;
 
-		object.light_specular_r = 4.f;
-		object.light_specular_g = 5.f;
-		object.light_specular_b = 6.f;
+		object.light_ambient_r = 0.f;
+		object.light_ambient_g = 0.1f;
+		object.light_ambient_b = 0.1f;
 		object.light_spot_cutoff = 8.f;
 
 		object.m_type = objectType;
@@ -198,12 +190,7 @@ bool ObjectManager::SpawnObject(OBJECT_TYPE objectType, DirectX::SimpleMath::Vec
 		object.model_path = "database/data/light.cmo";
 		object.tex_diffuse_path = "database/data/light.dds";
 		object.enabled = true;
-		object.rotX = 0.f;
-		object.rotY = 1.f;
-		object.rotZ = 0.f;
-		object.ambR = 0.2f;
-		object.ambG = 0.2f;
-		object.ambB = 0.2f;
+		object.rotY = 1.f;	
 	}
 	break;
 	case OBJECT_TYPE::CUBE:
@@ -236,7 +223,10 @@ bool ObjectManager::SpawnObject(OBJECT_TYPE objectType, DirectX::SimpleMath::Vec
 	sceneGraph.push_back(object);
 
 	// Rebuild display list
-	m_game->BuildDisplayList(&sceneGraph);	
+	m_game->RebuildDisplayList(&sceneGraph);	
+
+	// Save current state
+	SceneManager::SetScene(&sceneGraph, m_game->GetDisplayChunk());
 }
 
 // Remove an object from scene graph & database
@@ -249,7 +239,19 @@ std::vector<SceneObject> ObjectManager::Remove(std::vector<int> & IDs, int ID)
 	if (ID != -1)
 	{		
 		// Remove object from database
-		SQLManager::RemoveObject(sceneGraph[ID]);		
+		SQLManager::RemoveObject(sceneGraph[ID]);
+
+		// Remove ID from storage
+		for (int i = 0; i < IDs.size(); ++i)
+		{
+			// If IDs match
+			if (IDs[i] == ID)
+			{
+				// Remove
+				IDs.erase(IDs.begin() + i);
+				break;
+			}
+		}
 	}
 
 	// Else, if no ID has been specified (delete all selected objects)
@@ -284,7 +286,7 @@ std::vector<SceneObject> ObjectManager::Remove(std::vector<int> & IDs, int ID)
 	while (SQLManager::GetObjectStep() == SQLITE_ROW) { sceneGraph.push_back(SQLManager::CreateObject()); }
 
 	// Rebuild display list from new table data
-	m_game->BuildDisplayList(&sceneGraph);
+	m_game->RebuildDisplayList(&sceneGraph);
 
 	// Overwrite selected objects list
 	m_selectedObjectIDs = IDs;
@@ -405,9 +407,9 @@ void ObjectManager::Cut(std::vector<int> & IDs)
 			object.light_diffuse_r = sceneGraph[IDs[i]].light_diffuse_r;
 			object.light_diffuse_g = sceneGraph[IDs[i]].light_diffuse_g;
 			object.light_diffuse_b = sceneGraph[IDs[i]].light_diffuse_b;
-			object.light_specular_r = sceneGraph[IDs[i]].light_specular_r;
-			object.light_specular_g = sceneGraph[IDs[i]].light_specular_g;
-			object.light_specular_b = sceneGraph[IDs[i]].light_specular_b;
+			object.light_ambient_r = sceneGraph[IDs[i]].light_ambient_r;
+			object.light_ambient_g = sceneGraph[IDs[i]].light_ambient_g;
+			object.light_ambient_b = sceneGraph[IDs[i]].light_ambient_b;
 			object.light_spot_cutoff = sceneGraph[IDs[i]].light_spot_cutoff;
 			object.light_constant = sceneGraph[IDs[i]].light_constant;
 			object.light_linear = sceneGraph[IDs[i]].light_linear;
@@ -521,9 +523,9 @@ void ObjectManager::Copy(std::vector<int> IDs)
 						object.light_diffuse_r = sceneGraph[j].light_diffuse_r;
 						object.light_diffuse_g = sceneGraph[j].light_diffuse_g;
 						object.light_diffuse_b = sceneGraph[j].light_diffuse_b;
-						object.light_specular_r = sceneGraph[j].light_specular_r;
-						object.light_specular_g = sceneGraph[j].light_specular_g;
-						object.light_specular_b = sceneGraph[j].light_specular_b;
+						object.light_ambient_r = sceneGraph[j].light_ambient_r;
+						object.light_ambient_g = sceneGraph[j].light_ambient_g;
+						object.light_ambient_b = sceneGraph[j].light_ambient_b;
 						object.light_spot_cutoff = sceneGraph[j].light_spot_cutoff;
 						object.light_constant = sceneGraph[j].light_constant;
 						object.light_linear = sceneGraph[j].light_linear;
@@ -575,6 +577,7 @@ bool ObjectManager::ReplaceType(SceneObject object,
 	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();
 	
 	// Count lights
+	if (object.m_type == OBJECT_TYPE::LIGHT)
 	{
 		int count = 0;
 		for (int i = 0; i < sceneGraph.size(); ++i)
@@ -598,8 +601,11 @@ bool ObjectManager::ReplaceType(SceneObject object,
 			// Remove object from database
 			SQLManager::RemoveObject(sceneGraph[i]);
 
+			// Handle object type
+			sceneGraph[i].m_type = object.m_type;
+
 			// Setup replacement object
-			SceneObject replacement = GetReplacement(sceneGraph[i]);
+			SceneObject replacement = GetReplacement(sceneGraph[i]);		
 
 			// Handle light type
 			if (object.m_type == OBJECT_TYPE::LIGHT) { replacement.light_type = lightType; }
@@ -631,6 +637,7 @@ bool ObjectManager::ReplaceObject(SceneObject newObject)
 	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();
 
 	// Count lights
+	if (newObject.m_type == OBJECT_TYPE::LIGHT)
 	{
 		int count = 0;
 		for (int i = 0; i < sceneGraph.size(); ++i)
@@ -668,7 +675,47 @@ bool ObjectManager::ReplaceObject(SceneObject newObject)
 	}
 
 	// Rebuild display list
-	m_game->BuildDisplayList(&sceneGraph);
+	m_game->RebuildDisplayList(&sceneGraph);
+
+	// Save current state
+	SceneManager::SetScene(&sceneGraph, m_game->GetDisplayChunk());
+
+	return true;
+}
+
+// Replace the lighting details of an object
+bool ObjectManager::ReplaceLight(SceneObject newObject)
+{
+	// Store game scene graph
+	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();
+
+	// Loop through current scene graphs
+	for (int i = 0; i < sceneGraph.size(); ++i)
+	{
+		// If IDs match
+		if (sceneGraph[i].ID == newObject.ID)
+		{
+			// Remove object from database
+			SQLManager::RemoveObject(sceneGraph[i]);
+
+			// Setup replacement object
+			SceneObject replacement = GetReplacement(newObject);
+			replacement.posX = sceneGraph[i].posX;
+			replacement.posY = sceneGraph[i].posY;
+			replacement.posZ = sceneGraph[i].posZ;
+
+			// Add new object to database
+			SQLManager::AddObject(replacement);
+
+			// Replace object in scene graph
+			sceneGraph[i] = replacement;
+
+			break;
+		}
+	}
+
+	// Rebuild display list
+	m_game->RebuildDisplayList(&sceneGraph);
 
 	// Save current state
 	SceneManager::SetScene(&sceneGraph, m_game->GetDisplayChunk());
@@ -1212,20 +1259,25 @@ SceneObject ObjectManager::GetReplacement(SceneObject object)
 		replacement.parent_id = object.parent_id;
 		replacement.editor_wireframe = object.editor_wireframe;
 
-		replacement.light_type = object.light_type;
-		replacement.light_diffuse_r = 2.f;
-		replacement.light_diffuse_g = 3.f;
-		replacement.light_diffuse_b = 4.f;
-		replacement.light_constant = 1.f;
-		replacement.light_linear = 0.f;
-		replacement.light_quadratic = 1.f;
+		if (object.m_type == OBJECT_TYPE::LIGHT) { replacement.light_type = object.light_type; }
+		else { replacement.light_type = 1; }
+		
+		replacement.light_diffuse_r = object.light_diffuse_r;
+		replacement.light_diffuse_g = object.light_diffuse_g;
+		replacement.light_diffuse_b = object.light_diffuse_b;
 
-		replacement.light_specular_r = 4.f;
-		replacement.light_specular_g = 5.f;
-		replacement.light_specular_b = 6.f;
-		replacement.light_spot_cutoff = 8.f;
+		replacement.light_constant = object.light_constant;
+		replacement.light_linear = object.light_linear;
+		replacement.light_quadratic = object.light_quadratic;
+
+		replacement.light_ambient_r = object.light_ambient_r;
+		replacement.light_ambient_g = object.light_ambient_g;
+		replacement.light_ambient_b = object.light_ambient_b;
+
+		replacement.light_spot_cutoff = object.light_spot_cutoff;
 
 		replacement.m_type = object.m_type;
+		replacement.enabled = object.enabled;
 	}
 
 	// Switch between type
@@ -1322,12 +1374,6 @@ SceneObject ObjectManager::GetReplacement(SceneObject object)
 		replacement.model_path = "database/data/light.cmo";
 		replacement.tex_diffuse_path = "database/data/light.dds";
 		replacement.enabled = true;
-		replacement.rotX = 0.f;
-		replacement.rotY = 1.f;
-		replacement.rotZ = 0.f;
-		replacement.ambR = 0.2f;
-		replacement.ambG = 0.2f;
-		replacement.ambB = 0.2f;
 	}
 	break;
 	case OBJECT_TYPE::CUBE:

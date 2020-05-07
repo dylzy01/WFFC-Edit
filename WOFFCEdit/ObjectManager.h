@@ -9,6 +9,12 @@
 #include "MouseManager.h"
 #include "SceneManager.h"
 
+enum class REPLACE_TYPE {
+	OBJECT,
+	TRANSFORM,
+	LIGHT
+};
+
 class ObjectManager
 {
 public:
@@ -44,6 +50,9 @@ public:
 
 	// Replace an entire object
 	static bool ReplaceObject(SceneObject newObject);
+
+	// Replace the lighting details of an object
+	static bool ReplaceLight(SceneObject newObject);
 	
 	// Setters
 	static void SetGame(Game * game) { m_game = game; }

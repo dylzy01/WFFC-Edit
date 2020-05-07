@@ -139,7 +139,7 @@ void ToolMain::Tick(MSG *msg)
 		//update Scenegraph							//done
 		//add to scenegraph							//done
 		//resend scenegraph to Direct X renderer	//done
-
+		
 	// Get updated scene graph
 	m_sceneGraph = m_d3dRenderer.GetSceneGraph();
 		
@@ -156,7 +156,7 @@ void ToolMain::Tick(MSG *msg)
 		
 	// If CTRL is pressed
 	if (m_toolInputCommands.CTRL)
-	{
+	{		
 		// If X is pressed, cut selected objects
 		if (m_toolInputCommands.X) { ObjectManager::Cut(m_selectedObjectIDs); }
 			
@@ -247,6 +247,19 @@ void ToolMain::Tick(MSG *msg)
 				{
 					// Transform selected objects
 					ObjectManager::Transform(m_objectFunction, m_constraint, m_selectedObjectIDs);
+
+					// Mouse dragging controller
+					m_mouseIsDragging = true;
+				}
+
+				// If mouse was dragging but not anymore
+				if (m_mouseIsDragging && !m_toolInputCommands.mouseDrag)
+				{					
+					// Enable request
+					m_request = true;
+
+					// Reset controller
+					m_mouseIsDragging = false;
 				}
 			}			
 		}			
@@ -274,11 +287,24 @@ void ToolMain::Tick(MSG *msg)
 			// If translating
 			if (m_objectFunction == OBJECT_FUNCTION::TRANSLATE)
 			{
-				// If mouse has been dragged
-				if (m_toolInputCommands.mouseDrag)
+				// If objects are selected and mouse has been dragged
+				if (m_selectedObjectIDs.size() != 0 && m_toolInputCommands.mouseDrag)
 				{					
 					// Transform lights
 					ObjectManager::Transform(OBJECT_FUNCTION::TRANSLATE, m_constraint, m_selectedObjectIDs);
+				
+					// Mouse dragging controller
+					m_mouseIsDragging = true;
+				}
+
+				// If mouse was dragging but not anymore
+				if (m_mouseIsDragging && !m_toolInputCommands.mouseDrag)
+				{
+					// Enable request
+					m_request = true;
+
+					// Reset controller
+					m_mouseIsDragging = false;
 				}
 			}
 
@@ -386,7 +412,7 @@ void ToolMain::UpdateInput(MSG * msg)
 
 	case WM_RBUTTONUP:
 		m_rDown = m_toolInputCommands.mouseRight = m_toolInputCommands.mouseDrag = false;				
-		m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+		///m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
 		TerrainManager::StorePosition(true);				
 		SceneManager::SetScene(&m_sceneGraph, m_d3dRenderer.GetDisplayChunk());
 		break;
@@ -442,6 +468,9 @@ void ToolMain::UpdateInput(MSG * msg)
 
 	// Z key to undo
 	m_toolInputCommands.Z = (m_keyArray['Z']);
+
+	// S key to save
+	m_toolInputCommands.S = (m_keyArray['S']);
 }
 
 bool ToolMain::GetNewSelection()

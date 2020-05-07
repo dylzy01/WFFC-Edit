@@ -18,7 +18,7 @@ DisplayObject::DisplayObject()
 
 	m_light_type =0;
 	m_light_diffuse_r = 0.0f;	m_light_diffuse_g = 0.0f;	m_light_diffuse_b = 0.0f;
-	m_light_specular_r = 0.0f;	m_light_specular_g = 0.0f;	m_light_specular_b = 0.0f;
+	m_light_ambient_r = 0.0f;	m_light_ambient_g = 0.0f;	m_light_ambient_b = 0.0f;
 	m_light_spot_cutoff = 0.0f;
 	m_light_constant = 0.0f;
 	m_light_linear = 0.0f;

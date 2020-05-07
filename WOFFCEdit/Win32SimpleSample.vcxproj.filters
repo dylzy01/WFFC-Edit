@@ -44,8 +44,11 @@
     <Filter Include="Shaders\Water">
       <UniqueIdentifier>{3fbb59d8-4e36-4ee2-b35b-c60fadf9dfb7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MFC\Dialogues\Misc">
+    <Filter Include="MFC\Dialogues\Tools">
       <UniqueIdentifier>{438ca32c-937d-4714-b6cf-4476bf7868a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MFC\Dialogues\Misc">
+      <UniqueIdentifier>{f6309931-9f41-49d8-93d1-d6bf59c2c967}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -126,36 +129,38 @@
       <Filter>Shaders\Water</Filter>
     </ClCompile>
     <ClCompile Include="LightDialogue.cpp">
-      <Filter>MFC\Dialogues\Misc</Filter>
+      <Filter>MFC\Dialogues\Tools</Filter>
     </ClCompile>
     <ClCompile Include="ToonBlendShader.cpp">
       <Filter>Shaders\Toon</Filter>
     </ClCompile>
     <ClCompile Include="TerrainDialogue.cpp">
-      <Filter>MFC\Dialogues\Misc</Filter>
+      <Filter>MFC\Dialogues\Tools</Filter>
     </ClCompile>
     <ClCompile Include="PaintDialogue.cpp">
-      <Filter>MFC\Dialogues\Misc</Filter>
+      <Filter>MFC\Dialogues\Tools</Filter>
     </ClCompile>
     <ClCompile Include="SculptDialogue.cpp">
-      <Filter>MFC\Dialogues\Misc</Filter>
+      <Filter>MFC\Dialogues\Tools</Filter>
     </ClCompile>
     <ClCompile Include="SpawnDialogue.cpp">
-      <Filter>MFC\Dialogues\Misc</Filter>
+      <Filter>MFC\Dialogues\Tools</Filter>
     </ClCompile>
     <ClCompile Include="ObjectDialogue.cpp">
-      <Filter>MFC\Dialogues\Misc</Filter>
-    </ClCompile>
-    <ClCompile Include="FocusDialogue.cpp">
-      <Filter>MFC\Dialogues</Filter>
+      <Filter>MFC\Dialogues\Tools</Filter>
     </ClCompile>
     <ClCompile Include="TerrainManager.cpp">
       <Filter>Custom\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="SaveDialogue.cpp">
-      <Filter>MFC\Dialogues</Filter>
+    <ClCompile Include="FocusDialogue.cpp">
+      <Filter>MFC\Dialogues\Misc</Filter>
     </ClCompile>
-    <ClCompile Include="LoadDialogue.cpp" />
+    <ClCompile Include="SaveDialogue.cpp">
+      <Filter>MFC\Dialogues\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadDialogue.cpp">
+      <Filter>MFC\Dialogues\Misc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -251,39 +256,41 @@
       <Filter>Shaders\Water</Filter>
     </ClInclude>
     <ClInclude Include="LightDialogue.h">
-      <Filter>MFC\Dialogues\Misc</Filter>
+      <Filter>MFC\Dialogues\Tools</Filter>
     </ClInclude>
     <ClInclude Include="ToonBlendShader.h">
       <Filter>Shaders\Toon</Filter>
     </ClInclude>
     <ClInclude Include="TerrainDialogue.h">
-      <Filter>MFC\Dialogues\Misc</Filter>
+      <Filter>MFC\Dialogues\Tools</Filter>
     </ClInclude>
     <ClInclude Include="ReadData.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
     <ClInclude Include="PaintDialogue.h">
-      <Filter>MFC\Dialogues\Misc</Filter>
+      <Filter>MFC\Dialogues\Tools</Filter>
     </ClInclude>
     <ClInclude Include="SculptDialogue.h">
-      <Filter>MFC\Dialogues\Misc</Filter>
+      <Filter>MFC\Dialogues\Tools</Filter>
     </ClInclude>
     <ClInclude Include="SpawnDialogue.h">
-      <Filter>MFC\Dialogues\Misc</Filter>
+      <Filter>MFC\Dialogues\Tools</Filter>
     </ClInclude>
     <ClInclude Include="ObjectDialogue.h">
-      <Filter>MFC\Dialogues\Misc</Filter>
-    </ClInclude>
-    <ClInclude Include="FocusDialogue.h">
-      <Filter>MFC\Dialogues</Filter>
+      <Filter>MFC\Dialogues\Tools</Filter>
     </ClInclude>
     <ClInclude Include="TerrainManager.h">
       <Filter>Custom\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="SaveDialogue.h">
-      <Filter>MFC\Dialogues</Filter>
+    <ClInclude Include="FocusDialogue.h">
+      <Filter>MFC\Dialogues\Misc</Filter>
     </ClInclude>
-    <ClInclude Include="LoadDialogue.h" />
+    <ClInclude Include="SaveDialogue.h">
+      <Filter>MFC\Dialogues\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadDialogue.h">
+      <Filter>MFC\Dialogues\Misc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

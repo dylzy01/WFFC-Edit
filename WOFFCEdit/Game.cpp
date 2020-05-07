@@ -121,6 +121,11 @@ void Game::Update(DX::StepTimer const& timer)
 {
 	// Frame time
 	m_deltaTime = timer.GetElapsedSeconds();
+
+	// Set shader parameters
+	ShaderManager::SetWorld(&m_world);
+	ShaderManager::SetView(&m_view);
+	ShaderManager::SetProjection(&m_projection);
 	
 	// Custom camera
 	UpdateCamera();
@@ -240,12 +245,7 @@ void Game::Render()
 		const XMVECTORF32 xaxis = { 512.f, 0.f, 0.f };
 		const XMVECTORF32 yaxis = { 0.f, 0.f, 512.f };
 		DrawGrid(xaxis, yaxis, g_XMZero, 512, 512, Colors::Gray);
-	}	
-
-	// Set shader parameters
-	ShaderManager::SetWorld(&m_world);
-	ShaderManager::SetView(&m_view);
-	ShaderManager::SetProjection(&m_projection);
+	}		
 
 	// Create vector of only lights
 	std::vector<DisplayObject> lights;
@@ -460,7 +460,7 @@ void Game::DrawDebug(int i)
 	m_deviceResources->PIXEndEvent();
 }
 
-std::vector<SceneObject> Game::SetupObjects(std::vector<SceneObject> sceneGraph)
+std::vector<SceneObject> Game::DefineObjects(std::vector<SceneObject> sceneGraph)
 {
 	// Loop through scene graph
 	for (int i = 0; i < sceneGraph.size(); ++i)
@@ -499,7 +499,9 @@ std::vector<SceneObject> Game::SetupObjects(std::vector<SceneObject> sceneGraph)
 		else if (sceneGraph[i].model_path == "database/data/water.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::WATER; sceneGraph[i].m_isWater = true; }
 
 		// Else, if object is light
-		else if (sceneGraph[i].model_path == "database/data/light.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::LIGHT; }
+		else if (sceneGraph[i].model_path == "database/data/light.cmo") { 
+			sceneGraph[i].m_type = OBJECT_TYPE::LIGHT;
+		}
 
 		// Else, if object is cube
 		else if (sceneGraph[i].model_path == "database/data/cube.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::CUBE; }
@@ -554,12 +556,8 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 {
 	CreateDeviceDependentResources();
 	
-	// Clear current list of lights
-	//m_lights.clear();
-	
 	// Update local scene graph
-	///m_sceneGraph = *sceneGraph;
-	m_sceneGraph = SetupObjects(*sceneGraph);
+	m_sceneGraph = DefineObjects(*sceneGraph);
 	
 	auto device = m_deviceResources->GetD3DDevice();
 	auto context = m_deviceResources->GetD3DDeviceContext();
@@ -631,15 +629,14 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 		newDisplayObject.m_light_diffuse_r = sceneGraph->at(i).light_diffuse_r;
 		newDisplayObject.m_light_diffuse_g = sceneGraph->at(i).light_diffuse_g;
 		newDisplayObject.m_light_diffuse_b = sceneGraph->at(i).light_diffuse_b;
-		newDisplayObject.m_light_specular_r = sceneGraph->at(i).light_specular_r;
-		newDisplayObject.m_light_specular_g = sceneGraph->at(i).light_specular_g;
-		newDisplayObject.m_light_specular_b = sceneGraph->at(i).light_specular_b;
+		newDisplayObject.m_light_ambient_r = sceneGraph->at(i).light_ambient_r;
+		newDisplayObject.m_light_ambient_g = sceneGraph->at(i).light_ambient_g;
+		newDisplayObject.m_light_ambient_b = sceneGraph->at(i).light_ambient_b;
 		newDisplayObject.m_light_spot_cutoff = sceneGraph->at(i).light_spot_cutoff;
 		newDisplayObject.m_light_constant = sceneGraph->at(i).light_constant;
 		newDisplayObject.m_light_linear = sceneGraph->at(i).light_linear;
 		newDisplayObject.m_light_quadratic = sceneGraph->at(i).light_quadratic;
-		newDisplayObject.SetAmbient(XMFLOAT4{ 0.2f, 0.2f, 0.2f, 1.f });
-		newDisplayObject.SetEnabled(true);
+		newDisplayObject.SetEnabled(sceneGraph->at(i).enabled);
 
 		// Set bounding box		
 		for (int j = 0; j < newDisplayObject.m_model->meshes.size(); ++j)
@@ -659,9 +656,6 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 void Game::RebuildDisplayList(std::vector<SceneObject>* sceneGraph)
 {
 	CreateDeviceDependentResources();
-
-	// Clear current list of lights
-	//m_lights.clear();
 
 	// Update local scene graph
 	m_sceneGraph = *sceneGraph;
@@ -736,14 +730,13 @@ void Game::RebuildDisplayList(std::vector<SceneObject>* sceneGraph)
 		newDisplayObject.m_light_diffuse_r = sceneGraph->at(i).light_diffuse_r;
 		newDisplayObject.m_light_diffuse_g = sceneGraph->at(i).light_diffuse_g;
 		newDisplayObject.m_light_diffuse_b = sceneGraph->at(i).light_diffuse_b;
-		newDisplayObject.m_light_specular_r = sceneGraph->at(i).light_specular_r;
-		newDisplayObject.m_light_specular_g = sceneGraph->at(i).light_specular_g;
-		newDisplayObject.m_light_specular_b = sceneGraph->at(i).light_specular_b;
+		newDisplayObject.m_light_ambient_r = sceneGraph->at(i).light_ambient_r;
+		newDisplayObject.m_light_ambient_g = sceneGraph->at(i).light_ambient_g;
+		newDisplayObject.m_light_ambient_b = sceneGraph->at(i).light_ambient_b;
 		newDisplayObject.m_light_spot_cutoff = sceneGraph->at(i).light_spot_cutoff;
 		newDisplayObject.m_light_constant = sceneGraph->at(i).light_constant;
 		newDisplayObject.m_light_linear = sceneGraph->at(i).light_linear;
 		newDisplayObject.m_light_quadratic = sceneGraph->at(i).light_quadratic;
-		newDisplayObject.SetAmbient(XMFLOAT4{ sceneGraph->at(i).ambR, sceneGraph->at(i).ambG, sceneGraph->at(i).ambB, 1.f });
 		newDisplayObject.SetEnabled(sceneGraph->at(i).enabled);
 
 		// Set bounding box		
@@ -768,7 +761,6 @@ void Game::BuildDisplayChunk(ChunkObject * SceneChunk, std::vector<DirectX::Simp
 	m_displayChunk.PopulateChunkData(SceneChunk);		//migrate chunk data
 	m_displayChunk.LoadHeightMap(m_deviceResources);
 	m_displayChunk.m_effect->SetProjection(m_projection);
-	///m_displayChunk.m_effectBlend->SetProjection(m_projection);
 	m_displayChunk.InitialiseBatch();
 }
 
@@ -857,24 +849,6 @@ void Game::SetTransform(int index, OBJECT_FUNCTION function, DirectX::SimpleMath
 	m_displayList[index].m_model->meshes[0]->boundingBox.Center = m_displayList[index].m_position;
 
 	SaveDisplayList();
-}
-
-void Game::SetLights(std::vector<DisplayObject> lights)
-{
-	// Loop through display list
-	for (int i = 0; i < m_displayList.size(); ++i)
-	{
-		// Loop through lights
-		for (int j = 0; j < lights.size(); ++j)
-		{
-			// If object ID matches light ID
-			if (m_displayList[i].m_ID == lights[j].m_ID)
-			{
-				// Update object to match light
-				m_displayList[i] = lights[j];
-			}
-		}		
-	}
 }
 
 void Game::SetFocus(int ID)

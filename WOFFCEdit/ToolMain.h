@@ -43,12 +43,18 @@ public: //methods
 	TERRAIN_PAINT GetTerrainPaint() { return m_paint; }
 	TERRAIN_SCULPT GetTerrainFunction() { return m_terrainFunction; }
 	CONSTRAINT GetConstraint() { return m_constraint; }
-	std::vector<DisplayObject> GetLights() { return m_d3dRenderer.GetLights(); }
 	std::vector<DisplayObject> GetDisplayList() { return m_d3dRenderer.GetDisplayList(); }
 	DisplayChunk* GetDisplayChunk() { return m_d3dRenderer.GetDisplayChunk(); }
 	std::vector<SceneObject> GetSceneGraph() { return m_d3dRenderer.GetSceneGraph(); }
 	InputCommands* GetInput() { return &m_toolInputCommands; }
 	bool GetNewSelection();
+	bool GetRequest() {
+		if (m_request) {
+			m_request = false;
+			return true;
+		}
+		else { return false; }
+	}
 
 	// Setters
 	void SetWireframe(bool wireframe) { m_d3dRenderer.SetWireframe(wireframe); }
@@ -120,7 +126,6 @@ public: //methods
 	void SetTerrainPaint(TERRAIN_PAINT paint) { m_paint = paint; }
 	void SetTerrainSculpt(TERRAIN_SCULPT function) { m_terrainFunction = function; }
 	void SetTerrainConstraint(CONSTRAINT constraint) { m_constraint = constraint; }
-	void SetLights(std::vector<DisplayObject> lights) { m_d3dRenderer.SetLights(lights); }
 	void SetSceneObject(SceneObject object, int index) { m_d3dRenderer.SetSceneObject(object, index); }
 	void SetSelectedObjectID(int ID) 
 	{ 
@@ -171,5 +176,6 @@ private:	//variables
 	bool m_lDown = false, m_rDown = false;
 	bool m_doOnce = false;
 	bool m_newSelection = false;
+	bool m_request = false, m_mouseIsDragging = false;
 	int m_counter = 0;
 };

@@ -181,14 +181,11 @@ void MFCMain::UpdateLoad()
 
 void MFCMain::UpdateLights()
 {
-	// If dialogue needs updated data
-	if (m_lightDialogue.GetRequest())
+	// If dialogue needs updated data or the mouse has been dragged
+	if (m_lightDialogue.GetRequest())/// || m_toolSystem.GetRequest())
 	{
 		// Send updated data
 		m_lightDialogue.SetLightData(&m_toolSystem.GetSceneGraph(), m_toolSystem.GetSelectedIDs());
-
-		// Reset controller
-		m_lightDialogue.SetRequest(false);
 	}
 	
 	// If ToolMain selected objects should be updated
@@ -227,13 +224,6 @@ void MFCMain::UpdateLights()
 		m_toolSystem.SetFocus(focusID);
 	}
 	else { m_toolSystem.SetFocus(-1); }
-
-	// If constraint isn't up-to-date
-	if (m_toolSystem.GetConstraint() != m_lightDialogue.GetConstraint())
-	{
-		// Set constraint
-		m_toolSystem.SetObjectConstraint(m_lightDialogue.GetConstraint());
-	}
 	
 	// If light function isn't up-to-date
 	if (m_toolSystem.GetObjectFunction() != m_lightDialogue.GetFunction())
@@ -249,57 +239,9 @@ void MFCMain::UpdateLights()
 		m_toolSystem.SetObjectConstraint(m_lightDialogue.GetConstraint());
 	}
 	
-	// Set tool editor mode
-	//m_toolSystem.SetEditor(EDITOR::LIGHTS);
-	//
-	//// If ToolMain selected objects (lights) should be updated
-	//if (m_lightDialogue.GetSelect()) { m_toolSystem.SetSelectedObjectIDs(m_lightDialogue.GetSelectedLightIDs()); }
-	//// Else, update dialogue selected objects (lights)
-	//else { m_lightDialogue.SetSelectedLightIDs(m_toolSystem.GetSelectedObjectIDs()); }
-	//
-	//// If there's been a new selection
-	//if (m_toolSystem.GetNewSelection())
-	//{
-	//	// Update dialogue entries to match selected light
-	//	m_lightDialogue.Update();
-	//}
-	//
-	//// If dialogue is requesting display list
-	//if (m_lightDialogue.GetRequest())
-	//{
-	//	// Update display list
-	//	m_lightDialogue.SetLightData(&m_toolSystem.GetDisplayList());
+	/////////////////////////////////////////////////////////////////////////////////////
 
-	//	// Reset controller
-	//	m_lightDialogue.SetRequest(false);
-	//}
-
-	//// If should focus on a light
-	//if (m_lightDialogue.GetFocus())
-	//{
-	//	// Setup temp focus ID
-	//	int focusID = -1;
-
-	//	// If more than one object is selected
-	//	if (m_lightDialogue.GetSelectedLightIDs().size() > 1)
-	//	{
-	//		// Define object ID to focus on
-	//		focusID = m_lightDialogue.GetFocusDialogue()->GetSelectedIndex();
-	//	}
-
-	//	// Else, if just one object is selected
-	//	else if (m_lightDialogue.GetSelectedLightIDs().size() == 1)
-	//	{
-	//		// Define object ID to focus on
-	//		focusID = m_lightDialogue.GetSelectedLightIDs()[0];
-	//	}
-
-	//	// Setup object ID to focus on
-	//	m_toolSystem.SetFocus(focusID);
-	//}
-	//else { m_toolSystem.SetFocus(-1); }	
-
-	//// If scene graph should be updated
+	// If scene graph should be updated
 	//if (m_lightDialogue.GetUpdate())
 	//{
 	//	// Get edited lights
@@ -350,76 +292,15 @@ void MFCMain::UpdateLights()
 	//	// Reset update controller
 	//	m_lightDialogue.SetUpdate(false);
 	//}
-	//
-	//// If light is being deleted
-	//if (m_lightDialogue.GetDelete())
-	//{
-	//	// Remove objects from database storage
-	//	ObjectManager::Remove(m_lightDialogue.GetSelectedLightIDs());
-
-	//	// Reset controller 
-	//	m_lightDialogue.SetDelete(false);
-	//}
-
-	//// Else, if light is being duplicated
-	//else if (m_lightDialogue.GetDuplicate())
-	//{
-	//	// Copy objects
-	//	ObjectManager::Copy(m_lightDialogue.GetSelectedLightIDs());
-
-	//	// Paste objects
-	//	ObjectManager::Paste();
-
-	//	// Reset controller
-	//	m_lightDialogue.SetDuplicate(false);
-	//}
-	//
-	//// Else, if light is being translated
-	//else if (m_lightDialogue.GetTranslating())
-	//{
-	//	// Set transform mode
-	//	m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::TRANSLATE);
-
-	//	// Set constraint
-	//	m_toolSystem.SetObjectConstraint(m_lightDialogue.GetConstraint());
-
-	//	// Loop through lights
-	//	for (int i = 0; i < m_lightDialogue.GetLights().size(); ++i)
-	//	{
-	//		// Loop through selection
-	//		for (int j = 0; j < m_lightDialogue.GetSelectedLightIDs().size(); ++j)
-	//		{
-	//			// If light matches currently selected
-	//			if (m_lightDialogue.GetLights()[i].m_ID == m_lightDialogue.GetSelectedLightIDs()[j])
-	//			{
-	//				// Update position
-	//				m_lightDialogue.UpdateLightPosition(m_toolSystem.GetLights()[i].GetPosition());
-	//			}
-	//		}
-	//	}
-	//}
-
-	//// Else, must be selecting lights
-	//else
-	//{
-	//	// Set transform mode
-	//	m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::SELECT);
-
-	//	// Set constraint
-	//	m_toolSystem.SetObjectConstraint(m_lightDialogue.GetConstraint());
-	//}	
 }
 
 void MFCMain::UpdateObjects()
 {		
 	// If dialogue needs updated data
-	if (m_objectDialogue.GetRequest()) 
+	if (m_objectDialogue.GetRequest())/// || m_toolSystem.GetRequest())
 	{
 		// Send updated data
 		m_objectDialogue.SetObjectData(&m_toolSystem.GetSceneGraph(), m_toolSystem.GetSelectedIDs());
-		
-		// Reset controller
-		m_objectDialogue.SetRequest(false);
 	}
 	
 	// If ToolMain selected objects should be updated

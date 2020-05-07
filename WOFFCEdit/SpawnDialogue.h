@@ -23,12 +23,10 @@ public:
 
 	// Getters
 	bool GetActive() { return m_active; }
-	bool GetUpdate() { return m_update; }
 	OBJECT_TYPE GetSpawnType() { return m_spawner; }
 
 	// Setters
 	void SetActive(bool active) { m_active = active; }
-	void SetUpdate(bool update) { m_update = update; }
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -42,7 +40,6 @@ protected:
 														
 	// Controllers
 	bool m_active;
-	bool m_update;
 	OBJECT_TYPE m_spawner;
 
 	DECLARE_MESSAGE_MAP()

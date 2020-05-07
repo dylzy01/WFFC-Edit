@@ -13,7 +13,9 @@ IMPLEMENT_DYNAMIC(LightDialogue, CDialogEx)
 LightDialogue::LightDialogue(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG8, pParent)
 {
-	
+	// Update tool controllers
+	m_function = OBJECT_FUNCTION::SELECT;
+	m_constraint = CONSTRAINT::NA;
 }
 
 void LightDialogue::SetLightData(std::vector<DisplayObject>* displayList)
@@ -74,10 +76,8 @@ void LightDialogue::SetLightData(std::vector<SceneObject>* sceneGraph, std::vect
 	// Setup light types
 	{
 		std::wstring typeBoxEntry;
-		typeBoxEntry = L"";			m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Directional";	m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Point";		m_boxType.AddString(typeBoxEntry.c_str());
-		typeBoxEntry = L"Spot";			m_boxType.AddString(typeBoxEntry.c_str());
 	}
 
 	// Setup constraint types
@@ -92,9 +92,6 @@ void LightDialogue::SetLightData(std::vector<SceneObject>* sceneGraph, std::vect
 		constBoxEntry = L"YZ";			m_boxConst.AddString(constBoxEntry.c_str());
 	}
 
-	// Update tool controllers
-	m_function = OBJECT_FUNCTION::SELECT;
-	m_constraint = CONSTRAINT::NA;
 	Update();
 }
 
@@ -102,7 +99,9 @@ void LightDialogue::Update(int ID)
 {
 	// If ID is valid
 	if (ID != -1) { m_boxID.SetCurSel(ID); }
-	else if (m_selectedIDs.size() == 1) { m_boxID.SetCurSel(0); }
+	else { m_internal = true; }
+
+	if (m_selectedIDs.size() == 1) { m_boxID.SetCurSel(0); }
 	UpdateType();
 	UpdateEnabled();
 	UpdatePosition();
@@ -112,6 +111,8 @@ void LightDialogue::Update(int ID)
 	UpdateConstA();
 	UpdateLinA();
 	UpdateQuadA();
+
+	m_internal = false;
 }
 
 void LightDialogue::UpdateLightPosition(DirectX::XMFLOAT3 position)
@@ -190,28 +191,37 @@ BEGIN_MESSAGE_MAP(LightDialogue, CDialogEx)
 	ON_COMMAND(IDOK, &LightDialogue::End)
 	ON_COMMAND(IDCANCEL, &LightDialogue::End)
 	ON_BN_CLICKED(IDOK, &LightDialogue::OnBnClickedOk)
+
 	ON_CBN_SELCHANGE(IDC_LIST1, &LightDialogue::OnCbnSelchangeID)
 	ON_CBN_SELCHANGE(IDC_COMBO2, &LightDialogue::OnCbnSelchangeType)
+
 	ON_BN_CLICKED(IDC_CHECK1, &LightDialogue::OnBnClickedEnable)
 	ON_BN_CLICKED(IDC_CHECK4, &LightDialogue::OnBnClickedFocus)
+
 	ON_EN_CHANGE(IDC_EDIT1, &LightDialogue::OnEnChangePosX)
 	ON_EN_CHANGE(IDC_EDIT2, &LightDialogue::OnEnChangePosY)
 	ON_EN_CHANGE(IDC_EDIT3, &LightDialogue::OnEnChangePosZ)
+
 	ON_EN_CHANGE(IDC_EDIT4, &LightDialogue::OnEnChangeDirX)
 	ON_EN_CHANGE(IDC_EDIT5, &LightDialogue::OnEnChangeDirY)
 	ON_EN_CHANGE(IDC_EDIT6, &LightDialogue::OnEnChangeDirZ)
+
 	ON_EN_CHANGE(IDC_EDIT7, &LightDialogue::OnEnChangeDifR)
 	ON_EN_CHANGE(IDC_EDIT8, &LightDialogue::OnEnChangeDifG)
 	ON_EN_CHANGE(IDC_EDIT9, &LightDialogue::OnEnChangeDifB)
+
 	ON_EN_CHANGE(IDC_EDIT10, &LightDialogue::OnEnChangeAmbR)
 	ON_EN_CHANGE(IDC_EDIT11, &LightDialogue::OnEnChangeAmbG)
 	ON_EN_CHANGE(IDC_EDIT12, &LightDialogue::OnEnChangeAmbB)
+
 	ON_EN_CHANGE(IDC_EDIT13, &LightDialogue::OnEnChangeConstA)
 	ON_EN_CHANGE(IDC_EDIT14, &LightDialogue::OnEnChangeLinA)
 	ON_EN_CHANGE(IDC_EDIT15, &LightDialogue::OnEnChangeQuadA)
+
 	ON_BN_CLICKED(IDC_BUTTON1, &LightDialogue::OnBnClickedDelete)
 	ON_BN_CLICKED(IDC_BUTTON2, &LightDialogue::OnBnClickedDuplicate)
 	ON_BN_CLICKED(IDC_CHECK2, &LightDialogue::OnBnClickedTranslate)
+
 	ON_BN_CLICKED(IDC_CHECK23, &LightDialogue::OnBnClickedX)
 	ON_BN_CLICKED(IDC_CHECK24, &LightDialogue::OnBnClickedY)
 	ON_BN_CLICKED(IDC_CHECK25, &LightDialogue::OnBnClickedZ)
@@ -258,7 +268,10 @@ void LightDialogue::OnCbnSelchangeID()
 	}
 
 	// If selection doesn't exist, add to selection
-	if (!exists) { m_selectedIDs.push_back(_ttoi(current)); }
+	if (!exists) { 
+		m_selectedIDs.push_back(_ttoi(current));
+		m_select = true;
+	}
 	
 	// Update light type box
 	UpdateType();
@@ -280,9 +293,6 @@ void LightDialogue::OnCbnSelchangeID()
 
 	// Update attenuation boxes
 	UpdateConstA(); UpdateLinA(); UpdateQuadA();
-
-	// Tell MFC/ToolMain to update scene graph & selected objects
-	m_update = m_select = true;
 }
 
 // Type has been changed
@@ -351,9 +361,6 @@ void LightDialogue::OnBnClickedEnable()
 						break;
 					}
 				}
-
-				// Tell MFC/ToolMain to update scene graph
-				m_update = true;
 			}
 		}
 	}
@@ -421,9 +428,6 @@ void LightDialogue::OnEnChangePosX()
 						break;
 					}
 				}
-
-				// Tell MFC/ToolMain to update scene graph
-				m_update = true;
 			}
 		}
 	}
@@ -470,9 +474,6 @@ void LightDialogue::OnEnChangePosY()
 						break;
 					}
 				}
-
-				// Tell MFC/ToolMain to update scene graph
-				m_update = true;
 			}
 		}
 	}
@@ -519,9 +520,6 @@ void LightDialogue::OnEnChangePosZ()
 						break;
 					}
 				}
-
-				// Tell MFC/ToolMain to update scene graph
-				m_update = true;
 			}
 		}
 	}
@@ -568,9 +566,6 @@ void LightDialogue::OnEnChangeDirX()
 						break;
 					}
 				}
-
-				// Tell MFC/ToolMain to update scene graph
-				m_update = true;
 			}
 		}
 	}
@@ -617,9 +612,6 @@ void LightDialogue::OnEnChangeDirY()
 						break;
 					}
 				}
-
-				// Tell MFC/ToolMain to update scene graph
-				m_update = true;
 			}
 		}
 	}
@@ -666,9 +658,6 @@ void LightDialogue::OnEnChangeDirZ()
 						break;
 					}
 				}
-
-				// Tell MFC/ToolMain to update scene graph
-				m_update = true;
 			}
 		}
 	}
@@ -715,9 +704,6 @@ void LightDialogue::OnEnChangeDifR()
 						break;
 					}
 				}
-
-				// Tell MFC/ToolMain to update scene graph
-				m_update = true;
 			}
 		}
 	}
@@ -746,7 +732,7 @@ void LightDialogue::OnEnChangeDifG()
 					{
 						// Store new G diffuse
 						CString string = _T("");
-						m_eDifR.GetWindowTextW(string);
+						m_eDifG.GetWindowTextW(string);
 
 						// Convert to float
 						float difG;
@@ -764,9 +750,6 @@ void LightDialogue::OnEnChangeDifG()
 						break;
 					}
 				}
-
-				// Tell MFC/ToolMain to update scene graph
-				m_update = true;
 			}
 		}
 	}
@@ -775,14 +758,11 @@ void LightDialogue::OnEnChangeDifG()
 // B diffuse has been changed
 void LightDialogue::OnEnChangeDifB()
 {
-	// Store ID selection
-	int ID = m_boxID.GetCurSel();
-
 	// If function has been called by user
 	if (!m_internal)
 	{
 		// If ID is valid
-		if (ID >= 0)
+		if (m_boxID.GetCurSel() >= 0)
 		{
 			// Loop through selected IDs
 			for (int i = 0; i < m_selectedIDs.size(); ++i)
@@ -795,7 +775,7 @@ void LightDialogue::OnEnChangeDifB()
 					{
 						// Store new B diffuse
 						CString string = _T("");
-						m_eDifR.GetWindowTextW(string);
+						m_eDifB.GetWindowTextW(string);
 
 						// Convert to float
 						float difB;
@@ -813,9 +793,6 @@ void LightDialogue::OnEnChangeDifB()
 						break;
 					}
 				}
-
-				// Tell MFC/ToolMain to update scene graph
-				m_update = true;
 			}
 		}
 	}
@@ -844,33 +821,24 @@ void LightDialogue::OnEnChangeAmbR()
 					{
 						// Store new R ambient
 						CString string = _T("");
-						m_eDifR.GetWindowText(string);
+						m_eAmbR.GetWindowText(string);
 
 						// Convert to float
 						float ambR;
 						if (!string.IsEmpty()) { ambR = _ttof(string); }
-						else { ambR = m_lights->at(j).ambR; }
-						/*if (ambR >= 4.f) { ambR /= 50.f; }
-						else if (ambR >= 3.f) { ambR /= 40.f; }
-						else if (ambR >= 2.f) { ambR /= 30.f; }
-						else if (ambR >= 1.f) { ambR /= 20.f; }
-						else if (ambR >= 0.f) { ambR /= 10.f; }*/
-						ambR /= 10.f;
+						else { ambR = m_lights->at(j).light_ambient_r; }
 
 						// If ambient is different from current ambient
-						if (m_lights->at(j).ambR != ambR)
+						if (m_lights->at(j).light_ambient_r != ambR)
 						{
 							// Update R ambient of light
-							m_lights->at(j).ambR = ambR;
+							m_lights->at(j).light_ambient_r = ambR;
 							UpdateLight(m_lights->at(j));
 						}
 
 						break;
 					}
 				}
-
-				// Tell MFC/ToolMain to update scene graph
-				m_update = true;
 			}
 		}
 	}
@@ -881,11 +849,11 @@ void LightDialogue::OnEnChangeAmbG()
 {
 	// Store ID selection
 	int ID = m_boxID.GetCurSel();
-
 	
 	// If function has been called by user
 	if (!m_internal)
-	{// If ID is valid
+	{
+		// If ID is valid
 		if (ID >= 0)
 		{
 			// Loop through selected IDs
@@ -899,33 +867,24 @@ void LightDialogue::OnEnChangeAmbG()
 					{
 						// Store new G ambient
 						CString string = _T("");
-						m_eDifR.GetWindowText(string);
+						m_eAmbG.GetWindowText(string);
 
 						// Convert to float
 						float ambG;
 						if (!string.IsEmpty()) { ambG = _ttof(string); }
-						else { ambG = m_lights->at(j).ambG; }
-						/*if (ambG >= 4.f) { ambG /= 50.f; }
-						else if (ambG >= 3.f) { ambG /= 40.f; }
-						else if (ambG >= 2.f) { ambG /= 30.f; }
-						else if (ambG >= 1.f) { ambG /= 20.f; }
-						else if (ambG >= 0.f) { ambG /= 10.f; }*/
-						ambG /= 10.f;
+						else { ambG = m_lights->at(j).light_ambient_g; }						
 
 						// If ambient is different from current ambient
-						if (m_lights->at(j).ambG != ambG)
+						if (m_lights->at(j).light_ambient_g != ambG)
 						{
 							// Update G ambient of light
-							m_lights->at(j).ambG = ambG;
+							m_lights->at(j).light_ambient_g = ambG;
 							UpdateLight(m_lights->at(j));
 						}
 
 						break;
 					}
 				}
-
-				// Tell MFC/ToolMain to update scene graph
-				m_update = true;
 			}
 		}
 	}
@@ -954,33 +913,24 @@ void LightDialogue::OnEnChangeAmbB()
 					{
 						// Store new B ambient
 						CString string = _T("");
-						m_eDifR.GetWindowText(string);
+						m_eAmbB.GetWindowText(string);
 
 						// Convert to float
 						float ambB;
 						if (!string.IsEmpty()) { ambB = _ttof(string); }
-						else { ambB = m_lights->at(j).ambB; }
-						/*if (ambB >= 4.f) { ambB /= 50.f; }
-						else if (ambB >= 3.f) { ambB /= 40.f; }
-						else if (ambB >= 2.f) { ambB /= 30.f; }
-						else if (ambB >= 1.f) { ambB /= 20.f; }
-						else if (ambB >= 0.f) { ambB /= 10.f; }*/
-						ambB /= 10.f;
+						else { ambB = m_lights->at(j).light_ambient_b; }						
 
 						// If ambient is different from current ambient
-						if (m_lights->at(j).ambB != ambB)
+						if (m_lights->at(j).light_ambient_b != ambB)
 						{
 							// Update B ambient of light
-							m_lights->at(j).ambB = ambB;
+							m_lights->at(j).light_ambient_b = ambB;
 							UpdateLight(m_lights->at(j));
 						}
 
 						break;
 					}
 				}
-
-				// Tell MFC/ToolMain to update scene graph
-				m_update = true;
 			}
 		}
 	}
@@ -1027,9 +977,6 @@ void LightDialogue::OnEnChangeConstA()
 						break;
 					}
 				}
-
-				// Tell MFC/ToolMain to update scene graph
-				m_update = true;
 			}
 		}
 	}
@@ -1077,9 +1024,6 @@ void LightDialogue::OnEnChangeLinA()
 						break;
 					}
 				}
-
-				// Tell MFC/ToolMain to update scene graph
-				m_update = true;
 			}
 		}
 	}
@@ -1127,9 +1071,6 @@ void LightDialogue::OnEnChangeQuadA()
 						break;
 					}
 				}
-
-				// Tell MFC/ToolMain to update scene graph
-				m_update = true;
 			}
 		}
 	}
@@ -1455,7 +1396,7 @@ void LightDialogue::UpdateAmbient()
 			if (m_lights->at(i).ID == m_selectedIDs[0])
 			{
 				// Store current ambient
-				XMFLOAT3 ambient = { m_lights->at(i).ambR, m_lights->at(i).ambG, m_lights->at(i).ambB };
+				XMFLOAT3 ambient = { m_lights->at(i).light_ambient_r, m_lights->at(i).light_ambient_g, m_lights->at(i).light_ambient_b };
 
 				// Update R ambient box
 				CString sR; sR.Format(L"%g", ambient.x);
@@ -1624,14 +1565,20 @@ void LightDialogue::Reset()
 	m_active = m_translating = m_x = m_y = m_z =
 		m_select = m_resetLights = m_lightSetup = false;
 
-	m_function = OBJECT_FUNCTION::NA;
+	m_function = OBJECT_FUNCTION::SELECT;
 	m_constraint = CONSTRAINT::NA;
+	
+	CheckDlgButton(IDC_CHECK2, false);
+	CheckDlgButton(IDC_CHECK23, false);
+	CheckDlgButton(IDC_CHECK24, false);
+	CheckDlgButton(IDC_CHECK25, false);
 }
 
 void LightDialogue::UpdateLight(SceneObject object)
 {
 	// Replace object through database
-	ObjectManager::ReplaceObject(object);
+	///ObjectManager::ReplaceObject(object);
+	ObjectManager::ReplaceLight(object);
 }
 
 void LightDialogue::SetupLights()
