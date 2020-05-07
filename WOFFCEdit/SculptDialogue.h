@@ -75,4 +75,7 @@ private:
 	void Update();
 	void UpdateSelectedSculpt(int sculpt);
 	void UpdateSelectedConstraint();
+
+	// Reset all variables
+	void Reset();
 };

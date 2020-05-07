@@ -99,6 +99,7 @@ void SculptDialogue::SetupCheckBoxes()
 
 BEGIN_MESSAGE_MAP(SculptDialogue, CDialogEx)
 	ON_COMMAND(IDOK, &SculptDialogue::End)
+	ON_COMMAND(IDCANCEL, &SculptDialogue::End)
 	ON_BN_CLICKED(IDOK, &SculptDialogue::OnBnClickedOk)
 	ON_CBN_SELCHANGE(IDC_COMBO3, &SculptDialogue::OnBnSelchangeSculpt)
 	ON_CBN_SELCHANGE(IDC_COMBO4, &SculptDialogue::OnBnSelchangeConstraint)
@@ -118,7 +119,8 @@ END_MESSAGE_MAP()
 // Kill the dialogue
 void SculptDialogue::End()
 {
-	DestroyWindow();
+	Reset();
+	ShowWindow(SW_HIDE);
 }
 
 // User is finished with dialogue
@@ -409,4 +411,11 @@ void SculptDialogue::UpdateSelectedConstraint()
 
 	// Update constraint box
 	m_boxConst.SetCurSel((int)m_constraint);
+}
+
+// Reset all variables
+void SculptDialogue::Reset()
+{
+	m_active = m_x = m_y = m_z = false;
+	m_scale = 1.f;
 }

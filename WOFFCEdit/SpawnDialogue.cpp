@@ -54,6 +54,7 @@ void SpawnDialogue::SetupCheckBoxes()
 
 BEGIN_MESSAGE_MAP(SpawnDialogue, CDialogEx)
 	ON_COMMAND(IDOK, &SpawnDialogue::End)
+	ON_COMMAND(IDCANCEL, &SpawnDialogue::End)
 	ON_BN_CLICKED(IDOK, &SpawnDialogue::OnBnClickedOk)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &SpawnDialogue::OnCbnSelchangeType)
 	ON_BN_CLICKED(IDC_CHECK26, &SpawnDialogue::OnBnClickedHouseOne)
@@ -78,8 +79,8 @@ END_MESSAGE_MAP()
 // Kill the dialogue
 void SpawnDialogue::End()
 {
-	m_active = false;
-	DestroyWindow();
+	Reset();
+	ShowWindow(SW_HIDE);
 }
 
 // User is finished with dialogue
@@ -1150,4 +1151,10 @@ void SpawnDialogue::Uncheck()
 	}
 	break;
 	}
+}
+
+void SpawnDialogue::Reset()
+{
+	m_active = m_update = false;
+	m_spawner = OBJECT_TYPE::NA;
 }

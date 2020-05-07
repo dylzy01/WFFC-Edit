@@ -220,8 +220,7 @@ END_MESSAGE_MAP()
 // Kill the dialogue
 void LightDialogue::End()
 {
-	m_active = false;
-	///DestroyWindow();
+	Reset();
 	ShowWindow(SW_HIDE);
 }
 
@@ -1623,8 +1622,9 @@ void LightDialogue::UpdateSelectedConstraint()
 void LightDialogue::Reset()
 {
 	m_active = m_translating = m_x = m_y = m_z =
-		m_select = m_resetLights = false;
+		m_select = m_resetLights = m_lightSetup = false;
 
+	m_function = OBJECT_FUNCTION::NA;
 	m_constraint = CONSTRAINT::NA;
 }
 

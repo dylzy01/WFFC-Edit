@@ -144,6 +144,7 @@ void TerrainDialogue::SetupCheckBoxes()
 
 BEGIN_MESSAGE_MAP(TerrainDialogue, CDialogEx)
 	ON_COMMAND(IDOK, &TerrainDialogue::End)
+	ON_COMMAND(IDCANCEL, &TerrainDialogue::End)
 	ON_BN_CLICKED(IDOK, &TerrainDialogue::OnBnClickedOk)
 	ON_CBN_SELCHANGE(IDC_COMBO3, &TerrainDialogue::OnBnSelchangeIndex)
 	ON_CBN_SELCHANGE(IDC_COMBO4, &TerrainDialogue::OnBnSelchangeIndex)
@@ -165,8 +166,8 @@ END_MESSAGE_MAP()
 // Kill the dialogue
 void TerrainDialogue::End()
 {
-	m_active = false;
-	DestroyWindow();
+	Reset();
+	ShowWindow(SW_HIDE);
 }
 
 // User is finished with dialogue
@@ -507,4 +508,10 @@ void TerrainDialogue::UpdateSelectedConstraint()
 
 	// Update constraint box
 	m_boxConst.SetCurSel((int)m_constraint);
+}
+
+void TerrainDialogue::Reset()
+{
+	m_active = m_sculpting = m_x = m_y = m_z = false;
+	m_scale = 1.f;
 }

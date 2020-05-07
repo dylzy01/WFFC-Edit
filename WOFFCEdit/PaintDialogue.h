@@ -70,4 +70,7 @@ private:
 
 	// Update dialogue details
 	void Update(int paint);
+
+	// Reset all variables
+	void Reset();
 };

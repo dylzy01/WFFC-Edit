@@ -75,4 +75,7 @@ private:
 
 	// Uncheck other spawn buttons
 	void Uncheck();
+
+	// Reset all variables
+	void Reset();
 };
