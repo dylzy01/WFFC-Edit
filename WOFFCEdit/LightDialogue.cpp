@@ -135,6 +135,7 @@ void LightDialogue::SetupCheckBoxes()
 
 BEGIN_MESSAGE_MAP(LightDialogue, CDialogEx)
 	ON_COMMAND(IDOK, &LightDialogue::End)
+	ON_COMMAND(IDCANCEL, &LightDialogue::End)
 	ON_BN_CLICKED(IDOK, &LightDialogue::OnBnClickedOk)
 	ON_CBN_SELCHANGE(IDC_LIST1, &LightDialogue::OnCbnSelchangeID)
 	ON_CBN_SELCHANGE(IDC_COMBO2, &LightDialogue::OnCbnSelchangeType)
@@ -167,7 +168,8 @@ END_MESSAGE_MAP()
 void LightDialogue::End()
 {
 	m_active = false;
-	DestroyWindow();
+	///DestroyWindow();
+	ShowWindow(SW_HIDE);
 }
 
 // User is finished with dialogue
@@ -318,7 +320,7 @@ void LightDialogue::OnBnClickedFocus()
 			m_focusDialogue.Create(IDD_DIALOG2);
 			m_focusDialogue.ShowWindow(SW_SHOW);
 			m_focusDialogue.SetActive(true);
-			m_focusDialogue.SetSelectData(&m_selectedLightIDs);
+			m_focusDialogue.SetFocusData(&m_selectedLightIDs);
 		}
 	}	
 }
@@ -1476,6 +1478,14 @@ void LightDialogue::UpdateSelectedConstraint()
 
 	// Update constraint box
 	m_boxConst.SetCurSel((int)m_constraint);
+}
+
+void LightDialogue::Reset()
+{
+	m_active = m_translating = m_x = m_y = m_z =
+		m_select = m_resetLights = false;
+
+	m_constraint = CONSTRAINT::NA;
 }
 
 void LightDialogue::SetupLights()

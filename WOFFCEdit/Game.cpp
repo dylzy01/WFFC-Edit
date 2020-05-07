@@ -855,6 +855,8 @@ void Game::SetTransform(int index, OBJECT_FUNCTION function, DirectX::SimpleMath
 
 	// Update object bounding box translation
 	m_displayList[index].m_model->meshes[0]->boundingBox.Center = m_displayList[index].m_position;
+
+	SaveDisplayList();
 }
 
 void Game::SetLights(std::vector<DisplayObject> lights)

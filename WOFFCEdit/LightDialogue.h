@@ -147,6 +147,9 @@ private:
 	void UpdateLinA();
 	void UpdateQuadA();
 	void UpdateSelectedConstraint();
+	
+	// Reset all variables
+	void Reset();
 
 private:
 	// Getters

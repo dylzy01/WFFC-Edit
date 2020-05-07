@@ -16,35 +16,34 @@ public:
 	~ObjectManager() {}
 
 	// Spawn an object at a location & add to database
-	static bool SpawnObject(OBJECT_TYPE objectType, DirectX::SimpleMath::Vector3 position,
-		std::vector<SceneObject> & sceneGraph, 
+	static bool SpawnObject(OBJECT_TYPE objectType, DirectX::SimpleMath::Vector3 position, 
 		int lightType = NULL, XMFLOAT3 diffuse = { NULL, NULL, NULL }, float constA = NULL, float linA = NULL, float quadA = NULL);
 
 	// Remove an object from scene graph & database
-	static void Remove(std::vector<int> & IDs, std::vector<SceneObject> & sceneGraph, int ID = -1);
+	static void Remove(std::vector<int> & IDs, int ID = -1);
 
 	// Temporarily store details of all selected objects
 	static void Store(std::vector<int> IDs);
 
 	// Transform selected objects
 	static void Transform(OBJECT_FUNCTION function, CONSTRAINT constraint,
-		std::vector<int> IDs, std::vector<SceneObject> & sceneGraph);
+		std::vector<int> IDs);
 
 	// Copy details of selected objects & remove from database
-	static void Cut(std::vector<int> & IDs, std::vector<SceneObject> & sceneGraph);
+	static void Cut(std::vector<int> & IDs);
 
 	// Copy details of selected objects
-	static void Copy(std::vector<int> IDs, std::vector<SceneObject> sceneGraph);
+	static void Copy(std::vector<int> IDs);
 
 	// Create new objects from copied
-	static void Paste(std::vector<SceneObject> & sceneGraph);
+	static void Paste();
 
 	// Replace the type of an object
-	static bool ReplaceType(int ID, std::vector<SceneObject>& sceneGraph, OBJECT_TYPE objectType,
+	static bool ReplaceType(int ID, OBJECT_TYPE objectType,
 		int lightType = NULL, XMFLOAT3 diffuse = { NULL, NULL, NULL }, float constA = NULL, float linA = NULL, float quadA = NULL);
 
 	// Replace an entire object
-	static bool ReplaceObject(SceneObject newObject, std::vector<SceneObject>& sceneGraph);
+	static bool ReplaceObject(SceneObject newObject);
 	
 	// Setters
 	static void SetGame(Game * game) { m_game = game; }

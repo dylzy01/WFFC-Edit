@@ -16,11 +16,13 @@ FocusDialogue::FocusDialogue(CWnd* pParent /*=nullptr*/)
 	m_selectedID = -1;
 }
 
-void FocusDialogue::SetSelectData(std::vector<int>* selection)
+void FocusDialogue::SetFocusData(std::vector<int>* selection)
 {	
+	m_selectedIDs.clear();
 	m_selectedIDs = *selection;
 	
 	// Loop through selection
+	m_boxID.ResetContent();
 	for (int i = 0; i < m_selectedIDs.size(); ++i)
 	{			
 		// Add entries to ID list box
@@ -38,6 +40,7 @@ void FocusDialogue::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(FocusDialogue, CDialogEx)
 	ON_COMMAND(IDOK, &FocusDialogue::End)							
+	ON_COMMAND(IDCANCEL, &FocusDialogue::End)							
 	ON_BN_CLICKED(IDOK, &FocusDialogue::OnBnClickedOk)
 	ON_LBN_SELCHANGE(IDC_LIST1, &FocusDialogue::OnCbnSelchangeID)	
 END_MESSAGE_MAP()
@@ -49,7 +52,8 @@ END_MESSAGE_MAP()
 void FocusDialogue::End()
 {
 	m_active = false;
-	DestroyWindow();
+	///DestroyWindow();
+	ShowWindow(SW_HIDE);
 }
 
 // User is finished with dialogue

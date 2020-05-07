@@ -19,7 +19,7 @@ struct InputCommands
 	bool DEL;
 	bool SHIFT;
 	bool CTRL;
-	bool X, C, V, Z, Y;
+	bool X, C, V, Z;
 	DirectX::SimpleMath::Vector2 mousePos;
 	DirectX::SimpleMath::Vector2 mousePosPrevious;
 };

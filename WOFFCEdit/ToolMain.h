@@ -38,6 +38,11 @@ public: //methods
 
 	// Getters
 	EDITOR GetEditor() { return m_d3dRenderer.GetEditor(); } //return current editor
+	OBJECT_TYPE GetObjectSpawn() { return m_objectType; }
+	OBJECT_FUNCTION GetObjectFunction() { return m_objectFunction; }	
+	TERRAIN_PAINT GetTerrainPaint() { return m_paint; }
+	TERRAIN_SCULPT GetTerrainFunction() { return m_terrainFunction; }
+	CONSTRAINT GetConstraint() { return m_constraint; }
 	std::vector<DisplayObject> GetLights() { return m_d3dRenderer.GetLights(); }
 	std::vector<DisplayObject> GetDisplayList() { return m_d3dRenderer.GetDisplayList(); }
 	DisplayChunk* GetDisplayChunk() { return m_d3dRenderer.GetDisplayChunk(); }
@@ -55,11 +60,11 @@ public: //methods
 		{
 			// Reset object transform
 			m_objectFunction = OBJECT_FUNCTION::NA;
-			m_objectConstraint = CONSTRAINT::NA;
+			m_constraint = CONSTRAINT::NA;
 
 			// Reset landscape sculpt
 			m_terrainFunction = TERRAIN_SCULPT::NA;
-			m_terrainConstraint = CONSTRAINT::NA;
+			m_constraint = CONSTRAINT::NA;
 
 			// Reset landscape paint
 			m_paint = TERRAIN_PAINT::NA;
@@ -72,7 +77,7 @@ public: //methods
 
 			// Reset landscape sculpt
 			m_terrainFunction = TERRAIN_SCULPT::NA;
-			m_terrainConstraint = CONSTRAINT::NA;
+			m_constraint = CONSTRAINT::NA;
 
 			// Reset landscape paint
 			m_paint = TERRAIN_PAINT::NA;
@@ -82,26 +87,26 @@ public: //methods
 		{
 			// Reset object spawn
 			m_objectType = OBJECT_TYPE::NA;
-			m_objectConstraint = CONSTRAINT::NA;
+			m_constraint = CONSTRAINT::NA;
 
 			// Reset object transform
 			m_objectFunction = OBJECT_FUNCTION::NA;
-			m_objectConstraint = CONSTRAINT::NA;
+			m_constraint = CONSTRAINT::NA;
 
 			// Reset landscape sculpt
 			m_terrainFunction = TERRAIN_SCULPT::NA;
-			m_terrainConstraint = CONSTRAINT::NA;
+			m_constraint = CONSTRAINT::NA;
 		}
 		break;
 		case EDITOR::SCULPT_FREELY:
 		{
 			// Reset object spawn
 			m_objectType = OBJECT_TYPE::NA;
-			m_objectConstraint = CONSTRAINT::NA;
+			m_constraint = CONSTRAINT::NA;
 
 			// Reset object transform
 			m_objectFunction = OBJECT_FUNCTION::NA;
-			m_objectConstraint = CONSTRAINT::NA;
+			m_constraint = CONSTRAINT::NA;
 
 			// Reset landscape paint
 			m_paint = TERRAIN_PAINT::NA;
@@ -111,10 +116,10 @@ public: //methods
 	}
 	void SetObjectSpawn(OBJECT_TYPE spawn) { m_objectType = spawn; }
 	void SetObjectFunction(OBJECT_FUNCTION function) { m_objectFunction = function; }
-	void SetObjectConstraint(CONSTRAINT constraint) { m_objectConstraint = constraint; }
+	void SetObjectConstraint(CONSTRAINT constraint) { m_constraint = constraint; }
 	void SetTerrainPaint(TERRAIN_PAINT paint) { m_paint = paint; }
 	void SetTerrainSculpt(TERRAIN_SCULPT function) { m_terrainFunction = function; }
-	void SetTerrainConstraint(CONSTRAINT constraint) { m_terrainConstraint = constraint; }
+	void SetTerrainConstraint(CONSTRAINT constraint) { m_constraint = constraint; }
 	void SetLights(std::vector<DisplayObject> lights) { m_d3dRenderer.SetLights(lights); }
 	void SetSceneObject(SceneObject object, int index) { m_d3dRenderer.SetSceneObject(object, index); }
 	void SetSelectedObjectID(int ID) 
@@ -138,10 +143,9 @@ public:	//variables
 	EDITOR m_editor;								//control which editor state is being applied
 	OBJECT_TYPE m_objectType;						//control which object is to be spawned
 	OBJECT_FUNCTION m_objectFunction;				//control which object function is being applied
-	CONSTRAINT m_objectConstraint;			//control which constraint is applied to object functions
-	TERRAIN_PAINT m_paint;				//control which paint should be applied to terrain
-	TERRAIN_SCULPT m_terrainFunction;			//control which sculpt function should be applied to terrain
-	CONSTRAINT m_terrainConstraint;		//control which constraint is applied to terrain functions
+	TERRAIN_PAINT m_paint;							//control which paint should be applied to terrain
+	TERRAIN_SCULPT m_terrainFunction;				//control which sculpt function should be applied to terrain
+	CONSTRAINT m_constraint;						//control which constraint is applied to all functions
 
 private:	//methods
 	void	onContentAdded();
@@ -165,7 +169,7 @@ private:	//variables
 
 	// Controllers
 	bool m_lDown = false, m_rDown = false;
-	bool m_newSelection = false;
 	bool m_doOnce = false;
+	bool m_newSelection = false;
 	int m_counter = 0;
 };

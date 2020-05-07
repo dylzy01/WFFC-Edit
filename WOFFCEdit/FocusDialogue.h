@@ -18,7 +18,7 @@ public:
 	virtual ~FocusDialogue() {}
 
 	// Passing in pointers the class will operate on
-	void SetSelectData(std::vector<int> * selection);
+	void SetFocusData(std::vector<int> * selection);
 
 	// Getters
 	bool GetActive() { return m_active; }

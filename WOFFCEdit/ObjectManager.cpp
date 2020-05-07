@@ -10,8 +10,11 @@ std::vector<std::pair<DirectX::SimpleMath::Vector3, int>> ObjectManager::m_store
 
 // Spawn an object at a location & add to database
 bool ObjectManager::SpawnObject(OBJECT_TYPE objectType, DirectX::SimpleMath::Vector3 position,
-	std::vector<SceneObject> & sceneGraph, int lightType, XMFLOAT3 diffuse, float constA, float linA, float quadA)
+	int lightType, XMFLOAT3 diffuse, float constA, float linA, float quadA)
 {
+	// Store game scene graph
+	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();
+	
 	// Count lights
 	int count = 0;
 	for (int i = 0; i < sceneGraph.size(); ++i)
@@ -237,8 +240,11 @@ bool ObjectManager::SpawnObject(OBJECT_TYPE objectType, DirectX::SimpleMath::Vec
 }
 
 // Remove an object from scene graph & database
-void ObjectManager::Remove(std::vector<int> & IDs, std::vector<SceneObject> & sceneGraph, int ID)
+void ObjectManager::Remove(std::vector<int> & IDs, int ID)
 {			
+	// Store game scene graph
+	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();
+	
 	// If ID has been specified
 	if (ID != -1)
 	{		
@@ -321,8 +327,11 @@ void ObjectManager::Store(std::vector<int> IDs)
 }
 
 // Transform selected objects
-void ObjectManager::Transform(OBJECT_FUNCTION function, CONSTRAINT constraint, std::vector<int> IDs, std::vector<SceneObject>& sceneGraph)
+void ObjectManager::Transform(OBJECT_FUNCTION function, CONSTRAINT constraint, std::vector<int> IDs)
 {
+	// Store game scene graph
+	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();
+	
 	// Switch between function
 	switch (function)
 	{
@@ -333,8 +342,11 @@ void ObjectManager::Transform(OBJECT_FUNCTION function, CONSTRAINT constraint, s
 }
 
 // Copy details of selected objects & remove from database
-void ObjectManager::Cut(std::vector<int> & IDs, std::vector<SceneObject> & sceneGraph)
+void ObjectManager::Cut(std::vector<int> & IDs)
 {
+	// Store game scene graph
+	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();
+	
 	// Clear current objects to copy
 	m_objectsToCopy.clear();
 
@@ -409,12 +421,15 @@ void ObjectManager::Cut(std::vector<int> & IDs, std::vector<SceneObject> & scene
 	}
 
 	// Remove objects from database
-	Remove(IDs, sceneGraph);
+	Remove(IDs);
 }
 
 // Copy details of selected objects
-void ObjectManager::Copy(std::vector<int> IDs, std::vector<SceneObject> sceneGraph)
+void ObjectManager::Copy(std::vector<int> IDs)
 {
+	// Store game scene graph
+	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();
+	
 	// Clear current objects to copy
 	m_objectsToCopy.clear();
 
@@ -526,8 +541,11 @@ void ObjectManager::Copy(std::vector<int> IDs, std::vector<SceneObject> sceneGra
 }
 
 // Create new objects from copied
-void ObjectManager::Paste(std::vector<SceneObject> & sceneGraph)
+void ObjectManager::Paste()
 {
+	// Store game scene graph
+	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();
+	
 	// Loop through objects to copy
 	for (int i = 0; i < m_objectsToCopy.size(); ++i)
 	{		
@@ -546,9 +564,12 @@ void ObjectManager::Paste(std::vector<SceneObject> & sceneGraph)
 }
 
 // Replace the type of an object
-bool ObjectManager::ReplaceType(int ID, std::vector<SceneObject>& sceneGraph, OBJECT_TYPE objectType,
+bool ObjectManager::ReplaceType(int ID, OBJECT_TYPE objectType,
 	int lightType, XMFLOAT3 diffuse, float constA, float linA, float quadA)
 {
+	// Store game scene graph
+	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();
+	
 	// Count lights
 	{
 		int count = 0;
@@ -599,8 +620,11 @@ bool ObjectManager::ReplaceType(int ID, std::vector<SceneObject>& sceneGraph, OB
 }
 
 // Replace an entire object
-bool ObjectManager::ReplaceObject(SceneObject newObject, std::vector<SceneObject>& sceneGraph)
+bool ObjectManager::ReplaceObject(SceneObject newObject)
 {
+	// Store game scene graph
+	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();
+
 	// Count lights
 	{
 		int count = 0;
@@ -616,7 +640,7 @@ bool ObjectManager::ReplaceObject(SceneObject newObject, std::vector<SceneObject
 		if (count >= 10) { return false; }
 	}
 
-	// Loop through current scene graph
+	// Loop through current scene graphs
 	for (int i = 0; i < sceneGraph.size(); ++i)
 	{
 		// If IDs match

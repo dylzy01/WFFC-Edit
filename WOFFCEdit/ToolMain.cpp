@@ -115,7 +115,7 @@ void ToolMain::onActionLoad(std::string name)
 void ToolMain::onActionDeleteObjects()
 {	
 	// Delete all selected objects
-	ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph);	
+	ObjectManager::Remove(m_selectedObjectIDs);	
 }
 
 void ToolMain::onActionUndo()
@@ -152,25 +152,25 @@ void ToolMain::Tick(MSG *msg)
 	}
 
 	// If DEL is pressed, deleted selected objects
-	if (m_toolInputCommands.DEL) { ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph); }
+	if (m_toolInputCommands.DEL) { ObjectManager::Remove(m_selectedObjectIDs); }
 		
 	// If CTRL is pressed
 	if (m_toolInputCommands.CTRL)
 	{
 		// If X is pressed, cut selected objects
-		if (m_toolInputCommands.X) { ObjectManager::Cut(m_selectedObjectIDs, m_sceneGraph); }
+		if (m_toolInputCommands.X) { ObjectManager::Cut(m_selectedObjectIDs); }
 			
 		// If C is pressed, copy selected objects
-		else if (m_toolInputCommands.C) { ObjectManager::Copy(m_selectedObjectIDs, m_sceneGraph); }
+		else if (m_toolInputCommands.C) { ObjectManager::Copy(m_selectedObjectIDs); }
 
 		// If V is pressed, paste selected objects
-		else if (m_toolInputCommands.V) { ObjectManager::Paste(m_sceneGraph); }
+		else if (m_toolInputCommands.V) { ObjectManager::Paste(); }
 
 		// If Z is pressed, undo last action
 		else if (m_toolInputCommands.Z) { SceneManager::Undo(); }
 		
-		// If Y is pressed, redo next action
-		else if (m_toolInputCommands.Y) { SceneManager::Redo(); }
+		// If Z and SHIFT is pressed, redo next action
+		else if (m_toolInputCommands.Z && m_toolInputCommands.SHIFT) { SceneManager::Redo(); }
 	}	
 		
 	// If right mouse button is pressed
@@ -185,7 +185,7 @@ void ToolMain::Tick(MSG *msg)
 			if (m_toolInputCommands.CTRL)
 			{				
 				// Remove an object
-				ObjectManager::Remove(m_selectedObjectIDs, m_sceneGraph, MouseManager::PickObject(PICK_TYPE::ANY));				
+				ObjectManager::Remove(m_selectedObjectIDs, MouseManager::PickObject(PICK_TYPE::ANY));				
 			}
 
 			// Else, if not
@@ -197,7 +197,8 @@ void ToolMain::Tick(MSG *msg)
 				else { lightType = LIGHT_TYPE::NA; }
 
 				// Create object at picking point
-				ObjectManager::SpawnObject(m_objectType, MouseManager::PickSpawn(), m_sceneGraph, (int)lightType);			}						
+				ObjectManager::SpawnObject(m_objectType, MouseManager::PickSpawn(), (int)lightType);
+			}						
 		}
 		break;
 		case EDITOR::OBJECT_FUNCTION:
@@ -245,7 +246,7 @@ void ToolMain::Tick(MSG *msg)
 				if (m_selectedObjectIDs.size() != 0 && m_toolInputCommands.mouseDrag)
 				{
 					// Transform selected objects
-					ObjectManager::Transform(m_objectFunction, m_objectConstraint, m_selectedObjectIDs, m_sceneGraph);
+					ObjectManager::Transform(m_objectFunction, m_constraint, m_selectedObjectIDs);
 				}
 			}			
 		}			
@@ -259,13 +260,13 @@ void ToolMain::Tick(MSG *msg)
 		case EDITOR::SCULPT_FREELY:
 		{
 			// Sculpt terrain
-			TerrainManager::Sculpt(m_selectedTerrain, m_terrainFunction, m_terrainConstraint);
+			TerrainManager::Sculpt(m_selectedTerrain, m_terrainFunction, m_constraint);
 		}
 		break;
 		case EDITOR::SCULPT_SINGLE:
 		{
 			// Sculpt selected terrain
-			TerrainManager::Sculpt(m_selectedTerrain, m_terrainFunction, m_terrainConstraint, true);
+			TerrainManager::Sculpt(m_selectedTerrain, m_terrainFunction, m_constraint, true);
 		}
 		break;
 		case EDITOR::LIGHTS:
@@ -277,7 +278,7 @@ void ToolMain::Tick(MSG *msg)
 				if (m_toolInputCommands.mouseDrag)
 				{					
 					// Transform lights
-					ObjectManager::Transform(OBJECT_FUNCTION::TRANSLATE, m_objectConstraint, m_selectedObjectIDs, m_sceneGraph);
+					ObjectManager::Transform(OBJECT_FUNCTION::TRANSLATE, m_constraint, m_selectedObjectIDs);
 				}
 			}
 
@@ -441,16 +442,11 @@ void ToolMain::UpdateInput(MSG * msg)
 
 	// Z key to undo
 	m_toolInputCommands.Z = (m_keyArray['Z']);
-
-	// Y key to redo
-	m_toolInputCommands.Y = (m_keyArray['Y']);
-
-	m_doOnce = (m_toolInputCommands.Z || m_toolInputCommands.Y);
 }
 
 bool ToolMain::GetNewSelection()
 {
-	if (m_newSelection) 
+	if (m_newSelection)
 	{
 		m_newSelection = false;
 		return true;

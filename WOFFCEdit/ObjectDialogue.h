@@ -8,6 +8,7 @@
 #include "SceneObject.h"
 #include "ObjectManager.h"
 #include "FocusDialogue.h"
+#include "ToolMain.h"
 
 // ObjectDialogue dialog
 
@@ -20,24 +21,20 @@ public:
 	virtual ~ObjectDialogue() {}
 
 	// Pass in data pointers the class will operate on
-	void SetObjectData(std::vector<SceneObject>* sceneGraph);
+	void SetObjectData(std::vector<SceneObject>* objects, std::vector<int>selectedIDs);
+	void SetToolSystem(ToolMain* toolSystem);	
 
-	// Update current object with dialogue values
+	// Update dialogue
 	void Update(int ID = -1);
 
 	// Getters
 	bool GetActive() { return m_active; }
-	bool GetUpdate() { return m_update; }
 	bool GetFocus() { return m_focus; }
 	bool GetTransforming() { return m_transforming; }
 	bool GetObjectsSetup() { return m_objectSetup; }
-	bool GetRequest() { return m_requestSceneGraph; }
-	float GetSnap() { if (m_snapTerrain) { return -1; } else if (m_snapValue) { return m_snapScale; } }
-	bool GetDelete() { return m_delete; }
-	bool GetDuplicate() { return m_duplicate; }
 	bool GetSelect() { return m_select; }
-	std::vector<int> GetSelectedObjectIDs() { return m_selectedObjectIDs; }
-	std::vector<SceneObject> GetObjects() { return m_objects; }
+	float GetSnap() { if (m_snapTerrain) { return -1; } else if (m_snapValue) { return m_snapScale; } }
+	std::vector<int> GetSelectedIDs() { return m_selectedIDs; }
 	OBJECT_FUNCTION GetFunction() { return m_function; }
 	CONSTRAINT GetConstraint() { return m_constraint; }
 	// Focus
@@ -45,13 +42,8 @@ public:
 	
 	// Setters
 	void SetActive(bool active) { m_active = active; }
-	void SetUpdate(bool update) { m_update = update; }
 	void SetTransforming(bool transforming) { m_transforming = transforming; }
-	void SetSelectedObjects(std::vector<int> IDs) { m_selectedObjectIDs = IDs; }
-	void SetRequest(bool request) { m_requestSceneGraph = request; SetupObjects(); }
-	void SetDelete(bool del) { m_delete = del; m_requestSceneGraph = !del; }
-	void SetDuplicate(bool dup) { m_duplicate = dup; m_requestSceneGraph = !dup; }
-	void SetSelect(bool select) { m_select = select; }
+	void SetSelectedIDs(std::vector<int> selectedIDs) { m_selectedIDs = selectedIDs; }
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -64,25 +56,22 @@ protected:
 	afx_msg void End();									// Kill the dialogue
 
 	// Local storage
-	std::vector<SceneObject> m_sceneGraph;
-	std::vector<SceneObject> m_objects;
-	std::vector<int> m_selectedObjectIDs;
+	ToolMain* m_toolSystem;
+	std::vector<SceneObject>* m_sceneGraph;
+	std::vector<SceneObject>* m_objects;
+	std::vector<int> m_selectedIDs;
 	
 	// Controllers
 	bool m_active;
-	bool m_update;
-	bool m_focus;
+	bool m_focus = false, m_focusCreated = false;
 	bool m_transforming = false;
 	bool m_objectSetup = false;
 	bool m_x, m_y, m_z;		
 	bool m_snapTerrain, m_snapValue;	
 	bool m_internal = false;
-	bool m_requestSceneGraph = false;
-	float m_snapScale;
-	bool m_delete = false, m_duplicate = false;
 	bool m_select = false;
+	float m_snapScale;
 	bool m_resetObjects = false;
-	///int m_selection;	
 	OBJECT_FUNCTION m_function;
 	CONSTRAINT m_constraint;
 
@@ -140,4 +129,10 @@ private:
 	
 	// Update constraint details
 	void UpdateSelectedConstraint();
+
+	// Update object in scene graph
+	void UpdateObject(SceneObject object);
+
+	// Reset all variables
+	void Reset();
 };
