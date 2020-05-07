@@ -103,14 +103,13 @@ void ToolMain::onActionLoad()
 	m_d3dRenderer.BuildDisplayChunk(&m_chunk);
 }
 
-void ToolMain::onActionSave()
-{	
-	SceneManager::Save();
-}
-
-void ToolMain::onActionSaveTerrain()
+void ToolMain::onActionLoad(std::string name)
 {
-	m_d3dRenderer.SaveDisplayChunk();
+	// Load chunk
+	m_chunk = SceneManager::LoadHeightMap(m_chunk, name);
+
+	// Build the renderable chunk
+	m_d3dRenderer.BuildDisplayChunk(&m_chunk);
 }
 
 void ToolMain::onActionDeleteObjects()
@@ -121,11 +120,13 @@ void ToolMain::onActionDeleteObjects()
 
 void ToolMain::onActionUndo()
 {
+	// Try and undo action
 	if (!SceneManager::Undo()) { MessageBox(NULL, L"There's nothing to undo!", L"Hey there!", MB_OK); }
 }
 
 void ToolMain::onActionRedo()
 {
+	// Try and redo action
 	if (!SceneManager::Redo()) { MessageBox(NULL, L"There's nothing to redo!", L"Hey there!", MB_OK); }
 }
 

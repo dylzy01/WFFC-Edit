@@ -280,12 +280,13 @@ void ObjectDialogue::OnEnChangeScaX()
 
 						// Update X scale of object
 						m_objects[j].scaX = scaX;
-
-						// Tell MFC/ToolMain to update scene graph
-						m_update = true;
+						break;
 					}
 				}
 			}
+
+			// Tell MFC/ToolMain to update scene graph
+			m_update = true;
 		}
 	}
 }
@@ -537,7 +538,7 @@ void ObjectDialogue::OnEnChangePosY()
 	if (!m_internal)
 	{
 		// If selection is valid
-		if (m_boxID.GetCurSel() >= 0)
+		if (m_selectedObjectIDs.size() >= 0)
 		{
 			// Loop through selected IDs
 			for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
@@ -803,6 +804,8 @@ void ObjectDialogue::OnBnClickedDuplicate()
 // Setup IDs of currently available objects
 void ObjectDialogue::SetupObjects()
 {
+	m_internal = true;
+	
 	if (m_resetObjects) { m_selectedObjectIDs.clear(); m_resetObjects = false; }
 	m_objects.clear();	
 	m_boxID.ResetContent();
@@ -833,6 +836,8 @@ void ObjectDialogue::SetupObjects()
 	SetDlgItemText(IDC_STATIC3, totalObjects.c_str());
 
 	m_objectSetup = true;
+
+	m_internal = false;
 }
 
 void ObjectDialogue::Uncheck()

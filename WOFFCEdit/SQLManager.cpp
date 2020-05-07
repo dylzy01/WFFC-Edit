@@ -204,9 +204,6 @@ bool SQLManager::RemoveObject(SceneObject object)
 	// Setup command stream from object data
 	std::stringstream ss;
 	ss << "DELETE FROM Objects WHERE ID = " << object.ID;
-	
-	/*SQLManager::SendQuery(ss.str().c_str(), true);
-	SQLManager::SetObjectStep();*/
 
 	// Add stream to query string
 	std::string command = ss.str();
@@ -301,4 +298,111 @@ bool SQLManager::SaveObjects(std::vector<SceneObject> sceneGraph)
 
 	if (rc) { return false; }
 	else { return true; }
+}
+
+// Load a different height map
+ChunkObject SQLManager::LoadHeightMap(ChunkObject chunk, std::string path)
+{
+	// Controller
+	int rc = -1;
+
+	// Setup command stream from chunk data
+	std::stringstream ss;
+	{
+		ss << "INSERT INTO Chunks (heightmap) "
+			<< "VALUES("
+			<< "'" << path << "'"
+			<< ")";
+	}
+
+	// Add stream to query string
+	std::string command = ss.str();
+	rc = sqlite3_prepare_v2(m_databaseConnection, command.c_str(), -1, &m_resultChunk, 0);
+	///sqlite3_step(m_resultChunk);
+
+	// Return created chunk from load data
+	return CreateChunk();
+}
+
+// Save updated chunk
+bool SQLManager::SaveChunk(ChunkObject chunk)
+{
+	// Controller
+	int rc = -1;
+
+	sqlite3_step(m_resultChunk);
+
+	// Setup command stream from chunk data
+	std::stringstream ss;
+	{
+		ss << "INSERT INTO Chunks "
+			<< "VALUES(" << chunk.ID << ","
+			"'" << chunk.name << "'" << ","
+			<< chunk.chunk_x_size_metres << ","
+			<< chunk.chunk_y_size_metres << ","
+			<< chunk.chunk_base_resolution << ","
+			<< "'" << chunk.heightmap_path << "'" << ","
+			<< "'" << chunk.tex_diffuse_path << "'" << ","
+			<< "'" << chunk.tex_splat_alpha_path << "'" << ","
+			<< "'" << chunk.tex_splat_1_path << "'" << ","
+			<< "'" << chunk.tex_splat_2_path << "'" << ","
+			<< "'" << chunk.tex_splat_3_path << "'" << ","
+			<< "'" << chunk.tex_splat_4_path << "'" << ","
+			<< chunk.render_wireframe << ","
+			<< chunk.render_normals << ","
+			<< chunk.tex_diffuse_tiling << ","
+			<< chunk.tex_splat_1_tiling << ","
+			<< chunk.tex_splat_2_tiling << ","
+			<< chunk.tex_splat_3_tiling << ","
+			<< chunk.tex_splat_4_tiling
+			<< ")";
+	}
+
+	// Add stream to query string
+	std::string command = ss.str();
+	rc = sqlite3_prepare_v2(m_databaseConnection, command.c_str(), -1, &m_resultChunk, 0);
+	sqlite3_step(m_resultChunk);
+
+	if (rc) { return false; }
+	else { return true; }
+}
+
+// Load chunk
+ChunkObject SQLManager::LoadChunk(std::string name)
+{
+	// Controller
+	int rc = -1;
+
+	// Setup command stream from chunk data
+	std::stringstream ss;
+	ss << "SELECT FROM Chunks WHERE NAME = " << "'" << name << "'";
+
+	// Add stream to query string
+	std::string command = ss.str();
+	rc = sqlite3_prepare_v2(m_databaseConnection, command.c_str(), -1, &m_resultChunk, 0);
+	sqlite3_step(m_resultChunk);
+
+	// Return created chunk from load data
+	return CreateChunk();
+}
+
+// Return all names of saved chunks
+std::vector<std::string> SQLManager::GetChunkNames()
+{
+	// Controllers
+	int rc = -1;
+	std::vector<std::string> names;
+
+	// Loop through each row in results
+	while (GetChunkStep() == SQLITE_ROW)
+	{
+		// Fetch text of name column
+		std::string temp = reinterpret_cast<const char*>(sqlite3_column_text(m_resultChunk, 1));
+
+		// Add to container
+		names.push_back(temp);
+	}
+
+	// Return vector of gathered names
+	return names;
 }

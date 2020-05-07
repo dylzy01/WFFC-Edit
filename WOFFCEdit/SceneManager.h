@@ -15,7 +15,18 @@ public:
 
 	// Save current world state (scene graph + chunk)
 	static void Save();
+
+	// Save current world state (scene graph + chunk) via a timer
 	static void QuickSave();
+
+	// Save current world state (chunk) into a new chunks table row
+	static void SaveAs(std::string name);
+
+	// Load world state (chunk) from chunks table
+	static ChunkObject LoadChunk(std::string name) { return SQLManager::LoadChunk(name); }
+
+	// Load a different height map
+	static ChunkObject LoadHeightMap(ChunkObject chunk, std::string path) { return SQLManager::LoadHeightMap(chunk, path); }
 
 	// Undo to previous world state
 	static bool	Undo();

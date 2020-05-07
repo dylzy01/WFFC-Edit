@@ -545,22 +545,24 @@ void ObjectManager::Paste(std::vector<SceneObject> & sceneGraph)
 	SceneManager::SetScene(&sceneGraph, m_game->GetDisplayChunk());
 }
 
-// Replace the model of an object
-bool ObjectManager::Replace(int ID, std::vector<SceneObject>& sceneGraph, OBJECT_TYPE objectType,
+// Replace the type of an object
+bool ObjectManager::ReplaceType(int ID, std::vector<SceneObject>& sceneGraph, OBJECT_TYPE objectType,
 	int lightType, XMFLOAT3 diffuse, float constA, float linA, float quadA)
 {
 	// Count lights
-	int count = 0;
-	for (int i = 0; i < sceneGraph.size(); ++i)
 	{
-		if (sceneGraph[i].m_type == OBJECT_TYPE::LIGHT)
+		int count = 0;
+		for (int i = 0; i < sceneGraph.size(); ++i)
 		{
-			count++;
+			if (sceneGraph[i].m_type == OBJECT_TYPE::LIGHT)
+			{
+				count++;
+			}
 		}
-	}
 
-	// If light count is above limit, don't continue
-	if (count >= 10) { return false; }
+		// If light count is above limit, don't continue
+		if (count >= 10) { return false; }
+	}
 
 	// Loop through scene graph
 	for (int i = 0; i < sceneGraph.size(); ++i)
@@ -571,193 +573,60 @@ bool ObjectManager::Replace(int ID, std::vector<SceneObject>& sceneGraph, OBJECT
 			// Remove object from database
 			SQLManager::RemoveObject(sceneGraph[i]);
 
-			// Setup temp object
-			SceneObject replacement;
+			// Setup replacement object
+			SceneObject replacement = GetReplacement(sceneGraph[i]);
+			replacement.m_type = objectType;
+			if (objectType == OBJECT_TYPE::LIGHT) { replacement.light_type = lightType; }
+			else { replacement.light_type = 0; }
 
-			// Define object values
-			{
-				replacement.ID = sceneGraph[i].ID;
-				replacement.chunk_ID = sceneGraph[i].chunk_ID;
-				replacement.posX = sceneGraph[i].posX;
-				replacement.posY = sceneGraph[i].posY;
-				replacement.posZ = sceneGraph[i].posZ;
-				replacement.rotX = sceneGraph[i].rotX;
-				replacement.rotY = sceneGraph[i].rotY;
-				replacement.rotZ = sceneGraph[i].rotZ;
-				replacement.scaX = sceneGraph[i].scaX;
-				replacement.scaY = sceneGraph[i].scaY;
-				replacement.scaZ = sceneGraph[i].scaZ;
-				replacement.render = sceneGraph[i].render;
-				replacement.collectable = sceneGraph[i].collectable;
-				replacement.collision_mesh = sceneGraph[i].collision_mesh;
-				replacement.destructable = sceneGraph[i].destructable;
-				replacement.health_amount = sceneGraph[i].health_amount;
-				replacement.editor_render = sceneGraph[i].editor_render;
-				replacement.editor_texture_vis = sceneGraph[i].editor_texture_vis;
-				replacement.editor_normals_vis = sceneGraph[i].editor_normals_vis;
-				replacement.editor_collision_vis = sceneGraph[i].editor_collision_vis;
-				replacement.editor_pivot_vis = sceneGraph[i].editor_pivot_vis;
-				replacement.pivotX = sceneGraph[i].pivotX;
-				replacement.pivotY = sceneGraph[i].pivotY;
-				replacement.pivotZ = sceneGraph[i].pivotZ;
-				replacement.snapToGround = sceneGraph[i].snapToGround;
-				replacement.AINode = sceneGraph[i].AINode;
-				replacement.audio_path = sceneGraph[i].audio_path;
-				replacement.volume = sceneGraph[i].volume;
-				replacement.pitch = sceneGraph[i].pitch;
-				replacement.pan = sceneGraph[i].pan;
-				replacement.one_shot = sceneGraph[i].one_shot;
-				replacement.play_on_init = sceneGraph[i].play_on_init;
-				replacement.play_in_editor = sceneGraph[i].play_in_editor;
-				replacement.min_dist = sceneGraph[i].min_dist;
-				replacement.max_dist = sceneGraph[i].max_dist;
-				replacement.camera = sceneGraph[i].camera;
-				replacement.path_node = sceneGraph[i].path_node;
-				replacement.path_node_start = sceneGraph[i].path_node_start;
-				replacement.path_node_end = sceneGraph[i].path_node_end;
-				replacement.parent_id = sceneGraph[i].parent_id;
-				replacement.editor_wireframe = sceneGraph[i].editor_wireframe;
+			// Add new object to database
+			SQLManager::AddObject(replacement);
 
-				replacement.light_type = lightType;
-				replacement.light_diffuse_r = 2.f;
-				replacement.light_diffuse_g = 3.f;
-				replacement.light_diffuse_b = 4.f;
-				replacement.light_constant = 1.f;
-				replacement.light_linear = 0.f;
-				replacement.light_quadratic = 1.f;
+			// Replace object in scene graph
+			sceneGraph[i] = replacement;
 
-				replacement.light_specular_r = 4.f;
-				replacement.light_specular_g = 5.f;
-				replacement.light_specular_b = 6.f;
-				replacement.light_spot_cutoff = 8.f;
+			break;
+		}
+	}
 
-				replacement.m_type = objectType;
-			}
+	// Rebuild display list
+	m_game->BuildDisplayList(&sceneGraph);
 
-			// Switch between type
-			switch (replacement.m_type)
+	// Save current state
+	SceneManager::SetScene(&sceneGraph, m_game->GetDisplayChunk());
+
+	return true;
+}
+
+// Replace an entire object
+bool ObjectManager::ReplaceObject(SceneObject newObject, std::vector<SceneObject>& sceneGraph)
+{
+	// Count lights
+	{
+		int count = 0;
+		for (int i = 0; i < sceneGraph.size(); ++i)
+		{
+			if (sceneGraph[i].m_type == OBJECT_TYPE::LIGHT)
 			{
-				// Residential //////////////////////////////////////////////////////////////////////////
-			case OBJECT_TYPE::HOUSE_ONE:
-			{
-				// Set object to house #1
-				replacement.m_isWater = false;
-				replacement.model_path = "database/data/house0.cmo";
-				replacement.tex_diffuse_path = "database/data/house0.dds";
+				count++;
 			}
-			break;
-			case OBJECT_TYPE::HOUSE_TWO:
-			{
-				// Set object to house #2
-				replacement.m_isWater = false;
-				replacement.model_path = "database/data/house1.cmo";
-				replacement.tex_diffuse_path = "database/data/house1.dds";
-			}
-			break;
-			case OBJECT_TYPE::CAVE:
-			{
-				// Set object to cave
-				replacement.m_isWater = false;
-				replacement.model_path = "database/data/cave.cmo";
-				replacement.tex_diffuse_path = "database/data/cave.dds";
-			}
-			break;
-			// Props ////////////////////////////////////////////////////////////////////////////////
-			case OBJECT_TYPE::BRIDGE:
-			{
-				// Set object to bridge
-				replacement.m_isWater = false;
-				replacement.model_path = "database/data/bridge.cmo";
-				replacement.tex_diffuse_path = "database/data/sand.dds";
-			}
-			break;
-			case OBJECT_TYPE::FENCE:
-			{
-				// Set object to fence
-				replacement.m_isWater = false;
-				replacement.model_path = "database/data/fence.cmo";
-				replacement.tex_diffuse_path = "database/data/sand.dds";
-			}
-			break;
-			case OBJECT_TYPE::BOAT:
-			{
-				// Set object to boat
-				replacement.m_isWater = false;
-				replacement.model_path = "database/data/boat.cmo";
-				replacement.tex_diffuse_path = "database/data/sand.dds";
-			}
-			break;
-			// Nature ///////////////////////////////////////////////////////////////////////////////
-			case OBJECT_TYPE::GRASS:
-			{
-				// Set object to grass
-				replacement.m_isWater = false;
-				replacement.model_path = "database/data/grass.cmo";
-				replacement.tex_diffuse_path = "database/data/grass.dds";
-			}
-			break;
-			case OBJECT_TYPE::TREE_ONE:
-			{
-				// Set object to tree
-				replacement.m_isWater = false;
-				replacement.model_path = "database/data/tree0.cmo";
-				replacement.tex_diffuse_path = "database/data/tree0.dds";
-			}
-			break;
-			case OBJECT_TYPE::TREE_TWO:
-			{
-				// Set object to tree
-				replacement.m_isWater = false;
-				replacement.model_path = "database/data/tree1.cmo";
-				replacement.tex_diffuse_path = "database/data/tree1.dds";
-			}
-			break;
-			case OBJECT_TYPE::WATER:
-			{
-				// Set object to water
-				replacement.m_isWater = true;
-				replacement.model_path = "database/data/water.cmo";
-				replacement.tex_diffuse_path = "database/data/water.dds";
-			}
-			break;
-			// Misc /////////////////////////////////////////////////////////////////////////////////
-			case OBJECT_TYPE::LIGHT:
-			{
-				// Set object to light
-				replacement.m_isWater = false;
-				replacement.model_path = "database/data/light.cmo";
-				replacement.tex_diffuse_path = "database/data/light.dds";
-				replacement.enabled = true;
-				replacement.rotX = 0.f;
-				replacement.rotY = 1.f;
-				replacement.rotZ = 0.f;
-				replacement.ambR = 0.2f;
-				replacement.ambG = 0.2f;
-				replacement.ambB = 0.2f;
-			}
-			break;
-			case OBJECT_TYPE::CUBE:
-			{
-				// Set object to cube
-				replacement.m_isWater = false;
-				replacement.model_path = "database/data/cube.cmo";
-			}
-			break;
-			case OBJECT_TYPE::CYLINDER:
-			{
-				// Set object to cylinder
-				replacement.m_isWater = false;
-				replacement.model_path = "database/data/cylinder.cmo";
-			}
-			break;
-			case OBJECT_TYPE::CONE:
-			{
-				// Set object to cone
-				replacement.m_isWater = false;
-				replacement.model_path = "database/data/cone.cmo";
-			}
-			break;
-			}
+		}
+
+		// If light count is above limit, don't continue
+		if (count >= 10) { return false; }
+	}
+
+	// Loop through current scene graph
+	for (int i = 0; i < sceneGraph.size(); ++i)
+	{
+		// If IDs match
+		if (sceneGraph[i].ID == newObject.ID)
+		{
+			// Remove object from database
+			SQLManager::RemoveObject(sceneGraph[i]);
+
+			// Setup replacement object
+			SceneObject replacement = GetReplacement(newObject);
 
 			// Add new object to database
 			SQLManager::AddObject(replacement);
@@ -1262,4 +1131,198 @@ std::vector<int> ObjectManager::GetAvailableIDs(std::vector<int> IDs, std::vecto
 
 	// Return container
 	return availableIDs;
+}
+
+// Get a replacement object
+SceneObject ObjectManager::GetReplacement(SceneObject object)
+{
+	// Setup temp object
+	SceneObject replacement;
+	
+	// Define object values
+	{
+		replacement.ID = object.ID;
+		replacement.chunk_ID = object.chunk_ID;
+		replacement.posX = object.posX;
+		replacement.posY = object.posY;
+		replacement.posZ = object.posZ;
+		replacement.rotX = object.rotX;
+		replacement.rotY = object.rotY;
+		replacement.rotZ = object.rotZ;
+		replacement.scaX = object.scaX;
+		replacement.scaY = object.scaY;
+		replacement.scaZ = object.scaZ;
+		replacement.render = object.render;
+		replacement.collectable = object.collectable;
+		replacement.collision_mesh = object.collision_mesh;
+		replacement.destructable = object.destructable;
+		replacement.health_amount = object.health_amount;
+		replacement.editor_render = object.editor_render;
+		replacement.editor_texture_vis = object.editor_texture_vis;
+		replacement.editor_normals_vis = object.editor_normals_vis;
+		replacement.editor_collision_vis = object.editor_collision_vis;
+		replacement.editor_pivot_vis = object.editor_pivot_vis;
+		replacement.pivotX = object.pivotX;
+		replacement.pivotY = object.pivotY;
+		replacement.pivotZ = object.pivotZ;
+		replacement.snapToGround = object.snapToGround;
+		replacement.AINode = object.AINode;
+		replacement.audio_path = object.audio_path;
+		replacement.volume = object.volume;
+		replacement.pitch = object.pitch;
+		replacement.pan = object.pan;
+		replacement.one_shot = object.one_shot;
+		replacement.play_on_init = object.play_on_init;
+		replacement.play_in_editor = object.play_in_editor;
+		replacement.min_dist = object.min_dist;
+		replacement.max_dist = object.max_dist;
+		replacement.camera = object.camera;
+		replacement.path_node = object.path_node;
+		replacement.path_node_start = object.path_node_start;
+		replacement.path_node_end = object.path_node_end;
+		replacement.parent_id = object.parent_id;
+		replacement.editor_wireframe = object.editor_wireframe;
+
+		replacement.light_type = object.light_type;
+		replacement.light_diffuse_r = 2.f;
+		replacement.light_diffuse_g = 3.f;
+		replacement.light_diffuse_b = 4.f;
+		replacement.light_constant = 1.f;
+		replacement.light_linear = 0.f;
+		replacement.light_quadratic = 1.f;
+
+		replacement.light_specular_r = 4.f;
+		replacement.light_specular_g = 5.f;
+		replacement.light_specular_b = 6.f;
+		replacement.light_spot_cutoff = 8.f;
+
+		replacement.m_type = object.m_type;
+	}
+
+	// Switch between type
+	switch (replacement.m_type)
+	{
+		// Residential //////////////////////////////////////////////////////////////////////////
+	case OBJECT_TYPE::HOUSE_ONE:
+	{
+		// Set object to house #1
+		replacement.m_isWater = false;
+		replacement.model_path = "database/data/house0.cmo";
+		replacement.tex_diffuse_path = "database/data/house0.dds";
+	}
+	break;
+	case OBJECT_TYPE::HOUSE_TWO:
+	{
+		// Set object to house #2
+		replacement.m_isWater = false;
+		replacement.model_path = "database/data/house1.cmo";
+		replacement.tex_diffuse_path = "database/data/house1.dds";
+	}
+	break;
+	case OBJECT_TYPE::CAVE:
+	{
+		// Set object to cave
+		replacement.m_isWater = false;
+		replacement.model_path = "database/data/cave.cmo";
+		replacement.tex_diffuse_path = "database/data/cave.dds";
+	}
+	break;
+	// Props ////////////////////////////////////////////////////////////////////////////////
+	case OBJECT_TYPE::BRIDGE:
+	{
+		// Set object to bridge
+		replacement.m_isWater = false;
+		replacement.model_path = "database/data/bridge.cmo";
+		replacement.tex_diffuse_path = "database/data/sand.dds";
+	}
+	break;
+	case OBJECT_TYPE::FENCE:
+	{
+		// Set object to fence
+		replacement.m_isWater = false;
+		replacement.model_path = "database/data/fence.cmo";
+		replacement.tex_diffuse_path = "database/data/sand.dds";
+	}
+	break;
+	case OBJECT_TYPE::BOAT:
+	{
+		// Set object to boat
+		replacement.m_isWater = false;
+		replacement.model_path = "database/data/boat.cmo";
+		replacement.tex_diffuse_path = "database/data/sand.dds";
+	}
+	break;
+	// Nature ///////////////////////////////////////////////////////////////////////////////
+	case OBJECT_TYPE::GRASS:
+	{
+		// Set object to grass
+		replacement.m_isWater = false;
+		replacement.model_path = "database/data/grass.cmo";
+		replacement.tex_diffuse_path = "database/data/grass.dds";
+	}
+	break;
+	case OBJECT_TYPE::TREE_ONE:
+	{
+		// Set object to tree
+		replacement.m_isWater = false;
+		replacement.model_path = "database/data/tree0.cmo";
+		replacement.tex_diffuse_path = "database/data/tree0.dds";
+	}
+	break;
+	case OBJECT_TYPE::TREE_TWO:
+	{
+		// Set object to tree
+		replacement.m_isWater = false;
+		replacement.model_path = "database/data/tree1.cmo";
+		replacement.tex_diffuse_path = "database/data/tree1.dds";
+	}
+	break;
+	case OBJECT_TYPE::WATER:
+	{
+		// Set object to water
+		replacement.m_isWater = true;
+		replacement.model_path = "database/data/water.cmo";
+		replacement.tex_diffuse_path = "database/data/water.dds";
+	}
+	break;
+	// Misc /////////////////////////////////////////////////////////////////////////////////
+	case OBJECT_TYPE::LIGHT:
+	{
+		// Set object to light
+		replacement.m_isWater = false;
+		replacement.model_path = "database/data/light.cmo";
+		replacement.tex_diffuse_path = "database/data/light.dds";
+		replacement.enabled = true;
+		replacement.rotX = 0.f;
+		replacement.rotY = 1.f;
+		replacement.rotZ = 0.f;
+		replacement.ambR = 0.2f;
+		replacement.ambG = 0.2f;
+		replacement.ambB = 0.2f;
+	}
+	break;
+	case OBJECT_TYPE::CUBE:
+	{
+		// Set object to cube
+		replacement.m_isWater = false;
+		replacement.model_path = "database/data/cube.cmo";
+	}
+	break;
+	case OBJECT_TYPE::CYLINDER:
+	{
+		// Set object to cylinder
+		replacement.m_isWater = false;
+		replacement.model_path = "database/data/cylinder.cmo";
+	}
+	break;
+	case OBJECT_TYPE::CONE:
+	{
+		// Set object to cone
+		replacement.m_isWater = false;
+		replacement.model_path = "database/data/cone.cmo";
+	}
+	break;
+	}
+
+	return replacement;
 }

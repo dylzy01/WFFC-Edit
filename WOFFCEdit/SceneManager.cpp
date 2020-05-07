@@ -12,6 +12,9 @@ bool SceneManager::m_autosave = false;
 // Save current world state (scene graph + chunk)
 void SceneManager::Save()
 {
+	// Save chunk
+	m_game->SaveDisplayChunk();
+	
 	// Update scene graph
 	m_game->SaveDisplayList();
 
@@ -27,6 +30,7 @@ void SceneManager::Save()
 	else { MessageBox(NULL, L"World Failed to Save", L"Notification", MB_OK); }
 }
 
+// Save current world state (scene graph + chunk) via a timer
 void SceneManager::QuickSave()
 {
 	// Update scene graph
@@ -40,6 +44,20 @@ void SceneManager::QuickSave()
 	SQLManager::SetObjectStep();
 
 	SQLManager::SaveObjects(m_game->GetSceneGraph());
+}
+
+// Save current world state (scene graph + chunk) into a new chunk table row
+void SceneManager::SaveAs(std::string name)
+{
+	// Store current chunk
+	ChunkObject chunk = m_game->GetDisplayChunk()->GetChunk();
+
+	// Update chunk details
+	chunk.name = name;
+	chunk.ID += 1;
+
+	// Save new chunk
+	SQLManager::SaveChunk(chunk);
 }
 
 // Undo to previous world state

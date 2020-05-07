@@ -16,6 +16,9 @@
 #include "ObjectDialogue.h"
 #include "SpawnDialogue.h"
 
+#include "SaveDialogue.h"
+#include "LoadDialogue.h"
+
 #include "SceneManager.h"
 
 class MFCMain : public CWinApp 
@@ -28,6 +31,8 @@ public:
 
 private:
 	void CheckDialogues();
+	void UpdateSave();
+	void UpdateLoad();
 	void UpdateLights();
 	void UpdateObjects();
 	void UpdateSpawn();
@@ -47,10 +52,16 @@ private:
 	ObjectDialogue		m_objectDialogue;
 	SpawnDialogue		m_spawnDialogue;
 
+	SaveDialogue		m_saveDialogue;
+	LoadDialogue		m_loadDialogue;
+
 	int m_width;		
 	int m_height;
 	
 	//Interface funtions for menu and toolbar etc requires
+	afx_msg void MenuFileSave();
+	afx_msg void MenuFileSaveAs();
+	afx_msg void MenuFileLoad();
 	afx_msg void MenuFileQuit();
 	afx_msg void MenuEditWireframeOn();
 	afx_msg void MenuEditWireframeOff();

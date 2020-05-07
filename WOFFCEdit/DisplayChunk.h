@@ -80,7 +80,6 @@ private:
 	void ReadPaints(std::string path, std::vector<std::pair<int, int>> &vector);
 	void ReadAllPaints();
 	void SaveAllPaints();	
-	
 
 	// Drawing
 	void DrawTerrain(std::vector<std::pair<int, int>> terrain);
@@ -127,4 +126,7 @@ private:
 	// Sculpt controllers
 	bool m_plateau;
 	float m_scaleFactor = 1.f;
+
+	// Index controller
+	int m_ID = -1;
 };

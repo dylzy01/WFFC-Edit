@@ -20,6 +20,7 @@ DisplayChunk::~DisplayChunk()
 
 void DisplayChunk::PopulateChunkData(ChunkObject * SceneChunk)
 {
+	m_ID = SceneChunk->ID;
 	m_name = SceneChunk->name;
 	m_chunk_x_size_metres = SceneChunk->chunk_x_size_metres;
 	m_chunk_y_size_metres = SceneChunk->chunk_y_size_metres;
@@ -211,28 +212,10 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 																							
 	//////////////////////////////////////////////////////////////////////////////////////////
 
-	// Load normal map
-	/*std::wstring normal = StringToWCHART("database/data/normalMap.dds");
-	HRESULT rsn;
-	rsn = CreateDDSTextureFromFile(device, normal.c_str(), NULL, &m_normalMap);*/
-
-	//////////////////////////////////////////////////////////////////////////////////////////
-
-	// Setup normal map effect
-	///m_normalMapEffect = std::make_unique<NormalMapEffect>(device);
-	///m_normalMapEffect->SetTexture(m_normalMap.Get());
-
-	//////////////////////////////////////////////////////////////////////////////////////////
-
-	// Setup state
-	///m_states = std::make_unique<CommonStates>(device);
-
-	//////////////////////////////////////////////////////////////////////////////////////////
-
 	// Setup basic terrain effect
 	m_effect = std::make_unique<BasicEffect>(device);
-	m_effect->EnableDefaultLighting();
-	m_effect->SetLightingEnabled(true);
+	///m_effect->EnableDefaultLighting();
+	///m_effect->SetLightingEnabled(true);
 	///m_effect->SetTextureEnabled(true);
 	///m_effect->SetTexture(m_texture_default);
 
@@ -251,30 +234,6 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 		);
 
 	m_batch = std::make_unique<PrimitiveBatch<VertexPositionNormalTexture>>(deviceContext);	
-
-	//////////////////////////////////////////////////////////////////////////////////////////
-
-	// Setup blend terrain effect
-	//m_effectBlend = std::make_unique<DualTextureEffect>(device);
-	//m_effectBlend->SetTexture(m_texture_splat_1);
-	//m_effectBlend->SetTexture2(m_texture_splat_2);
-
-	//// setup blend batch
-	//void const* shaderByteCodeBlend;
-	//size_t byteCodeLengthBlend;
-
-	//m_effectBlend->GetVertexShaderBytecode(&shaderByteCodeBlend, &byteCodeLengthBlend);
-
-	//// setup blend batch
-	//DX::ThrowIfFailed(
-	//	device->CreateInputLayout(VertexPositionDualTexture::InputElements,
-	//		VertexPositionDualTexture::InputElementCount,
-	//		shaderByteCodeBlend,
-	//		byteCodeLengthBlend,
-	//		m_terrainInputLayout.GetAddressOf())
-	//);
-
-	//m_batchBlend = std::make_unique<PrimitiveBatch<VertexPositionDualTexture>>(deviceContext);
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1683,6 +1642,7 @@ ChunkObject DisplayChunk::GetChunk()
 	ChunkObject temp;
 	
 	// Populate temp chunk object
+	temp.ID = m_ID;
 	temp.name = m_name;
 	temp.chunk_x_size_metres = m_chunk_x_size_metres;
 	temp.chunk_y_size_metres = m_chunk_y_size_metres;

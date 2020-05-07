@@ -3,6 +3,9 @@
 
 
 BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
+	ON_COMMAND(ID_FILE_SAVE, &MFCMain::MenuFileSave)
+	ON_COMMAND(ID_FILE_SAVEAS, &MFCMain::MenuFileSaveAs)
+	ON_COMMAND(ID_FILE_LOAD, &MFCMain::MenuFileLoad)
 	ON_COMMAND(ID_FILE_QUIT, &MFCMain::MenuFileQuit)
 	ON_COMMAND(ID_WIREFRAME_ON, &MFCMain::MenuEditWireframeOn)
 	ON_COMMAND(ID_WIREFRAME_OFF, &MFCMain::MenuEditWireframeOff)
@@ -106,6 +109,14 @@ int MFCMain::Run()
 
 void MFCMain::CheckDialogues()
 {
+	// If save dialogue is active
+	if (m_saveDialogue.GetActive()) { UpdateSave(); }
+
+	// Else, if load dialogue is active
+	else if (m_loadDialogue.GetActive()) { UpdateLoad(); }
+
+	/////////////////////////////////////////////////////////
+
 	// If light inspector is active
 	if (m_lightDialogue.GetActive()) { UpdateLights(); }	
 
@@ -142,6 +153,32 @@ void MFCMain::CheckDialogues()
 }
 
 // Update via individual dialogue functions /////////////////////////////
+
+void MFCMain::UpdateSave()
+{
+	// If dialogue is updated
+	if (m_saveDialogue.GetUpdate())
+	{
+		// Save current chunk with input name
+		m_toolSystem.onActionSaveAs(m_saveDialogue.GetName());
+
+		// Reset controller
+		m_saveDialogue.SetUpdate(false);
+	}
+}
+
+void MFCMain::UpdateLoad()
+{
+	// If dialogue is updated
+	if (m_loadDialogue.GetUpdate())
+	{
+		// Save current chunk with input name
+		m_toolSystem.onActionLoad(m_loadDialogue.GetPath());
+
+		// Reset controller
+		m_loadDialogue.SetUpdate(false);
+	}
+}
 
 void MFCMain::UpdateLights()
 {
@@ -294,6 +331,7 @@ void MFCMain::UpdateLights()
 			}
 		}
 	}
+
 	// Else, must be selecting lights
 	else
 	{
@@ -387,8 +425,17 @@ void MFCMain::UpdateObjects()
 		// Loop through objects
 		for (int i = 0; i < objects.size(); ++i)
 		{
-			// Replace object type through database
-			ObjectManager::Replace(objects[i].ID, sceneGraph, objects[i].m_type);				
+			// Loop through selected object IDs
+			for (int j = 0; j < m_objectDialogue.GetSelectedObjectIDs().size(); ++j)
+			{
+				// If IDs match
+				if (objects[i].ID == m_objectDialogue.GetSelectedObjectIDs()[j])
+				{
+					// Replace object type through database
+					ObjectManager::ReplaceObject(objects[i], sceneGraph);
+					break;
+				}
+			}							
 		}	
 
 		// Reset update controller
@@ -506,13 +553,35 @@ void MFCMain::UpdateSculpt()
 	m_toolSystem.SetTerrainConstraint(m_sculptDialogue.GetConstraint());
 }
 
+// Message handlers (menu) //////////////////////////////////////////////
+
+void MFCMain::MenuFileSave()
+{
+	m_toolSystem.onActionSave();
+}
+
+void MFCMain::MenuFileSaveAs()
+{
+	// Create & display dialogue window
+	m_saveDialogue.Create(IDD_DIALOG3);
+	m_saveDialogue.ShowWindow(SW_SHOW);
+	m_saveDialogue.SetActive(true);
+}
+
+void MFCMain::MenuFileLoad()
+{
+	// Create & display dialogue window
+	m_loadDialogue.Create(IDD_DIALOG4);
+	m_loadDialogue.ShowWindow(SW_SHOW);
+	m_loadDialogue.SetActive(true);
+	m_loadDialogue.SetupData(4);
+}
+
 void MFCMain::MenuFileQuit()
 {
 	//will post message to the message thread that will exit the application normally
 	PostQuitMessage(0);
 }
-
-// Message handlers (menu) //////////////////////////////////////////////
 
 void MFCMain::MenuEditWireframeOn()
 {
@@ -538,7 +607,6 @@ void MFCMain::MenuEditAutosaveOff()
 
 void MFCMain::ToolBarSave()
 {	
-	m_toolSystem.onActionSaveTerrain();
 	m_toolSystem.onActionSave();	
 }
 

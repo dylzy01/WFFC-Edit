@@ -37,11 +37,23 @@ public:
 	// Save updated scene graph
 	static bool SaveObjects(std::vector<SceneObject> sceneGraph);
 
+	// Load a different height map
+	static ChunkObject LoadHeightMap(ChunkObject chunk, std::string path);
+
+	// Save updated chunk
+	static bool SaveChunk(ChunkObject chunk);
+
+	// Load chunk
+	static ChunkObject LoadChunk(std::string name);
+
 	// Getters
 	static int GetObjectStep() { return sqlite3_step(m_resultObject); }
+	static int GetChunkStep() { return sqlite3_step(m_resultChunk); }
+	static std::vector<std::string> GetChunkNames();
 
 	// Setters
 	static void SetObjectStep() { sqlite3_step(m_resultObject); }
+	static void SetChunkStep() { sqlite3_step(m_resultChunk); }
 
 private:
 	static sqlite3 *m_databaseConnection;

@@ -26,12 +26,6 @@
     <Filter Include="MFC\Main">
       <UniqueIdentifier>{d83391ee-70a4-444a-b0a8-7782fa93fd95}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MFC\Dialogues\Terrain">
-      <UniqueIdentifier>{155e6265-9f79-4593-8c84-4774e5518082}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="MFC\Dialogues\Object">
-      <UniqueIdentifier>{4deb829c-d332-489b-ab3d-31a0947b4941}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Custom\Managers">
       <UniqueIdentifier>{b2d82c3f-a97e-4926-be10-cb415bafb097}</UniqueIdentifier>
     </Filter>
@@ -101,21 +95,6 @@
     <ClCompile Include="MFCRenderFrame.cpp">
       <Filter>MFC\Main</Filter>
     </ClCompile>
-    <ClCompile Include="LandscapeDialogue.cpp">
-      <Filter>MFC\Dialogues\Terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrainPaintDialogue.cpp">
-      <Filter>MFC\Dialogues\Terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrainSculptDialogue.cpp">
-      <Filter>MFC\Dialogues\Terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectSpawnDialogue.cpp">
-      <Filter>MFC\Dialogues\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectEditorDialogue.cpp">
-      <Filter>MFC\Dialogues\Object</Filter>
-    </ClCompile>
     <ClCompile Include="SQLManager.cpp">
       <Filter>Custom\Managers</Filter>
     </ClCompile>
@@ -173,6 +152,10 @@
     <ClCompile Include="TerrainManager.cpp">
       <Filter>Custom\Managers</Filter>
     </ClCompile>
+    <ClCompile Include="SaveDialogue.cpp">
+      <Filter>MFC\Dialogues</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadDialogue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -230,21 +213,6 @@
     </ClInclude>
     <ClInclude Include="MFCRenderFrame.h">
       <Filter>MFC\Main</Filter>
-    </ClInclude>
-    <ClInclude Include="LandscapeDialogue.h">
-      <Filter>MFC\Dialogues\Terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrainPaintDialogue.h">
-      <Filter>MFC\Dialogues\Terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrainSculptDialogue.h">
-      <Filter>MFC\Dialogues\Terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectSpawnDialogue.h">
-      <Filter>MFC\Dialogues\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectEditorDialogue.h">
-      <Filter>MFC\Dialogues\Object</Filter>
     </ClInclude>
     <ClInclude Include="SQLManager.h">
       <Filter>Custom\Managers</Filter>
@@ -312,6 +280,10 @@
     <ClInclude Include="TerrainManager.h">
       <Filter>Custom\Managers</Filter>
     </ClInclude>
+    <ClInclude Include="SaveDialogue.h">
+      <Filter>MFC\Dialogues</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadDialogue.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

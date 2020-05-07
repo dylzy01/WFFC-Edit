@@ -22,10 +22,10 @@ public: //methods
 	std::vector<int>	GetSelectedObjectIDs() { return m_selectedObjectIDs; }		//returns the selection numbers of currently selected objects so that It can be displayed.
 	std::vector<TERRAIN>	getCurrentTerrainSelection() { return m_selectedTerrains; }		//returns the currently selected chunk so it can be displayed
 	void				onActionInitialise(HWND handle, int width, int height);				//Passes through handle and hieght and width and initialises DirectX renderer and SQL LITE
-	void				onActionFocusCamera();
 	void				onActionLoad();
-	afx_msg void		onActionSave();
-	afx_msg void		onActionSaveTerrain();												//save chunk geometry
+	afx_msg void		onActionSave() { SceneManager::Save(); }
+	afx_msg void		onActionSaveAs(std::string name) { SceneManager::SaveAs(name); }
+	afx_msg void		onActionLoad(std::string path);
 	afx_msg void		onActionDeleteObjects();											//delete selected objects
 	afx_msg void		onActionUndo();
 	afx_msg void		onActionRedo();
@@ -124,7 +124,6 @@ public: //methods
 		m_d3dRenderer.SetSelectedObjectIDs(m_selectedObjectIDs); 
 	}
 	void SetSelectedObjectIDs(std::vector<int> IDs) { m_selectedObjectIDs = IDs; m_d3dRenderer.SetSelectedObjectIDs(m_selectedObjectIDs); }
-	///void SetLights(std::pair<std::vector<Light*>, std::vector<int>>& lights) { m_lights = lights; }
 	void SetSelectedTerrain(TERRAIN& terrain) { m_selectedTerrain = terrain; }
 	void SetFocus(int ID) { m_d3dRenderer.SetFocus(ID); }
 
@@ -135,7 +134,6 @@ public:	//variables
 	TERRAIN m_selectedTerrain;				
 	std::vector<TERRAIN> m_selectedTerrains;	//IDs of multiple current TERRAIN selections
 	std::vector<int> m_objectIDsToCopy;
-	///std::pair<std::vector<Light*>, std::vector<int>> m_lights;
 
 	EDITOR m_editor;								//control which editor state is being applied
 	OBJECT_TYPE m_objectType;						//control which object is to be spawned

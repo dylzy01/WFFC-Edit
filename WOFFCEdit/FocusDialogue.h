@@ -46,7 +46,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	// Control variables for more efficient uses of the box
+	// Control variable for more efficient uses of the box
 	CListBox m_boxID;
 
 	// Message handlers

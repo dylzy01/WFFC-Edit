@@ -39,9 +39,12 @@ public:
 	// Create new objects from copied
 	static void Paste(std::vector<SceneObject> & sceneGraph);
 
-	// Replace the model of an object
-	static bool Replace(int ID, std::vector<SceneObject> & sceneGraph, OBJECT_TYPE objectType, 
+	// Replace the type of an object
+	static bool ReplaceType(int ID, std::vector<SceneObject>& sceneGraph, OBJECT_TYPE objectType,
 		int lightType = NULL, XMFLOAT3 diffuse = { NULL, NULL, NULL }, float constA = NULL, float linA = NULL, float quadA = NULL);
+
+	// Replace an entire object
+	static bool ReplaceObject(SceneObject newObject, std::vector<SceneObject>& sceneGraph);
 	
 	// Setters
 	static void SetGame(Game * game) { m_game = game; }
@@ -64,6 +67,9 @@ private:
 
 	// Check scene graph for available IDs
 	static std::vector<int> GetAvailableIDs(std::vector<int> IDs, std::vector<SceneObject> & sceneGraph);
+
+	// Get a replacement object
+	static SceneObject GetReplacement(SceneObject object);
 
 private:
 	static Game * m_game;
