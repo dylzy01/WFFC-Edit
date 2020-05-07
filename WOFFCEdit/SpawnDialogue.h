@@ -19,7 +19,7 @@ public:
 	virtual ~SpawnDialogue() {}
 
 	// Pass in data pointers the class will operate on
-	void SetObjectData(std::vector<SceneObject>* sceneGraph);
+	void Setup();
 
 	// Getters
 	bool GetActive() { return m_active; }
@@ -39,9 +39,6 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	void SetupCheckBoxes();
 	afx_msg void End();									// Kill the dialogue
-
-	// Local storage
-	std::vector<SceneObject> m_sceneGraph;
 														
 	// Controllers
 	bool m_active;

@@ -16,11 +16,8 @@ SpawnDialogue::SpawnDialogue(CWnd* pParent /*=nullptr*/)
 
 }
 
-void SpawnDialogue::SetObjectData(std::vector<SceneObject>* sceneGraph)
+void SpawnDialogue::Setup()
 {
-	// Local storage of scene graph
-	m_sceneGraph = *sceneGraph;
-
 	// Setup spawn types
 	{
 		std::wstring typeBoxEntry;

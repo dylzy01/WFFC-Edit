@@ -478,16 +478,12 @@ void MFCMain::UpdateObjects()
 
 void MFCMain::UpdateSpawn()
 {
-	// Set other modes to none
-	m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
-	m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
-	m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
-
-	// Set tool editor
-	m_toolSystem.SetEditor(EDITOR::OBJECT_SPAWN);
-
-	// Set spawn mode
-	m_toolSystem.SetObjectSpawn(m_spawnDialogue.GetSpawnType());
+	// If spawn mode isn't up-to-date
+	if (m_toolSystem.GetObjectSpawn() != m_spawnDialogue.GetSpawnType())
+	{
+		// Set spawn mode
+		m_toolSystem.SetObjectSpawn(m_spawnDialogue.GetSpawnType());
+	}	
 }
 
 void MFCMain::UpdateTerrain()
@@ -534,16 +530,12 @@ void MFCMain::UpdateTerrain()
 
 void MFCMain::UpdatePaint()
 {
-	// Set other modes to none
-	m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
-	m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
-	m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
-
-	// Set tool editor
-	m_toolSystem.SetEditor(EDITOR::TERRAIN_PAINT);
-
-	// Set paint mode
-	m_toolSystem.SetTerrainPaint(m_paintDialogue.GetPaint());
+	// If paint mode isn't up-to-date
+	if (m_toolSystem.GetTerrainPaint() != m_paintDialogue.GetPaint())
+	{
+		// Set paint mode
+		m_toolSystem.SetTerrainPaint(m_paintDialogue.GetPaint());
+	}
 }
 
 void MFCMain::UpdateSculpt()
@@ -960,6 +952,14 @@ void MFCMain::ToolBarObject()
 
 void MFCMain::ToolBarSpawn()
 {
+	// Set other modes to none
+	m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
+	m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
+	m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
+
+	// Set tool editor
+	m_toolSystem.SetEditor(EDITOR::OBJECT_SPAWN);
+	
 	// Destroy other windows 
 	CheckDialogues(DIALOGUE_TYPE::SPAWN);
 
@@ -967,7 +967,7 @@ void MFCMain::ToolBarSpawn()
 	if (!m_spawn) { m_spawnDialogue.Create(IDD_DIALOG13); m_spawn = true; }
 	m_spawnDialogue.ShowWindow(SW_SHOW);
 	m_spawnDialogue.SetActive(true);
-	m_spawnDialogue.SetObjectData(&m_toolSystem.GetSceneGraph());
+	m_spawnDialogue.Setup();
 }
 
 void MFCMain::ToolBarTerrain()
@@ -984,6 +984,14 @@ void MFCMain::ToolBarTerrain()
 
 void MFCMain::ToolBarPaint()
 {
+	// Set other modes to none
+	m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
+	m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
+	m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
+
+	// Set tool editor
+	m_toolSystem.SetEditor(EDITOR::TERRAIN_PAINT);
+	
 	// Destroy other windows 
 	CheckDialogues(DIALOGUE_TYPE::PAINT);
 
