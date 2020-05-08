@@ -16,12 +16,11 @@ SculptDialogue::SculptDialogue(CWnd* pParent /*=nullptr*/)
 
 }
 
-// Pass in data pointers the class will operate on
-void SculptDialogue::SetChunkData(DisplayChunk * displayChunk)
+void SculptDialogue::SetToolData(ToolMain * toolSystem)
 {
 	// Local storage 
-	m_displayChunk = displayChunk;
-
+	m_toolSystem = toolSystem;
+	
 	// Setup checkbox images
 	SetupCheckBoxes();
 
@@ -33,7 +32,7 @@ void SculptDialogue::SetChunkData(DisplayChunk * displayChunk)
 	sculptBoxEntry = L"Decrease";	m_boxSculpt.AddString(sculptBoxEntry.c_str());
 
 	// Setup constraint types
-	std::wstring constBoxEntry; 
+	std::wstring constBoxEntry;
 	constBoxEntry = L"N/A";			m_boxConst.AddString(constBoxEntry.c_str());
 	constBoxEntry = L"X";			m_boxConst.AddString(constBoxEntry.c_str());
 	constBoxEntry = L"Y";			m_boxConst.AddString(constBoxEntry.c_str());
@@ -47,11 +46,28 @@ void SculptDialogue::SetChunkData(DisplayChunk * displayChunk)
 	m_boxConst.SetCurSel(0);
 
 	// Set initial scale factor
-	CString scale; scale.Format(L"%g", m_displayChunk->GetScaleFactor());
+	CString scale; scale.Format(L"%g", toolSystem->GetDisplayChunk()->GetScaleFactor());
 	m_eScale.SetWindowTextW(scale);
 
 	// Reset scale limit
-	m_displayChunk->SetScaleFactor(1);
+	toolSystem->GetDisplayChunk()->SetScaleFactor(1);
+
+	// Set other modes to none
+	toolSystem->SetObjectSpawn(OBJECT_TYPE::NA);
+	toolSystem->SetObjectFunction(OBJECT_FUNCTION::NA);
+	toolSystem->SetTerrainPaint(TERRAIN_PAINT::NA);
+
+	// Set tool editor
+	toolSystem->SetEditor(EDITOR::SCULPT_FREELY);
+}
+
+void SculptDialogue::UpdateTool()
+{
+	// Keep sculpt mode up-to-date
+	if (m_toolSystem->GetTerrainFunction() != m_sculpt) { m_toolSystem->SetTerrainSculpt(m_sculpt); }
+
+	// Keep constraint up-to-date
+	if (m_toolSystem->GetConstraint() != m_constraint) { m_toolSystem->SetConstraint(m_constraint); }
 }
 
 void SculptDialogue::DoDataExchange(CDataExchange* pDX)
@@ -306,7 +322,7 @@ void SculptDialogue::OnEnChangeScale()
 	else { scale = 5.f; }
 
 	// Update limit
-	m_displayChunk->SetScaleFactor(scale);
+	m_toolSystem->GetDisplayChunk()->SetScaleFactor(scale);
 }
 
 // Update remaining sculpt details when one is changed //////////////////////////////////////////////

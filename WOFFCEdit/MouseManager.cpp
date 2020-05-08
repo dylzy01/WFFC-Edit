@@ -5,6 +5,7 @@ using namespace DirectX::SimpleMath;
 
 Game * MouseManager::m_game;
 InputCommands * MouseManager::m_input;
+int MouseManager::m_index;
 
 // Picking a single object
 int MouseManager::PickObject(PICK_TYPE type)
@@ -198,6 +199,9 @@ int MouseManager::AnyIntersection(DirectX::SimpleMath::Ray ray)
 
 					// Reset controller
 					firstPick = false;
+
+					// Store index
+					m_index = i;
 				}
 				// Else, if a closer object has been intersected
 				else if (pickedDistance < storedDistance)
@@ -207,6 +211,9 @@ int MouseManager::AnyIntersection(DirectX::SimpleMath::Ray ray)
 
 					// Store current distance
 					storedDistance = pickedDistance;
+
+					// Store index
+					m_index = i;
 				}
 			}
 		}		
@@ -249,6 +256,9 @@ int MouseManager::ObjectIntersection(DirectX::SimpleMath::Ray ray)
 
 						// Reset controller
 						firstPick = false;
+
+						// Store index
+						m_index = i;
 					}
 					// Else, if a closer object has been intersected
 					else if (pickedDistance < storedDistance)
@@ -258,6 +268,9 @@ int MouseManager::ObjectIntersection(DirectX::SimpleMath::Ray ray)
 
 						// Store current distance
 						storedDistance = pickedDistance;
+
+						// Store index
+						m_index = i;
 					}
 				}
 			}
@@ -301,6 +314,9 @@ int MouseManager::LightIntersection(DirectX::SimpleMath::Ray ray)
 
 						// Reset controller
 						firstPick = false;
+
+						// Store index
+						m_index = i;
 					}
 					// Else, if a closer object has been intersected
 					else if (pickedDistance < storedDistance)
@@ -310,6 +326,9 @@ int MouseManager::LightIntersection(DirectX::SimpleMath::Ray ray)
 
 						// Store current distance
 						storedDistance = pickedDistance;
+
+						// Store index
+						m_index = i;
 					}
 				}
 			}

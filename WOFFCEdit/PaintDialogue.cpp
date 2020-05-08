@@ -16,11 +16,10 @@ PaintDialogue::PaintDialogue(CWnd* pParent /*=nullptr*/)
 
 }
 
-// Pass in data pointers the class will operate on
-void PaintDialogue::SetChunkData(DisplayChunk * displayChunk)
+void PaintDialogue::SetToolData(ToolMain * toolSystem)
 {
-	// Local storage 
-	m_displayChunk = displayChunk;
+	// Local storage
+	m_toolSystem = toolSystem;
 
 	// Setup checkbox images
 	SetupCheckBoxes();
@@ -34,8 +33,19 @@ void PaintDialogue::SetChunkData(DisplayChunk * displayChunk)
 	selectBoxEntry = L"Stone";			m_boxSelect.AddString(selectBoxEntry.c_str());
 	selectBoxEntry = L"Snow";			m_boxSelect.AddString(selectBoxEntry.c_str());
 
-	// Select grass paint
-	OnBnClickedGrass();
+	// Set other modes to none
+	toolSystem->SetObjectSpawn(OBJECT_TYPE::NA);
+	toolSystem->SetObjectFunction(OBJECT_FUNCTION::NA);
+	toolSystem->SetTerrainSculpt(TERRAIN_SCULPT::NA);
+
+	// Set tool editor
+	toolSystem->SetEditor(EDITOR::TERRAIN_PAINT);
+}
+
+void PaintDialogue::UpdateTool()
+{
+	// Keep tool paint mode up-to-date
+	if (m_toolSystem->GetTerrainPaint() != m_paint) { m_toolSystem->SetTerrainPaint(m_paint); }
 }
 
 void PaintDialogue::DoDataExchange(CDataExchange* pDX)
@@ -310,7 +320,7 @@ void PaintDialogue::OnBnClickedNA()
 void PaintDialogue::OnBnClickedBlend()
 {
 	// Update blend controller of display chunk based on button state
-	m_displayChunk->SetBlend(IsDlgButtonChecked(IDC_CHECK3));
+	m_toolSystem->GetDisplayChunk()->SetBlend(IsDlgButtonChecked(IDC_CHECK3));
 }
 
 // Update remaining paint details when one is changed ///////////////////////////////////////////////

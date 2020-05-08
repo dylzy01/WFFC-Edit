@@ -1,33 +1,7 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Win32SimpleSample.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  ObjectManager.cpp
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(22): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(72): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(73): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(245): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(261): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(264): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(312): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(318): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(358): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(447): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(453): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(468): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(554): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(583): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(596): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(643): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(656): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(693): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(733): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(739): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(835): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(841): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(937): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(943): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(1065): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(1118): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(1166): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(1190): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(1197): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\objectmanager.cpp(230): warning C4715: 'ObjectManager::SpawnObject': not all control paths return a value
+  SculptDialogue.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\resource.h(137): warning C4005: 'ID_FILE_SAVE': macro redefinition
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\atlmfc\include\afxres.h(217): note: see previous definition of 'ID_FILE_SAVE'
+c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\sculptdialogue.cpp(321): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   Win32SimpleSample.vcxproj -> C:\Users\dylan\Documents\GitHub\ToolsProgramming\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe

@@ -18,21 +18,21 @@ LightDialogue::LightDialogue(CWnd* pParent /*=nullptr*/)
 	m_constraint = CONSTRAINT::NA;
 }
 
-void LightDialogue::SetLightData(std::vector<DisplayObject>* displayList)
+void LightDialogue::SetToolData(ToolMain * toolSystem)
 {
 	// Local storage
-	///m_displayList = *displayList;
+	m_toolSystem = toolSystem;
+	m_selectedIDs = toolSystem->GetSelectedIDs();
+	m_input = toolSystem->GetInput();		
 
 	// Setup IDs of currently available lights
-	SetupLights();	
+	SetupLights(&toolSystem->GetSceneGraph());
 
 	// Setup light types
 	{
 		std::wstring typeBoxEntry;
-		typeBoxEntry = L"";			m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Directional";	m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Point";		m_boxType.AddString(typeBoxEntry.c_str());
-		typeBoxEntry = L"Spot";			m_boxType.AddString(typeBoxEntry.c_str());
 	}
 
 	// Setup constraint types
@@ -47,55 +47,72 @@ void LightDialogue::SetLightData(std::vector<DisplayObject>* displayList)
 		constBoxEntry = L"YZ";			m_boxConst.AddString(constBoxEntry.c_str());
 	}
 
-	SetupCheckBoxes();
+	UpdateDialogue();
+
+	// Set other modes to none
+	m_toolSystem->SetObjectSpawn(OBJECT_TYPE::NA);
+	m_toolSystem->SetTerrainSculpt(TERRAIN_SCULPT::NA);
+	m_toolSystem->SetTerrainPaint(TERRAIN_PAINT::NA);
+
+	// Set tool editor
+	m_toolSystem->SetEditor(EDITOR::LIGHTS);
 }
 
-void LightDialogue::SetLightData(std::vector<SceneObject>* sceneGraph, std::vector<int> selectedIDs)
-{
-	// Local storage
-	m_sceneGraph = sceneGraph;
-	m_selectedIDs = selectedIDs;
-
-	// Local storage of lights
-	m_lights = new std::vector<SceneObject>();
-
-	// Loop through scene graph
-	for (int i = 0; i < sceneGraph->size(); ++i)
+void LightDialogue::UpdateTool()
+{	
+	// If selected IDs should be updated
+	if (m_select) { m_toolSystem->SetSelectedObjectIDs(m_selectedIDs); m_select = false; }
+	else { m_selectedIDs = m_toolSystem->GetSelectedIDs(); }
+	
+	// If there's been a new selection
+	if (m_toolSystem->GetNewSelection()) { 
+		UpdateDialogue(); 
+	}
+	
+	// If should focus on an object
+	if (m_focus)
 	{
-		// If object is a light
-		if (sceneGraph->at(i).m_type == OBJECT_TYPE::LIGHT)
+		// Setup temp focus ID
+		int focusID = -1;
+
+		// If more than one object is selected
+		if (m_toolSystem->GetSelectedIDs().size() > 1)
 		{
-			// Add to storage
-			m_lights->push_back(sceneGraph->at(i));
+			// Define object ID to focus on
+			focusID = m_focusDialogue.GetSelectedIndex();
 		}
+
+		// Else, if just one object is selected
+		else if (m_toolSystem->GetSelectedIDs().size() == 1)
+		{
+			// Define object ID to focus on
+			focusID = m_toolSystem->GetSelectedIDs()[0];
+		}
+
+		// Setup object ID to focus on
+		m_toolSystem->SetFocus(focusID);
 	}
+	else { m_toolSystem->SetFocus(-1); }
 
-	// Setup IDs of currently available lights
-	SetupLights();
-
-	// Setup light types
-	{
-		std::wstring typeBoxEntry;
-		typeBoxEntry = L"Directional";	m_boxType.AddString(typeBoxEntry.c_str());
-		typeBoxEntry = L"Point";		m_boxType.AddString(typeBoxEntry.c_str());
-	}
-
-	// Setup constraint types
-	{
-		std::wstring constBoxEntry;
-		constBoxEntry = L"N/A";			m_boxConst.AddString(constBoxEntry.c_str());
-		constBoxEntry = L"X";			m_boxConst.AddString(constBoxEntry.c_str());
-		constBoxEntry = L"Y";			m_boxConst.AddString(constBoxEntry.c_str());
-		constBoxEntry = L"Z";			m_boxConst.AddString(constBoxEntry.c_str());
-		constBoxEntry = L"XY";			m_boxConst.AddString(constBoxEntry.c_str());
-		constBoxEntry = L"XZ";			m_boxConst.AddString(constBoxEntry.c_str());
-		constBoxEntry = L"YZ";			m_boxConst.AddString(constBoxEntry.c_str());
-	}
-
-	Update();
+	// If tool function isn't up-to-date
+	if (m_toolSystem->GetObjectFunction() != m_function) { m_toolSystem->SetObjectFunction(m_function); }
+	
+	// If tool constraint isn't up-to-date
+	if (m_toolSystem->GetConstraint() != m_constraint) { m_toolSystem->SetConstraint(m_constraint); }	
+	
+	// If user is translating
+	//if (m_translating)
+	//{		
+	//	// If only one light is selected
+	//	if (m_selectedIDs.size() == 1)
+	//	{
+	//		// Update position boxes
+	//		UpdatePosition(m_toolSystem->GetSceneGraph()[m_toolSystem->GetSelectedIndex()].GetPosition());					
+	//	}		
+	//}
 }
 
-void LightDialogue::Update(int ID)
+void LightDialogue::UpdateDialogue(int ID)
 {
 	// If ID is valid
 	if (ID != -1) { m_boxID.SetCurSel(ID); }
@@ -113,30 +130,6 @@ void LightDialogue::Update(int ID)
 	UpdateQuadA();
 
 	m_internal = false;
-}
-
-void LightDialogue::UpdateLightPosition(DirectX::XMFLOAT3 position)
-{
-	// Loop through current selection
-	for (int i = 0; i < m_selectedIDs.size(); ++i)
-	{
-		// Loop through lights
-		for (int j = 0; j < m_lights->size(); ++j)
-		{
-			// If light ID matches selection
-			if (m_lights->at(j).ID == m_selectedIDs[i])
-			{
-				// Set current light position
-				m_lights->at(j).posX = position.x;
-				m_lights->at(j).posY = position.y;
-				m_lights->at(j).posZ = position.z;
-				break;
-			}
-		}
-	}	
-
-	// Update position boxes
-	UpdatePosition();
 }
 
 void LightDialogue::DoDataExchange(CDataExchange* pDX)
@@ -1083,10 +1076,7 @@ void LightDialogue::OnBnClickedDelete()
 	if (m_selectedIDs.size() > 0)
 	{
 		// Remove lights from database storage
-		ObjectManager::Remove(m_selectedIDs);
-
-		// Request updated scene graph
-		m_request = true;
+		SetupLights(&ObjectManager::Remove(m_selectedIDs));
 	}
 }
 
@@ -1100,18 +1090,17 @@ void LightDialogue::OnBnClickedDuplicate()
 		ObjectManager::Copy(m_selectedIDs);
 
 		// Paste lights
-		ObjectManager::Paste();
-
-		// Request updated scene graph
-		m_request = true;
+		SetupLights(&ObjectManager::Paste());
 	}
 }
 
 // Translate has been selected
 void LightDialogue::OnBnClickedTranslate()
 {
+	m_translating = IsDlgButtonChecked(IDC_CHECK2);
+	
 	// Switch between translating
-	switch (IsDlgButtonChecked(IDC_CHECK2))
+	switch (m_translating)
 	{
 	case true:
 	{
@@ -1295,6 +1284,21 @@ void LightDialogue::UpdatePosition()
 		m_ePosZ.SetWindowTextW(empty);
 		m_internal = false;
 	}
+}
+
+void LightDialogue::UpdatePosition(DirectX::XMFLOAT3 position)
+{
+	// Update X position box
+	CString sX; sX.Format(L"%g", position.x);
+	m_ePosX.SetWindowTextW(sX);
+
+	// Update Y position box
+	CString sY; sY.Format(L"%g", position.y);
+	m_ePosY.SetWindowTextW(sY);
+
+	// Update Z position box
+	CString sZ; sZ.Format(L"%g", position.z);
+	m_ePosZ.SetWindowTextW(sZ);
 }
 
 void LightDialogue::UpdateDirection()
@@ -1563,7 +1567,7 @@ void LightDialogue::UpdateSelectedConstraint()
 void LightDialogue::Reset()
 {
 	m_active = m_translating = m_x = m_y = m_z =
-		m_select = m_resetLights = m_lightSetup = false;
+		m_select = false;
 
 	m_function = OBJECT_FUNCTION::SELECT;
 	m_constraint = CONSTRAINT::NA;
@@ -1581,11 +1585,24 @@ void LightDialogue::UpdateLight(SceneObject object)
 	ObjectManager::ReplaceLight(object);
 }
 
-void LightDialogue::SetupLights()
+void LightDialogue::SetupLights(std::vector<SceneObject>* sceneGraph)
 {
 	m_internal = true;
 	
-	if (m_resetLights) { m_selectedIDs.clear(); m_resetLights = false; }
+	// Local storage of lights
+	m_lights = new std::vector<SceneObject>();
+
+	// Loop through scene graph
+	for (int i = 0; i < sceneGraph->size(); ++i)
+	{
+		// If object is a light
+		if (sceneGraph->at(i).m_type == OBJECT_TYPE::LIGHT)
+		{
+			// Add to storage
+			m_lights->push_back(sceneGraph->at(i));
+		}
+	}
+	
 	m_boxID.ResetContent();
 
 	// Loop through lights in scene graph
@@ -1599,8 +1616,6 @@ void LightDialogue::SetupLights()
 	// Setup total lights in scene
 	std::wstring totalLights = std::to_wstring(m_lights->size());
 	SetDlgItemText(IDC_STATIC3, totalLights.c_str());
-
-	m_lightSetup = true;
 
 	m_internal = false;
 }

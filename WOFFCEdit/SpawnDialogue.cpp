@@ -16,8 +16,11 @@ SpawnDialogue::SpawnDialogue(CWnd* pParent /*=nullptr*/)
 
 }
 
-void SpawnDialogue::Setup()
+void SpawnDialogue::SetToolData(ToolMain * toolSystem)
 {
+	// Local storage
+	m_toolSystem = toolSystem;
+	
 	// Setup spawn types
 	{
 		std::wstring typeBoxEntry;
@@ -29,7 +32,7 @@ void SpawnDialogue::Setup()
 		typeBoxEntry = L"Boat";			m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Grass";		m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Palm Tree";	m_boxType.AddString(typeBoxEntry.c_str());
-		typeBoxEntry = L"Pine Tree";	m_boxType.AddString(typeBoxEntry.c_str());		
+		typeBoxEntry = L"Pine Tree";	m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Cube";			m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Cylinder";		m_boxType.AddString(typeBoxEntry.c_str());
 		typeBoxEntry = L"Cone";			m_boxType.AddString(typeBoxEntry.c_str());
@@ -39,6 +42,20 @@ void SpawnDialogue::Setup()
 	}
 
 	SetupCheckBoxes();
+
+	// Set other modes to none
+	toolSystem->SetObjectFunction(OBJECT_FUNCTION::NA);
+	toolSystem->SetTerrainSculpt(TERRAIN_SCULPT::NA);
+	toolSystem->SetTerrainPaint(TERRAIN_PAINT::NA);
+
+	// Set tool editor
+	toolSystem->SetEditor(EDITOR::OBJECT_SPAWN);
+}
+
+void SpawnDialogue::UpdateTool()
+{
+	// Keep spawn mode up-to-date
+	if (m_toolSystem->GetObjectSpawn() != m_spawner) { m_toolSystem->SetObjectSpawn(m_spawner); }
 }
 
 void SpawnDialogue::DoDataExchange(CDataExchange* pDX)

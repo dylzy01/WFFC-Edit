@@ -63,23 +63,13 @@ float4 GenerateLight(float3 normal, float3 position3D)
         float4 diffuse = Lights[i].diffuseColour;
         
         // Apply different lighting based on type
-        if (Lights[i].type == 2 || Lights[i].type == 3)
+        if (Lights[i].type == 1)
         {
             // Calculate attenuation
             float attenuation = 1.f / (Lights[i].constA + (Lights[i].linA + dis) + (Lights[i].quadA * pow(dis, 2)));
     
             // Apply attenuation to diffuse colour
             diffuse *= attenuation;
-            
-            // Setup spot light
-            if (Lights[i].type == 3)
-            {
-                // Calculate spot & apply to diffuse colour
-                float minCos = cos(Lights[i].spotAngle);
-                float maxCos = (minCos + 1.f) / 2.f;
-                float angleCos = dot(Lights[i].direction, dis);
-                diffuse *= smoothstep(minCos, maxCos, angleCos);
-            }
         }
         
         // Calculate lighting

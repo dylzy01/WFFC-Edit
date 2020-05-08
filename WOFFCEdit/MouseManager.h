@@ -26,6 +26,9 @@ public:
 	// Picking a piece of terrain
 	static TERRAIN PickTerrain();
 
+	// Getters
+	static int GetIndex() { return m_index; }
+
 	// Setters
 	static void SetGame(Game * game) { m_game = game; }
 	static void SetInput(InputCommands * input) { m_input = input; }
@@ -45,5 +48,6 @@ private:
 private:
 	static Game * m_game;
 	static InputCommands * m_input;
+	static int m_index;
 };
 

@@ -9,6 +9,7 @@
 #include "ObjectManager.h"
 #include "SceneManager.h"
 #include "FocusDialogue.h"
+#include "ToolMain.h"
 
 
 // LightDialogue dialog
@@ -21,44 +22,17 @@ public:
 	LightDialogue(CWnd* pParent = NULL);
 	virtual ~LightDialogue() {}
 
-	// Pass in data pointers the class will operate on
-	void SetLightData(std::vector<DisplayObject>* displayList);
-	void SetLightData(std::vector<SceneObject>* sceneGraph, std::vector<int> selectedIDs);
+	// Pass in a pointer for the class to operate on
+	void SetToolData(ToolMain* toolSystem);
 
-	// Update current light with dialogue values
-	void Update(int ID = -1);
-
-	// Update current light position
-	void UpdateLightPosition(DirectX::XMFLOAT3 position);	
+	// Update ToolMain from this dialogue
+	void UpdateTool();	
 
 	// Getters
 	bool GetActive() { return m_active; }
-	bool GetTranslating() { return m_translating; }
-	bool GetLightSetup() { return m_lightSetup; }
-	bool GetFocus() { return m_focus; }
-	bool GetSelect() { 
-		if (m_select) {
-			m_select = false;
-			return true;
-		}
-		else { return false; }
-	}
-	bool GetRequest() { 
-		if (m_request) {
-			m_request = false;
-			return true;
-		}
-		else { return false; }
-	}
-	std::vector<int> GetSelectedIDs() { return m_selectedIDs; }
-	OBJECT_FUNCTION GetFunction() { return m_function; }
-	CONSTRAINT GetConstraint() { return m_constraint; }
-	// Focus
-	FocusDialogue* GetFocusDialogue() { return &m_focusDialogue; }
 
 	// Setters
 	void SetActive(bool active) { m_active = active; }
-	void SetSelectedIDs(std::vector<int> selection) { m_selectedIDs = selection; }
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -71,9 +45,10 @@ protected:
 	afx_msg void End();									// Kill the dialogue
 
 	// Local storage 
-	std::vector<SceneObject>* m_sceneGraph;
 	std::vector<SceneObject>* m_lights;
 	std::vector<int> m_selectedIDs;
+	ToolMain* m_toolSystem;
+	InputCommands* m_input;
 
 	// Controllers
 	bool m_active;
@@ -82,8 +57,6 @@ protected:
 	bool m_internal = false;
 	bool m_focus = false;
 	bool m_select = false;
-	bool m_resetLights = false;
-	bool m_request = false;
 	OBJECT_FUNCTION m_function;
 	CONSTRAINT m_constraint;
 
@@ -105,7 +78,6 @@ public:
 	float m_fDifR, m_fDifG, m_fDifB;
 	float m_fAmbR, m_fAmbG, m_fAmbB;
 	float m_fConstA, m_fLinA, m_fQuadA;
-	bool m_lightSetup = false;
 
 	// Message handlers
 	afx_msg void OnBnClickedOk();
@@ -138,12 +110,14 @@ public:
 
 private:
 	// Setup IDs of currently available lights
-	void SetupLights();
+	void SetupLights(std::vector<SceneObject>* sceneGraph);
 	
 	// Update light details
+	void UpdateDialogue(int ID = -1);
 	void UpdateType();
 	void UpdateEnabled();
 	void UpdatePosition();
+	void UpdatePosition(DirectX::XMFLOAT3 position);
 	void UpdateDirection();
 	void UpdateDiffuse();
 	void UpdateAmbient();

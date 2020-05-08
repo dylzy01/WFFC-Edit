@@ -55,6 +55,7 @@ public: //methods
 		}
 		else { return false; }
 	}
+	int GetSelectedIndex() { return MouseManager::GetIndex(); }
 
 	// Setters
 	void SetWireframe(bool wireframe) { m_d3dRenderer.SetWireframe(wireframe); }
@@ -122,10 +123,9 @@ public: //methods
 	}
 	void SetObjectSpawn(OBJECT_TYPE spawn) { m_objectType = spawn; }
 	void SetObjectFunction(OBJECT_FUNCTION function) { m_objectFunction = function; }
-	void SetObjectConstraint(CONSTRAINT constraint) { m_constraint = constraint; }
 	void SetTerrainPaint(TERRAIN_PAINT paint) { m_paint = paint; }
 	void SetTerrainSculpt(TERRAIN_SCULPT function) { m_terrainFunction = function; }
-	void SetTerrainConstraint(CONSTRAINT constraint) { m_constraint = constraint; }
+	void SetConstraint(CONSTRAINT constraint) { m_constraint = constraint; }
 	void SetSceneObject(SceneObject object, int index) { m_d3dRenderer.SetSceneObject(object, index); }
 	void SetSelectedObjectID(int ID) 
 	{ 

@@ -6,6 +6,7 @@
 #include <string>
 #include "Tools.h"
 #include "DisplayChunk.h"
+#include "ToolMain.h"
 
 // PaintDialogue dialog
 
@@ -16,15 +17,15 @@ class PaintDialogue : public CDialogEx
 public:
 	PaintDialogue(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~PaintDialogue() {}
+	
+	// Pass in a pointer for the class to operate on
+	void SetToolData(ToolMain* toolSystem);
 
-	// Pass in data pointers the class will operate on
-	void SetChunkData(DisplayChunk* displayChunk);
+	// Update ToolMain from this dialogue
+	void UpdateTool();
 
 	// Getters
 	bool GetActive() { return m_active; }
-	bool GetSurround() { return m_surround; }
-	bool GetBlend() { return m_blend; }
-	TERRAIN_PAINT GetPaint() { return m_paint; }
 
 	// Setters
 	void SetActive(bool active) { m_active = active; }
@@ -40,7 +41,7 @@ protected:
 	afx_msg void End();									// Kill the dialogue
 
 	// Local storage
-	DisplayChunk* m_displayChunk;
+	ToolMain* m_toolSystem;
 
 	// Controllers
 	bool m_active;

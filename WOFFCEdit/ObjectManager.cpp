@@ -286,7 +286,7 @@ std::vector<SceneObject> ObjectManager::Remove(std::vector<int> & IDs, int ID)
 	while (SQLManager::GetObjectStep() == SQLITE_ROW) { sceneGraph.push_back(SQLManager::CreateObject()); }
 
 	// Rebuild display list from new table data
-	m_game->RebuildDisplayList(&sceneGraph);
+	m_game->BuildDisplayList(&sceneGraph);
 
 	// Overwrite selected objects list
 	m_selectedObjectIDs = IDs;

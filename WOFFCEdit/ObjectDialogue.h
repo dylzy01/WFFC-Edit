@@ -20,43 +20,17 @@ public:
 	ObjectDialogue(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~ObjectDialogue() {}
 
-	// Pass in data pointers the class will operate on
-	void SetObjectData(std::vector<SceneObject>* objects, std::vector<int>selectedIDs);
+	// Pass in a pointer for the class to operate on
 	void SetToolSystem(ToolMain* toolSystem);	
 
-	// Update dialogue
-	void Update(int ID = -1);
-
+	// Update ToolMain from this dialogue
+	void UpdateTool();
+	
 	// Getters
 	bool GetActive() { return m_active; }
-	bool GetFocus() { return m_focus; }
-	bool GetTransforming() { return m_transforming; }
-	bool GetObjectsSetup() { return m_objectSetup; }
-	bool GetSelect() { 
-		if (m_select) {
-			m_select = false;
-			return true;
-		}
-		else { return false; }
-	}
-	bool GetRequest() { 
-		if (m_request) {
-			m_request = false;
-			return true;
-		}
-		else { return false; }
-	}
-	float GetSnap() { if (m_snapTerrain) { return -1; } else if (m_snapValue) { return m_snapScale; } }
-	std::vector<int> GetSelectedIDs() { return m_selectedIDs; }
-	OBJECT_FUNCTION GetFunction() { return m_function; }
-	CONSTRAINT GetConstraint() { return m_constraint; }
-	// Focus
-	FocusDialogue* GetFocusDialogue() { return &m_focusDialogue; }
 	
 	// Setters
-	void SetActive(bool active) { m_active = active; }
-	void SetTransforming(bool transforming) { m_transforming = transforming; }
-	void SetSelectedIDs(std::vector<int> selectedIDs) { m_selectedIDs = selectedIDs; }	
+	void SetActive(bool active) { m_active = active; }	
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -70,7 +44,6 @@ protected:
 
 	// Local storage
 	ToolMain* m_toolSystem;
-	std::vector<SceneObject>* m_sceneGraph;
 	std::vector<SceneObject>* m_objects;
 	std::vector<int> m_selectedIDs;
 	
@@ -78,14 +51,11 @@ protected:
 	bool m_active;
 	bool m_focus = false, m_focusCreated = false;
 	bool m_transforming = false;
-	bool m_objectSetup = false;
 	bool m_x, m_y, m_z;		
 	bool m_snapTerrain, m_snapValue;	
 	bool m_internal = false;
 	bool m_select = false;
-	bool m_request = false;
 	float m_snapScale;
-	bool m_resetObjects = false;
 	OBJECT_FUNCTION m_function;
 	CONSTRAINT m_constraint;
 
@@ -130,12 +100,13 @@ public:
 
 private:
 	// Setup IDs of currently available objects
-	void SetupObjects();
+	void SetupObjects(std::vector<SceneObject>* sceneGraph);
 
 	// Uncheck other function buttons
 	void Uncheck();
 
 	// Update object details
+	void UpdateDialogue(int ID = -1);
 	void UpdateType();
 	void UpdateScale();
 	void UpdateRotation();

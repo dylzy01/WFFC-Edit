@@ -6,6 +6,7 @@
 #include <string>
 #include "Tools.h"
 #include "DisplayChunk.h"
+#include "ToolMain.h"
 
 // SculptDialogue dialog
 
@@ -17,14 +18,14 @@ public:
 	SculptDialogue(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SculptDialogue() {}
 
-	// Pass in data pointers the class will operate on
-	void SetChunkData(DisplayChunk* displayChunk);
+	// Pass in a pointer for the class to operate on
+	void SetToolData(ToolMain* toolSystem);
+
+	// Update ToolMain from this dialogue
+	void UpdateTool();
 
 	// Getters
 	bool GetActive() { return m_active; }
-	///bool GetPlateau() { return m_plateau; }
-	TERRAIN_SCULPT GetSculpt() { return m_sculpt; }
-	CONSTRAINT GetConstraint() { return m_constraint; }
 
 	// Setters
 	void SetActive(bool active) { m_active = active; }
@@ -40,7 +41,7 @@ protected:
 	afx_msg void End();									// Kill the dialogue
 
 	// Local storage
-	DisplayChunk* m_displayChunk;
+	ToolMain* m_toolSystem;
 
 	// Controllers
 	bool m_active;/// , m_plateau;

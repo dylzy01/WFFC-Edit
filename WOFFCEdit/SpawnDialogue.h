@@ -7,6 +7,7 @@
 #include "Tools.h"
 #include "SceneObject.h"
 #include "ObjectManager.h"
+#include "ToolMain.h"
 
 // SpawnDialogue dialog
 
@@ -18,12 +19,14 @@ public:
 	SpawnDialogue(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SpawnDialogue() {}
 
-	// Pass in data pointers the class will operate on
-	void Setup();
+	// Pass in a pointer for the class to operate on
+	void SetToolData(ToolMain* toolSystem);
+
+	// Update ToolMain from this dialogue
+	void UpdateTool();
 
 	// Getters
 	bool GetActive() { return m_active; }
-	OBJECT_TYPE GetSpawnType() { return m_spawner; }
 
 	// Setters
 	void SetActive(bool active) { m_active = active; }
@@ -37,7 +40,10 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	void SetupCheckBoxes();
 	afx_msg void End();									// Kill the dialogue
-														
+					
+	// Local storage
+	ToolMain* m_toolSystem;
+
 	// Controllers
 	bool m_active;
 	OBJECT_TYPE m_spawner;

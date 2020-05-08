@@ -12,6 +12,10 @@ public:
 	SceneObject();
 	~SceneObject();
 
+	DirectX::XMFLOAT3 GetPosition() {
+		return DirectX::XMFLOAT3{ posX, posY, posZ };
+	}
+
 	int chunk_ID;
 	std::string model_path;
 	std::string tex_diffuse_path;

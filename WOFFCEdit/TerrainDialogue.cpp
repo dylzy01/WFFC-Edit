@@ -16,11 +16,10 @@ TerrainDialogue::TerrainDialogue(CWnd* pParent /*=nullptr*/)
 
 }
 
-// Pass in data pointers the class will operate on
-void TerrainDialogue::SetChunkData(DisplayChunk* displayChunk)
+void TerrainDialogue::SetToolData(ToolMain * toolSystem)
 {
-	// Local storage 
-	m_displayChunk = displayChunk;
+	// Local storage
+	m_toolSystem = toolSystem;
 
 	// Setup indexes
 	for (int i = 0; i < TERRAINRESOLUTION - 1; ++i)
@@ -32,61 +31,120 @@ void TerrainDialogue::SetChunkData(DisplayChunk* displayChunk)
 	}
 
 	// Setup texture types
-	std::wstring texBoxEntry;
-	texBoxEntry = L"NA";			m_boxTex.AddString(texBoxEntry.c_str());
-	texBoxEntry = L"Grass";			m_boxTex.AddString(texBoxEntry.c_str());
-	texBoxEntry = L"Dirt";			m_boxTex.AddString(texBoxEntry.c_str());
-	texBoxEntry = L"Sand";			m_boxTex.AddString(texBoxEntry.c_str());
-	texBoxEntry = L"Stone";			m_boxTex.AddString(texBoxEntry.c_str());
-	texBoxEntry = L"Snow";			m_boxTex.AddString(texBoxEntry.c_str());
-	texBoxEntry = L"Grass/Dirt";	m_boxTex.AddString(texBoxEntry.c_str());
-	texBoxEntry = L"Grass/Sand";	m_boxTex.AddString(texBoxEntry.c_str());
-	texBoxEntry = L"Grass/Stone";	m_boxTex.AddString(texBoxEntry.c_str());
-	texBoxEntry = L"Grass/Snow";	m_boxTex.AddString(texBoxEntry.c_str());
-	texBoxEntry = L"Dirt/Sand";		m_boxTex.AddString(texBoxEntry.c_str());
-	texBoxEntry = L"Dirt/Stone";	m_boxTex.AddString(texBoxEntry.c_str());
-	texBoxEntry = L"Dirt/Snow";		m_boxTex.AddString(texBoxEntry.c_str());
-	texBoxEntry = L"Sand/Stone";	m_boxTex.AddString(texBoxEntry.c_str());
-	texBoxEntry = L"Sand/Snow";		m_boxTex.AddString(texBoxEntry.c_str());
-	texBoxEntry = L"Stone/Snow";	m_boxTex.AddString(texBoxEntry.c_str());
+	{
+		std::wstring texBoxEntry;
+		texBoxEntry = L"NA";			m_boxTex.AddString(texBoxEntry.c_str());
+		texBoxEntry = L"Grass";			m_boxTex.AddString(texBoxEntry.c_str());
+		texBoxEntry = L"Dirt";			m_boxTex.AddString(texBoxEntry.c_str());
+		texBoxEntry = L"Sand";			m_boxTex.AddString(texBoxEntry.c_str());
+		texBoxEntry = L"Stone";			m_boxTex.AddString(texBoxEntry.c_str());
+		texBoxEntry = L"Snow";			m_boxTex.AddString(texBoxEntry.c_str());
+		texBoxEntry = L"Grass/Dirt";	m_boxTex.AddString(texBoxEntry.c_str());
+		texBoxEntry = L"Grass/Sand";	m_boxTex.AddString(texBoxEntry.c_str());
+		texBoxEntry = L"Grass/Stone";	m_boxTex.AddString(texBoxEntry.c_str());
+		texBoxEntry = L"Grass/Snow";	m_boxTex.AddString(texBoxEntry.c_str());
+		texBoxEntry = L"Dirt/Sand";		m_boxTex.AddString(texBoxEntry.c_str());
+		texBoxEntry = L"Dirt/Stone";	m_boxTex.AddString(texBoxEntry.c_str());
+		texBoxEntry = L"Dirt/Snow";		m_boxTex.AddString(texBoxEntry.c_str());
+		texBoxEntry = L"Sand/Stone";	m_boxTex.AddString(texBoxEntry.c_str());
+		texBoxEntry = L"Sand/Snow";		m_boxTex.AddString(texBoxEntry.c_str());
+		texBoxEntry = L"Stone/Snow";	m_boxTex.AddString(texBoxEntry.c_str());
+	}
 
 	// Setup sculpt types
-	std::wstring sculptBoxEntry;
-	sculptBoxEntry = L"N/A";		m_boxSculpt.AddString(sculptBoxEntry.c_str());
-	sculptBoxEntry = L"Increase";	m_boxSculpt.AddString(sculptBoxEntry.c_str());
-	sculptBoxEntry = L"Flatten";	m_boxSculpt.AddString(sculptBoxEntry.c_str());
-	sculptBoxEntry = L"Decrease";	m_boxSculpt.AddString(sculptBoxEntry.c_str());
+	{
+		std::wstring sculptBoxEntry;
+		sculptBoxEntry = L"N/A";		m_boxSculpt.AddString(sculptBoxEntry.c_str());
+		sculptBoxEntry = L"Increase";	m_boxSculpt.AddString(sculptBoxEntry.c_str());
+		sculptBoxEntry = L"Flatten";	m_boxSculpt.AddString(sculptBoxEntry.c_str());
+		sculptBoxEntry = L"Decrease";	m_boxSculpt.AddString(sculptBoxEntry.c_str());
+	}
 
 	// Setup constraint types
-	std::wstring constBoxEntry;
-	constBoxEntry = L"N/A";			m_boxConst.AddString(constBoxEntry.c_str());
-	constBoxEntry = L"X";			m_boxConst.AddString(constBoxEntry.c_str());
-	constBoxEntry = L"Y";			m_boxConst.AddString(constBoxEntry.c_str());
-	constBoxEntry = L"Z";			m_boxConst.AddString(constBoxEntry.c_str());
-	constBoxEntry = L"XY";			m_boxConst.AddString(constBoxEntry.c_str());
-	constBoxEntry = L"XZ";			m_boxConst.AddString(constBoxEntry.c_str());
-	constBoxEntry = L"YZ";			m_boxConst.AddString(constBoxEntry.c_str());
+	{
+		std::wstring constBoxEntry;
+		constBoxEntry = L"N/A";			m_boxConst.AddString(constBoxEntry.c_str());
+		constBoxEntry = L"X";			m_boxConst.AddString(constBoxEntry.c_str());
+		constBoxEntry = L"Y";			m_boxConst.AddString(constBoxEntry.c_str());
+		constBoxEntry = L"Z";			m_boxConst.AddString(constBoxEntry.c_str());
+		constBoxEntry = L"XY";			m_boxConst.AddString(constBoxEntry.c_str());
+		constBoxEntry = L"XZ";			m_boxConst.AddString(constBoxEntry.c_str());
+		constBoxEntry = L"YZ";			m_boxConst.AddString(constBoxEntry.c_str());
+	}
 
 	// Set initial scale factor
-	CString scale; scale.Format(L"%g", m_displayChunk->GetScaleFactor());
+	CString scale; scale.Format(L"%g", toolSystem->GetDisplayChunk()->GetScaleFactor());
 	m_eScale.SetWindowTextW(scale);
 
 	// Reset scale limit
-	m_displayChunk->SetScaleFactor(1);
+	toolSystem->GetDisplayChunk()->SetScaleFactor(1);
 
 	// Display first terrain
-	UpdateTerrain(0, 0);
+	TERRAIN temp;
+	temp.row = 0;
+	temp.column = 0;
+	UpdateTerrain(temp);
 
 	SetupCheckBoxes();
+
+	// Set other modes to none
+	toolSystem->SetObjectSpawn(OBJECT_TYPE::NA);
+	toolSystem->SetObjectFunction(OBJECT_FUNCTION::NA);
+	toolSystem->SetTerrainPaint(TERRAIN_PAINT::NA);
+
+	// Set tool editor
+	toolSystem->SetEditor(EDITOR::SCULPT_SINGLE);
+}
+
+void TerrainDialogue::UpdateTool()
+{
+	// If user is pressing the right mouse button
+	if (m_toolSystem->GetInput()->mouseRight)
+	{
+		// If the user isn't sculpting
+		if (!m_sculpting)
+		{
+			// Set editor to none
+			m_toolSystem->SetTerrainSculpt(TERRAIN_SCULPT::NA);
+
+			// Get current terrain selection
+			TERRAIN terrain = MouseManager::PickTerrain();
+
+			// If terrain has been intersected
+			if (terrain.intersect)
+			{
+				// Update dialogue data
+				UpdateTerrain(terrain);
+			}
+		}
+
+		// Else, if the user is sculpting
+		else
+		{
+			// Set tool editor
+			m_toolSystem->SetEditor(EDITOR::SCULPT_SINGLE);
+
+			// Update tool selected terrrain
+			m_toolSystem->SetSelectedTerrain(m_terrain);
+
+			// Set sculpt mode
+			m_toolSystem->SetTerrainSculpt(m_sculpt);
+
+			// Set constraint
+			m_toolSystem->SetConstraint(m_constraint);
+		}
+	}
 }
 
 // Update current terrain with dialogue values/vice versa
-void TerrainDialogue::UpdateTerrain(int row, int column)
+void TerrainDialogue::UpdateTerrain(TERRAIN terrain)
 {
-	m_boxRow.SetCurSel(row);
-	m_boxCol.SetCurSel(column);
-	UpdateCoordinates(row, column);
-	UpdateTexture(row, column);
+	m_terrain = terrain;
+	
+	m_boxRow.SetCurSel(terrain.row);
+	m_boxCol.SetCurSel(terrain.column);
+	UpdateCoordinates(terrain.row, terrain.column);
+	UpdateTexture(terrain.row, terrain.column);
 
 	// Set sculpt & constraint box to N/A
 	m_boxSculpt.SetCurSel(0);
@@ -201,7 +259,7 @@ void TerrainDialogue::OnBnSelchangeTexture()
 	int texture = m_boxTex.GetCurSel();
 
 	// Set new paint
-	m_displayChunk->OverwritePaint(row, col, (TERRAIN_PAINT)texture);
+	m_toolSystem->GetDisplayChunk()->OverwritePaint(row, col, (TERRAIN_PAINT)texture);	
 }
 
 // Sculpt mode has been changed
@@ -372,7 +430,7 @@ void TerrainDialogue::OnEnChangeScale()
 	else { scale = 5.f; }
 
 	// Update limit
-	m_displayChunk->SetScaleFactor(scale);
+	m_toolSystem->GetDisplayChunk()->SetScaleFactor(scale);
 }
 
 // Update remaining terrain details when one is changed /////////////////////////////////////////////
@@ -436,7 +494,7 @@ void TerrainDialogue::Uncheck()
 void TerrainDialogue::UpdateCoordinates(int row, int column)
 {
 	// Store position of selected terrain
-	DirectX::XMFLOAT3 coords = m_displayChunk->GetGeometry(row, column).position;
+	DirectX::XMFLOAT3 coords = m_toolSystem->GetDisplayChunk()->GetGeometry(row, column).position;
 
 	// Update X coord box
 	CString sX; sX.Format(L"%g", coords.x);
@@ -455,7 +513,7 @@ void TerrainDialogue::UpdateCoordinates(int row, int column)
 void TerrainDialogue::UpdateTexture(int row, int column)
 {
 	// Store texture of selected terrain
-	TERRAIN_PAINT paint = m_displayChunk->GetPaint(row, column);
+	TERRAIN_PAINT paint = m_toolSystem->GetDisplayChunk()->GetPaint(row, column);
 
 	// Set combo box
 	m_boxTex.SetCurSel((int)paint);
@@ -514,6 +572,9 @@ void TerrainDialogue::Reset()
 {
 	m_active = m_sculpting = m_x = m_y = m_z = false;
 	m_scale = 1.f;
+
+	m_sculpt = TERRAIN_SCULPT::NA;
+	m_constraint = CONSTRAINT::NA;
 
 	CheckDlgButton(IDC_CHECK2, false);
 	CheckDlgButton(IDC_CHECK15, false);

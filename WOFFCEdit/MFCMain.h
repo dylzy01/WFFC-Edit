@@ -42,12 +42,6 @@ private:
 	void UpdateDialogues();
 	void UpdateSave();
 	void UpdateLoad();
-	void UpdateLights();
-	void UpdateObjects();
-	void UpdateSpawn();
-	void UpdateTerrain();
-	void UpdatePaint();
-	void UpdateSculpt();
 
 	void CheckDialogues(DIALOGUE_TYPE type);
 
@@ -90,8 +84,7 @@ private:
 	afx_msg void ToolBarSpawn();
 	afx_msg void ToolBarTerrain();
 	afx_msg void ToolBarPaint();
-	afx_msg void ToolBarSculpt();
-	
+	afx_msg void ToolBarSculpt();	
 
 	DECLARE_MESSAGE_MAP()	// required macro for message map functionality  One per class
 };

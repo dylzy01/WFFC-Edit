@@ -6,6 +6,7 @@
 #include <string>
 #include "Tools.h"
 #include "DisplayChunk.h"
+#include "ToolMain.h"
 
 // TerrainDialogue dialog
 
@@ -17,23 +18,17 @@ public:
 	TerrainDialogue(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~TerrainDialogue() {}
 
-	// Pass in data pointers the class will operate on
-	void SetChunkData(DisplayChunk* displayChunk);
+	// Pass a pointer for the class to operate on
+	void SetToolData(ToolMain* toolSystem);
 
-	// Update current terrain with dialogue values/vice versa
-	void UpdateTerrain(int row, int column);
-	
+	// Update ToolMain from this dialogue
+	void UpdateTool();
+
 	// Getters
 	bool GetActive() { return m_active; }
-	bool GetSculpting() { return m_sculpting; }
-	TERRAIN GetTerrain() { return m_terrain; }
-	TERRAIN_SCULPT GetSculpt() { return m_sculpt; }
-	CONSTRAINT GetConstraint() { return m_constraint; }
 
 	// Setters
 	void SetActive(bool active) { m_active = active; }
-	void SetSculpting(bool sculpting) { m_sculpting = sculpting; }
-	void SetTerrain(TERRAIN terrain) { m_terrain = terrain; }
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -46,7 +41,7 @@ protected:
 	afx_msg void End();									// Kill the dialogue
 
 	// Local storage
-	DisplayChunk* m_displayChunk;
+	ToolMain* m_toolSystem;
 	TERRAIN m_terrain;
 														
 	// Controllers
@@ -84,6 +79,7 @@ private:
 	void Uncheck();
 
 	// Update terrain details
+	void UpdateTerrain(TERRAIN terrain);
 	void UpdateCoordinates(int row, int column);
 	void UpdateTexture(int row, int column);
 
