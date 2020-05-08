@@ -66,6 +66,9 @@ void ObjectDialogue::SetToolSystem(ToolMain * toolSystem)
 
 	// Set tool editor
 	m_toolSystem->SetEditor(EDITOR::OBJECT_FUNCTION);
+
+	// Disable input box
+	GetDlgItem(IDC_EDIT10)->EnableWindow(false);
 }
 
 void ObjectDialogue::UpdateTool()
@@ -109,6 +112,20 @@ void ObjectDialogue::UpdateTool()
 
 	// If tool constraint isn't up-to-date
 	if (m_toolSystem->GetConstraint() != m_constraint) { m_toolSystem->SetConstraint(m_constraint); }
+
+	// If snap by value is active
+	if (m_snapByValue)
+	{
+		// Update manager snap factor
+		ObjectManager::SetSnap(m_snapFactor);
+	}
+	else { ObjectManager::SetSnap(0.f); }
+
+	// If snap to terrain is active
+	if (m_snapToTerrain)
+	{
+
+	}
 }
 
 void ObjectDialogue::DoDataExchange(CDataExchange* pDX)
@@ -807,10 +824,10 @@ void ObjectDialogue::OnBnClickedZ()
 // Snap to terrain has been selected
 void ObjectDialogue::OnBnClickedSnapTerrain()
 {
-	m_snapTerrain = IsDlgButtonChecked(IDC_CHECK4);
+	m_snapToTerrain = IsDlgButtonChecked(IDC_CHECK4);
 
 	// Switch between checked/unchecked
-	switch (m_snapTerrain)
+	switch (m_snapToTerrain)
 	{
 	case true:
 	{
@@ -832,21 +849,27 @@ void ObjectDialogue::OnBnClickedSnapTerrain()
 // Snap by value has been selected
 void ObjectDialogue::OnBnClickedSnapValue()
 {
-	m_snapValue = IsDlgButtonChecked(IDC_CHECK5);
+	m_snapByValue = IsDlgButtonChecked(IDC_CHECK5);
 
 	// Switch between checked/unchecked
-	switch (m_snapValue)
+	switch (m_snapByValue)
 	{
 	case true:
 	{
 		// Disable snap to terrain
 		GetDlgItem(IDC_CHECK4)->EnableWindow(false);
+
+		// Enable input box
+		GetDlgItem(IDC_EDIT10)->EnableWindow(true);
 	}
 	break;
 	case false:
 	{
 		// Enable snap to terrain
 		GetDlgItem(IDC_CHECK4)->EnableWindow(true);
+
+		// Disable input box
+		GetDlgItem(IDC_EDIT10)->EnableWindow(false);
 	}
 	break;
 	}
@@ -1188,7 +1211,7 @@ void ObjectDialogue::UpdateObject(SceneObject object)
 void ObjectDialogue::Reset()
 {
 	m_active = m_focus = m_transforming =
-		m_x = m_y = m_z = m_snapTerrain = m_snapValue = false;
+		m_x = m_y = m_z = m_snapToTerrain = m_snapByValue = false;
 
 	m_function = OBJECT_FUNCTION::SELECT;
 	m_constraint = CONSTRAINT::NA;

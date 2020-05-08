@@ -90,34 +90,6 @@ DirectX::SimpleMath::Vector3 MouseManager::PickSpawn()
 	return pickingPoint;
 }
 
-// Get spawn point in middle of screen
-DirectX::SimpleMath::Vector3 MouseManager::GetBasicSpawn()
-{
-	// Setup temp point
-	DirectX::SimpleMath::Vector3 pickingPoint;
-
-	// Setup screen centre
-	RECT size = m_game->GetDeviceResources()->GetOutputSize();
-	DirectX::SimpleMath::Vector2 centre;
-	centre.x = (float)size.right / 2.f;
-	centre.y = (float)size.bottom / 2.f;
-
-	// Setup ray trace from middle of screen
-	DirectX::SimpleMath::Ray ray = RayTrace(centre);
-
-	// Setup temp mouse position
-	DirectX::SimpleMath::Vector3 mouse = ray.position;
-
-	// Setup default distance
-	float distance = 10.f;
-
-	// Setup picking point
-	pickingPoint = ray.position + (ray.direction * distance);
-
-	// Return picking point
-	return pickingPoint;
-}
-
 // Picking a piece of terrain
 TERRAIN MouseManager::PickTerrain()
 {
@@ -174,10 +146,8 @@ int MouseManager::AnyIntersection(DirectX::SimpleMath::Ray ray)
 {
 	// Define controllers
 	int ID = -1;
-	float distance = 10000.f, pickedDistance = 0.f, storedDistance = 1.f;
+	float pickedDistance = 0.f, storedDistance = 1.f;
 	bool firstPick = true;
-	DirectX::SimpleMath::Vector3 one = ray.position;
-	DirectX::SimpleMath::Vector3 two = ray.position + (ray.direction * distance);
 
 	// Loop through all objects
 	for (int i = 0; i < m_game->GetDisplayList().size(); ++i)
@@ -228,10 +198,8 @@ int MouseManager::ObjectIntersection(DirectX::SimpleMath::Ray ray)
 {
 	// Define controllers
 	int ID = -1;
-	float distance = 10000.f, pickedDistance = 0.f, storedDistance = 1.f;
+	float pickedDistance = 0.f, storedDistance = 1.f;
 	bool firstPick = true;
-	DirectX::SimpleMath::Vector3 one = ray.position;
-	DirectX::SimpleMath::Vector3 two = ray.position + (ray.direction * distance);
 
 	// Loop through all objects
 	for (int i = 0; i < m_game->GetDisplayList().size(); ++i)
@@ -286,10 +254,8 @@ int MouseManager::LightIntersection(DirectX::SimpleMath::Ray ray)
 {
 	// Define controllers
 	int ID = -1;
-	float distance = 10000.f, pickedDistance = 0.f, storedDistance = 1.f;
+	float pickedDistance = 0.f, storedDistance = 1.f;
 	bool firstPick = true;
-	DirectX::SimpleMath::Vector3 one = ray.position;
-	DirectX::SimpleMath::Vector3 two = ray.position + (ray.direction * distance);
 
 	// Loop through all objects
 	for (int i = 0; i < m_game->GetDisplayList().size(); ++i)
@@ -349,8 +315,6 @@ TERRAIN MouseManager::TerrainIntersection(DirectX::SimpleMath::Ray ray)
 	// Define controllers
 	float distance = 10000.f, pickedDistance = 0.f, storedDistance = 1.f;
 	bool firstPick = true;
-	DirectX::SimpleMath::Vector3 one = ray.position;
-	DirectX::SimpleMath::Vector3 two = ray.position + (ray.direction * distance);
 
 	// Loop through terrain row size
 	for (int i = 0; i < TERRAINRESOLUTION - 1; ++i)

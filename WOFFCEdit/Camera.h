@@ -41,13 +41,13 @@ protected:
 	InputCommands* m_input;
 
 	// Rotation
-	float m_yaw, m_pitch, m_roll, m_speed;
+	float m_yaw, m_pitch, m_roll, m_speed, m_track;
 
 	// Vectors
-	DirectX::SimpleMath::Vector3 m_up, m_lookAt, m_right, m_forward, m_position;
+	DirectX::SimpleMath::Vector3 m_up, m_lookAt, m_right, m_forward, m_position, m_translation;
 
-	// Rotation controllers
-	float m_centreX, m_centreY, m_deltaTime;
+	// Controllers
+	float m_centreX, m_centreY, m_deltaTime, m_distance;
 
 	// Focus controllers
 	bool m_focussing = false;

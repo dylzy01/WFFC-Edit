@@ -56,6 +56,9 @@ public:
 	void SetBlend(bool blend) { m_blend = blend; }	
 	void SetPlateau(bool plateau) { m_plateau = plateau; }
 	void SetScaleFactor(float scale) { m_scaleFactor = scale; }
+	void SetPosition(int row, int column, float position) {
+		m_terrainGeometry[row][column].position.y += position;
+	}
 
 	// Save
 	void SaveGeometryPositions(int count);

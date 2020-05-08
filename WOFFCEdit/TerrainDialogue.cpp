@@ -132,6 +132,8 @@ void TerrainDialogue::UpdateTool()
 
 			// Set constraint
 			m_toolSystem->SetConstraint(m_constraint);
+
+			///TerrainManager::SculptDrag(MouseManager::PickTerrain());
 		}
 	}
 }

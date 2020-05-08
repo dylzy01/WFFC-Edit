@@ -88,8 +88,12 @@ int MFCMain::Run()
 			std::vector<int> IDs = m_toolSystem.GetSelectedIDs();
 			for (int i = 0; i < IDs.size(); ++i)
 			{
-				if (i != 0) { statusString += L", " + std::to_wstring(IDs[i]); }
-				else { statusString += std::to_wstring(IDs[i]); }
+				// If ID is valid
+				if (IDs[i] != -1)
+				{
+					if (i != 0) { statusString += L", " + std::to_wstring(IDs[i]); }
+					else { statusString += std::to_wstring(IDs[i]); }
+				}
 			}
 
 			// Check which dialogue is open & update ToolMain
@@ -585,3 +589,4 @@ void MFCMain::ToolBarSculpt()
 	m_sculptDialogue.SetActive(true);
 	m_sculptDialogue.SetToolData(&m_toolSystem);
 }
+

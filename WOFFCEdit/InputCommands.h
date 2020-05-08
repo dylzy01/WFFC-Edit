@@ -10,10 +10,8 @@ struct InputCommands
 	bool Q;
 	bool rotRight;
 	bool rotLeft;
-	bool mouseLeft;
 	bool mouseRight;
 	bool mouseWheel;
-	bool mouseDrag;
 	bool pickOnce, storeOnce, toggle;
 	bool escape;
 	bool DEL;

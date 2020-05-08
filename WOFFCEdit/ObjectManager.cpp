@@ -7,6 +7,7 @@ std::vector<SceneObject> ObjectManager::m_objectsToCopy;
 std::vector<std::pair<DirectX::SimpleMath::Vector3, int>> ObjectManager::m_storedObjectScales;
 std::vector<std::pair<DirectX::SimpleMath::Vector3, int>> ObjectManager::m_storedObjectRotations;
 std::vector<std::pair<DirectX::SimpleMath::Vector3, int>> ObjectManager::m_storedObjectTranslations;
+float ObjectManager::m_snapFactor;
 
 // Spawn an object at a location & add to database
 bool ObjectManager::SpawnObject(OBJECT_TYPE objectType, DirectX::SimpleMath::Vector3 position,
@@ -230,7 +231,7 @@ bool ObjectManager::SpawnObject(OBJECT_TYPE objectType, DirectX::SimpleMath::Vec
 }
 
 // Remove an object from scene graph & database
-std::vector<SceneObject> ObjectManager::Remove(std::vector<int> & IDs, int ID)
+std::vector<SceneObject> ObjectManager::Delete(std::vector<int> & IDs, int ID)
 {			
 	// Store game scene graph
 	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();
@@ -354,78 +355,86 @@ void ObjectManager::Cut(std::vector<int> & IDs)
 	// Clear current objects to copy
 	m_objectsToCopy.clear();
 
-	// Loop through selected objects
-	for (int i = 0; i < IDs.size(); ++i)
+	// Loop through scene graph
+	for (int i = 0; i < sceneGraph.size(); ++i)
 	{
-		// Setup temp scene object
-		SceneObject object;
-
-		// Define object values
+		// Loop through selected objects
+		for (int j = 0; j < IDs.size(); ++j)
 		{
-			object.ID = IDs[i];
-			object.chunk_ID = sceneGraph[IDs[i]].chunk_ID;
-			object.posX = sceneGraph[IDs[i]].posX;
-			object.posY = sceneGraph[IDs[i]].posY;
-			object.posZ = sceneGraph[IDs[i]].posZ;
-			object.rotX = sceneGraph[IDs[i]].rotX;
-			object.rotY = sceneGraph[IDs[i]].rotY;
-			object.rotZ = sceneGraph[IDs[i]].rotZ;
-			object.scaX = sceneGraph[IDs[i]].scaX;
-			object.scaY = sceneGraph[IDs[i]].scaY;
-			object.scaZ = sceneGraph[IDs[i]].scaZ;
-			object.render = sceneGraph[IDs[i]].render;
-			object.collectable = sceneGraph[IDs[i]].collectable;
-			object.collision_mesh = sceneGraph[IDs[i]].collision_mesh;
-			object.destructable = sceneGraph[IDs[i]].destructable;
-			object.health_amount = sceneGraph[IDs[i]].health_amount;
-			object.editor_render = sceneGraph[IDs[i]].editor_render;
-			object.editor_texture_vis = sceneGraph[IDs[i]].editor_texture_vis;
-			object.editor_normals_vis = sceneGraph[IDs[i]].editor_normals_vis;
-			object.editor_collision_vis = sceneGraph[IDs[i]].editor_collision_vis;
-			object.editor_pivot_vis = sceneGraph[IDs[i]].editor_pivot_vis;
-			object.pivotX = sceneGraph[IDs[i]].pivotX;
-			object.pivotY = sceneGraph[IDs[i]].pivotY;
-			object.pivotZ = sceneGraph[IDs[i]].pivotZ;
-			object.snapToGround = sceneGraph[IDs[i]].snapToGround;
-			object.AINode = sceneGraph[IDs[i]].AINode;
-			object.audio_path = sceneGraph[IDs[i]].audio_path;
-			object.volume = sceneGraph[IDs[i]].volume;
-			object.pitch = sceneGraph[IDs[i]].pitch;
-			object.pan = sceneGraph[IDs[i]].pan;
-			object.one_shot = sceneGraph[IDs[i]].one_shot;
-			object.play_on_init = sceneGraph[IDs[i]].play_on_init;
-			object.play_in_editor = sceneGraph[IDs[i]].play_in_editor;
-			object.min_dist = sceneGraph[IDs[i]].min_dist;
-			object.max_dist = sceneGraph[IDs[i]].max_dist;
-			object.camera = sceneGraph[IDs[i]].camera;
-			object.path_node = sceneGraph[IDs[i]].path_node;
-			object.path_node_start = sceneGraph[IDs[i]].path_node_start;
-			object.path_node_end = sceneGraph[IDs[i]].path_node_end;
-			object.parent_id = sceneGraph[IDs[i]].parent_id;
-			object.editor_wireframe = sceneGraph[IDs[i]].editor_wireframe;
-			object.light_type = sceneGraph[IDs[i]].light_type;
-			object.light_diffuse_r = sceneGraph[IDs[i]].light_diffuse_r;
-			object.light_diffuse_g = sceneGraph[IDs[i]].light_diffuse_g;
-			object.light_diffuse_b = sceneGraph[IDs[i]].light_diffuse_b;
-			object.light_ambient_r = sceneGraph[IDs[i]].light_ambient_r;
-			object.light_ambient_g = sceneGraph[IDs[i]].light_ambient_g;
-			object.light_ambient_b = sceneGraph[IDs[i]].light_ambient_b;
-			object.light_spot_cutoff = sceneGraph[IDs[i]].light_spot_cutoff;
-			object.light_constant = sceneGraph[IDs[i]].light_constant;
-			object.light_linear = sceneGraph[IDs[i]].light_linear;
-			object.light_quadratic = sceneGraph[IDs[i]].light_quadratic;
+			// If IDs match
+			if (sceneGraph[i].ID == IDs[j])
+			{
+				// Setup temp scene object
+				SceneObject object;
 
-			object.m_isWater = sceneGraph[IDs[i]].m_isWater;
-			object.model_path = sceneGraph[IDs[i]].model_path;
-			object.tex_diffuse_path = sceneGraph[IDs[i]].tex_diffuse_path;
+				// Define object values
+				{
+					object.ID = IDs[j];
+					object.chunk_ID = sceneGraph[i].chunk_ID;
+					object.posX = sceneGraph[i].posX;
+					object.posY = sceneGraph[i].posY;
+					object.posZ = sceneGraph[i].posZ;
+					object.rotX = sceneGraph[i].rotX;
+					object.rotY = sceneGraph[i].rotY;
+					object.rotZ = sceneGraph[i].rotZ;
+					object.scaX = sceneGraph[i].scaX;
+					object.scaY = sceneGraph[i].scaY;
+					object.scaZ = sceneGraph[i].scaZ;
+					object.render = sceneGraph[i].render;
+					object.collectable = sceneGraph[i].collectable;
+					object.collision_mesh = sceneGraph[i].collision_mesh;
+					object.destructable = sceneGraph[i].destructable;
+					object.health_amount = sceneGraph[i].health_amount;
+					object.editor_render = sceneGraph[i].editor_render;
+					object.editor_texture_vis = sceneGraph[i].editor_texture_vis;
+					object.editor_normals_vis = sceneGraph[i].editor_normals_vis;
+					object.editor_collision_vis = sceneGraph[i].editor_collision_vis;
+					object.editor_pivot_vis = sceneGraph[i].editor_pivot_vis;
+					object.pivotX = sceneGraph[i].pivotX;
+					object.pivotY = sceneGraph[i].pivotY;
+					object.pivotZ = sceneGraph[i].pivotZ;
+					object.snapToGround = sceneGraph[i].snapToGround;
+					object.AINode = sceneGraph[i].AINode;
+					object.audio_path = sceneGraph[i].audio_path;
+					object.volume = sceneGraph[i].volume;
+					object.pitch = sceneGraph[i].pitch;
+					object.pan = sceneGraph[i].pan;
+					object.one_shot = sceneGraph[i].one_shot;
+					object.play_on_init = sceneGraph[i].play_on_init;
+					object.play_in_editor = sceneGraph[i].play_in_editor;
+					object.min_dist = sceneGraph[i].min_dist;
+					object.max_dist = sceneGraph[i].max_dist;
+					object.camera = sceneGraph[i].camera;
+					object.path_node = sceneGraph[i].path_node;
+					object.path_node_start = sceneGraph[i].path_node_start;
+					object.path_node_end = sceneGraph[i].path_node_end;
+					object.parent_id = sceneGraph[i].parent_id;
+					object.editor_wireframe = sceneGraph[i].editor_wireframe;
+					object.light_type = sceneGraph[i].light_type;
+					object.light_diffuse_r = sceneGraph[i].light_diffuse_r;
+					object.light_diffuse_g = sceneGraph[i].light_diffuse_g;
+					object.light_diffuse_b = sceneGraph[i].light_diffuse_b;
+					object.light_ambient_r = sceneGraph[i].light_ambient_r;
+					object.light_ambient_g = sceneGraph[i].light_ambient_g;
+					object.light_ambient_b = sceneGraph[i].light_ambient_b;
+					object.light_spot_cutoff = sceneGraph[i].light_spot_cutoff;
+					object.light_constant = sceneGraph[i].light_constant;
+					object.light_linear = sceneGraph[i].light_linear;
+					object.light_quadratic = sceneGraph[i].light_quadratic;
+
+					object.m_isWater = sceneGraph[i].m_isWater;
+					object.model_path = sceneGraph[i].model_path;
+					object.tex_diffuse_path = sceneGraph[i].tex_diffuse_path;
+				}
+
+				// Add object to storage
+				m_objectsToCopy.push_back(object);
+			}			
 		}
-
-		// Add object to storage
-		m_objectsToCopy.push_back(object);
-	}
+	}	
 
 	// Remove objects from database
-	Remove(IDs);
+	Delete(IDs);
 }
 
 // Copy details of selected objects
@@ -557,11 +566,11 @@ std::vector<SceneObject> ObjectManager::Paste()
 		SQLManager::AddObject(m_objectsToCopy[i]);
 
 		// Add new object to scene graph
-		sceneGraph.push_back(m_objectsToCopy[i]);
-
-		// Rebuild display list
-		m_game->BuildDisplayList(&sceneGraph);
+		sceneGraph.push_back(m_objectsToCopy[i]);		
 	}
+
+	// Rebuild display list
+	m_game->BuildDisplayList(&sceneGraph);
 
 	// Save current state
 	SceneManager::SetScene(&sceneGraph, m_game->GetDisplayChunk());
@@ -1162,16 +1171,22 @@ DirectX::SimpleMath::Vector3 ObjectManager::GetTranslation(int index)
 	// Setup temp translation
 	DirectX::SimpleMath::Vector3 position;
 
+	// Get difference between picking points
+	DirectX::SimpleMath::Vector3 difference;
+	difference.x = pickingC.x - pickingP.x;
+	difference.y = pickingC.y - pickingP.y;
+	difference.z = pickingC.z - pickingP.z;
+
 	// Loop through stored translations
 	for (int i = 0; i < m_storedObjectTranslations.size(); ++i)
 	{
-		// If indexes math
+		// If indexes match
 		if (m_storedObjectTranslations[i].second == index)
 		{
 			// Define manipulated translation
-			position.x = m_storedObjectTranslations[i].first.x + (pickingC.x - pickingP.x);
-			position.y = m_storedObjectTranslations[i].first.y + (pickingC.y - pickingP.y);
-			position.z = m_storedObjectTranslations[i].first.z + (pickingC.z - pickingP.z);
+			position.x = m_storedObjectTranslations[i].first.x + difference.x;
+			position.y = m_storedObjectTranslations[i].first.y + difference.y;
+			position.z = m_storedObjectTranslations[i].first.z + difference.z;			
 		}
 	}	
 

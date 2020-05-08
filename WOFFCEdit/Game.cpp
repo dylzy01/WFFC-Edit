@@ -408,9 +408,9 @@ void XM_CALLCONV Game::DrawGrid(FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR orig
 void Game::DrawDebug(int i)
 {
 	// Setup vectors
-	DirectX::FXMVECTOR x = { 1.f, 0.f, 0.f };
-	DirectX::FXMVECTOR y = { 0.f, 1.f, 0.f };
-	DirectX::FXMVECTOR z = { 0.f, 0.f, 1.5f };
+	DirectX::FXMVECTOR x = { 3.f, 0.f, 0.f };
+	DirectX::FXMVECTOR y = { 0.f, 3.f, 0.f };
+	DirectX::FXMVECTOR z = { 0.f, 0.f, 3.5f };
 	DirectX::GXMVECTOR red = { 255.f, 0.f, 0.f };
 	DirectX::GXMVECTOR green = { 0.f, 255.f, 0.f };
 	DirectX::GXMVECTOR blue = { 0.f, 0.f, 255.f };

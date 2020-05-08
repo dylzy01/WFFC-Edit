@@ -4,6 +4,7 @@
 #include "InputCommands.h"
 #include "DisplayObject.h"
 
+#define MAX_DIST 10000
 
 class MouseManager
 {
@@ -20,14 +21,15 @@ public:
 	// Picking a spawn point for an object
 	static DirectX::SimpleMath::Vector3 PickSpawn();
 
-	// Get spawn point in middle of screen
-	static DirectX::SimpleMath::Vector3 GetBasicSpawn();
-
 	// Picking a piece of terrain
 	static TERRAIN PickTerrain();
 
 	// Getters
 	static int GetIndex() { return m_index; }
+	static bool GetMouseDrag() {
+		return (m_input->mouseRight &&
+			m_input->mousePosPrevious != m_input->mousePos);
+	}
 
 	// Setters
 	static void SetGame(Game * game) { m_game = game; }

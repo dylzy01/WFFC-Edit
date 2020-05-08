@@ -8,7 +8,6 @@
 ToolMain::ToolMain()
 {
 	m_currentChunk = 0;		//default value
-	///m_selectedObject = 0;	//initial selection ID
 	m_sceneGraph.clear();	//clear the vector for the scenegraph
 	m_databaseConnection = NULL;
 
@@ -19,10 +18,8 @@ ToolMain::ToolMain()
 	m_toolInputCommands.D			= false;
 	m_toolInputCommands.E			= false;
 	m_toolInputCommands.Q			= false;
-	m_toolInputCommands.mouseLeft	= false;
 	m_toolInputCommands.mouseRight	= false;
 	m_toolInputCommands.mouseWheel	= false;
-	m_toolInputCommands.mouseDrag	= false;
 	m_toolInputCommands.escape		= false;
 	m_toolInputCommands.SHIFT		= false;
 	m_toolInputCommands.CTRL		= false;
@@ -55,6 +52,7 @@ void ToolMain::onActionInitialise(HWND handle, int width, int height)
 	// Set static landscape manager display chunk
 	TerrainManager::SetDisplayChunk(m_d3dRenderer.GetDisplayChunk());
 	TerrainManager::StorePosition(true);
+	TerrainManager::SetInput(&m_toolInputCommands);
 
 	// Estable database connection
 	if (SQLManager::Connect()) { TRACE("Database connection: fail"); }
@@ -142,15 +140,7 @@ void ToolMain::Tick(MSG *msg)
 		
 	// Get updated scene graph
 	m_sceneGraph = m_d3dRenderer.GetSceneGraph();
-		
-	// If mouse right has been pressed & mouse position is different from stored
-	if (m_toolInputCommands.mouseRight &&
-		m_toolInputCommands.mousePosPrevious != m_toolInputCommands.mousePos)
-	{
-		// Mouse has been dragged
-		m_toolInputCommands.mouseDrag = true;
-	}
-
+	
 	// If DEL is pressed, deleted selected objects
 	if (m_toolInputCommands.DEL) { ObjectManager::Remove(m_selectedObjectIDs); }
 		
@@ -243,23 +233,10 @@ void ToolMain::Tick(MSG *msg)
 			else
 			{
 				// If objects are selected and mouse has been dragged
-				if (m_selectedObjectIDs.size() != 0 && m_toolInputCommands.mouseDrag)
+				if (m_selectedObjectIDs.size() != 0 && MouseManager::GetMouseDrag())
 				{
 					// Transform selected objects
 					ObjectManager::Transform(m_objectFunction, m_constraint, m_selectedObjectIDs);
-
-					// Mouse dragging controller
-					m_mouseIsDragging = true;
-				}
-
-				// If mouse was dragging but not anymore
-				if (m_mouseIsDragging && !m_toolInputCommands.mouseDrag)
-				{					
-					// Enable request
-					m_request = true;
-
-					// Reset controller
-					m_mouseIsDragging = false;
 				}
 			}			
 		}			
@@ -288,23 +265,10 @@ void ToolMain::Tick(MSG *msg)
 			if (m_objectFunction == OBJECT_FUNCTION::TRANSLATE)
 			{
 				// If objects are selected and mouse has been dragged
-				if (m_selectedObjectIDs.size() != 0 && m_toolInputCommands.mouseDrag)
+				if (m_selectedObjectIDs.size() != 0 && MouseManager::GetMouseDrag())
 				{					
 					// Transform lights
 					ObjectManager::Transform(OBJECT_FUNCTION::TRANSLATE, m_constraint, m_selectedObjectIDs);
-				
-					// Mouse dragging controller
-					m_mouseIsDragging = true;
-				}
-
-				// If mouse was dragging but not anymore
-				if (m_mouseIsDragging && !m_toolInputCommands.mouseDrag)
-				{
-					// Enable request
-					m_request = true;
-
-					// Reset controller
-					m_mouseIsDragging = false;
 				}
 			}
 
@@ -378,21 +342,9 @@ void ToolMain::UpdateInput(MSG * msg)
 		break;
 
 	case WM_LBUTTONDOWN:
-		if (!m_lDown)
-		{
-			m_lDown = true;
-			m_toolInputCommands.mouseLeft = true;
-			m_toolInputCommands.pickOnce = true;
-			if (m_toolInputCommands.toggle) { m_toolInputCommands.storeOnce = true; m_toolInputCommands.toggle = false; }
-
-			// Store current mouse position
-			m_toolInputCommands.mousePosPrevious = m_toolInputCommands.mousePos;
-		}
 		break;
 
 	case WM_LBUTTONUP:
-		m_lDown = m_toolInputCommands.mouseLeft = m_toolInputCommands.mouseDrag = false;
-		m_toolInputCommands.toggle = true;
 		break;
 
 	case WM_RBUTTONDOWN:
@@ -411,7 +363,7 @@ void ToolMain::UpdateInput(MSG * msg)
 		break;
 
 	case WM_RBUTTONUP:
-		m_rDown = m_toolInputCommands.mouseRight = m_toolInputCommands.mouseDrag = false;				
+		m_rDown = m_toolInputCommands.mouseRight = false;				
 		///m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
 		TerrainManager::StorePosition(true);				
 		SceneManager::SetScene(&m_sceneGraph, m_d3dRenderer.GetDisplayChunk());

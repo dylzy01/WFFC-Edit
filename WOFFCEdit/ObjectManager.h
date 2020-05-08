@@ -57,6 +57,7 @@ public:
 	// Setters
 	static void SetGame(Game * game) { m_game = game; }
 	static void SetInput(InputCommands * input) { m_input = input; }
+	static void SetSnap(float scale) { m_snapFactor = scale; }
 
 private:
 	// Scale selected objects
@@ -85,5 +86,6 @@ private:
 	static std::vector<int> m_selectedObjectIDs;
 	static std::vector<SceneObject> m_objectsToCopy;
 	static std::vector<std::pair<DirectX::SimpleMath::Vector3, int>> m_storedObjectScales, m_storedObjectTranslations, m_storedObjectRotations;	
+	static float m_snapFactor;
 };
 

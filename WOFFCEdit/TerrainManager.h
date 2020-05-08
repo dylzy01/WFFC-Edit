@@ -16,16 +16,24 @@ public:
 	// Paint selected terrain
 	static void Paint(TERRAIN & terrain, TERRAIN_PAINT paint);
 
-	// Sculpt selected terrain
+	// Sculpt selected terrain by scale factor
 	static void Sculpt(TERRAIN & terrain, TERRAIN_SCULPT function, CONSTRAINT constraint, bool single = false);
+
+	// Sculpt selected terrain by mouse drag
+	static void SculptDrag(TERRAIN & terrain);/// , CONSTRAINT constraint);
 	
 	// Setters
 	static void SetDisplayChunk(DisplayChunk * chunk) { m_displayChunk = chunk; }
 	static void StorePosition(bool store) { m_store = store; }
+	static void SetInput(InputCommands * input) { m_input = input; }
+
+private:
+	static std::vector<DirectX::XMFLOAT3> GetTranslation(TERRAIN terrain);
 
 private:
 	static DisplayChunk * m_displayChunk;
 	static bool m_store;
+	static InputCommands * m_input;
 	static std::vector<DirectX::SimpleMath::Vector3> m_storedPositions;
 };
 

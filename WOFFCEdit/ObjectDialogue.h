@@ -52,10 +52,10 @@ protected:
 	bool m_focus = false, m_focusCreated = false;
 	bool m_transforming = false;
 	bool m_x, m_y, m_z;		
-	bool m_snapTerrain, m_snapValue;	
+	bool m_snapToTerrain, m_snapByValue;	
 	bool m_internal = false;
 	bool m_select = false;
-	float m_snapScale;
+	float m_snapFactor;
 	OBJECT_FUNCTION m_function;
 	CONSTRAINT m_constraint;
 

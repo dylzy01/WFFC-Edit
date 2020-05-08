@@ -11,10 +11,7 @@ bool SceneManager::m_autosave = false;
 
 // Save current world state (scene graph + chunk)
 void SceneManager::Save()
-{
-	// Save chunk
-	m_game->SaveDisplayChunk();
-	
+{	
 	// Update scene graph
 	m_game->SaveDisplayList();
 
