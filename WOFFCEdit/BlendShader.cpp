@@ -6,7 +6,7 @@ ID3D11InputLayout *							BlendShader::m_inputLayout;
 ID3D11Buffer *								BlendShader::m_bufferMatrix;
 ID3D11SamplerState *						BlendShader::m_samplerState;
 ID3D11Buffer *								BlendShader::m_bufferLight;
-ID3D11Buffer *								BlendShader::m_bufferActive;
+ID3D11Buffer *								BlendShader::m_bufferCount;
 DirectX::SimpleMath::Matrix *				BlendShader::m_world;
 DirectX::SimpleMath::Matrix *				BlendShader::m_view;
 DirectX::SimpleMath::Matrix *				BlendShader::m_projection;
@@ -58,7 +58,7 @@ bool BlendShader::Initialise(ID3D11Device * device)
 	device->CreateBuffer(&matrixBufferDesc, NULL, &m_bufferMatrix);
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Setup description of active buffer
+	// Setup description of count buffer
 	activeBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	activeBufferDesc.ByteWidth = sizeof(LightBufferType);
 	activeBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -67,7 +67,7 @@ bool BlendShader::Initialise(ID3D11Device * device)
 	activeBufferDesc.StructureByteStride = 0;
 
 	// Create constant buffer pointer for access to vertex shader constant buffer
-	device->CreateBuffer(&activeBufferDesc, NULL, &m_bufferActive);
+	device->CreateBuffer(&activeBufferDesc, NULL, &m_bufferCount);
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Setup description of light buffer
@@ -79,7 +79,7 @@ bool BlendShader::Initialise(ID3D11Device * device)
 	lightBufferDesc.StructureByteStride = 0;
 
 	// Create constant buffer pointer for access to vertex shader constant buffer
-	device->CreateBuffer(&lightBufferDesc, NULL, &m_bufferLight);
+	device->CreateBuffer(&lightBufferDesc, NULL, &m_bufferLight);	
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Create texture sampler state description
@@ -104,7 +104,7 @@ bool BlendShader::Initialise(ID3D11Device * device)
 }
 
 // Setup shader 
-bool BlendShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture1, ID3D11ShaderResourceView* texture2, std::vector<DisplayObject> lights)
+bool BlendShader::SetShaderParameters(bool isNormal, ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture1, ID3D11ShaderResourceView* texture2, std::vector<DisplayObject> lights)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
@@ -116,6 +116,8 @@ bool BlendShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11Shade
 	tworld = m_world->Transpose();
 	tview = m_view->Transpose();
 	tproj = m_projection->Transpose();
+
+	// Send matrix data
 	context->Map(m_bufferMatrix, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	dataPtr = (MatrixBufferType*)mappedResource.pData;
 	dataPtr->world = tworld;
@@ -125,11 +127,11 @@ bool BlendShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11Shade
 	context->VSSetConstantBuffers(0, 1, &m_bufferMatrix);
 
 	// Send number of active lights data
-	context->Map(m_bufferActive, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	context->Map(m_bufferCount, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	activePtr = (ActiveBufferType*)mappedResource.pData;
 	activePtr->activeCount = lights.size();
-	context->Unmap(m_bufferActive, 0);
-	context->PSSetConstantBuffers(0, 1, &m_bufferActive);
+	context->Unmap(m_bufferCount, 0);
+	context->PSSetConstantBuffers(0, 1, &m_bufferCount);
 
 	// Send light data
 	context->Map(m_bufferLight, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -139,7 +141,7 @@ bool BlendShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11Shade
 		lightPtr->lights[i].diffuseColour = lights[i].GetDiffuse();
 		lightPtr->lights[i].ambientColour = lights[i].GetAmbient();
 		lightPtr->lights[i].position = lights[i].GetPosition();
-		lightPtr->lights[i].angle = 45.f;
+		lightPtr->lights[i].normal = isNormal;
 
 		lightPtr->lights[i].direction = lights[i].GetDirection();
 		lightPtr->lights[i].constA = lights[i].GetConstantAttenuation();

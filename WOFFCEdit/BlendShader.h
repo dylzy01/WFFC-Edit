@@ -15,10 +15,10 @@ public:
 	static bool Initialise(ID3D11Device * device);
 
 	// Setup shader 
-	static bool SetShaderParameters(ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture1, ID3D11ShaderResourceView* texture2, std::vector<DisplayObject> lights);
+	static bool SetShaderParameters(bool isNormal, ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture1, ID3D11ShaderResourceView* texture2, std::vector<DisplayObject> light);
 
 	// Handler
-	static void Enable(ID3D11DeviceContext * context);	
+	static void Enable(ID3D11DeviceContext * context);
 
 	// Setters
 	static void SetWorld(DirectX::SimpleMath::Matrix * world) { m_world = world; }
@@ -33,7 +33,7 @@ private:
 		DirectX::XMFLOAT4 diffuseColour;
 		DirectX::XMFLOAT4 ambientColour;
 		DirectX::XMFLOAT3 position;
-		float angle;
+		float normal;
 
 		DirectX::XMFLOAT3 direction;
 		float constA;
@@ -57,7 +57,7 @@ private:
 
 	// Buffers	
 	static ID3D11Buffer*								m_bufferLight;
-	static ID3D11Buffer*								m_bufferActive;
+	static ID3D11Buffer*								m_bufferCount;
 	static Microsoft::WRL::ComPtr<ID3D11VertexShader>	m_shaderVertex;
 	static Microsoft::WRL::ComPtr<ID3D11PixelShader>	m_shaderPixel;
 	static ID3D11InputLayout *							m_inputLayout;
@@ -67,4 +67,3 @@ private:
 	static DirectX::SimpleMath::Matrix *				m_view;
 	static DirectX::SimpleMath::Matrix *				m_projection;
 };
-

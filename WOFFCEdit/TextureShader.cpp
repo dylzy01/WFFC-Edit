@@ -68,7 +68,7 @@ bool TextureShader::Initialise(ID3D11Device * device)
 
 	// Create constant buffer pointer for access to vertex shader constant buffer
 	device->CreateBuffer(&activeBufferDesc, NULL, &m_bufferActive);
-
+	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Setup description of light buffer
 	lightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -79,7 +79,7 @@ bool TextureShader::Initialise(ID3D11Device * device)
 	lightBufferDesc.StructureByteStride = 0;
 
 	// Create constant buffer pointer for access to vertex shader constant buffer
-	device->CreateBuffer(&lightBufferDesc, NULL, &m_bufferLight);
+	device->CreateBuffer(&lightBufferDesc, NULL, &m_bufferLight);	
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Create texture sampler state description
@@ -104,7 +104,7 @@ bool TextureShader::Initialise(ID3D11Device * device)
 }
 
 // Setup shader 
-bool TextureShader::SetShaderParameters(bool isNormal, ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture, std::vector<DisplayObject> lights)
+bool TextureShader::SetShaderParameters(bool isNormal, ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture1, std::vector<DisplayObject> lights)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
@@ -135,7 +135,7 @@ bool TextureShader::SetShaderParameters(bool isNormal, ID3D11DeviceContext * con
 
 	// Send light data
 	context->Map(m_bufferLight, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	lightPtr = (LightBufferType*)mappedResource.pData;	
+	lightPtr = (LightBufferType*)mappedResource.pData;
 	for (int i = 0; i < lights.size(); ++i)
 	{
 		lightPtr->lights[i].diffuseColour = lights[i].GetDiffuse();
@@ -143,18 +143,18 @@ bool TextureShader::SetShaderParameters(bool isNormal, ID3D11DeviceContext * con
 		lightPtr->lights[i].position = lights[i].GetPosition();
 		lightPtr->lights[i].normal = isNormal;
 
-		lightPtr->lights[i].direction = lights[i].GetDirection();
+		lightPtr->lights[i].direction = lights[i].GetDirection(); 
 		lightPtr->lights[i].constA = lights[i].GetConstantAttenuation();
 		lightPtr->lights[i].linA = lights[i].GetLinearAttenuation();
 		lightPtr->lights[i].quadA = lights[i].GetQuadraticAttenuation();
 		lightPtr->lights[i].type = (int)lights[i].GetLightType();
 		lightPtr->lights[i].enabled = lights[i].GetEnabled();
-	}	
+	}
 	context->Unmap(m_bufferLight, 0);
-	context->PSSetConstantBuffers(1, 1, &m_bufferLight);
+	context->PSSetConstantBuffers(1, 1, &m_bufferLight);	
 
 	// Pass textures to pixel shader
-	context->PSSetShaderResources(0, 1, &texture);
+	context->PSSetShaderResources(0, 1, &texture1);
 
 	return true;
 }

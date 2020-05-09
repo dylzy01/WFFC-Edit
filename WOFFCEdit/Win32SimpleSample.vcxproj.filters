@@ -32,12 +32,6 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{c1b5adda-fb38-4f8e-8ee2-f966b34c895f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\Texture">
-      <UniqueIdentifier>{b0ec188f-9c61-49ff-b9bd-9568169232e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\Toon">
-      <UniqueIdentifier>{4723fded-8e66-4149-a900-ab9a9628c780}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders\Water">
       <UniqueIdentifier>{3fbb59d8-4e36-4ee2-b35b-c60fadf9dfb7}</UniqueIdentifier>
     </Filter>
@@ -46,6 +40,9 @@
     </Filter>
     <Filter Include="MFC\Dialogues\Misc">
       <UniqueIdentifier>{f6309931-9f41-49d8-93d1-d6bf59c2c967}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Texture">
+      <UniqueIdentifier>{4723fded-8e66-4149-a900-ab9a9628c780}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -113,20 +110,11 @@
     <ClCompile Include="ShaderManager.cpp">
       <Filter>Custom\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="TextureShader.cpp">
-      <Filter>Shaders\Texture</Filter>
-    </ClCompile>
-    <ClCompile Include="ToonShader.cpp">
-      <Filter>Shaders\Toon</Filter>
-    </ClCompile>
     <ClCompile Include="WaterShader.cpp">
       <Filter>Shaders\Water</Filter>
     </ClCompile>
     <ClCompile Include="LightDialogue.cpp">
       <Filter>MFC\Dialogues\Tools</Filter>
-    </ClCompile>
-    <ClCompile Include="ToonBlendShader.cpp">
-      <Filter>Shaders\Toon</Filter>
     </ClCompile>
     <ClCompile Include="TerrainDialogue.cpp">
       <Filter>MFC\Dialogues\Tools</Filter>
@@ -156,6 +144,9 @@
       <Filter>MFC\Dialogues\Misc</Filter>
     </ClCompile>
     <ClCompile Include="BlendShader.cpp">
+      <Filter>Shaders\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureShader.cpp">
       <Filter>Shaders\Texture</Filter>
     </ClCompile>
   </ItemGroup>
@@ -234,14 +225,8 @@
     <ClInclude Include="ShaderManager.h">
       <Filter>Custom\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="TextureShader.h">
-      <Filter>Shaders\Texture</Filter>
-    </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>Custom</Filter>
-    </ClInclude>
-    <ClInclude Include="ToonShader.h">
-      <Filter>Shaders\Toon</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Shaders</Filter>
@@ -251,9 +236,6 @@
     </ClInclude>
     <ClInclude Include="LightDialogue.h">
       <Filter>MFC\Dialogues\Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="ToonBlendShader.h">
-      <Filter>Shaders\Toon</Filter>
     </ClInclude>
     <ClInclude Include="TerrainDialogue.h">
       <Filter>MFC\Dialogues\Tools</Filter>
@@ -286,6 +268,9 @@
       <Filter>MFC\Dialogues\Misc</Filter>
     </ClInclude>
     <ClInclude Include="BlendShader.h">
+      <Filter>Shaders\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureShader.h">
       <Filter>Shaders\Texture</Filter>
     </ClInclude>
   </ItemGroup>
@@ -363,34 +348,22 @@
     <Media Include="database\data\Scene1.fbx" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="texture_ps.hlsl">
-      <Filter>Shaders\Texture</Filter>
-    </FxCompile>
-    <FxCompile Include="texture_vs.hlsl">
-      <Filter>Shaders\Texture</Filter>
-    </FxCompile>
-    <FxCompile Include="toon_vs.hlsl">
-      <Filter>Shaders\Toon</Filter>
-    </FxCompile>
-    <FxCompile Include="toon_ps.hlsl">
-      <Filter>Shaders\Toon</Filter>
-    </FxCompile>
     <FxCompile Include="water_vs.hlsl">
       <Filter>Shaders\Water</Filter>
     </FxCompile>
     <FxCompile Include="water_ps.hlsl">
       <Filter>Shaders\Water</Filter>
     </FxCompile>
-    <FxCompile Include="toon_blend_ps.hlsl">
-      <Filter>Shaders\Toon</Filter>
-    </FxCompile>
-    <FxCompile Include="toon_blend_vs.hlsl">
-      <Filter>Shaders\Toon</Filter>
-    </FxCompile>
     <FxCompile Include="blend_ps.hlsl">
       <Filter>Shaders\Texture</Filter>
     </FxCompile>
     <FxCompile Include="blend_vs.hlsl">
+      <Filter>Shaders\Texture</Filter>
+    </FxCompile>
+    <FxCompile Include="texture_ps.hlsl">
+      <Filter>Shaders\Texture</Filter>
+    </FxCompile>
+    <FxCompile Include="texture_vs.hlsl">
       <Filter>Shaders\Texture</Filter>
     </FxCompile>
   </ItemGroup>

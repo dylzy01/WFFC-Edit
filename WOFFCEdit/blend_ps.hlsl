@@ -1,4 +1,4 @@
-// Texture pixel shader - blend
+// Blend pixel shader
 
 #define MAX_COUNT 10
 
@@ -78,7 +78,7 @@ float4 GenerateLight(float3 normal, float3 position3D)
         col += Lights[i].ambientColour;
         
         // If toonify is enabled
-        if (Lights[i].normal > 0.5f)
+        if (Lights[i].normal < 0.5f)
         {
              // Get normalized light vector compared to world position
             float3 direction = normalize(Lights[0].lightPosition - position3D);
@@ -115,12 +115,41 @@ float4 GenerateLight(float3 normal, float3 position3D)
 
 float4 main(InputType input) : SV_TARGET
 {
-    // Sample texture
+    // Sample textures
     float4 textureColour = shaderTexture.Sample(sampleType, input.tex);
     textureColour *= shaderTexture1.Sample(sampleType, input.tex);
+    
+    // Get normalized light vector compared to world position
+    //float3 direction = normalize(Lights[0].lightPosition - input.position3D);
+    
+    //// Get normalized dot product between object normal and light
+    //float lightDot = max(0, dot(input.normal, direction));
+    
+    //// Calculate toon shading threshold based on light
+    //if (lightDot > 0.9f)
+    //{
+    //    textureColour *= 1.f;
+    //}
+    //else if (lightDot > 0.65f)
+    //{
+    //    textureColour *= 0.8f;
+    //}
+    //else if (lightDot > 0.4f)
+    //{
+    //    textureColour *= 0.6f;
+    //}
+    //else if (lightDot > 0.15f)
+    //{
+    //    textureColour *= 0.4f;
+    //}
+    //else
+    //{
+    //    textureColour *= 0.2f;
+    //}
     
     // Add lighting
     textureColour *= GenerateLight(input.normal, input.position3D);
     
     return textureColour;
 }
+

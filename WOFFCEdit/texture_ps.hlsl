@@ -1,6 +1,6 @@
 // Texture pixel shader
 
-#define MAX_COUNT 1
+#define MAX_COUNT 10
 
 Texture2D shaderTexture : register(t0);
 SamplerState sampleType : register(s0);
@@ -13,7 +13,9 @@ struct Light
     float normal;
     
     float3 direction;
-    float3 attenuation;
+    float constA;
+    float linA;
+    float quadA;
     int type;
     float enabled;
 };
@@ -63,7 +65,7 @@ float4 GenerateLight(float3 normal, float3 position3D)
         if (Lights[i].type == 1)
         {
             // Calculate attenuation
-            float attenuation = 1.f / (Lights[i].attenuation.x + (Lights[i].attenuation.y + dis) + (Lights[i].attenuation.z * pow(dis, 2)));
+            float attenuation = 1.f / (Lights[i].constA + (Lights[i].linA + dis) + (Lights[i].quadA * pow(dis, 2)));
     
             // Apply attenuation to diffuse colour
             diffuse *= attenuation;
@@ -106,7 +108,6 @@ float4 GenerateLight(float3 normal, float3 position3D)
             }
         }
     }
-    
     return col;
 }
 
@@ -114,6 +115,34 @@ float4 main(InputType input) : SV_TARGET
 {
     // Sample texture
     float4 textureColour = shaderTexture.Sample(sampleType, input.tex);
+    
+    // Get normalized light vector compared to world position
+    //float3 direction = normalize(Lights[0].lightPosition - input.position3D);
+    
+    //// Get normalized dot product between object normal and light
+    //float lightDot = max(0, dot(input.normal, direction));
+    
+    //// Calculate toon shading threshold based on light
+    //if (lightDot > 0.9f)
+    //{
+    //    textureColour *= 1.f;
+    //}
+    //else if (lightDot > 0.65f)
+    //{
+    //    textureColour *= 0.8f;
+    //}
+    //else if (lightDot > 0.4f)
+    //{
+    //    textureColour *= 0.6f;
+    //}
+    //else if (lightDot > 0.15f)
+    //{
+    //    textureColour *= 0.4f;
+    //}
+    //else
+    //{
+    //    textureColour *= 0.2f;
+    //}
     
     // Add lighting
     textureColour *= GenerateLight(input.normal, input.position3D);

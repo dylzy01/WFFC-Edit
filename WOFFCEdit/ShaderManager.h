@@ -5,8 +5,6 @@
 
 #include "TextureShader.h"
 #include "BlendShader.h"
-#include "ToonShader.h"
-#include "ToonBlendShader.h"
 
 class ShaderManager
 {
