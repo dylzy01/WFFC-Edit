@@ -76,6 +76,8 @@ private:
 	afx_msg void MenuEditWireframeOff();
 	afx_msg void MenuEditAutosaveOn();
 	afx_msg void MenuEditAutosaveOff();
+	afx_msg void MenuEditShaderNormal();
+	afx_msg void MenuEditShaderCartoon();
 	afx_msg	void ToolBarSave();
 	afx_msg void ToolBarUndo();
 	afx_msg void ToolBarRedo();

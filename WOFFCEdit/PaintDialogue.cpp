@@ -36,16 +36,19 @@ void PaintDialogue::SetToolData(ToolMain * toolSystem)
 	// Set other modes to none
 	toolSystem->SetObjectSpawn(OBJECT_TYPE::NA);
 	toolSystem->SetObjectFunction(OBJECT_FUNCTION::NA);
-	toolSystem->SetTerrainSculpt(TERRAIN_SCULPT::NA);
 
 	// Set tool editor
-	toolSystem->SetEditor(EDITOR::TERRAIN_PAINT);
+	toolSystem->SetEditor(EDITOR_COMPLEX::NA);
 }
 
 void PaintDialogue::UpdateTool()
 {
-	// Keep tool paint mode up-to-date
-	if (m_toolSystem->GetTerrainPaint() != m_paint) { m_toolSystem->SetTerrainPaint(m_paint); }
+	// If user is pressing the right mouse button
+	if (m_toolSystem->GetInput()->mouseRight)
+	{
+		// Paint terrain
+		TerrainManager::Paint(m_paint);
+	}
 }
 
 void PaintDialogue::DoDataExchange(CDataExchange* pDX)

@@ -14,10 +14,10 @@ public:
 	~TerrainManager() {}
 
 	// Paint selected terrain
-	static void Paint(TERRAIN & terrain, TERRAIN_PAINT paint);
+	static void Paint(TERRAIN_PAINT paint);
 
 	// Sculpt selected terrain by scale factor
-	static void Sculpt(TERRAIN & terrain, TERRAIN_SCULPT function, CONSTRAINT constraint, bool single = false);
+	static bool Sculpt(TERRAIN_SCULPT function, CONSTRAINT constraint, int row = -1, int column = -1);
 
 	// Sculpt selected terrain by mouse drag
 	static void SculptDrag(TERRAIN & terrain);/// , CONSTRAINT constraint);

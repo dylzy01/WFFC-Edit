@@ -14,41 +14,37 @@ void ShaderManager::Initialise(ID3D11Device * device)
 
 	// Initialise toon blend shader
 	ToonBlendShader::Initialise(device);
-
-	// Initialise water shader
-	WaterShader::Initialise(device);
 }
 
 // Setup specific shader parameters
-void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, std::vector<DisplayObject> lights, ID3D11ShaderResourceView * texture1, ID3D11ShaderResourceView * texture2, DirectX::XMFLOAT2 screen)
+void ShaderManager::Shader(bool isNormal, bool blend, ID3D11DeviceContext * context, std::vector<DisplayObject> lights, ID3D11ShaderResourceView * texture1, ID3D11ShaderResourceView * texture2, DirectX::XMFLOAT2 screen)
 {	
 	// Setup temp light
 	std::vector<DisplayObject> temp;
 	temp.push_back(GetLight());
 	
-	// Switch between shader type
-	switch (type)
-	{
-	case SHADER_TYPE::TEXTURE:
+	// If should blend
+	if (blend)
 	{
 		// Handle texture shader
 		TextureShader::Enable(context);
-		
+
 		// If light vector is empty
 		if (lights.size() == 0)
 		{
 			// Setup texture parameters
-			TextureShader::SetShaderParameters(context, texture1, temp);
+			TextureShader::SetShaderParameters(isNormal, context, texture1, temp);
 		}
 		// Else, if light vector is valid
 		else
 		{
 			// Setup texture parameters
-			TextureShader::SetShaderParameters(context, texture1, lights);
-		}		
+			TextureShader::SetShaderParameters(isNormal, context, texture1, lights);
+		}
 	}
-	break;
-	case SHADER_TYPE::BLEND:
+
+	// Else, if should not blend
+	else
 	{
 		// Handle blend shader
 		BlendShader::Enable(context);
@@ -66,55 +62,6 @@ void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, std:
 			BlendShader::SetShaderParameters(context, texture1, texture2, lights);
 		}
 	}
-	break;
-	case SHADER_TYPE::TOON_SINGLE:
-	{
-		// Handle toon shader
-		ToonShader::Enable(context);
-
-		// If light vector is empty
-		if (lights.size() == 0)
-		{
-			// Setup toon parameters
-			ToonShader::SetShaderParameters(context, texture1, temp);
-		}
-		// Else, if light vector is valid
-		else
-		{
-			// Setup toon parameters
-			ToonShader::SetShaderParameters(context, texture1, lights);
-		}
-	}
-	break;
-	case SHADER_TYPE::TOON_BLEND:
-	{
-		// Handle toon shader
-		ToonBlendShader::Enable(context);
-
-		// If light vector is empty
-		if (lights.size() == 0)
-		{
-			// Setup toon blend parameters
-			ToonBlendShader::SetShaderParameters(context, texture1, texture2, temp);
-		}
-		// Else, if light vector is valid
-		else
-		{
-			// Setup toon blend parameters
-			ToonBlendShader::SetShaderParameters(context, texture1, texture2, lights);
-		}
-	}
-	break;
-	case SHADER_TYPE::WATER:
-	{
-		// Handle water shader
-		WaterShader::Enable(context);
-
-		// Setup water parameters
-		///WaterShader::SetShaderParameters(context, texture1);
-	}
-	break;
-	}
 }
 
 // Set shader world matrices
@@ -124,7 +71,6 @@ void ShaderManager::SetWorld(DirectX::SimpleMath::Matrix * world)
 	BlendShader::SetWorld(world);
 	ToonShader::SetWorld(world);
 	ToonBlendShader::SetWorld(world);
-	WaterShader::SetWorld(world);
 }
 
 // Set shader view matrices
@@ -134,7 +80,6 @@ void ShaderManager::SetView(DirectX::SimpleMath::Matrix * view)
 	BlendShader::SetView(view);
 	ToonShader::SetView(view);
 	ToonBlendShader::SetView(view);
-	WaterShader::SetView(view);
 }
 
 // Set shader projection matrices
@@ -144,7 +89,6 @@ void ShaderManager::SetProjection(DirectX::SimpleMath::Matrix * projection)
 	BlendShader::SetProjection(projection);
 	ToonShader::SetProjection(projection);
 	ToonBlendShader::SetProjection(projection);
-	WaterShader::SetProjection(projection);
 }
 
 // Setup temp, disabled light

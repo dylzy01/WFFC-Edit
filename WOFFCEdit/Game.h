@@ -73,7 +73,7 @@ public:
 	std::vector<SceneObject> GetSceneGraph() { return m_sceneGraph; }
 	std::vector<DisplayObject> GetDisplayList() { return m_displayList; }
 	DisplayChunk* GetDisplayChunk() { return &m_displayChunk; }	
-	EDITOR GetEditor() { return m_editor; }
+	EDITOR_COMPLEX GetEditor() { return m_editor; }
 	OBJECT_FUNCTION GetObjectFunction() { return m_objectFunction; }
 	RECT GetScreenDimensions() { return m_screenDimensions; }
 	std::vector<DisplayObject> GetLights();
@@ -146,7 +146,7 @@ private:
 	std::vector<DirectX::SimpleMath::Vector3> m_storedTerrainPositions;
 
 	// Editor controllers
-	EDITOR m_editor;
+	EDITOR_COMPLEX m_editor;
 	OBJECT_TYPE m_objectSpawn = OBJECT_TYPE::NA;
 	OBJECT_FUNCTION m_objectFunction = OBJECT_FUNCTION::NA;
 	CONSTRAINT m_objectConstraint = CONSTRAINT::NA;

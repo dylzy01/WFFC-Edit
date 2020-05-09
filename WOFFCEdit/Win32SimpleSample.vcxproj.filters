@@ -35,9 +35,6 @@
     <Filter Include="Shaders\Texture">
       <UniqueIdentifier>{b0ec188f-9c61-49ff-b9bd-9568169232e9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\Blend">
-      <UniqueIdentifier>{b78f625e-3568-4e8b-9824-831d69c7497d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders\Toon">
       <UniqueIdentifier>{4723fded-8e66-4149-a900-ab9a9628c780}</UniqueIdentifier>
     </Filter>
@@ -119,9 +116,6 @@
     <ClCompile Include="TextureShader.cpp">
       <Filter>Shaders\Texture</Filter>
     </ClCompile>
-    <ClCompile Include="BlendShader.cpp">
-      <Filter>Shaders\Blend</Filter>
-    </ClCompile>
     <ClCompile Include="ToonShader.cpp">
       <Filter>Shaders\Toon</Filter>
     </ClCompile>
@@ -160,6 +154,9 @@
     </ClCompile>
     <ClCompile Include="LoadDialogue.cpp">
       <Filter>MFC\Dialogues\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="BlendShader.cpp">
+      <Filter>Shaders\Texture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -240,9 +237,6 @@
     <ClInclude Include="TextureShader.h">
       <Filter>Shaders\Texture</Filter>
     </ClInclude>
-    <ClInclude Include="BlendShader.h">
-      <Filter>Shaders\Blend</Filter>
-    </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>Custom</Filter>
     </ClInclude>
@@ -290,6 +284,9 @@
     </ClInclude>
     <ClInclude Include="LoadDialogue.h">
       <Filter>MFC\Dialogues\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="BlendShader.h">
+      <Filter>Shaders\Texture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -372,12 +369,6 @@
     <FxCompile Include="texture_vs.hlsl">
       <Filter>Shaders\Texture</Filter>
     </FxCompile>
-    <FxCompile Include="blend_ps.hlsl">
-      <Filter>Shaders\Blend</Filter>
-    </FxCompile>
-    <FxCompile Include="blend_vs.hlsl">
-      <Filter>Shaders\Blend</Filter>
-    </FxCompile>
     <FxCompile Include="toon_vs.hlsl">
       <Filter>Shaders\Toon</Filter>
     </FxCompile>
@@ -395,6 +386,12 @@
     </FxCompile>
     <FxCompile Include="toon_blend_vs.hlsl">
       <Filter>Shaders\Toon</Filter>
+    </FxCompile>
+    <FxCompile Include="blend_ps.hlsl">
+      <Filter>Shaders\Texture</Filter>
+    </FxCompile>
+    <FxCompile Include="blend_vs.hlsl">
+      <Filter>Shaders\Texture</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

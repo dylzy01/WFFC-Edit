@@ -1,26 +1,8 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Win32SimpleSample.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  Game.cpp
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(123): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(197): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(252): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(272): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(271): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(270): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(300): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(309): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(317): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(323): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(320): warning C4390: ';': empty controlled statement found; is this the intent?
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(297): warning C4101: 'Buffer': unreferenced local variable
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(437): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(466): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(642): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(743): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(776): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(801): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\game.cpp(860): warning C4018: '<': signed/unsigned mismatch
-  SceneManager.cpp
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\scenemanager.cpp(67): warning C4018: '<': signed/unsigned mismatch
-c:\users\dylan\documents\github\toolsprogramming\wffc-edit\woffcedit\scenemanager.cpp(93): warning C4018: '<': signed/unsigned mismatch
-  Generating Code...
-  Win32SimpleSample.vcxproj -> C:\Users\dylan\Documents\GitHub\ToolsProgramming\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe
+C:\Users\dylan\Documents\GitHub\ToolsProgramming\WFFC-Edit\WOFFCEdit\blend_ps.hlsl(116,10-39): warning X3578: Output value 'main' is not completely initialized
+  
+  compilation object save succeeded; see C:\Users\dylan\Documents\GitHub\ToolsProgramming\WFFC-Edit\WOFFCEdit\Debug\blend_ps.cso
+  compilation object save succeeded; see C:\Users\dylan\Documents\GitHub\ToolsProgramming\WFFC-Edit\WOFFCEdit\Debug\blend_vs.cso
+C:\Users\dylan\Documents\GitHub\ToolsProgramming\WFFC-Edit\WOFFCEdit\texture_ps.hlsl(113,10-39): error X3508: 'main': Top-level return value is not completely initialized
+  
+  compilation failed; no code produced

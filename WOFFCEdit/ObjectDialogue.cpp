@@ -61,11 +61,9 @@ void ObjectDialogue::SetToolSystem(ToolMain * toolSystem)
 
 	// Set other modes to none
 	m_toolSystem->SetObjectSpawn(OBJECT_TYPE::NA);
-	m_toolSystem->SetTerrainSculpt(TERRAIN_SCULPT::NA);
-	m_toolSystem->SetTerrainPaint(TERRAIN_PAINT::NA);
 
 	// Set tool editor
-	m_toolSystem->SetEditor(EDITOR::OBJECT_FUNCTION);
+	m_toolSystem->SetEditor(EDITOR_COMPLEX::OBJECTS);
 
 	// Disable input box
 	GetDlgItem(IDC_EDIT10)->EnableWindow(false);
@@ -78,9 +76,7 @@ void ObjectDialogue::UpdateTool()
 	else { m_selectedIDs = m_toolSystem->GetSelectedIDs(); }
 
 	// If there's been a new selection
-	if (m_toolSystem->GetNewSelection()) {
-		UpdateDialogue();
-	}
+	if (m_toolSystem->GetNewSelection()) { UpdateDialogue(); }
 
 	// If should focus on an object
 	if (m_focus)
@@ -107,25 +103,11 @@ void ObjectDialogue::UpdateTool()
 	}
 	else { m_toolSystem->SetFocus(-1); }
 
-	// If tool function isn't up-to-date
+	// If tool function isn't up to date
 	if (m_toolSystem->GetObjectFunction() != m_function) { m_toolSystem->SetObjectFunction(m_function); }
 
-	// If tool constraint isn't up-to-date
+	// If tool constraint isn't up to date
 	if (m_toolSystem->GetConstraint() != m_constraint) { m_toolSystem->SetConstraint(m_constraint); }
-
-	// If snap by value is active
-	if (m_snapByValue)
-	{
-		// Update manager snap factor
-		ObjectManager::SetSnap(m_snapFactor);
-	}
-	else { ObjectManager::SetSnap(0.f); }
-
-	// If snap to terrain is active
-	if (m_snapToTerrain)
-	{
-
-	}
 }
 
 void ObjectDialogue::DoDataExchange(CDataExchange* pDX)
@@ -199,10 +181,6 @@ BEGIN_MESSAGE_MAP(ObjectDialogue, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK23, &ObjectDialogue::OnBnClickedX)
 	ON_BN_CLICKED(IDC_CHECK24, &ObjectDialogue::OnBnClickedY)
 	ON_BN_CLICKED(IDC_CHECK25, &ObjectDialogue::OnBnClickedZ)
-
-	ON_BN_CLICKED(IDC_CHECK4, &ObjectDialogue::OnBnClickedSnapTerrain)
-	ON_BN_CLICKED(IDC_CHECK5, &ObjectDialogue::OnBnClickedSnapValue)
-	ON_EN_CHANGE(IDC_EDIT10, &ObjectDialogue::OnEnChangeSnapValue)
 
 	ON_BN_CLICKED(IDC_BUTTON1, &ObjectDialogue::OnBnClickedDelete)
 	ON_BN_CLICKED(IDC_BUTTON2, &ObjectDialogue::OnBnClickedDuplicate)
@@ -821,66 +799,6 @@ void ObjectDialogue::OnBnClickedZ()
 	UpdateSelectedConstraint();
 }
 
-// Snap to terrain has been selected
-void ObjectDialogue::OnBnClickedSnapTerrain()
-{
-	m_snapToTerrain = IsDlgButtonChecked(IDC_CHECK4);
-
-	// Switch between checked/unchecked
-	switch (m_snapToTerrain)
-	{
-	case true:
-	{
-		// Disable snap by value
-		GetDlgItem(IDC_CHECK5)->EnableWindow(false);
-		m_eSnap.EnableWindow(false);
-	}
-	break;
-	case false:
-	{
-		// Enable snap by value
-		GetDlgItem(IDC_CHECK5)->EnableWindow(true);
-		m_eSnap.EnableWindow(true);
-	}
-	break;
-	}
-}
-
-// Snap by value has been selected
-void ObjectDialogue::OnBnClickedSnapValue()
-{
-	m_snapByValue = IsDlgButtonChecked(IDC_CHECK5);
-
-	// Switch between checked/unchecked
-	switch (m_snapByValue)
-	{
-	case true:
-	{
-		// Disable snap to terrain
-		GetDlgItem(IDC_CHECK4)->EnableWindow(false);
-
-		// Enable input box
-		GetDlgItem(IDC_EDIT10)->EnableWindow(true);
-	}
-	break;
-	case false:
-	{
-		// Enable snap to terrain
-		GetDlgItem(IDC_CHECK4)->EnableWindow(true);
-
-		// Disable input box
-		GetDlgItem(IDC_EDIT10)->EnableWindow(false);
-	}
-	break;
-	}
-}
-
-// Snap value has been changed
-void ObjectDialogue::OnEnChangeSnapValue()
-{
-
-}
-
 // Delete has been selected
 void ObjectDialogue::OnBnClickedDelete()
 {
@@ -888,7 +806,7 @@ void ObjectDialogue::OnBnClickedDelete()
 	if (m_selectedIDs.size() > 0)
 	{
 		// Remove objects from database storage
-		SetupObjects(&ObjectManager::Remove(m_selectedIDs));
+		SetupObjects(&ObjectManager::Delete(m_selectedIDs));
 	}
 }
 
@@ -1211,7 +1129,7 @@ void ObjectDialogue::UpdateObject(SceneObject object)
 void ObjectDialogue::Reset()
 {
 	m_active = m_focus = m_transforming =
-		m_x = m_y = m_z = m_snapToTerrain = m_snapByValue = false;
+		m_x = m_y = m_z = false;
 
 	m_function = OBJECT_FUNCTION::SELECT;
 	m_constraint = CONSTRAINT::NA;

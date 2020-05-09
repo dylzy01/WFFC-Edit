@@ -185,7 +185,7 @@ bool SQLManager::AddObject(SceneObject object)
 
 			<< ")";
 	}
-
+	
 	// Add stream to query string
 	std::string command = ss.str();
 	rc = sqlite3_prepare_v2(m_databaseConnection, command.c_str(), -1, &m_resultObject, 0);

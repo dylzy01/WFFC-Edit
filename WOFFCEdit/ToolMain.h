@@ -20,7 +20,6 @@ public: //methods
 
 	//onAction - These are the interface to MFC
 	std::vector<int>	GetSelectedIDs() { return m_selectedObjectIDs; }		//returns the selection numbers of currently selected objects so that It can be displayed.
-	std::vector<TERRAIN>	getCurrentTerrainSelection() { return m_selectedTerrains; }		//returns the currently selected chunk so it can be displayed
 	void				onActionInitialise(HWND handle, int width, int height);				//Passes through handle and hieght and width and initialises DirectX renderer and SQL LITE
 	void				onActionLoad();
 	afx_msg void		onActionSave() { SceneManager::Save(); }
@@ -37,11 +36,9 @@ public: //methods
 	void ClearSelected() { m_selectedObjectIDs.clear(); m_d3dRenderer.SetSelectedObjectIDs(m_selectedObjectIDs); }
 
 	// Getters
-	EDITOR GetEditor() { return m_d3dRenderer.GetEditor(); } //return current editor
+	EDITOR_COMPLEX GetEditor() { return m_d3dRenderer.GetEditor(); } //return current editor
 	OBJECT_TYPE GetObjectSpawn() { return m_objectType; }
 	OBJECT_FUNCTION GetObjectFunction() { return m_objectFunction; }	
-	TERRAIN_PAINT GetTerrainPaint() { return m_paint; }
-	TERRAIN_SCULPT GetTerrainFunction() { return m_terrainFunction; }
 	CONSTRAINT GetConstraint() { return m_constraint; }
 	std::vector<DisplayObject> GetDisplayList() { return m_d3dRenderer.GetDisplayList(); }
 	DisplayChunk* GetDisplayChunk() { return m_d3dRenderer.GetDisplayChunk(); }
@@ -59,72 +56,42 @@ public: //methods
 
 	// Setters
 	void SetWireframe(bool wireframe) { m_d3dRenderer.SetWireframe(wireframe); }
-	void SetEditor(EDITOR editor) {
+	void SetEditor(EDITOR_COMPLEX editor) {
 		m_editor = editor;
 		switch (editor)
 		{
-		case EDITOR::OBJECT_SPAWN:
+		case EDITOR_COMPLEX::SPAWN:
 		{
 			// Reset object transform
 			m_objectFunction = OBJECT_FUNCTION::NA;
 			m_constraint = CONSTRAINT::NA;
 
-			// Reset landscape sculpt
-			m_terrainFunction = TERRAIN_SCULPT::NA;
+			// Reset constraint
 			m_constraint = CONSTRAINT::NA;
-
-			// Reset landscape paint
-			m_paint = TERRAIN_PAINT::NA;
 		}
 		break;
-		case EDITOR::OBJECT_FUNCTION:
+		case EDITOR_COMPLEX::OBJECTS:
 		{
 			// Reset object spawn
 			m_objectType = OBJECT_TYPE::NA;
 
-			// Reset landscape sculpt
-			m_terrainFunction = TERRAIN_SCULPT::NA;
-			m_constraint = CONSTRAINT::NA;
-
-			// Reset landscape paint
-			m_paint = TERRAIN_PAINT::NA;
-		}
-		break;
-		case EDITOR::TERRAIN_PAINT:
-		{
-			// Reset object spawn
-			m_objectType = OBJECT_TYPE::NA;
-			m_constraint = CONSTRAINT::NA;
-
-			// Reset object transform
-			m_objectFunction = OBJECT_FUNCTION::NA;
-			m_constraint = CONSTRAINT::NA;
-
-			// Reset landscape sculpt
-			m_terrainFunction = TERRAIN_SCULPT::NA;
+			// Reset constraint
 			m_constraint = CONSTRAINT::NA;
 		}
 		break;
-		case EDITOR::SCULPT_FREELY:
+		case EDITOR_COMPLEX::LIGHTS:
 		{
 			// Reset object spawn
 			m_objectType = OBJECT_TYPE::NA;
-			m_constraint = CONSTRAINT::NA;
 
-			// Reset object transform
-			m_objectFunction = OBJECT_FUNCTION::NA;
+			// Reset constraint
 			m_constraint = CONSTRAINT::NA;
-
-			// Reset landscape paint
-			m_paint = TERRAIN_PAINT::NA;
 		}
 		break;
 		}
 	}
 	void SetObjectSpawn(OBJECT_TYPE spawn) { m_objectType = spawn; }
 	void SetObjectFunction(OBJECT_FUNCTION function) { m_objectFunction = function; }
-	void SetTerrainPaint(TERRAIN_PAINT paint) { m_paint = paint; }
-	void SetTerrainSculpt(TERRAIN_SCULPT function) { m_terrainFunction = function; }
 	void SetConstraint(CONSTRAINT constraint) { m_constraint = constraint; }
 	void SetSceneObject(SceneObject object, int index) { m_d3dRenderer.SetSceneObject(object, index); }
 	void SetSelectedObjectID(int ID) 
@@ -134,22 +101,17 @@ public: //methods
 		m_d3dRenderer.SetSelectedObjectIDs(m_selectedObjectIDs); 
 	}
 	void SetSelectedObjectIDs(std::vector<int> IDs) { m_selectedObjectIDs = IDs; m_d3dRenderer.SetSelectedObjectIDs(m_selectedObjectIDs); }
-	void SetSelectedTerrain(TERRAIN& terrain) { m_selectedTerrain = terrain; }
 	void SetFocus(int ID) { m_d3dRenderer.SetFocus(ID); }
 
 public:	//variables
 	std::vector<SceneObject>    m_sceneGraph;	//our scenegraph storing all the objects in the current chunk
 	ChunkObject					m_chunk;		//our landscape chunk
 	std::vector<int> m_selectedObjectIDs;			//IDs of multiple current OBJECT selections
-	TERRAIN m_selectedTerrain;				
-	std::vector<TERRAIN> m_selectedTerrains;	//IDs of multiple current TERRAIN selections
 	std::vector<int> m_objectIDsToCopy;
 
-	EDITOR m_editor;								//control which editor state is being applied
+	EDITOR_COMPLEX m_editor;								//control which editor state is being applied
 	OBJECT_TYPE m_objectType;						//control which object is to be spawned
 	OBJECT_FUNCTION m_objectFunction;				//control which object function is being applied
-	TERRAIN_PAINT m_paint;							//control which paint should be applied to terrain
-	TERRAIN_SCULPT m_terrainFunction;				//control which sculpt function should be applied to terrain
 	CONSTRAINT m_constraint;						//control which constraint is applied to all functions
 
 private:	//methods

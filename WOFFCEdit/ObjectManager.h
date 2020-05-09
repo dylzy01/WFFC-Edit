@@ -26,7 +26,7 @@ public:
 		int lightType = NULL, XMFLOAT3 diffuse = { NULL, NULL, NULL }, float constA = NULL, float linA = NULL, float quadA = NULL);
 
 	// Remove an object from scene graph & database
-	static std::vector<SceneObject> Remove(std::vector<int> & IDs, int ID = -1);
+	static std::vector<SceneObject> Delete(std::vector<int> & IDs, int ID = -1);
 
 	// Temporarily store details of all selected objects
 	static void Store(std::vector<int> IDs);

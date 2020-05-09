@@ -90,10 +90,9 @@ void TerrainDialogue::SetToolData(ToolMain * toolSystem)
 	// Set other modes to none
 	toolSystem->SetObjectSpawn(OBJECT_TYPE::NA);
 	toolSystem->SetObjectFunction(OBJECT_FUNCTION::NA);
-	toolSystem->SetTerrainPaint(TERRAIN_PAINT::NA);
 
 	// Set tool editor
-	toolSystem->SetEditor(EDITOR::SCULPT_SINGLE);
+	toolSystem->SetEditor(EDITOR_COMPLEX::NA);
 }
 
 void TerrainDialogue::UpdateTool()
@@ -104,9 +103,6 @@ void TerrainDialogue::UpdateTool()
 		// If the user isn't sculpting
 		if (!m_sculpting)
 		{
-			// Set editor to none
-			m_toolSystem->SetTerrainSculpt(TERRAIN_SCULPT::NA);
-
 			// Get current terrain selection
 			TERRAIN terrain = MouseManager::PickTerrain();
 
@@ -121,19 +117,8 @@ void TerrainDialogue::UpdateTool()
 		// Else, if the user is sculpting
 		else
 		{
-			// Set tool editor
-			m_toolSystem->SetEditor(EDITOR::SCULPT_SINGLE);
-
-			// Update tool selected terrrain
-			m_toolSystem->SetSelectedTerrain(m_terrain);
-
-			// Set sculpt mode
-			m_toolSystem->SetTerrainSculpt(m_sculpt);
-
-			// Set constraint
-			m_toolSystem->SetConstraint(m_constraint);
-
-			///TerrainManager::SculptDrag(MouseManager::PickTerrain());
+			// Sculpt selected terrain
+			TerrainManager::Sculpt(m_sculpt, m_constraint, m_terrain.row, m_terrain.column);
 		}
 	}
 }

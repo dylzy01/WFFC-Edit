@@ -7,17 +7,17 @@ SamplerState sampleType : register(s0);
 
 struct Light
 {
-    float4  diffuseColour;
-    float4  ambientColour;
-    float3  lightPosition;
-    float   spotAngle;
+    float4 diffuseColour;
+    float4 ambientColour;
+    float3 lightPosition;
+    float normal;
     
-    float3  direction;
-    float   constA;
-    float   linA;
-    float   quadA;
-    int     type;
-    float   enabled;
+    float3 direction;
+    float constA;
+    float linA;
+    float quadA;
+    int type;
+    float enabled;
 };
 
 cbuffer ActiveCountBuffer : register(b0)
@@ -32,10 +32,10 @@ cbuffer LightBuffer : register(b1)
 
 struct InputType
 {
-    float4  position : SV_POSITION;
-    float3  normal : NORMAL;
-    float2  tex : TEXCOORD0;
-    float3  position3D : TEXCOORD2;
+    float4 position : SV_POSITION;
+    float3 normal : NORMAL;
+    float2 tex : TEXCOORD0;
+    float3 position3D : TEXCOORD2;
 };
 
 // Produce lighting
@@ -75,43 +75,74 @@ float4 GenerateLight(float3 normal, float3 position3D)
         float light = saturate(dot(normal, normalize(dir)));
         col += saturate(diffuse * light);
         col += Lights[i].ambientColour;
-    }
+        
+        // If toonify is enabled
+        if (Lights[i].normal < 0.5f)
+        {
+             // Get normalized light vector compared to world position
+            float3 direction = normalize(Lights[0].lightPosition - position3D);
     
+            // Get normalized dot product between object normal and light
+            float lightDot = max(0, dot(normal, direction));
+            
+            // Calculate toon shading threshold based on light
+            if (lightDot > 0.9f)
+            {
+                col *= 1.f;
+            }
+            else if (lightDot > 0.65f)
+            {
+                col *= 0.8f;
+            }
+            else if (lightDot > 0.4f)
+            {
+                col *= 0.6f;
+            }
+            else if (lightDot > 0.15f)
+            {
+                col *= 0.4f;
+            }
+            else
+            {
+                col *= 0.2f;
+            }
+        }
+    }
     return col;
 }
 
 float4 main(InputType input) : SV_TARGET
-{            
+{
     // Sample texture
     float4 textureColour = shaderTexture.Sample(sampleType, input.tex);
     
     // Get normalized light vector compared to world position
-    float3 direction = normalize(Lights[0].lightPosition - input.position3D);
+    //float3 direction = normalize(Lights[0].lightPosition - input.position3D);
     
-    // Get normalized dot product between object normal and light
-    float lightDot = max(0, dot(input.normal, direction));
+    //// Get normalized dot product between object normal and light
+    //float lightDot = max(0, dot(input.normal, direction));
     
-    // Calculate toon shading threshold based on light
-    if (lightDot > 0.9f)
-    {
-        textureColour *= 1.f;
-    }
-    else if (lightDot > 0.65f)
-    {
-        textureColour *= 0.8f;
-    }
-    else if (lightDot > 0.4f)
-    {
-        textureColour *= 0.6f;
-    }
-    else if (lightDot > 0.15f)
-    {
-        textureColour *= 0.4f;
-    }
-    else
-    {
-        textureColour *= 0.2f;
-    }
+    //// Calculate toon shading threshold based on light
+    //if (lightDot > 0.9f)
+    //{
+    //    textureColour *= 1.f;
+    //}
+    //else if (lightDot > 0.65f)
+    //{
+    //    textureColour *= 0.8f;
+    //}
+    //else if (lightDot > 0.4f)
+    //{
+    //    textureColour *= 0.6f;
+    //}
+    //else if (lightDot > 0.15f)
+    //{
+    //    textureColour *= 0.4f;
+    //}
+    //else
+    //{
+    //    textureColour *= 0.2f;
+    //}
     
     // Add lighting
     textureColour *= GenerateLight(input.normal, input.position3D);

@@ -113,7 +113,7 @@ void ToolMain::onActionLoad(std::string name)
 void ToolMain::onActionDeleteObjects()
 {	
 	// Delete all selected objects
-	ObjectManager::Remove(m_selectedObjectIDs);	
+	ObjectManager::Delete(m_selectedObjectIDs);	
 }
 
 void ToolMain::onActionUndo()
@@ -142,7 +142,7 @@ void ToolMain::Tick(MSG *msg)
 	m_sceneGraph = m_d3dRenderer.GetSceneGraph();
 	
 	// If DEL is pressed, deleted selected objects
-	if (m_toolInputCommands.DEL) { ObjectManager::Remove(m_selectedObjectIDs); }
+	if (m_toolInputCommands.DEL) { ObjectManager::Delete(m_selectedObjectIDs); }
 		
 	// If CTRL is pressed
 	if (m_toolInputCommands.CTRL)
@@ -166,16 +166,16 @@ void ToolMain::Tick(MSG *msg)
 	// If right mouse button is pressed
 	if (m_toolInputCommands.mouseRight)
 	{				
-		// Switch between modes
+		// Switch between complex editor modes
 		switch(m_editor)
 		{
-		case EDITOR::OBJECT_SPAWN:
+		case EDITOR_COMPLEX::SPAWN:
 		{
 			// If control key is pressed
 			if (m_toolInputCommands.CTRL)
 			{				
 				// Remove an object
-				ObjectManager::Remove(m_selectedObjectIDs, MouseManager::PickObject(PICK_TYPE::ANY));				
+				ObjectManager::Delete(m_selectedObjectIDs, MouseManager::PickObject(PICK_TYPE::ANY));				
 			}
 
 			// Else, if not
@@ -191,7 +191,7 @@ void ToolMain::Tick(MSG *msg)
 			}						
 		}
 		break;
-		case EDITOR::OBJECT_FUNCTION:
+		case EDITOR_COMPLEX::OBJECTS:
 		{			
 			// If object function is select
 			if (m_objectFunction == OBJECT_FUNCTION::SELECT)
@@ -241,25 +241,7 @@ void ToolMain::Tick(MSG *msg)
 			}			
 		}			
 		break;
-		case EDITOR::TERRAIN_PAINT:
-		{
-			// Paint terrain
-			TerrainManager::Paint(m_selectedTerrain, m_paint);
-		}
-		break;
-		case EDITOR::SCULPT_FREELY:
-		{
-			// Sculpt terrain
-			TerrainManager::Sculpt(m_selectedTerrain, m_terrainFunction, m_constraint);
-		}
-		break;
-		case EDITOR::SCULPT_SINGLE:
-		{
-			// Sculpt selected terrain
-			TerrainManager::Sculpt(m_selectedTerrain, m_terrainFunction, m_constraint, true);
-		}
-		break;
-		case EDITOR::LIGHTS:
+		case EDITOR_COMPLEX::LIGHTS:
 		{
 			// If translating
 			if (m_objectFunction == OBJECT_FUNCTION::TRANSLATE)

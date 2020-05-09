@@ -7,7 +7,6 @@
 #include "BlendShader.h"
 #include "ToonShader.h"
 #include "ToonBlendShader.h"
-#include "WaterShader.h"
 
 class ShaderManager
 {
@@ -19,7 +18,7 @@ public:
 	static void Initialise(ID3D11Device * device);
 
 	// Setup specific shader parameters
-	static void Shader(SHADER_TYPE type, ID3D11DeviceContext * context, std::vector<DisplayObject> lights, ID3D11ShaderResourceView* texture1, ID3D11ShaderResourceView* texture2 = NULL, DirectX::XMFLOAT2 screen = { NULL, NULL });
+	static void Shader(bool isNormal, bool blend, ID3D11DeviceContext * context, std::vector<DisplayObject> lights, ID3D11ShaderResourceView* texture1, ID3D11ShaderResourceView* texture2 = NULL, DirectX::XMFLOAT2 screen = { NULL, NULL });
 
 	// Setters
 	static void SetWorld(DirectX::SimpleMath::Matrix * world);

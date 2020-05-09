@@ -45,11 +45,9 @@ void SpawnDialogue::SetToolData(ToolMain * toolSystem)
 
 	// Set other modes to none
 	toolSystem->SetObjectFunction(OBJECT_FUNCTION::NA);
-	toolSystem->SetTerrainSculpt(TERRAIN_SCULPT::NA);
-	toolSystem->SetTerrainPaint(TERRAIN_PAINT::NA);
 
 	// Set tool editor
-	toolSystem->SetEditor(EDITOR::OBJECT_SPAWN);
+	toolSystem->SetEditor(EDITOR_COMPLEX::SPAWN);
 }
 
 void SpawnDialogue::UpdateTool()

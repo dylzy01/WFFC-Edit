@@ -55,19 +55,19 @@ void SculptDialogue::SetToolData(ToolMain * toolSystem)
 	// Set other modes to none
 	toolSystem->SetObjectSpawn(OBJECT_TYPE::NA);
 	toolSystem->SetObjectFunction(OBJECT_FUNCTION::NA);
-	toolSystem->SetTerrainPaint(TERRAIN_PAINT::NA);
 
 	// Set tool editor
-	toolSystem->SetEditor(EDITOR::SCULPT_FREELY);
+	toolSystem->SetEditor(EDITOR_COMPLEX::NA);
 }
 
 void SculptDialogue::UpdateTool()
 {
-	// Keep sculpt mode up-to-date
-	if (m_toolSystem->GetTerrainFunction() != m_sculpt) { m_toolSystem->SetTerrainSculpt(m_sculpt); }
-
-	// Keep constraint up-to-date
-	if (m_toolSystem->GetConstraint() != m_constraint) { m_toolSystem->SetConstraint(m_constraint); }
+	// If user is pressing the right mouse button
+	if (m_toolSystem->GetInput()->mouseRight)
+	{
+		// Sculpt terrain
+		TerrainManager::Sculpt(m_sculpt, m_constraint);
+	}	
 }
 
 void SculptDialogue::DoDataExchange(CDataExchange* pDX)

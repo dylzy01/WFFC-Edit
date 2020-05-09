@@ -50,15 +50,16 @@ public:
 	TERRAIN_PAINT GetPaint(int row, int column);
 	float GetScaleFactor() { return m_scaleFactor; }
 	bool GetBlend() { return m_blend; }
+	bool GetShaderType() { return m_normalShader; }
 	
 	// Setters
-	void SetSelected(bool selected, int row, int column);
 	void SetBlend(bool blend) { m_blend = blend; }	
 	void SetPlateau(bool plateau) { m_plateau = plateau; }
 	void SetScaleFactor(float scale) { m_scaleFactor = scale; }
 	void SetPosition(int row, int column, float position) {
 		m_terrainGeometry[row][column].position.y += position;
 	}
+	void SetShaderType(bool normalShader) { m_normalShader = normalShader; }
 
 	// Save
 	void SaveGeometryPositions(int count);
@@ -124,7 +125,7 @@ private:
 	std::vector<std::pair<int, int>> m_highlight, m_grassTemp, m_dirtTemp, m_sandTemp, m_stoneTemp, m_snowTemp;
 
 	// Paint controllers
-	bool m_surround, m_blend;
+	bool m_surround, m_blend, m_normalShader = false;
 
 	// Sculpt controllers
 	bool m_plateau;

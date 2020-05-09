@@ -45,20 +45,18 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 {	
 	// Setup device context
 	auto context = deviceResources->GetD3DDeviceContext();
-	///context->IASetInputLayout(m_terrainInputLayout.Get());
 
-	XMFLOAT2 size;
-	size.x = deviceResources->GetOutputSize().right;
-	size.y = deviceResources->GetOutputSize().bottom;
+	// Setup shader type based on user selection
+	SHADER_TYPE type;
+	if (m_normalShader) { type = SHADER_TYPE::NORMAL_TEXTURE; }
+	else { type = SHADER_TYPE::TOON_TEXTURE; }
 
 	m_effect->Apply(context);
 
 	// Draw all grass geometry
 	if (m_grass.size() != 0) {
 		m_batch->Begin();
-		///ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, lights, m_texture_splat_1);
-		ShaderManager::Shader(SHADER_TYPE::TOON_SINGLE, context, lights, m_texture_splat_1);
-		///ShaderManager::Shader(SHADER_TYPE::OUTLINE, context, m_texture_splat_1, NULL, size);
+		ShaderManager::Shader(m_normalShader, false, context, lights, m_texture_splat_1);
 		DrawTerrain(m_grass);
 		m_batch->End();
 	}
@@ -66,8 +64,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all dirt geometry
 	if (m_dirt.size() != 0) {
 		m_batch->Begin();
-		///ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, lights, m_texture_splat_2);
-		ShaderManager::Shader(SHADER_TYPE::TOON_SINGLE, context, lights, m_texture_splat_2);
+		ShaderManager::Shader(m_normalShader, false, context, lights, m_texture_splat_2);
 		DrawTerrain(m_dirt);
 		m_batch->End();
 	}
@@ -75,8 +72,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all sand geometry
 	if (m_sand.size() != 0)	{
 		m_batch->Begin();
-		///ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, lights, m_texture_splat_3);
-		ShaderManager::Shader(SHADER_TYPE::TOON_SINGLE, context, lights, m_texture_splat_3);
+		ShaderManager::Shader(m_normalShader, false, context, lights, m_texture_splat_3);
 		DrawTerrain(m_sand);
 		m_batch->End();
 	}
@@ -84,8 +80,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all stone geometry
 	if (m_stone.size() != 0) {
 		m_batch->Begin();
-		///ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, lights, m_texture_splat_4);
-		ShaderManager::Shader(SHADER_TYPE::TOON_SINGLE, context, lights, m_texture_splat_4);
+		ShaderManager::Shader(m_normalShader, false, context, lights, m_texture_splat_4);
 		DrawTerrain(m_stone);
 		m_batch->End();
 	}
@@ -93,8 +88,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all snow geometry
 	if (m_snow.size() != 0) {
 		m_batch->Begin();
-		///ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, lights, m_texture_splat_5);
-		ShaderManager::Shader(SHADER_TYPE::TOON_SINGLE, context, lights, m_texture_splat_5);
+		ShaderManager::Shader(m_normalShader, false, context, lights, m_texture_splat_5);
 		DrawTerrain(m_snow);
 		m_batch->End();
 	}	
@@ -547,149 +541,6 @@ void DisplayChunk::PaintTerrain(int i, int j, TERRAIN_PAINT paint)
 	
 	// Else, current paint must be blended
 	else { PaintOverBlended(paint, index); }
-	
-	// Switch between current paint
-	//switch (CheckForDuplicates(i, j, paint))
-	//{
-	//case LANDSCAPE_PAINT::GRASS:
-	//{
-	//	// If selected paint is grass, do nothing
-	//	if (paint == LANDSCAPE_PAINT::GRASS) {}
-
-	//	// Else, apply selected paint
-	//	else 
-	//	{
-	//		// Switch between selected paint
-	//		switch (paint)
-	//		{
-	//		case LANDSCAPE_PAINT::DIRT:		m_grassDirt.push_back(index); break;
-	//		case LANDSCAPE_PAINT::SAND:		m_grassSand.push_back(index); break;
-	//		case LANDSCAPE_PAINT::STONE:	m_grassStone.push_back(index); break;
-	//		case LANDSCAPE_PAINT::SNOW:		m_grassSnow.push_back(index); break;
-	//		}
-	//	}
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::DIRT:
-	//{
-	//	// If selected paint is dirt, do nothing
-	//	if (paint == LANDSCAPE_PAINT::DIRT) {}
-
-	//	// Else, apply selected paint
-	//	else
-	//	{
-	//		// Switch between selected paint
-	//		switch (paint)
-	//		{
-	//		case LANDSCAPE_PAINT::GRASS:	m_grassDirt.push_back(index); break;
-	//		case LANDSCAPE_PAINT::SAND:		m_dirtSand.push_back(index); break;
-	//		case LANDSCAPE_PAINT::STONE:	m_dirtStone.push_back(index); break;
-	//		case LANDSCAPE_PAINT::SNOW:		m_dirtSnow.push_back(index); break;
-	//		}
-	//	}
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::SAND:
-	//{
-	//	// If selected paint is sand, do nothing
-	//	if (paint == LANDSCAPE_PAINT::SAND) {}
-
-	//	// Else, apply selected paint
-	//	else
-	//	{
-	//		// Switch between selected paint
-	//		switch (paint)
-	//		{
-	//		case LANDSCAPE_PAINT::GRASS: m_grassSand.push_back(index); break;
-	//		case LANDSCAPE_PAINT::DIRT: m_dirtSand.push_back(index); break;
-	//		case LANDSCAPE_PAINT::STONE: m_sandStone.push_back(index); break;
-	//		case LANDSCAPE_PAINT::SNOW: m_sandSnow.push_back(index); break;
-	//		}
-	//	}
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::STONE:
-	//{
-	//	// If selected paint is stone, do nothing
-	//	if (paint == LANDSCAPE_PAINT::STONE) {}
-
-	//	// Else, apply selected paint
-	//	else
-	//	{
-	//		// Switch between selected paint
-	//		switch (paint)
-	//		{
-	//		case LANDSCAPE_PAINT::GRASS: m_grassStone.push_back(index); break;
-	//		case LANDSCAPE_PAINT::DIRT: m_dirtStone.push_back(index); break;
-	//		case LANDSCAPE_PAINT::SAND: m_sandStone.push_back(index); break;
-	//		case LANDSCAPE_PAINT::SNOW: m_stoneSnow.push_back(index); break;
-	//		}
-	//	}
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::SNOW:
-	//{
-	//	// If selected paint is snow, do nothing
-	//	if (paint == LANDSCAPE_PAINT::SNOW) {}
-
-	//	// Else, apply selected paint
-	//	else
-	//	{
-	//		// Switch between selected paint
-	//		switch (paint)
-	//		{
-	//		case LANDSCAPE_PAINT::GRASS: m_grassSnow.push_back(index); break;
-	//		case LANDSCAPE_PAINT::DIRT: m_dirtSnow.push_back(index); break;
-	//		case LANDSCAPE_PAINT::SAND: m_sandSnow.push_back(index); break;
-	//		case LANDSCAPE_PAINT::STONE: m_stoneSnow.push_back(index); break;
-	//		}
-	//	}
-	//}
-	//break;
-	//}
-	
-	// Check if selected geometry is within other containers & remove
-	///LANDSCAPE_PAINT current = CheckForDuplicates(i, j, paint);
-
-	// Blend surrounding geometry paints
-	///if (checkSurroundings) { CheckSurroundings(i, j, paint); }
-
-	// Switch between paints
-	//switch (paint)
-	//{
-	//case LANDSCAPE_PAINT::NA: m_default.push_back(std::pair<int, int>(i, j)); break;
-	//case LANDSCAPE_PAINT::GRASS: m_grass.push_back(std::pair<int, int>(i, j)); break;
-	//case LANDSCAPE_PAINT::DIRT: 
-	//{
-	//	///m_dirt.push_back(std::pair<int, int>(i, j));
-	//	// Switch between current paint
-	//	switch (current)
-	//	{
-	//	case LANDSCAPE_PAINT::GRASS: m_grassDirt.push_back(std::pair<int, int>(i, j)); break;
-	//	case LANDSCAPE_PAINT::DIRT: m_dirt.push_back(std::pair<int, int>(i, j)); break;
-	//	case LANDSCAPE_PAINT::SAND: m_dirtSand.push_back(std::pair<int, int>(i, j)); break;
-	//	case LANDSCAPE_PAINT::STONE: m_dirtStone.push_back(std::pair<int, int>(i, j)); break;
-	//	case LANDSCAPE_PAINT::SNOW: m_dirtSnow.push_back(std::pair<int, int>(i, j)); break;
-	//	case LANDSCAPE_PAINT::GRASS_DIRT: m_dirt.push_back(std::pair<int, int>(i, j)); break;
-	//	}
-	//}
-	//break;
-	//case LANDSCAPE_PAINT::SAND: m_sand.push_back(std::pair<int, int>(i, j)); break;
-	//case LANDSCAPE_PAINT::STONE: m_stone.push_back(std::pair<int, int>(i, j)); break;
-	//case LANDSCAPE_PAINT::SNOW: m_snow.push_back(std::pair<int, int>(i, j)); break;
-
-
-	//case LANDSCAPE_PAINT::GRASS_DIRT: m_grassDirt.push_back(std::pair<int, int>(i, j)); break;
-	//case LANDSCAPE_PAINT::GRASS_SAND: m_grassSand.push_back(std::pair<int, int>(i, j)); break;
-	//case LANDSCAPE_PAINT::GRASS_STONE: m_grassStone.push_back(std::pair<int, int>(i, j)); break;
-	//case LANDSCAPE_PAINT::GRASS_SNOW: m_grassSnow.push_back(std::pair<int, int>(i, j)); break;
-	//case LANDSCAPE_PAINT::DIRT_SAND: m_dirtSand.push_back(std::pair<int, int>(i, j)); break;
-	//case LANDSCAPE_PAINT::DIRT_STONE: m_dirtStone.push_back(std::pair<int, int>(i, j)); break;
-	//case LANDSCAPE_PAINT::DIRT_SNOW: m_dirtSnow.push_back(std::pair<int, int>(i, j)); break;
-	//case LANDSCAPE_PAINT::SAND_STONE: m_sandStone.push_back(std::pair<int, int>(i, j)); break;
-	//case LANDSCAPE_PAINT::SAND_SNOW: m_sandSnow.push_back(std::pair<int, int>(i, j)); break;
-	//case LANDSCAPE_PAINT::STONE_SNOW: m_stoneSnow.push_back(std::pair<int, int>(i, j)); break;
-	//}
 }
 
 void DisplayChunk::PaintBlend(int i, int j, TERRAIN_PAINT paint)
@@ -975,104 +826,7 @@ void DisplayChunk::PaintOverBlended(TERRAIN_PAINT paint, std::pair<int, int> ind
 }
 
 void DisplayChunk::SculptTerrain(int row, int column, TERRAIN_SCULPT sculpt, CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position)
-{
-	// Store starting vertex
-	//Vector3 start = m_terrainGeometry[row][column].position; 
-
-	//// Store other vertices of quad
-	//std::vector<Vector3> others;
-	//others.push_back(m_terrainGeometry[row][column + 1].position);
-	//others.push_back(m_terrainGeometry[row + 1][column + 1].position);
-	//others.push_back(m_terrainGeometry[row + 1][column].position);
-
-	//// Store distances between start and other vertices
-	//std::vector<float> distances;
-	//for (int i = 0; i < others.size(); ++i)
-	//{
-	//	float dist = sqrt(
-	//		(start.x - others[i].x) * (start.x - others[i].x) +
-	//		(start.y - others[i].y) * (start.y - others[i].y) +
-	//		(start.z - others[i].z) * (start.z - others[i].z));
-	//	distances.push_back(dist);
-	//}
-	//	
-	//// Loop through distances
-	//for (int i = 0; i < distances.size(); ++i)
-	//{
-	//	// Divide each distance to put in 0,1 interval
-	//	distances[i] = (distances[i] * 2.f) - 1.f;
-
-	//	// Plug into cosine
-	//	distances[i] = sin(distances[i]);
-
-	//	///cos(m_terrainGeometry[i][j].position.x + (deltaTime * 100.f))
-	//}
-
-	// Test
-	//if (sculpt == TERRAIN_SCULPT::INCREASE)
-	//{
-	//	switch (constraint)
-	//	{
-	//	case CONSTRAINT::Y:
-	//	{
-	//		// Increase position
-	//		m_terrainGeometry[row][column].position.y += m_scaleFactor;
-	//		m_terrainGeometry[row][column + 1].position.y += distances[0];
-	//		m_terrainGeometry[row + 1][column + 1].position.y += distances[1];
-	//		m_terrainGeometry[row + 1][column].position.y += distances[2];
-	//	}
-	//	break;
-	//	}
-	//}
-	
-	// Centre point
-	///DirectX::VertexPositionNormalTexture* centre = &m_terrainGeometry[row][column];
-
-	// Surrounding points
-	//std::vector<DirectX::VertexPositionNormalTexture*> surroundings;
-	//surroundings.push_back(&m_terrainGeometry[row - 1][column - 1]);	// Top left
-	//surroundings.push_back(&m_terrainGeometry[row - 1][column]);		// Top Middle
-	//surroundings.push_back(&m_terrainGeometry[row - 1][column + 1]);	// Top Right
-	//surroundings.push_back(&m_terrainGeometry[row][column - 1]);		// Left
-	//surroundings.push_back(&m_terrainGeometry[row][column + 1]);		// Right
-	//surroundings.push_back(&m_terrainGeometry[row + 1][column - 1]);	// Bottom left
-	//surroundings.push_back(&m_terrainGeometry[row + 1][column]);		// Bottom Middle
-	//surroundings.push_back(&m_terrainGeometry[row + 1][column + 1]);	// Bottom Right
-
-	// Quad sculpt setup ///////////////////////////////////////////////
-	//std::vector<int> rows = { row, row, row + 1, row + 1 };
-	//std::vector<int> cols = { column, column + 1, column + 1, column };
-	//std::vector<DirectX::VertexPositionNormalTexture*> quad;
-	//quad.push_back(&m_terrainGeometry[rows[0]][cols[0]]);
-	//quad.push_back(&m_terrainGeometry[rows[1]][cols[1]]);
-	//quad.push_back(&m_terrainGeometry[rows[2]][cols[2]]);
-	//quad.push_back(&m_terrainGeometry[rows[3]][cols[3]]);
-	//std::vector<DirectX::VertexPositionNormalTexture*> surroundings;
-	//// Top left
-	//{
-	//	surroundings.push_back(&m_terrainGeometry[rows[0]][cols[0] - 1]);
-	//	surroundings.push_back(&m_terrainGeometry[rows[0] - 1][cols[0] - 1]);
-	//	surroundings.push_back(&m_terrainGeometry[rows[0] - 1][cols[0]]);
-	//}
-	//// Top right
-	//{
-	//	surroundings.push_back(&m_terrainGeometry[rows[1] - 1][cols[1]]);
-	//	surroundings.push_back(&m_terrainGeometry[rows[1] - 1][cols[1] + 1]);
-	//	surroundings.push_back(&m_terrainGeometry[rows[1]][cols[1] + 1]);
-	//}
-	//// Bottom right
-	//{
-	//	surroundings.push_back(&m_terrainGeometry[rows[2]][cols[2] + 1]);
-	//	surroundings.push_back(&m_terrainGeometry[rows[2] + 1][cols[2] + 1]);
-	//	surroundings.push_back(&m_terrainGeometry[rows[2] + 1][cols[2]]);
-	//}
-	//// Bottom left
-	//{
-	//	surroundings.push_back(&m_terrainGeometry[rows[3] + 1][cols[3]]);
-	//	surroundings.push_back(&m_terrainGeometry[rows[3] + 1][cols[3] - 1]);
-	//	surroundings.push_back(&m_terrainGeometry[rows[3]][cols[3] - 1]);
-	//}
-	
+{	
 	// Switch between sculpt parameter
 	switch (sculpt)
 	{
@@ -1573,56 +1327,6 @@ void DisplayChunk::SculptTerrain(int row, int column, TERRAIN_SCULPT sculpt, CON
 	if (m_terrainGeometry[row + 1][column].position.y < 0.f)		{ m_terrainGeometry[row + 1][column].position.y = 0.f; }
 }
 
-void DisplayChunk::SetSelected(bool selected, int row, int column)
-{
-	// If selecting
-	if (selected)
-	{
-		// Remove from other vectors
-		RemoveDuplicates(row, column);
-
-		// Add to highlight vector
-		m_highlight.push_back(std::pair<int, int>(row, column));
-	}
-	// Else, if unselecting
-	else
-	{
-		// Temp
-		int index = -1;
-		std::pair<int, int> terrain = std::pair<int, int>(row, column);
-			
-		// Search through temp grass vector
-		if (FindInVector(index, m_grassTemp, terrain))
-		{
-			// Add to main storage
-			m_grass.push_back(terrain);
-
-			// Remove from temp storage
-			m_grassTemp.erase(m_grassTemp.begin() + index);
-		}
-
-		// Else, search through temp dirt vector
-		else if (FindInVector(index, m_dirtTemp, terrain))
-		{
-			// Add to main storage
-			m_dirt.push_back(terrain);
-
-			// Remove from temp storage
-			m_dirtTemp.erase(m_dirtTemp.begin() + index);
-		}
-
-		// Else, search through temp sand vector
-		else if (FindInVector(index, m_sandTemp, terrain))
-		{
-			// Add to main storage
-			m_sand.push_back(terrain);
-
-			// Remove from temp storage
-			m_sandTemp.erase(m_sandTemp.begin() + index);
-		}
-	}
-}
-
 void DisplayChunk::DrawTerrain(std::vector<std::pair<int, int>> terrain)
 {
 	for (int i = 0; i < terrain.size(); ++i)
@@ -1675,66 +1379,6 @@ TERRAIN_PAINT DisplayChunk::RemoveDuplicates(int row, int column, TERRAIN_PAINT 
 	terrain.first = row;
 	terrain.second = column;
 	bool check = false;
-
-	// Search through grass vector
-	//check = SearchAndDestroy(index, m_grass, terrain);
-	//if (check) { current = LANDSCAPE_PAINT::GRASS; }
-
-	//// Else, search through dirt vector
-	//if (!check) { check = SearchAndDestroy(index, m_dirt, terrain); }
-	//if (check) { current = LANDSCAPE_PAINT::DIRT; }
-
-	//// Else, search through sand vector
-	//if (!check) { check = SearchAndDestroy(index, m_sand, terrain); }
-	//if (check) { current = LANDSCAPE_PAINT::SAND; }
-
-	//// Else, search through stone vector
-	//if (!check) { check = SearchAndDestroy(index, m_stone, terrain); }
-	//if (check) { current = LANDSCAPE_PAINT::STONE; }
-
-	//// Else, search through snow vector
-	//if (!check) { check = SearchAndDestroy(index, m_snow, terrain); }
-	//if (check) { current = LANDSCAPE_PAINT::SNOW; }
-
-	//// Else, search through grass/dirt blend vector
-	//if (!check) { check = SearchAndDestroy(index, m_grassDirt, terrain); }
-	//if (check) { current = LANDSCAPE_PAINT::GRASS_DIRT; }
-
-	//// Else, search through grass/sand blend vector
-	//if (!check) { check = SearchAndDestroy(index, m_grassSand, terrain); }
-	//if (check) { current = LANDSCAPE_PAINT::GRASS_SAND; }
-
-	//// Else, search through grass/stone blend vector
-	//if (!check) { check = SearchAndDestroy(index, m_grassStone, terrain); }
-	//if (check) { current = LANDSCAPE_PAINT::GRASS_STONE; }
-
-	//// Else, search through grass/snow blend vector
-	//if (!check) { check = SearchAndDestroy(index, m_grassSnow, terrain); }
-	//if (check) { current = LANDSCAPE_PAINT::GRASS_SNOW; }
-
-	//// Else, search through dirt/sand blend vector
-	//if (!check) { check = SearchAndDestroy(index, m_dirtSand, terrain); }
-	//if (check) { current = LANDSCAPE_PAINT::DIRT_SAND; }
-
-	//// Else, search through dirt/stone blend vector
-	//if (!check) { check = SearchAndDestroy(index, m_dirtStone, terrain); }
-	//if (check) { current = LANDSCAPE_PAINT::DIRT_STONE; }
-
-	//// Else, search through dirt/snow blend vector
-	//if (!check) { check = SearchAndDestroy(index, m_dirtSnow, terrain); }
-	//if (check) { current = LANDSCAPE_PAINT::DIRT_SNOW; }
-
-	//// Else, search through sand/stone blend vector
-	//if (!check) { check = SearchAndDestroy(index, m_sandStone, terrain); }
-	//if (check) { current = LANDSCAPE_PAINT::SAND_STONE; }
-
-	//// Else, search through sand/snow blend vector
-	//if (!check) { check = SearchAndDestroy(index, m_sandSnow, terrain); }
-	//if (check) { current = LANDSCAPE_PAINT::SAND_SNOW; }
-
-	//// Else, search through stone/snow blend vector
-	//if (!check) { check = SearchAndDestroy(index, m_stoneSnow, terrain); }
-	//if (check) { current = LANDSCAPE_PAINT::STONE_SNOW; }
 
 	// Switch between paints
 	switch (paint)
@@ -2701,7 +2345,7 @@ void DisplayChunk::CheckSurroundings(int row, int column, TERRAIN_PAINT paint)
 	//   o o o 
 	// c   c   c
 
-	// Run a check here, in a different function, increase e.g. 'row - 2' goes off the grid
+	// Run a check here, in a different function, increase e.g. 'row -2' goes off the grid
 	// maybe replace with '-1' instead and run another check when applying blending texture
 	// just to blend it same as the rest if the value is '-1'
 	// if the rest is evenly spread, randomly choose ??
@@ -2756,16 +2400,17 @@ void DisplayChunk::CheckSurroundings(int row, int column, TERRAIN_PAINT paint)
 			// Switch between 'x' paint
 			switch (x_paint)
 			{
-			case TERRAIN_PAINT::GRASS:	o_paints[i] = TERRAIN_PAINT::GRASS;		break;
-			case TERRAIN_PAINT::DIRT:		o_paints[i] = TERRAIN_PAINT::GRASS_DIRT;	break;
-			case TERRAIN_PAINT::SAND:		o_paints[i] = TERRAIN_PAINT::GRASS_SAND;	break;
-			case TERRAIN_PAINT::STONE:	o_paints[i] = TERRAIN_PAINT::GRASS_STONE; break;
-			case TERRAIN_PAINT::SNOW:		o_paints[i] = TERRAIN_PAINT::GRASS_SNOW;	break;
-			case TERRAIN_PAINT::GRASS_DIRT: o_paints[i] = TERRAIN_PAINT::GRASS; break;
-			case TERRAIN_PAINT::GRASS_SAND: o_paints[i] = TERRAIN_PAINT::GRASS; break;
-			case TERRAIN_PAINT::GRASS_STONE: o_paints[i] = TERRAIN_PAINT::GRASS; break;
-			case TERRAIN_PAINT::GRASS_SNOW: o_paints[i] = TERRAIN_PAINT::GRASS; break;
+			case TERRAIN_PAINT::GRASS:			o_paints[i] = TERRAIN_PAINT::GRASS;			break;
+			case TERRAIN_PAINT::DIRT:			o_paints[i] = TERRAIN_PAINT::GRASS_DIRT;	break;
+			case TERRAIN_PAINT::SAND:			o_paints[i] = TERRAIN_PAINT::GRASS_SAND;	break;
+			case TERRAIN_PAINT::STONE:			o_paints[i] = TERRAIN_PAINT::GRASS_STONE;	break;
+			case TERRAIN_PAINT::SNOW:			o_paints[i] = TERRAIN_PAINT::GRASS_SNOW;	break;
+			case TERRAIN_PAINT::GRASS_DIRT:		o_paints[i] = TERRAIN_PAINT::GRASS;			break;
+			case TERRAIN_PAINT::GRASS_SAND:		o_paints[i] = TERRAIN_PAINT::GRASS;			break;
+			case TERRAIN_PAINT::GRASS_STONE:	o_paints[i] = TERRAIN_PAINT::GRASS;			break;
+			case TERRAIN_PAINT::GRASS_SNOW:		o_paints[i] = TERRAIN_PAINT::GRASS;			break;
 			///case LANDSCAPE_PAINT::DIRT_SAND: 
+			// too many combinations for the time limit...
 			}
 		}
 		break;
@@ -2774,9 +2419,9 @@ void DisplayChunk::CheckSurroundings(int row, int column, TERRAIN_PAINT paint)
 			// Switch between 'x' paint
 			switch (x_paint)
 			{
-			case TERRAIN_PAINT::GRASS: o_paints[i] = TERRAIN_PAINT::GRASS_DIRT; break;
-			case TERRAIN_PAINT::DIRT: o_paints[i] = TERRAIN_PAINT::DIRT; break;
-			case TERRAIN_PAINT::SAND: o_paints[i] = TERRAIN_PAINT::GRASS_SAND; break;
+			case TERRAIN_PAINT::GRASS:			o_paints[i] = TERRAIN_PAINT::GRASS_DIRT;	break;
+			case TERRAIN_PAINT::DIRT:			o_paints[i] = TERRAIN_PAINT::DIRT;			break;
+			case TERRAIN_PAINT::SAND:			o_paints[i] = TERRAIN_PAINT::GRASS_SAND;	break;
 			}
 		}
 		break;
@@ -2785,9 +2430,9 @@ void DisplayChunk::CheckSurroundings(int row, int column, TERRAIN_PAINT paint)
 			// Switch between 'x' paint
 			switch (x_paint)
 			{
-			case TERRAIN_PAINT::GRASS: o_paints[i] = TERRAIN_PAINT::GRASS_SAND; break;
-			case TERRAIN_PAINT::DIRT: o_paints[i] = TERRAIN_PAINT::DIRT_SAND; break;
-			case TERRAIN_PAINT::SAND: o_paints[i] = TERRAIN_PAINT::SAND; break;
+			case TERRAIN_PAINT::GRASS:			o_paints[i] = TERRAIN_PAINT::GRASS_SAND;	break;
+			case TERRAIN_PAINT::DIRT:			o_paints[i] = TERRAIN_PAINT::DIRT_SAND;		break;
+			case TERRAIN_PAINT::SAND:			o_paints[i] = TERRAIN_PAINT::SAND;			break;
 			}
 		}
 		break;
@@ -2803,22 +2448,22 @@ void DisplayChunk::CheckSurroundings(int row, int column, TERRAIN_PAINT paint)
 		// Switch between blended paint
 		switch (o_paints[i])
 		{
-		case TERRAIN_PAINT::GRASS:		m_grass.push_back(o[i]);		break;
+		case TERRAIN_PAINT::GRASS:			m_grass.push_back(o[i]);		break;
 		case TERRAIN_PAINT::DIRT:			m_dirt.push_back(o[i]);			break;
 		case TERRAIN_PAINT::SAND:			m_sand.push_back(o[i]);			break;
-		case TERRAIN_PAINT::STONE:		m_sand.push_back(o[i]);			break;
+		case TERRAIN_PAINT::STONE:			m_sand.push_back(o[i]);			break;
 		case TERRAIN_PAINT::SNOW:			m_sand.push_back(o[i]);			break;
-		case TERRAIN_PAINT::GRASS_DIRT:	m_grassDirt.push_back(o[i]);	break;
-		case TERRAIN_PAINT::GRASS_SAND:	m_grassSand.push_back(o[i]);	break;
+		case TERRAIN_PAINT::GRASS_DIRT:		m_grassDirt.push_back(o[i]);	break;
+		case TERRAIN_PAINT::GRASS_SAND:		m_grassSand.push_back(o[i]);	break;
 		case TERRAIN_PAINT::GRASS_STONE:	m_grassStone.push_back(o[i]);	break;
-		case TERRAIN_PAINT::GRASS_SNOW:	m_grassSnow.push_back(o[i]);	break;
-		case TERRAIN_PAINT::DIRT_SAND:	m_dirtSand.push_back(o[i]);		break;
-		case TERRAIN_PAINT::DIRT_STONE:	m_dirtStone.push_back(o[i]);	break;
-		case TERRAIN_PAINT::DIRT_SNOW:	m_dirtSnow.push_back(o[i]);		break;
-		case TERRAIN_PAINT::SAND_STONE:	m_sandStone.push_back(o[i]);	break;
-		case TERRAIN_PAINT::SAND_SNOW:	m_sandSnow.push_back(o[i]);		break;
-		case TERRAIN_PAINT::STONE_SNOW:	m_stoneSnow.push_back(o[i]);	break;
-		case TERRAIN_PAINT::NA:			m_default.push_back(o[i]);		break;
+		case TERRAIN_PAINT::GRASS_SNOW:		m_grassSnow.push_back(o[i]);	break;
+		case TERRAIN_PAINT::DIRT_SAND:		m_dirtSand.push_back(o[i]);		break;
+		case TERRAIN_PAINT::DIRT_STONE:		m_dirtStone.push_back(o[i]);	break;
+		case TERRAIN_PAINT::DIRT_SNOW:		m_dirtSnow.push_back(o[i]);		break;
+		case TERRAIN_PAINT::SAND_STONE:		m_sandStone.push_back(o[i]);	break;
+		case TERRAIN_PAINT::SAND_SNOW:		m_sandSnow.push_back(o[i]);		break;
+		case TERRAIN_PAINT::STONE_SNOW:		m_stoneSnow.push_back(o[i]);	break;
+		case TERRAIN_PAINT::NA:				m_default.push_back(o[i]);		break;
 		}
 	}
 }
@@ -3080,12 +2725,16 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 {
 	// Setup device context
 	auto context = deviceResources->GetD3DDeviceContext();
-	context->IASetInputLayout(m_terrainInputLayout.Get());
+
+	// Setup shader type based on user selection
+	SHADER_TYPE type;
+	if (m_normalShader) { type = SHADER_TYPE::NORMAL_BLEND; }
+	else { type = SHADER_TYPE::TOON_BLEND; }
 
 	// Draw all grass/dirt geometry
 	if (m_grassDirt.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TOON_BLEND, context, lights, m_texture_splat_1, m_texture_splat_2);
+		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_1, m_texture_splat_2);
 		DrawTerrain(m_grassDirt);
 		m_batch->End();
 	}
@@ -3093,7 +2742,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all grass/sand geometry
 	if (m_grassSand.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TOON_BLEND, context, lights, m_texture_splat_1, m_texture_splat_3);
+		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_1, m_texture_splat_3);
 		DrawTerrain(m_grassSand);
 		m_batch->End();
 	}
@@ -3101,7 +2750,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all grass/stone geometry
 	if (m_grassStone.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TOON_BLEND, context, lights, m_texture_splat_1, m_texture_splat_4);
+		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_1, m_texture_splat_4);
 		DrawTerrain(m_grassStone);
 		m_batch->End();
 	}
@@ -3109,7 +2758,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all grass/snow geometry
 	if (m_grassSnow.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TOON_BLEND, context, lights, m_texture_splat_1, m_texture_splat_5);
+		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_1, m_texture_splat_5);
 		DrawTerrain(m_grassSnow);
 		m_batch->End();
 	}
@@ -3117,7 +2766,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all dirt/sand geometry
 	if (m_dirtSand.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TOON_BLEND, context, lights, m_texture_splat_2, m_texture_splat_3);
+		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_2, m_texture_splat_3);
 		DrawTerrain(m_dirtSand);
 		m_batch->End();
 	}
@@ -3125,7 +2774,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all dirt/stone geometry
 	if (m_dirtStone.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TOON_BLEND, context, lights, m_texture_splat_2, m_texture_splat_4);
+		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_2, m_texture_splat_4);
 		DrawTerrain(m_dirtStone);
 		m_batch->End();
 	}
@@ -3133,7 +2782,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all dirt/snow geometry
 	if (m_dirtSnow.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TOON_BLEND, context, lights, m_texture_splat_2, m_texture_splat_5);
+		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_2, m_texture_splat_5);
 		DrawTerrain(m_dirtSnow);
 		m_batch->End();
 	}
@@ -3141,7 +2790,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all sand/stone geometry
 	if (m_sandStone.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TOON_BLEND, context, lights, m_texture_splat_3, m_texture_splat_4);
+		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_3, m_texture_splat_4);
 		DrawTerrain(m_sandStone);
 		m_batch->End();
 	}
@@ -3149,7 +2798,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all sand/snow geometry
 	if (m_sandSnow.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TOON_BLEND, context, lights, m_texture_splat_3, m_texture_splat_5);
+		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_3, m_texture_splat_5);
 		DrawTerrain(m_sandSnow);
 		m_batch->End();
 	}
@@ -3157,7 +2806,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all stone/snow geometry
 	if (m_stoneSnow.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(SHADER_TYPE::TOON_BLEND, context, lights, m_texture_splat_4, m_texture_splat_5);
+		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_4, m_texture_splat_5);
 		DrawTerrain(m_stoneSnow);
 		m_batch->End();
 	}

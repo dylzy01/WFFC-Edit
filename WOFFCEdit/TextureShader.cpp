@@ -104,12 +104,12 @@ bool TextureShader::Initialise(ID3D11Device * device)
 }
 
 // Setup shader 
-bool TextureShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture, std::vector<DisplayObject> lights)
+bool TextureShader::SetShaderParameters(bool isNormal, ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture, std::vector<DisplayObject> lights)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
 	LightBufferType* lightPtr;
-	ActiveBufferType* activePtr;
+	ActiveBufferType* countPtr;
 	DirectX::SimpleMath::Matrix  tworld, tview, tproj;
 
 	// Transpose matrices for shader preperation
@@ -128,8 +128,8 @@ bool TextureShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11Sha
 
 	// Send number of active lights data
 	context->Map(m_bufferActive, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	activePtr = (ActiveBufferType*)mappedResource.pData;
-	activePtr->activeCount = lights.size();
+	countPtr = (ActiveBufferType*)mappedResource.pData;
+	countPtr->activeCount = lights.size();
 	context->Unmap(m_bufferActive, 0);
 	context->PSSetConstantBuffers(0, 1, &m_bufferActive);
 
@@ -141,7 +141,7 @@ bool TextureShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11Sha
 		lightPtr->lights[i].diffuseColour = lights[i].GetDiffuse();
 		lightPtr->lights[i].ambientColour = lights[i].GetAmbient();
 		lightPtr->lights[i].position = lights[i].GetPosition();
-		lightPtr->lights[i].angle = 45.f;
+		lightPtr->lights[i].normal = isNormal;
 
 		lightPtr->lights[i].direction = lights[i].GetDirection();
 		lightPtr->lights[i].constA = lights[i].GetConstantAttenuation();

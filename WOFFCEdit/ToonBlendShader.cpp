@@ -104,7 +104,7 @@ bool ToonBlendShader::Initialise(ID3D11Device * device)
 }
 
 // Setup shader 
-bool ToonBlendShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture1, ID3D11ShaderResourceView* texture2, std::vector<DisplayObject> lights)
+bool ToonBlendShader::SetShaderParameters(bool isNormal, ID3D11DeviceContext * context, ID3D11ShaderResourceView* texture1, ID3D11ShaderResourceView* texture2, std::vector<DisplayObject> lights)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
@@ -141,7 +141,7 @@ bool ToonBlendShader::SetShaderParameters(ID3D11DeviceContext * context, ID3D11S
 		lightPtr->lights[i].diffuseColour = lights[i].GetDiffuse();
 		lightPtr->lights[i].ambientColour = lights[i].GetAmbient();
 		lightPtr->lights[i].position = lights[i].GetPosition();
-		lightPtr->lights[i].angle = 45.f;
+		lightPtr->lights[i].normal = isNormal;
 
 		lightPtr->lights[i].direction = lights[i].GetDirection();
 		lightPtr->lights[i].constA = lights[i].GetConstantAttenuation();

@@ -274,7 +274,8 @@ void Game::Render()
 		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
 
 		// Shader		
-		ShaderManager::Shader(SHADER_TYPE::TEXTURE, context, lights, m_displayList[i].m_texture_diffuse);		
+		if (m_displayChunk.GetShaderType()) { ShaderManager::Shader(SHADER_TYPE::NORMAL_TEXTURE, context, lights, m_displayList[i].m_texture_diffuse); }
+		else { ShaderManager::Shader(SHADER_TYPE::TOON_TEXTURE, context, lights, m_displayList[i].m_texture_diffuse); }				
 		
 		m_displayList[i].m_model->Draw(context, *m_states, local, m_view, m_projection, false);	//last variable in draw,  make TRUE for wireframe
 

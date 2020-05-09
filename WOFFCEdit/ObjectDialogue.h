@@ -52,7 +52,6 @@ protected:
 	bool m_focus = false, m_focusCreated = false;
 	bool m_transforming = false;
 	bool m_x, m_y, m_z;		
-	bool m_snapToTerrain, m_snapByValue;	
 	bool m_internal = false;
 	bool m_select = false;
 	float m_snapFactor;
@@ -92,9 +91,6 @@ public:
 	afx_msg void OnBnClickedX();
 	afx_msg void OnBnClickedY();
 	afx_msg void OnBnClickedZ();
-	afx_msg void OnBnClickedSnapTerrain();
-	afx_msg void OnBnClickedSnapValue();
-	afx_msg void OnEnChangeSnapValue();
 	afx_msg void OnBnClickedDelete();
 	afx_msg void OnBnClickedDuplicate();
 

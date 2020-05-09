@@ -11,6 +11,8 @@ BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_WIREFRAME_OFF, &MFCMain::MenuEditWireframeOff)
 	ON_COMMAND(ID_AUTOSAVE_ON, &MFCMain::MenuEditAutosaveOn)
 	ON_COMMAND(ID_AUTOSAVE_OFF, &MFCMain::MenuEditAutosaveOff)
+	ON_COMMAND(ID_SHADER_NORMAL, &MFCMain::MenuEditShaderNormal)
+	ON_COMMAND(ID_SHADER_CARTOON, &MFCMain::MenuEditShaderCartoon)
 	ON_COMMAND(ID_BUTTON40001,	&MFCMain::ToolBarSave)
 	ON_COMMAND(ID_BUTTON40053, &MFCMain::ToolBarUndo)
 	ON_COMMAND(ID_BUTTON40054, &MFCMain::ToolBarRedo)
@@ -144,13 +146,11 @@ void MFCMain::UpdateDialogues()
 	else
 	{
 		// Set tool editor
-		m_toolSystem.SetEditor(EDITOR::NA);
+		m_toolSystem.SetEditor(EDITOR_COMPLEX::NA);
 
 		// Set all modes to none
 		m_toolSystem.SetObjectSpawn(OBJECT_TYPE::NA);
 		m_toolSystem.SetObjectFunction(OBJECT_FUNCTION::NA);
-		m_toolSystem.SetTerrainSculpt(TERRAIN_SCULPT::NA);
-		m_toolSystem.SetTerrainPaint(TERRAIN_PAINT::NA);
 
 		// Deselect all objects
 		m_toolSystem.ClearSelected();
@@ -499,6 +499,16 @@ void MFCMain::MenuEditAutosaveOn()
 void MFCMain::MenuEditAutosaveOff()
 {
 	SceneManager::SetAutosave(false);
+}
+
+void MFCMain::MenuEditShaderNormal()
+{
+	m_toolSystem.GetDisplayChunk()->SetShaderType(true);
+}
+
+void MFCMain::MenuEditShaderCartoon()
+{
+	m_toolSystem.GetDisplayChunk()->SetShaderType(false);
 }
 
 // Message handlers (toolbar) ///////////////////////////////////////////

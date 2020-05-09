@@ -51,11 +51,9 @@ void LightDialogue::SetToolData(ToolMain * toolSystem)
 
 	// Set other modes to none
 	m_toolSystem->SetObjectSpawn(OBJECT_TYPE::NA);
-	m_toolSystem->SetTerrainSculpt(TERRAIN_SCULPT::NA);
-	m_toolSystem->SetTerrainPaint(TERRAIN_PAINT::NA);
 
 	// Set tool editor
-	m_toolSystem->SetEditor(EDITOR::LIGHTS);
+	m_toolSystem->SetEditor(EDITOR_COMPLEX::LIGHTS);
 }
 
 void LightDialogue::UpdateTool()
@@ -1076,7 +1074,7 @@ void LightDialogue::OnBnClickedDelete()
 	if (m_selectedIDs.size() > 0)
 	{
 		// Remove lights from database storage
-		SetupLights(&ObjectManager::Remove(m_selectedIDs));
+		SetupLights(&ObjectManager::Delete(m_selectedIDs));
 	}
 }
 
