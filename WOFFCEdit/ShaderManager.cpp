@@ -17,50 +17,91 @@ void ShaderManager::Initialise(ID3D11Device * device)
 }
 
 // Setup specific shader parameters
-void ShaderManager::Shader(bool isNormal, bool blend, ID3D11DeviceContext * context, std::vector<DisplayObject> lights, ID3D11ShaderResourceView * texture1, ID3D11ShaderResourceView * texture2, DirectX::XMFLOAT2 screen)
+void ShaderManager::Shader(SHADER_TYPE type, ID3D11DeviceContext * context, std::vector<DisplayObject> lights, ID3D11ShaderResourceView * texture1, ID3D11ShaderResourceView * texture2, DirectX::XMFLOAT2 screen)
 {	
 	// Setup temp light
 	std::vector<DisplayObject> temp;
 	temp.push_back(GetLight());
-	
-	// If should blend
-	if (blend)
+
+	// Switch between shader types
+	switch (type)
+	{
+	case SHADER_TYPE::NORMAL_TEXTURE:
 	{
 		// Handle texture shader
-		TextureShader::Enable(context);
+		ToonShader::Enable(context);
 
 		// If light vector is empty
 		if (lights.size() == 0)
 		{
 			// Setup texture parameters
-			TextureShader::SetShaderParameters(isNormal, context, texture1, temp);
+			ToonShader::SetShaderParameters(true, context, texture1, temp);
 		}
 		// Else, if light vector is valid
 		else
 		{
 			// Setup texture parameters
-			TextureShader::SetShaderParameters(isNormal, context, texture1, lights);
+			ToonShader::SetShaderParameters(true, context, texture1, lights);
 		}
 	}
-
-	// Else, if should not blend
-	else
+	break;
+	case SHADER_TYPE::NORMAL_BLEND:
 	{
 		// Handle blend shader
-		BlendShader::Enable(context);
+		ToonBlendShader::Enable(context);
 
 		// If light vector is empty
 		if (lights.size() == 0)
 		{
 			// Setup texture parameters
-			BlendShader::SetShaderParameters(context, texture1, texture2, temp);
+			ToonBlendShader::SetShaderParameters(true, context, texture1, texture2, temp);
 		}
 		// Else, if light vector is valid
 		else
 		{
 			// Setup texture parameters
-			BlendShader::SetShaderParameters(context, texture1, texture2, lights);
+			ToonBlendShader::SetShaderParameters(true, context, texture1, texture2, lights);
 		}
+	}
+	break;
+	case SHADER_TYPE::TOON_TEXTURE:
+	{
+		// Handle texture shader
+		ToonShader::Enable(context);
+
+		// If light vector is empty
+		if (lights.size() == 0)
+		{
+			// Setup texture parameters
+			ToonShader::SetShaderParameters(false, context, texture1, temp);
+		}
+		// Else, if light vector is valid
+		else
+		{
+			// Setup texture parameters
+			ToonShader::SetShaderParameters(false, context, texture1, lights);
+		}
+	}
+	break;
+	case SHADER_TYPE::TOON_BLEND:
+	{
+		// Handle blend shader
+		ToonBlendShader::Enable(context);
+
+		// If light vector is empty
+		if (lights.size() == 0)
+		{
+			// Setup texture parameters
+			ToonBlendShader::SetShaderParameters(false, context, texture1, texture2, temp);
+		}
+		// Else, if light vector is valid
+		else
+		{
+			// Setup texture parameters
+			ToonBlendShader::SetShaderParameters(false, context, texture1, texture2, lights);
+		}
+	}
+	break;
 	}
 }
 

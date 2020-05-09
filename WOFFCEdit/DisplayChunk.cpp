@@ -56,7 +56,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all grass geometry
 	if (m_grass.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(m_normalShader, false, context, lights, m_texture_splat_1);
+		ShaderManager::Shader(type, context, lights, m_texture_splat_1);
 		DrawTerrain(m_grass);
 		m_batch->End();
 	}
@@ -64,7 +64,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all dirt geometry
 	if (m_dirt.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(m_normalShader, false, context, lights, m_texture_splat_2);
+		ShaderManager::Shader(type, context, lights, m_texture_splat_2);
 		DrawTerrain(m_dirt);
 		m_batch->End();
 	}
@@ -72,7 +72,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all sand geometry
 	if (m_sand.size() != 0)	{
 		m_batch->Begin();
-		ShaderManager::Shader(m_normalShader, false, context, lights, m_texture_splat_3);
+		ShaderManager::Shader(type, context, lights, m_texture_splat_3);
 		DrawTerrain(m_sand);
 		m_batch->End();
 	}
@@ -80,7 +80,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all stone geometry
 	if (m_stone.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(m_normalShader, false, context, lights, m_texture_splat_4);
+		ShaderManager::Shader(type, context, lights, m_texture_splat_4);
 		DrawTerrain(m_stone);
 		m_batch->End();
 	}
@@ -88,7 +88,7 @@ void DisplayChunk::RenderBatch(std::shared_ptr<DX::DeviceResources> deviceResour
 	// Draw all snow geometry
 	if (m_snow.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(m_normalShader, false, context, lights, m_texture_splat_5);
+		ShaderManager::Shader(type, context, lights, m_texture_splat_5);
 		DrawTerrain(m_snow);
 		m_batch->End();
 	}	
@@ -2734,7 +2734,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all grass/dirt geometry
 	if (m_grassDirt.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_1, m_texture_splat_2);
+		ShaderManager::Shader(type, context, lights, m_texture_splat_1, m_texture_splat_2);
 		DrawTerrain(m_grassDirt);
 		m_batch->End();
 	}
@@ -2742,7 +2742,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all grass/sand geometry
 	if (m_grassSand.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_1, m_texture_splat_3);
+		ShaderManager::Shader(type, context, lights, m_texture_splat_1, m_texture_splat_3);
 		DrawTerrain(m_grassSand);
 		m_batch->End();
 	}
@@ -2750,7 +2750,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all grass/stone geometry
 	if (m_grassStone.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_1, m_texture_splat_4);
+		ShaderManager::Shader(type, context, lights, m_texture_splat_1, m_texture_splat_4);
 		DrawTerrain(m_grassStone);
 		m_batch->End();
 	}
@@ -2758,7 +2758,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all grass/snow geometry
 	if (m_grassSnow.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_1, m_texture_splat_5);
+		ShaderManager::Shader(type, context, lights, m_texture_splat_1, m_texture_splat_5);
 		DrawTerrain(m_grassSnow);
 		m_batch->End();
 	}
@@ -2766,7 +2766,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all dirt/sand geometry
 	if (m_dirtSand.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_2, m_texture_splat_3);
+		ShaderManager::Shader(type, context, lights, m_texture_splat_2, m_texture_splat_3);
 		DrawTerrain(m_dirtSand);
 		m_batch->End();
 	}
@@ -2774,7 +2774,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all dirt/stone geometry
 	if (m_dirtStone.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_2, m_texture_splat_4);
+		ShaderManager::Shader(type, context, lights, m_texture_splat_2, m_texture_splat_4);
 		DrawTerrain(m_dirtStone);
 		m_batch->End();
 	}
@@ -2782,7 +2782,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all dirt/snow geometry
 	if (m_dirtSnow.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_2, m_texture_splat_5);
+		ShaderManager::Shader(type, context, lights, m_texture_splat_2, m_texture_splat_5);
 		DrawTerrain(m_dirtSnow);
 		m_batch->End();
 	}
@@ -2790,7 +2790,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all sand/stone geometry
 	if (m_sandStone.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_3, m_texture_splat_4);
+		ShaderManager::Shader(type, context, lights, m_texture_splat_3, m_texture_splat_4);
 		DrawTerrain(m_sandStone);
 		m_batch->End();
 	}
@@ -2798,7 +2798,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all sand/snow geometry
 	if (m_sandSnow.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_3, m_texture_splat_5);
+		ShaderManager::Shader(type, context, lights, m_texture_splat_3, m_texture_splat_5);
 		DrawTerrain(m_sandSnow);
 		m_batch->End();
 	}
@@ -2806,7 +2806,7 @@ void DisplayChunk::DrawBlends(std::shared_ptr<DX::DeviceResources> deviceResourc
 	// Draw all stone/snow geometry
 	if (m_stoneSnow.size() != 0) {
 		m_batch->Begin();
-		ShaderManager::Shader(m_normalShader, true, context, lights, m_texture_splat_4, m_texture_splat_5);
+		ShaderManager::Shader(type, context, lights, m_texture_splat_4, m_texture_splat_5);
 		DrawTerrain(m_stoneSnow);
 		m_batch->End();
 	}
