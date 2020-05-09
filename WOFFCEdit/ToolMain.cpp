@@ -129,15 +129,7 @@ void ToolMain::onActionRedo()
 }
 
 void ToolMain::Tick(MSG *msg)
-{
-	//do we have a selection						//done
-	//do we have a mode								//done
-	//are we clicking / dragging /releasing			//done
-	//has something changed							//*** still do write a check for this ***//
-		//update Scenegraph							//done
-		//add to scenegraph							//done
-		//resend scenegraph to Direct X renderer	//done
-		
+{		
 	// Get updated scene graph
 	m_sceneGraph = m_d3dRenderer.GetSceneGraph();
 	
@@ -297,7 +289,7 @@ void ToolMain::Tick(MSG *msg)
 	// Set renderer selected objects to draw bounding boxes
 	m_d3dRenderer.SetSelectedObjectIDs(m_selectedObjectIDs);
 
-	//Renderer Update Call
+	// Renderer Update Call
 	m_d3dRenderer.Tick(&m_toolInputCommands);
 
 	// If should autosave

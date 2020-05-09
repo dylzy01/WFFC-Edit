@@ -1070,6 +1070,12 @@ DirectX::SimpleMath::Vector3 ObjectManager::GetScale(int index)
 	// Setup temp scale
 	DirectX::SimpleMath::Vector3 scale;
 
+	// Get difference between picking points
+	DirectX::SimpleMath::Vector3 difference;
+	difference.x = pickingC.x - pickingP.x;
+	difference.y = pickingC.y - pickingP.y;
+	difference.z = pickingC.z - pickingP.z;
+
 	// Loop through stored scale
 	for (int i = 0; i < m_storedObjectScales.size(); ++i)
 	{
@@ -1077,9 +1083,9 @@ DirectX::SimpleMath::Vector3 ObjectManager::GetScale(int index)
 		if (m_storedObjectScales[i].second == index)
 		{
 			// Define manipulated translation
-			scale.x = m_storedObjectScales[i].first.x + (pickingC.x - pickingP.x);
-			scale.y = m_storedObjectScales[i].first.y + (pickingC.y - pickingP.y);
-			scale.z = m_storedObjectScales[i].first.z + (pickingC.z - pickingP.z);
+			scale.x = m_storedObjectScales[i].first.x + difference.x;
+			scale.y = m_storedObjectScales[i].first.y + difference.y;
+			scale.z = m_storedObjectScales[i].first.z + difference.z;
 		}
 	}
 
@@ -1123,6 +1129,12 @@ DirectX::SimpleMath::Vector3 ObjectManager::GetRotation(int index)
 	// Setup temp rotation
 	DirectX::SimpleMath::Vector3 rotate;
 
+	// Get difference between picking points
+	DirectX::SimpleMath::Vector3 difference;
+	difference.x = pickingC.x - pickingP.x;
+	difference.y = pickingC.y - pickingP.y;
+	difference.z = pickingC.z - pickingP.z;
+
 	// Loop through stored rotations
 	for (int i = 0; i < m_storedObjectRotations.size(); ++i)
 	{
@@ -1130,9 +1142,9 @@ DirectX::SimpleMath::Vector3 ObjectManager::GetRotation(int index)
 		if (m_storedObjectRotations[i].second == index)
 		{
 			// Define manipulated rotation
-			rotate.x = m_storedObjectRotations[i].first.x + (pickingC.x - pickingP.x) * 50.f;
-			rotate.y = m_storedObjectRotations[i].first.y + (pickingC.y - pickingP.y) * 50.f;
-			rotate.z = m_storedObjectRotations[i].first.z + (pickingC.z - pickingP.z) * 50.f;
+			rotate.x = m_storedObjectRotations[i].first.x + difference.x * 50.f;
+			rotate.y = m_storedObjectRotations[i].first.y + difference.y * 50.f;
+			rotate.z = m_storedObjectRotations[i].first.z + difference.z * 50.f;
 		}
 	}
 
