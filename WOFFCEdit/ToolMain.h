@@ -10,7 +10,6 @@
 #include "ObjectManager.h"
 #include "TerrainManager.h"
 #include "SceneManager.h"
-#include "Light.h"
 
 class ToolMain
 {
@@ -19,7 +18,6 @@ public: //methods
 	~ToolMain() { SQLManager::Disconnect(); }
 
 	//onAction - These are the interface to MFC
-	std::vector<int>	GetSelectedIDs() { return m_selectedObjectIDs; }		//returns the selection numbers of currently selected objects so that It can be displayed.
 	void				onActionInitialise(HWND handle, int width, int height);				//Passes through handle and hieght and width and initialises DirectX renderer and SQL LITE
 	void				onActionLoad();
 	afx_msg void		onActionSave() { SceneManager::Save(); }
@@ -33,7 +31,7 @@ public: //methods
 	void	UpdateInput(MSG *msg);
 
 	// Helpers
-	void ClearSelected() { m_selectedObjectIDs.clear(); m_d3dRenderer.SetSelectedObjectIDs(m_selectedObjectIDs); }
+	void ClearSelected() { m_selectedIDs.clear(); m_d3dRenderer.SetSelectedObjectIDs(m_selectedIDs); }
 
 	// Getters
 	EDITOR_COMPLEX GetEditor() { return m_d3dRenderer.GetEditor(); } //return current editor
@@ -45,14 +43,7 @@ public: //methods
 	std::vector<SceneObject> GetSceneGraph() { return m_d3dRenderer.GetSceneGraph(); }
 	InputCommands* GetInput() { return &m_toolInputCommands; }
 	bool GetNewSelection();
-	bool GetRequest() {
-		if (m_request) {
-			m_request = false;
-			return true;
-		}
-		else { return false; }
-	}
-	int GetSelectedIndex() { return MouseManager::GetIndex(); }
+	std::vector<int> GetSelectedIDs() { return m_selectedIDs; }
 
 	// Setters
 	void SetWireframe(bool wireframe) { m_d3dRenderer.SetWireframe(wireframe); }
@@ -94,20 +85,17 @@ public: //methods
 	void SetObjectFunction(OBJECT_FUNCTION function) { m_objectFunction = function; }
 	void SetConstraint(CONSTRAINT constraint) { m_constraint = constraint; }
 	void SetSceneObject(SceneObject object, int index) { m_d3dRenderer.SetSceneObject(object, index); }
-	void SetSelectedObjectID(int ID) 
-	{ 
-		m_selectedObjectIDs.clear(); 
-		m_selectedObjectIDs.push_back(ID); 
-		m_d3dRenderer.SetSelectedObjectIDs(m_selectedObjectIDs); 
+	void SetSelectedIDs(std::vector<int> IDs) { 
+		m_selectedIDs = IDs; 
+		m_d3dRenderer.SetSelectedObjectIDs(m_selectedIDs); 
 	}
-	void SetSelectedObjectIDs(std::vector<int> IDs) { m_selectedObjectIDs = IDs; m_d3dRenderer.SetSelectedObjectIDs(m_selectedObjectIDs); }
 	void SetFocus(int ID) { m_d3dRenderer.SetFocus(ID); }
 
 public:	//variables
 	std::vector<SceneObject>    m_sceneGraph;	//our scenegraph storing all the objects in the current chunk
 	ChunkObject					m_chunk;		//our landscape chunk
-	std::vector<int> m_selectedObjectIDs;			//IDs of multiple current OBJECT selections
-	std::vector<int> m_objectIDsToCopy;
+	std::vector<int> m_selectedIDs;			//IDs of multiple current OBJECT selections
+	int m_selectedIndex;
 
 	EDITOR_COMPLEX m_editor;								//control which editor state is being applied
 	OBJECT_TYPE m_objectType;						//control which object is to be spawned

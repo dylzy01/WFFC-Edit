@@ -63,20 +63,23 @@ void ObjectDialogue::SetToolSystem(ToolMain * toolSystem)
 	m_toolSystem->SetObjectSpawn(OBJECT_TYPE::NA);
 
 	// Set tool editor
-	m_toolSystem->SetEditor(EDITOR_COMPLEX::OBJECTS);
-
-	// Disable input box
-	GetDlgItem(IDC_EDIT10)->EnableWindow(false);
+	m_toolSystem->SetEditor(EDITOR_COMPLEX::OBJECTS);	
 }
 
 void ObjectDialogue::UpdateTool()
 {
 	// If selected IDs should be updated
-	if (m_select) { m_toolSystem->SetSelectedObjectIDs(m_selectedIDs); m_select = false; }
+	if (m_select) { 
+		m_toolSystem->SetSelectedIDs(m_selectedIDs); 
+		m_select = false; 
+	}
 	else { m_selectedIDs = m_toolSystem->GetSelectedIDs(); }
 
 	// If there's been a new selection
-	if (m_toolSystem->GetNewSelection()) { UpdateDialogue(); }
+	if (m_toolSystem->GetNewSelection()) { 
+		m_selectedIndex = MouseManager::GetIndex();
+		UpdateDialogue();
+	}
 
 	// If should focus on an object
 	if (m_focus)
@@ -108,6 +111,11 @@ void ObjectDialogue::UpdateTool()
 
 	// If tool constraint isn't up to date
 	if (m_toolSystem->GetConstraint() != m_constraint) { m_toolSystem->SetConstraint(m_constraint); }
+
+	// Update object details
+	m_internal = true;	
+	UpdateTransform();
+	m_internal = false;
 }
 
 void ObjectDialogue::DoDataExchange(CDataExchange* pDX)
@@ -129,8 +137,6 @@ void ObjectDialogue::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT7, m_ePosX);		
 	DDX_Control(pDX, IDC_EDIT8, m_ePosY);		
 	DDX_Control(pDX, IDC_EDIT9, m_ePosZ);	
-
-	DDX_Control(pDX, IDC_EDIT10, m_eSnap);
 }
 
 void ObjectDialogue::SetupCheckBoxes()
@@ -230,9 +236,24 @@ void ObjectDialogue::OnCbnSelchangeID()
 	}
 
 	// If selection doesn't exist, add to selection
-	if (!exists) { 
-		m_selectedIDs.push_back(_ttoi(current));
-		m_select = true;
+	if (!exists) { m_selectedIDs.push_back(_ttoi(current)); }
+
+	m_select = m_internal = true;
+
+	// If only one object is selected
+	if (m_selectedIDs.size() == 1)
+	{
+		// Loop through scene graph
+		for (int i = 0; i < m_toolSystem->GetSceneGraph().size(); ++i)
+		{
+			// If IDs match
+			if (m_toolSystem->GetSceneGraph()[i].ID == m_selectedIDs[0])
+			{
+				// Set selected index
+				m_selectedIndex = i;
+				break;
+			}
+		}
 	}
 
 	// Update object type box
@@ -246,6 +267,8 @@ void ObjectDialogue::OnCbnSelchangeID()
 	
 	// Update object position boxes
 	UpdatePosition();
+
+	m_internal = false;
 }
 
 // Type has been changed
@@ -804,7 +827,7 @@ void ObjectDialogue::OnBnClickedDelete()
 {
 	// If selection is valid
 	if (m_selectedIDs.size() > 0)
-	{
+	{		
 		// Remove objects from database storage
 		SetupObjects(&ObjectManager::Delete(m_selectedIDs));
 	}
@@ -922,11 +945,9 @@ void ObjectDialogue::UpdateDialogue(int ID)
 {
 	// If ID is valid
 	if (ID != -1) { m_boxID.SetCurSel(ID); }
-	else if (m_selectedIDs.size() == 1) { m_boxID.SetCurSel(0); }
+	///else if (m_selectedIDs.size() == 1) { m_boxID.SetCurSel(0); }
 	UpdateType();
-	UpdateScale();
-	UpdateRotation();
-	UpdatePosition();
+	UpdateTransform();
 }
 
 void ObjectDialogue::UpdateType()
@@ -962,31 +983,18 @@ void ObjectDialogue::UpdateScale()
 {
 	// If only one object is selected
 	if (m_selectedIDs.size() == 1)
-	{
-		// Loop through lights
-		for (int i = 0; i < m_objects->size(); ++i)
-		{
-			// If light ID matches selection
-			if (m_objects->at(i).ID == m_selectedIDs.at(0))
-			{
-				// Store current scale
-				float x = m_objects->at(i).scaX;
-				float y = m_objects->at(i).scaY;
-				float z = m_objects->at(i).scaZ;
+	{	
+		// Update X scale box
+		CString sX; sX.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].scaX);
+		m_eScaX.SetWindowTextW(sX);
 
-				// Update X scale box
-				CString sX; sX.Format(L"%g", x);
-				m_eScaX.SetWindowTextW(sX);
+		// Update Y scale box
+		CString sY; sY.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].scaY);
+		m_eScaY.SetWindowTextW(sY);
 
-				// Update Y scale box
-				CString sY; sY.Format(L"%g", y);
-				m_eScaY.SetWindowTextW(sY);
-
-				// Update Z scale box
-				CString sZ; sZ.Format(L"%g", z);
-				m_eScaZ.SetWindowTextW(sZ);
-			}
-		}
+		// Update Z scale box
+		CString sZ; sZ.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].scaZ);
+		m_eScaZ.SetWindowTextW(sZ);		
 	}
 
 	// Else, multiple objects are selected
@@ -1006,31 +1014,18 @@ void ObjectDialogue::UpdateRotation()
 {
 	// If only one object is selected
 	if (m_selectedIDs.size() == 1)
-	{
-		// Loop through lights
-		for (int i = 0; i < m_objects->size(); ++i)
-		{
-			// If light ID matches selection
-			if (m_objects->at(i).ID == m_selectedIDs.at(0))
-			{
-				// Store current rotation
-				float x = m_objects->at(i).rotX;
-				float y = m_objects->at(i).rotY;
-				float z = m_objects->at(i).rotZ;
+	{		
+		// Update X rotation box
+		CString sX; sX.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].rotX);
+		m_eRotX.SetWindowTextW(sX);
 
-				// Update X rotation box
-				CString sX; sX.Format(L"%g", x);
-				m_eRotX.SetWindowTextW(sX);
+		// Update Y rotation box
+		CString sY; sY.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].rotY);
+		m_eRotY.SetWindowTextW(sY);
 
-				// Update Y rotation box
-				CString sY; sY.Format(L"%g", y);
-				m_eRotY.SetWindowTextW(sY);
-
-				// Update Z rotation box
-				CString sZ; sZ.Format(L"%g", z);
-				m_eRotZ.SetWindowTextW(sZ);
-			}
-		}
+		// Update Z rotation box
+		CString sZ; sZ.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].rotZ);
+		m_eRotZ.SetWindowTextW(sZ);					
 	}
 
 	// Else, multiple objects are selected
@@ -1050,31 +1045,18 @@ void ObjectDialogue::UpdatePosition()
 {
 	// If only one object is selected
 	if (m_selectedIDs.size() == 1)
-	{
-		// Loop through objects
-		for (int i = 0; i < m_objects->size(); ++i)
-		{
-			// If light ID matches selection
-			if (m_objects->at(i).ID == m_selectedIDs.at(0))
-			{
-				// Store current position
-				float x = m_objects->at(i).posX;
-				float y = m_objects->at(i).posY;
-				float z = m_objects->at(i).posZ;
+	{		
+		// Update X position box
+		CString sX; sX.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].posX);
+		m_ePosX.SetWindowTextW(sX);
 
-				// Update X position box
-				CString sX; sX.Format(L"%g", x);
-				m_ePosX.SetWindowTextW(sX);
+		// Update Y position box
+		CString sY; sY.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].posY);
+		m_ePosY.SetWindowTextW(sY);
 
-				// Update Y position box
-				CString sY; sY.Format(L"%g", y);
-				m_ePosY.SetWindowTextW(sY);
-
-				// Update Z position box
-				CString sZ; sZ.Format(L"%g", z);
-				m_ePosZ.SetWindowTextW(sZ);
-			}
-		}
+		// Update Z position box
+		CString sZ; sZ.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].posZ);
+		m_ePosZ.SetWindowTextW(sZ);	
 	}
 
 	// Else, multiple objects are selected
@@ -1140,5 +1122,5 @@ void ObjectDialogue::Reset()
 	CheckDlgButton(IDC_CHECK28, false);
 	CheckDlgButton(IDC_CHECK23, false);
 	CheckDlgButton(IDC_CHECK24, false);
-	CheckDlgButton(IDC_CHECK25, false);
+	CheckDlgButton(IDC_CHECK25, false);	
 }

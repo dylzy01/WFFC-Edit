@@ -46,6 +46,7 @@ protected:
 	ToolMain* m_toolSystem;
 	std::vector<SceneObject>* m_objects;
 	std::vector<int> m_selectedIDs;
+	int m_selectedIndex;
 	
 	// Controllers
 	bool m_active;
@@ -69,7 +70,6 @@ public:
 	CEdit m_eScaX, m_eScaY, m_eScaZ;
 	CEdit m_eRotX, m_eRotY, m_eRotZ;
 	CEdit m_ePosX, m_ePosY, m_ePosZ;
-	CEdit m_eSnap;
 
 	// Message handlers
 	afx_msg void OnBnClickedOk();
@@ -103,10 +103,15 @@ private:
 
 	// Update object details
 	void UpdateDialogue(int ID = -1);
-	void UpdateType();
+	void UpdateType();	
 	void UpdateScale();
 	void UpdateRotation();
 	void UpdatePosition();
+	void UpdateTransform() {
+		UpdateScale();
+		UpdateRotation();
+		UpdatePosition();
+	}
 	
 	// Update constraint details
 	void UpdateSelectedConstraint();

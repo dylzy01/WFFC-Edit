@@ -22,8 +22,7 @@ void LightDialogue::SetToolData(ToolMain * toolSystem)
 {
 	// Local storage
 	m_toolSystem = toolSystem;
-	m_selectedIDs = toolSystem->GetSelectedIDs();
-	m_input = toolSystem->GetInput();		
+	m_selectedIDs = toolSystem->GetSelectedIDs();	
 
 	// Setup IDs of currently available lights
 	SetupLights(&toolSystem->GetSceneGraph());
@@ -59,12 +58,13 @@ void LightDialogue::SetToolData(ToolMain * toolSystem)
 void LightDialogue::UpdateTool()
 {	
 	// If selected IDs should be updated
-	if (m_select) { m_toolSystem->SetSelectedObjectIDs(m_selectedIDs); m_select = false; }
+	if (m_select) { m_toolSystem->SetSelectedIDs(m_selectedIDs); m_select = false; }
 	else { m_selectedIDs = m_toolSystem->GetSelectedIDs(); }
 	
 	// If there's been a new selection
 	if (m_toolSystem->GetNewSelection()) { 
-		UpdateDialogue(); 
+		m_selectedIndex = MouseManager::GetIndex();
+		UpdateDialogue();
 	}
 	
 	// If should focus on an object
@@ -98,16 +98,10 @@ void LightDialogue::UpdateTool()
 	// If tool constraint isn't up-to-date
 	if (m_toolSystem->GetConstraint() != m_constraint) { m_toolSystem->SetConstraint(m_constraint); }	
 	
-	// If user is translating
-	//if (m_translating)
-	//{		
-	//	// If only one light is selected
-	//	if (m_selectedIDs.size() == 1)
-	//	{
-	//		// Update position boxes
-	//		UpdatePosition(m_toolSystem->GetSceneGraph()[m_toolSystem->GetSelectedIndex()].GetPosition());					
-	//	}		
-	//}
+	// Update light details
+	m_internal = true;
+	UpdatePosition();
+	m_internal = false;
 }
 
 void LightDialogue::UpdateDialogue(int ID)
@@ -138,25 +132,25 @@ void LightDialogue::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO2, m_boxType);
 	DDX_Control(pDX, IDC_COMBO6, m_boxConst);
 
-	DDX_Control(pDX, IDC_EDIT1, m_ePosX);		DDX_Text(pDX, IDC_EDIT1, m_fPosX);
-	DDX_Control(pDX, IDC_EDIT2, m_ePosY);		DDX_Text(pDX, IDC_EDIT2, m_fPosY);
-	DDX_Control(pDX, IDC_EDIT3, m_ePosZ);		DDX_Text(pDX, IDC_EDIT3, m_fPosZ);
+	DDX_Control(pDX, IDC_EDIT1, m_ePosX);		
+	DDX_Control(pDX, IDC_EDIT2, m_ePosY);		
+	DDX_Control(pDX, IDC_EDIT3, m_ePosZ);		
 
-	DDX_Control(pDX, IDC_EDIT4, m_eDirX);		DDX_Text(pDX, IDC_EDIT4, m_fDirX);
-	DDX_Control(pDX, IDC_EDIT5, m_eDirY);		DDX_Text(pDX, IDC_EDIT5, m_fDirX);
-	DDX_Control(pDX, IDC_EDIT6, m_eDirZ);		DDX_Text(pDX, IDC_EDIT6, m_fDirX);
+	DDX_Control(pDX, IDC_EDIT4, m_eDirX);		
+	DDX_Control(pDX, IDC_EDIT5, m_eDirY);		
+	DDX_Control(pDX, IDC_EDIT6, m_eDirZ);		
 
-	DDX_Control(pDX, IDC_EDIT7, m_eDifR);		DDX_Text(pDX, IDC_EDIT7, m_fDifR);
-	DDX_Control(pDX, IDC_EDIT8, m_eDifG);		DDX_Text(pDX, IDC_EDIT8, m_fDifG);
-	DDX_Control(pDX, IDC_EDIT9, m_eDifB);		DDX_Text(pDX, IDC_EDIT9, m_fDifB);
+	DDX_Control(pDX, IDC_EDIT7, m_eDifR);		
+	DDX_Control(pDX, IDC_EDIT8, m_eDifG);		
+	DDX_Control(pDX, IDC_EDIT9, m_eDifB);		
 
-	DDX_Control(pDX, IDC_EDIT10, m_eAmbR);		DDX_Text(pDX, IDC_EDIT10, m_fAmbR);
-	DDX_Control(pDX, IDC_EDIT11, m_eAmbG);		DDX_Text(pDX, IDC_EDIT11, m_fAmbG);
-	DDX_Control(pDX, IDC_EDIT12, m_eAmbB);		DDX_Text(pDX, IDC_EDIT12, m_fAmbB);
+	DDX_Control(pDX, IDC_EDIT10, m_eAmbR);		
+	DDX_Control(pDX, IDC_EDIT11, m_eAmbG);		
+	DDX_Control(pDX, IDC_EDIT12, m_eAmbB);		
 
-	DDX_Control(pDX, IDC_EDIT13, m_eConstA);	DDX_Text(pDX, IDC_EDIT13, m_fConstA);
-	DDX_Control(pDX, IDC_EDIT14, m_eLinA);		DDX_Text(pDX, IDC_EDIT14, m_fLinA);
-	DDX_Control(pDX, IDC_EDIT15, m_eQuadA);		DDX_Text(pDX, IDC_EDIT15, m_fQuadA);
+	DDX_Control(pDX, IDC_EDIT13, m_eConstA);	
+	DDX_Control(pDX, IDC_EDIT14, m_eLinA);		
+	DDX_Control(pDX, IDC_EDIT15, m_eQuadA);		
 }
 
 void LightDialogue::SetupCheckBoxes()
@@ -259,9 +253,24 @@ void LightDialogue::OnCbnSelchangeID()
 	}
 
 	// If selection doesn't exist, add to selection
-	if (!exists) { 
-		m_selectedIDs.push_back(_ttoi(current));
-		m_select = true;
+	if (!exists) { m_selectedIDs.push_back(_ttoi(current)); }
+	
+	m_select = m_internal = true;
+
+	// If only one object is selected
+	if (m_selectedIDs.size() == 1)
+	{
+		// Loop through scene graph
+		for (int i = 0; i < m_toolSystem->GetSceneGraph().size(); ++i)
+		{
+			// If IDs match
+			if (m_toolSystem->GetSceneGraph()[i].ID == m_selectedIDs[0])
+			{
+				// Set selected index
+				m_selectedIndex = i;
+				break;
+			}
+		}
 	}
 	
 	// Update light type box
@@ -284,6 +293,8 @@ void LightDialogue::OnCbnSelchangeID()
 
 	// Update attenuation boxes
 	UpdateConstA(); UpdateLinA(); UpdateQuadA();
+
+	m_internal = false;
 }
 
 // Type has been changed
@@ -1186,18 +1197,9 @@ void LightDialogue::UpdateType()
 {
 	// If only one object is selected
 	if (m_selectedIDs.size() == 1)
-	{
-		// Loop through lights
-		for (int i = 0; i < m_lights->size(); ++i)
-		{
-			// If light ID matches selection
-			if (m_lights->at(i).ID == m_selectedIDs[0])
-			{
-				// Set combo box
-				m_boxType.SetCurSel(m_lights->at(i).light_type);
-				break;
-			}
-		}		
+	{		
+		// Set combo box
+		m_boxType.SetCurSel(m_toolSystem->GetSceneGraph()[m_selectedIndex].light_type);			
 	}	
 
 	// Else, multiple objects are selected
@@ -1215,18 +1217,9 @@ void LightDialogue::UpdateEnabled()
 {
 	// If only one object is selected
 	if (m_selectedIDs.size() == 1)
-	{
-		// Loop through lights
-		for (int i = 0; i < m_lights->size(); ++i)
-		{
-			// If light ID matches selection
-			if (m_lights->at(i).ID == m_selectedIDs[0])
-			{
-				// Set enabled check box to match light 
-				CheckDlgButton(IDC_CHECK1, m_lights->at(i).enabled);
-				break;
-			}
-		}
+	{	
+		// Set enabled check box to match light 
+		CheckDlgButton(IDC_CHECK1, m_toolSystem->GetSceneGraph()[m_selectedIndex].enabled);		
 	}	
 
 	// Else, multiple objects are selected
@@ -1244,31 +1237,18 @@ void LightDialogue::UpdatePosition()
 {
 	// If only one object is selected
 	if (m_selectedIDs.size() == 1)
-	{
-		// Loop through lights
-		for (int i = 0; i < m_lights->size(); ++i)
-		{
-			// If light ID matches selection
-			if (m_lights->at(i).ID == m_selectedIDs[0])
-			{
-				// Store current position
-				XMFLOAT3 position = { m_lights->at(i).posX, m_lights->at(i).posY, m_lights->at(i).posZ };
+	{		
+		// Update X position box
+		CString sX; sX.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].posX);
+		m_ePosX.SetWindowTextW(sX);
 
-				// Update X position box
-				CString sX; sX.Format(L"%g", position.x);
-				m_ePosX.SetWindowTextW(sX);
+		// Update Y position box
+		CString sY; sY.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].posY);
+		m_ePosY.SetWindowTextW(sY);
 
-				// Update Y position box
-				CString sY; sY.Format(L"%g", position.y);
-				m_ePosY.SetWindowTextW(sY);
-
-				// Update Z position box
-				CString sZ; sZ.Format(L"%g", position.z);
-				m_ePosZ.SetWindowTextW(sZ);
-
-				break;
-			}
-		}
+		// Update Z position box
+		CString sZ; sZ.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].posZ);
+		m_ePosZ.SetWindowTextW(sZ);	
 	}
 
 	// Else, multiple objects are selected
@@ -1284,50 +1264,22 @@ void LightDialogue::UpdatePosition()
 	}
 }
 
-void LightDialogue::UpdatePosition(DirectX::XMFLOAT3 position)
-{
-	// Update X position box
-	CString sX; sX.Format(L"%g", position.x);
-	m_ePosX.SetWindowTextW(sX);
-
-	// Update Y position box
-	CString sY; sY.Format(L"%g", position.y);
-	m_ePosY.SetWindowTextW(sY);
-
-	// Update Z position box
-	CString sZ; sZ.Format(L"%g", position.z);
-	m_ePosZ.SetWindowTextW(sZ);
-}
-
 void LightDialogue::UpdateDirection()
 {
 	// If only one object is selected
 	if (m_selectedIDs.size() == 1)
 	{
-		// Loop through lights
-		for (int i = 0; i < m_lights->size(); ++i)
-		{
-			// If light ID matches selection
-			if (m_lights->at(i).ID == m_selectedIDs[0])
-			{
-				// Store current direction
-				XMFLOAT3 direction = { m_lights->at(i).rotX, m_lights->at(i).rotY, m_lights->at(i).rotZ };
+		// Update X direction box
+		CString sX; sX.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].rotX);
+		m_eDirX.SetWindowTextW(sX);
 
-				// Update X direction box
-				CString sX; sX.Format(L"%g", direction.x);
-				m_eDirX.SetWindowTextW(sX);
+		// Update Y direction box
+		CString sY; sY.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].rotY);
+		m_eDirY.SetWindowTextW(sY);
 
-				// Update Y direction box
-				CString sY; sY.Format(L"%g", direction.y);
-				m_eDirY.SetWindowTextW(sY);
-
-				// Update Z direction box
-				CString sZ; sZ.Format(L"%g", direction.z);
-				m_eDirZ.SetWindowTextW(sZ);
-
-				break;
-			}
-		}
+		// Update Z direction box
+		CString sZ; sZ.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].rotZ);
+		m_eDirZ.SetWindowTextW(sZ);
 	}
 	// Else, multiple objects are selected
 	else
@@ -1346,31 +1298,18 @@ void LightDialogue::UpdateDiffuse()
 {
 	// If only one object is selected
 	if (m_selectedIDs.size() == 1)
-	{
-		// Loop through lights
-		for (int i = 0; i < m_lights->size(); ++i)
-		{
-			// If light ID matches selection
-			if (m_lights->at(i).ID == m_selectedIDs[0])
-			{
-				// Store current diffuse
-				XMFLOAT3 diffuse = { m_lights->at(i).light_diffuse_r, m_lights->at(i).light_diffuse_g, m_lights->at(i).light_diffuse_b };
+	{	
+		// Update R diffuse box
+		CString sR; sR.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].light_diffuse_r);
+		m_eDifR.SetWindowTextW(sR);
 
-				// Update R diffuse box
-				CString sR; sR.Format(L"%g", diffuse.x);
-				m_eDifR.SetWindowTextW(sR);
+		// Update G diffuse box
+		CString sG; sG.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].light_diffuse_g);
+		m_eDifG.SetWindowTextW(sG);
 
-				// Update G diffuse box
-				CString sG; sG.Format(L"%g", diffuse.y);
-				m_eDifG.SetWindowTextW(sG);
-
-				// Update B diffuse box
-				CString sB; sB.Format(L"%g", diffuse.z);
-				m_eDifB.SetWindowTextW(sB);
-
-				break;
-			}
-		}
+		// Update B diffuse box
+		CString sB; sB.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].light_diffuse_b);
+		m_eDifB.SetWindowTextW(sB);
 	}
 
 	// Else, multiple objects are selected
@@ -1391,30 +1330,17 @@ void LightDialogue::UpdateAmbient()
 	// If only one object is selected
 	if (m_selectedIDs.size() == 1)
 	{
-		// Loop through lights
-		for (int i = 0; i < m_lights->size(); ++i)
-		{
-			// If light ID matches selection
-			if (m_lights->at(i).ID == m_selectedIDs[0])
-			{
-				// Store current ambient
-				XMFLOAT3 ambient = { m_lights->at(i).light_ambient_r, m_lights->at(i).light_ambient_g, m_lights->at(i).light_ambient_b };
+		// Update R ambient box
+		CString sR; sR.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].light_ambient_r);
+		m_eAmbR.SetWindowTextW(sR);
 
-				// Update R ambient box
-				CString sR; sR.Format(L"%g", ambient.x);
-				m_eAmbR.SetWindowTextW(sR);
+		// Update G ambient box
+		CString sG; sG.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].light_ambient_g);
+		m_eAmbG.SetWindowTextW(sG);
 
-				// Update G ambient box
-				CString sG; sG.Format(L"%g", ambient.y);
-				m_eAmbG.SetWindowTextW(sG);
-
-				// Update B ambient box
-				CString sB; sB.Format(L"%g", ambient.z);
-				m_eAmbB.SetWindowTextW(sB);
-
-				break;
-			}
-		}
+		// Update B ambient box
+		CString sB; sB.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].light_ambient_b);
+		m_eAmbB.SetWindowTextW(sB);
 	}
 
 	// Else, multiple objects are selected
@@ -1434,23 +1360,10 @@ void LightDialogue::UpdateConstA()
 {
 	// If only one object is selected
 	if (m_selectedIDs.size() == 1)
-	{
-		// Loop through lights
-		for (int i = 0; i < m_lights->size(); ++i)
-		{
-			// If light ID matches selection
-			if (m_lights->at(i).ID == m_selectedIDs[0])
-			{
-				// Store current constant attenuation
-				float constA = m_lights->at(i).light_constant;
-
-				// Update constant attenuation box
-				CString sA; sA.Format(L"%g", constA);
-				m_eConstA.SetWindowTextW(sA);
-
-				break;
-			}
-		}
+	{				
+		// Update constant attenuation box
+		CString sA; sA.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].light_constant);
+		m_eConstA.SetWindowTextW(sA);
 	}
 
 	// Else, multiple objects are selected
@@ -1469,22 +1382,9 @@ void LightDialogue::UpdateLinA()
 	// If only one object is selected
 	if (m_selectedIDs.size() == 1)
 	{
-		// Loop through lights
-		for (int i = 0; i < m_lights->size(); ++i)
-		{
-			// If light ID matches selection
-			if (m_lights->at(i).ID == m_selectedIDs[0])
-			{
-				// Store current linear attenuation
-				float linA = m_lights->at(i).light_linear;
-
-				// Update linear attenuation box
-				CString sA; sA.Format(L"%g", linA);
-				m_eLinA.SetWindowTextW(sA);
-
-				break;
-			}
-		}
+		// Update linear attenuation box
+		CString sA; sA.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].light_linear);
+		m_eLinA.SetWindowTextW(sA);
 	}
 
 	// Else, multiple objects are selected
@@ -1503,22 +1403,9 @@ void LightDialogue::UpdateQuadA()
 	// If only one object is selected
 	if (m_selectedIDs.size() == 1)
 	{
-		// Loop through lights
-		for (int i = 0; i < m_lights->size(); ++i)
-		{
-			// If light ID matches selection
-			if (m_lights->at(i).ID == m_selectedIDs[0])
-			{
-				// Store current quadratic attenuation
-				float quadA = m_lights->at(i).light_quadratic;
-
-				// Update linear attenuation box
-				CString sA; sA.Format(L"%g", quadA);
-				m_eQuadA.SetWindowTextW(sA);
-
-				break;
-			}
-		}
+		// Update linear attenuation box
+		CString sA; sA.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].light_quadratic);
+		m_eQuadA.SetWindowTextW(sA);
 	}
 
 	// Else, multiple objects are selected
@@ -1574,6 +1461,10 @@ void LightDialogue::Reset()
 	CheckDlgButton(IDC_CHECK23, false);
 	CheckDlgButton(IDC_CHECK24, false);
 	CheckDlgButton(IDC_CHECK25, false);
+
+	GetDlgItem(IDC_BUTTON1)->EnableWindow(true);
+	GetDlgItem(IDC_BUTTON2)->EnableWindow(true);
+	GetDlgItem(IDC_CHECK1)->EnableWindow(true);
 }
 
 void LightDialogue::UpdateLight(SceneObject object)
@@ -1616,142 +1507,4 @@ void LightDialogue::SetupLights(std::vector<SceneObject>* sceneGraph)
 	SetDlgItemText(IDC_STATIC3, totalLights.c_str());
 
 	m_internal = false;
-}
-
-XMFLOAT3 LightDialogue::GetPosition()
-{
-	// Store X position
-	CString stringX = _T("");
-	m_ePosX.GetWindowTextW(stringX);
-
-	// Convert to float
-	float posX;
-	if (!stringX.IsEmpty()) { posX = _ttof(stringX); }
-	else { posX = 150.f; }
-
-	// Store Y position
-	CString stringY = _T("");
-	m_ePosY.GetWindowTextW(stringY);
-
-	// Convert to float
-	float posY;
-	if (!stringY.IsEmpty()) { posY = _ttof(stringY); }
-	else { posY = 150.f; }
-
-	// Store Z position
-	CString stringZ = _T("");
-	m_ePosZ.GetWindowTextW(stringZ);
-
-	// Convert to float
-	float posZ;
-	if (!stringZ.IsEmpty()) { posZ = _ttof(stringZ); }
-	else { posZ = 150.f; }
-
-	return XMFLOAT3{ posX, posY, posZ };
-}
-
-XMFLOAT3 LightDialogue::GetDirection()
-{
-	// Store X direction
-	CString stringX = _T("");
-	m_eDirX.GetWindowTextW(stringX);
-
-	// Convert to float
-	float dirX;
-	if (!stringX.IsEmpty()) { dirX = _ttof(stringX); }
-	else { dirX = 0.f; }
-
-	// Store Y direction
-	CString stringY = _T("");
-	m_eDirY.GetWindowTextW(stringY);
-
-	// Convert to float
-	float dirY;
-	if (!stringY.IsEmpty()) { dirY = _ttof(stringY); }
-	else { dirY = 1.f; }
-
-	// Store Z direction
-	CString stringZ = _T("");
-	m_eDirY.GetWindowTextW(stringZ);
-
-	// Convert to float
-	float dirZ;
-	if (!stringZ.IsEmpty()) { dirZ = _ttof(stringZ); }
-	else { dirZ = 0.f; }
-
-	return XMFLOAT3{ dirX, dirY, dirZ };
-}
-
-XMFLOAT3 LightDialogue::GetDiffuse()
-{
-	// Store R diffuse
-	CString stringR = _T("");
-	m_eDifR.GetWindowTextW(stringR);
-
-	// Convert to float
-	float difR;
-	if (!stringR.IsEmpty()) { difR = _ttof(stringR); }
-	else { difR = 2.f; }
-
-	// Store G diffuse
-	CString stringG = _T("");
-	m_eDifR.GetWindowTextW(stringG);
-
-	// Convert to float
-	float difG;
-	if (!stringG.IsEmpty()) { difG = _ttof(stringG); }
-	else { difG = 2.f; }
-
-	// Store B diffuse
-	CString stringB = _T("");
-	m_eDifR.GetWindowTextW(stringB);
-
-	// Convert to float
-	float difB;
-	if (!stringB.IsEmpty()) { difB = _ttof(stringB); }
-	else { difB = 2.f; }
-
-	return XMFLOAT3{ difR, difG, difB };
-}
-
-float LightDialogue::GetConstA()
-{
-	// Store constant attenuation
-	CString string = _T("");
-	m_eConstA.GetWindowTextW(string);
-
-	// Convert to float
-	float constA;
-	if (!string.IsEmpty()) { constA = _ttof(string); }
-	else { constA = 8.f; }
-
-	return constA;
-}
-
-float LightDialogue::GetLinA()
-{
-	// Store linear attenuation
-	CString string = _T("");
-	m_eLinA.GetWindowTextW(string);
-
-	// Convert to float
-	float linA;
-	if (!string.IsEmpty()) { linA = _ttof(string); linA /= 10.f; }
-	else { linA = 0.0125; }
-	
-	return linA;
-}
-
-float LightDialogue::GetQuadA()
-{
-	// Store quadratic attenuation
-	CString string = _T("");
-	m_eQuadA.GetWindowTextW(string);
-
-	// Convert to float
-	float quadA;
-	if (!string.IsEmpty()) { quadA = _ttof(string); quadA /= 100.f; }
-	else { quadA = 0.1f; }
-	
-	return quadA;
 }

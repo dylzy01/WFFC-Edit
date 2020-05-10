@@ -10,8 +10,8 @@ std::vector<std::pair<DirectX::SimpleMath::Vector3, int>> ObjectManager::m_store
 float ObjectManager::m_snapFactor;
 
 // Spawn an object at a location & add to database
-bool ObjectManager::SpawnObject(OBJECT_TYPE objectType, DirectX::SimpleMath::Vector3 position,
-	int lightType, XMFLOAT3 diffuse, float constA, float linA, float quadA)
+bool ObjectManager::SpawnObject(std::vector<int> IDs, OBJECT_TYPE objectType, DirectX::SimpleMath::Vector3 position,
+	int lightType, DirectX::XMFLOAT3 diffuse, float constA, float linA, float quadA)
 {
 	// Store game scene graph
 	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();
@@ -31,13 +31,28 @@ bool ObjectManager::SpawnObject(OBJECT_TYPE objectType, DirectX::SimpleMath::Vec
 		// If light count is above limit, don't continue
 		if (count >= 10) { return false; }
 	}
-		
+
 	// Setup temp object
 	SceneObject object;
+	
+	// Fetch available IDs
+	std::vector<int> availableIDs = GetAvailableIDs(IDs, sceneGraph);	
+
+	// Check available IDs container is valid
+	if (availableIDs.size() > 0 && availableIDs[0] < sceneGraph.size())
+	{
+		// Set new object ID to first available ID
+		object.ID = availableIDs[0];
+
+		// Clear available ID from vector
+		availableIDs.erase(availableIDs.begin());
+	}
+
+	// Else, set new object ID as scene graph size
+	else { object.ID = sceneGraph.size(); }
 
 	// Define object values
 	{
-		object.ID = sceneGraph.size();
 		object.chunk_ID = 0;
 		object.posX = position.x;
 		object.posY = position.y;
@@ -233,8 +248,10 @@ bool ObjectManager::SpawnObject(OBJECT_TYPE objectType, DirectX::SimpleMath::Vec
 // Remove an object from scene graph & database
 std::vector<SceneObject> ObjectManager::Delete(std::vector<int> & IDs, int ID)
 {			
+	SceneManager::QuickSave();
+	
 	// Store game scene graph
-	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();
+	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();	
 	
 	// If ID has been specified
 	if (ID != -1)
@@ -580,7 +597,7 @@ std::vector<SceneObject> ObjectManager::Paste()
 
 // Replace the type of an object
 bool ObjectManager::ReplaceType(SceneObject object,
-	int lightType, XMFLOAT3 diffuse, float constA, float linA, float quadA)
+	int lightType, DirectX::XMFLOAT3 diffuse, float constA, float linA, float quadA)
 {
 	// Store game scene graph
 	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();
@@ -618,7 +635,7 @@ bool ObjectManager::ReplaceType(SceneObject object,
 
 			// Handle light type
 			if (object.m_type == OBJECT_TYPE::LIGHT) { replacement.light_type = lightType; }
-			else { replacement.light_type = 0; }
+			else { replacement.light_type = 1; }
 
 			// Add new object to database
 			SQLManager::AddObject(replacement);

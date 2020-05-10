@@ -113,7 +113,7 @@ void ToolMain::onActionLoad(std::string name)
 void ToolMain::onActionDeleteObjects()
 {	
 	// Delete all selected objects
-	ObjectManager::Delete(m_selectedObjectIDs);	
+	ObjectManager::Delete(m_selectedIDs);	
 }
 
 void ToolMain::onActionUndo()
@@ -134,16 +134,16 @@ void ToolMain::Tick(MSG *msg)
 	m_sceneGraph = m_d3dRenderer.GetSceneGraph();
 	
 	// If DEL is pressed, deleted selected objects
-	if (m_toolInputCommands.DEL) { ObjectManager::Delete(m_selectedObjectIDs); }
+	if (m_toolInputCommands.DEL) { ObjectManager::Delete(m_selectedIDs); }
 		
 	// If CTRL is pressed
 	if (m_toolInputCommands.CTRL)
 	{		
 		// If X is pressed, cut selected objects
-		if (m_toolInputCommands.X) { ObjectManager::Cut(m_selectedObjectIDs); }
+		if (m_toolInputCommands.X) { ObjectManager::Cut(m_selectedIDs); }
 			
 		// If C is pressed, copy selected objects
-		else if (m_toolInputCommands.C) { ObjectManager::Copy(m_selectedObjectIDs); }
+		else if (m_toolInputCommands.C) { ObjectManager::Copy(m_selectedIDs); }
 
 		// If V is pressed, paste selected objects
 		else if (m_toolInputCommands.V) { ObjectManager::Paste(); }
@@ -167,7 +167,7 @@ void ToolMain::Tick(MSG *msg)
 			if (m_toolInputCommands.CTRL)
 			{				
 				// Remove an object
-				ObjectManager::Delete(m_selectedObjectIDs, MouseManager::PickObject(PICK_TYPE::ANY));				
+				ObjectManager::Delete(m_selectedIDs, MouseManager::PickObject(PICK_TYPE::ANY));				
 			}
 
 			// Else, if not
@@ -175,11 +175,11 @@ void ToolMain::Tick(MSG *msg)
 			{
 				// Define light or not
 				LIGHT_TYPE lightType;
-				if (m_objectType == OBJECT_TYPE::LIGHT) { lightType = LIGHT_TYPE::POINT; }
+				if (m_objectType == OBJECT_TYPE::LIGHT) { lightType = LIGHT_TYPE::DIRECTIONAL; }
 				else { lightType = LIGHT_TYPE::NA; }
 
 				// Create object at picking point
-				ObjectManager::SpawnObject(m_objectType, MouseManager::PickSpawn(), (int)lightType);
+				ObjectManager::SpawnObject(m_selectedIDs, m_objectType, MouseManager::PickSpawn(), (int)lightType);
 			}						
 		}
 		break;
@@ -195,22 +195,22 @@ void ToolMain::Tick(MSG *msg)
 					if (m_toolInputCommands.SHIFT)
 					{
 						// Select multiple objects
-						MouseManager::PickMultipleObjects(m_selectedObjectIDs, PICK_TYPE::OBJECT, true);
+						MouseManager::PickMultipleObjects(m_selectedIDs, PICK_TYPE::OBJECT, true);
 					}
 
 					// Else, if control key is pressed
 					else if (m_toolInputCommands.CTRL)
 					{
 						// Deselect multiple objects
-						MouseManager::PickMultipleObjects(m_selectedObjectIDs, PICK_TYPE::OBJECT, false);
+						MouseManager::PickMultipleObjects(m_selectedIDs, PICK_TYPE::OBJECT, false);
 					}
 
 					// Else, if not
 					else
 					{
 						// Select a single object
-						m_selectedObjectIDs.clear();
-						m_selectedObjectIDs.push_back(MouseManager::PickObject(PICK_TYPE::OBJECT));
+						m_selectedIDs.clear();
+						m_selectedIDs.push_back(MouseManager::PickObject(PICK_TYPE::OBJECT));
 					}	
 
 					// There's been a new selection
@@ -225,10 +225,10 @@ void ToolMain::Tick(MSG *msg)
 			else
 			{
 				// If objects are selected and mouse has been dragged
-				if (m_selectedObjectIDs.size() != 0 && MouseManager::GetMouseDrag())
+				if (m_selectedIDs.size() != 0 && MouseManager::GetMouseDrag())
 				{
 					// Transform selected objects
-					ObjectManager::Transform(m_objectFunction, m_constraint, m_selectedObjectIDs);
+					ObjectManager::Transform(m_objectFunction, m_constraint, m_selectedIDs);
 				}
 			}			
 		}			
@@ -239,10 +239,10 @@ void ToolMain::Tick(MSG *msg)
 			if (m_objectFunction == OBJECT_FUNCTION::TRANSLATE)
 			{
 				// If objects are selected and mouse has been dragged
-				if (m_selectedObjectIDs.size() != 0 && MouseManager::GetMouseDrag())
+				if (m_selectedIDs.size() != 0 && MouseManager::GetMouseDrag())
 				{					
 					// Transform lights
-					ObjectManager::Transform(OBJECT_FUNCTION::TRANSLATE, m_constraint, m_selectedObjectIDs);
+					ObjectManager::Transform(OBJECT_FUNCTION::TRANSLATE, m_constraint, m_selectedIDs);
 				}
 			}
 
@@ -256,22 +256,22 @@ void ToolMain::Tick(MSG *msg)
 					if (m_toolInputCommands.SHIFT)
 					{
 						// Select multiple lights
-						MouseManager::PickMultipleObjects(m_selectedObjectIDs, PICK_TYPE::LIGHT, true);
+						MouseManager::PickMultipleObjects(m_selectedIDs, PICK_TYPE::LIGHT, true);
 					}
 
 					// Else, if control key is pressed
 					else if (m_toolInputCommands.CTRL)
 					{
 						// Deselect multiple lights
-						MouseManager::PickMultipleObjects(m_selectedObjectIDs, PICK_TYPE::LIGHT, false);
+						MouseManager::PickMultipleObjects(m_selectedIDs, PICK_TYPE::LIGHT, false);
 					}
 
 					// Else, if not
 					else
 					{
 						// Select a single light
-						m_selectedObjectIDs.clear();
-						m_selectedObjectIDs.push_back(MouseManager::PickObject(PICK_TYPE::LIGHT));
+						m_selectedIDs.clear();
+						m_selectedIDs.push_back(MouseManager::PickObject(PICK_TYPE::LIGHT));
 					}
 
 					// There's been a new selection
@@ -287,7 +287,7 @@ void ToolMain::Tick(MSG *msg)
 	}
 
 	// Set renderer selected objects to draw bounding boxes
-	m_d3dRenderer.SetSelectedObjectIDs(m_selectedObjectIDs);
+	m_d3dRenderer.SetSelectedObjectIDs(m_selectedIDs);
 
 	// Renderer Update Call
 	m_d3dRenderer.Tick(&m_toolInputCommands);
@@ -329,7 +329,7 @@ void ToolMain::UpdateInput(MSG * msg)
 			m_toolInputCommands.pickOnce = true;
 
 			// Store all object details
-			ObjectManager::Store(m_selectedObjectIDs);
+			ObjectManager::Store(m_selectedIDs);
 
 			// Store current mouse position
 			m_toolInputCommands.mousePosPrevious = m_toolInputCommands.mousePos;

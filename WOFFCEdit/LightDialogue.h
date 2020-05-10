@@ -5,7 +5,6 @@
 #include <vector>
 #include <string>
 #include "Tools.h"
-#include "Light.h"
 #include "ObjectManager.h"
 #include "SceneManager.h"
 #include "FocusDialogue.h"
@@ -45,10 +44,10 @@ protected:
 	afx_msg void End();									// Kill the dialogue
 
 	// Local storage 
-	std::vector<SceneObject>* m_lights;
-	std::vector<int> m_selectedIDs;
 	ToolMain* m_toolSystem;
-	InputCommands* m_input;
+	std::vector<SceneObject>* m_lights;
+	std::vector<int> m_selectedIDs;	
+	int m_selectedIndex;
 
 	// Controllers
 	bool m_active;
@@ -73,11 +72,6 @@ public:
 	CEdit m_eDifR, m_eDifG, m_eDifB;
 	CEdit m_eAmbR, m_eAmbG, m_eAmbB;
 	CEdit m_eConstA, m_eLinA, m_eQuadA;
-	float m_fPosX, m_fPosY, m_fPosZ;
-	float m_fDirX, m_fDirY, m_fDirZ;
-	float m_fDifR, m_fDifG, m_fDifB;
-	float m_fAmbR, m_fAmbG, m_fAmbB;
-	float m_fConstA, m_fLinA, m_fQuadA;
 
 	// Message handlers
 	afx_msg void OnBnClickedOk();
@@ -117,7 +111,6 @@ private:
 	void UpdateType();
 	void UpdateEnabled();
 	void UpdatePosition();
-	void UpdatePosition(DirectX::XMFLOAT3 position);
 	void UpdateDirection();
 	void UpdateDiffuse();
 	void UpdateAmbient();
@@ -131,11 +124,4 @@ private:
 
 	// Update object in scene graph
 	void UpdateLight(SceneObject object);
-
-private:
-	// Getters
-	XMFLOAT3 GetPosition();
-	XMFLOAT3 GetDirection();
-	XMFLOAT3 GetDiffuse();
-	float GetConstA(), GetLinA(), GetQuadA();
 };

@@ -245,18 +245,7 @@ void Game::Render()
 		const XMVECTORF32 xaxis = { 512.f, 0.f, 0.f };
 		const XMVECTORF32 yaxis = { 0.f, 0.f, 512.f };
 		DrawGrid(xaxis, yaxis, g_XMZero, 512, 512, Colors::Gray);
-	}		
-
-	// Create vector of only lights
-	std::vector<DisplayObject> lights;
-	for (int i = 0; i < m_displayList.size(); ++i)
-	{
-		// If current object is a light
-		if (m_displayList[i].m_objectType == OBJECT_TYPE::LIGHT)
-		{
-			lights.push_back(m_displayList[i]);
-		}
-	}
+	}			
 	
 	//RENDER OBJECTS FROM SCENEGRAPH
 	int numRenderObjects = m_displayList.size();
@@ -277,14 +266,25 @@ void Game::Render()
 
 		m_deviceResources->PIXEndEvent();
 	}
-	m_deviceResources->PIXEndEvent();
-
+	m_deviceResources->PIXEndEvent();	
+	
 	//RENDER TERRAIN
 	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
 	context->OMSetDepthStencilState(m_states->DepthDefault(),0);
 	context->RSSetState(m_states->CullNone());
 	if (m_wireframe) { context->RSSetState(m_states->Wireframe()); }		
 
+	// Create vector of only lights
+	std::vector<DisplayObject> lights;
+	for (int i = 0; i < m_displayList.size(); ++i)
+	{
+		// If current object is a light
+		if (m_displayList[i].m_objectType == OBJECT_TYPE::LIGHT)
+		{
+			lights.push_back(m_displayList[i]);
+		}
+	}
+	
 	//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
 	m_displayChunk.RenderBatch(m_deviceResources, lights);
 
@@ -307,7 +307,7 @@ void Game::Render()
 
 	m_sprites->End();	
 
-	// Coordinate system	
+	// Selection system
 	if (m_displayList.size() != 0)
 	{
 		// Loop through selected objects
@@ -820,9 +820,9 @@ void Game::SetTransform(int index, OBJECT_FUNCTION function, DirectX::SimpleMath
 		m_displayList[index].m_scale = vector;		
 
 		// Update object bounding box scale
-		m_displayList[index].m_model->meshes[0]->boundingBox.Extents.x = vector.x;
-		m_displayList[index].m_model->meshes[0]->boundingBox.Extents.y = vector.y;
-		m_displayList[index].m_model->meshes[0]->boundingBox.Extents.z = vector.z;
+		m_displayList[index].m_model->meshes[0]->boundingBox.Extents.x = (vector.x + vector.x);
+		m_displayList[index].m_model->meshes[0]->boundingBox.Extents.y = (vector.y + vector.y);
+		m_displayList[index].m_model->meshes[0]->boundingBox.Extents.z = (vector.z + vector.z);
 	}
 	break;
 	case OBJECT_FUNCTION::ROTATE: 

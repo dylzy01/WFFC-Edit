@@ -3,7 +3,6 @@
 #include "DeviceResources.h"
 #include "ChunkObject.h"
 #include "ShaderManager.h"
-#include "Light.h"
 
 //geometric resoltuion - note,  hard coded.
 #define TERRAINRESOLUTION 128

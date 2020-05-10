@@ -22,8 +22,8 @@ public:
 	~ObjectManager() {}
 
 	// Spawn an object at a location & add to database
-	static bool SpawnObject(OBJECT_TYPE objectType, DirectX::SimpleMath::Vector3 position, 
-		int lightType = NULL, XMFLOAT3 diffuse = { NULL, NULL, NULL }, float constA = NULL, float linA = NULL, float quadA = NULL);
+	static bool SpawnObject(std::vector<int> IDs, OBJECT_TYPE objectType, DirectX::SimpleMath::Vector3 position,
+		int lightType = NULL, DirectX::XMFLOAT3 diffuse = { NULL, NULL, NULL }, float constA = NULL, float linA = NULL, float quadA = NULL);
 
 	// Remove an object from scene graph & database
 	static std::vector<SceneObject> Delete(std::vector<int> & IDs, int ID = -1);
@@ -46,7 +46,7 @@ public:
 
 	// Replace the type of an object
 	static bool ReplaceType(SceneObject object,
-		int lightType = NULL, XMFLOAT3 diffuse = { NULL, NULL, NULL }, float constA = NULL, float linA = NULL, float quadA = NULL);
+		int lightType = NULL, DirectX::XMFLOAT3 diffuse = { NULL, NULL, NULL }, float constA = NULL, float linA = NULL, float quadA = NULL);
 
 	// Replace an entire object
 	static bool ReplaceObject(SceneObject newObject);

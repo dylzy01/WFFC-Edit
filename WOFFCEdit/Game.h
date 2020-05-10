@@ -12,9 +12,7 @@
 #include "ChunkObject.h"
 #include "InputCommands.h"
 #include "Camera.h"
-#include "Water.h"
 #include "DebugDraw.h"
-#include "Light.h"
 
 #include "SQLManager.h"
 #include "ShaderManager.h"
@@ -155,7 +153,6 @@ private:
 	CONSTRAINT m_landscapeConstraint = CONSTRAINT::NA;
 
 	// Water controllers
-	Water* m_water;
 	std::vector<int> m_waterIDs;
 	bool m_spawnWater = false;
 	std::vector<DirectX::SimpleMath::Vector3> m_waterPositions;
