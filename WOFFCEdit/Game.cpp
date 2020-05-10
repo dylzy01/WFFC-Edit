@@ -496,9 +496,7 @@ std::vector<SceneObject> Game::DefineObjects(std::vector<SceneObject> sceneGraph
 		else if (sceneGraph[i].model_path == "database/data/water.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::WATER; sceneGraph[i].m_isWater = true; }
 
 		// Else, if object is light
-		else if (sceneGraph[i].model_path == "database/data/light.cmo") { 
-			sceneGraph[i].m_type = OBJECT_TYPE::LIGHT;
-		}
+		else if (sceneGraph[i].model_path == "database/data/light.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::LIGHT; }
 
 		// Else, if object is cube
 		else if (sceneGraph[i].model_path == "database/data/cube.cmo") { sceneGraph[i].m_type = OBJECT_TYPE::CUBE; }
@@ -642,7 +640,11 @@ void Game::BuildDisplayList(std::vector<SceneObject> * sceneGraph)
 			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y *= newDisplayObject.m_scale.y;
 			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.z *= newDisplayObject.m_scale.z;
 			newDisplayObject.m_model->meshes[j]->boundingBox.Center = newDisplayObject.m_position;
-			///newDisplayObject.m_model->meshes[j]->boundingBox.Center.y += newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y;
+			if (newDisplayObject.m_objectType != OBJECT_TYPE::CUBE && newDisplayObject.m_objectType != OBJECT_TYPE::CYLINDER &&
+				newDisplayObject.m_objectType != OBJECT_TYPE::CONE && newDisplayObject.m_objectType != OBJECT_TYPE::LIGHT &&
+				newDisplayObject.m_objectType != OBJECT_TYPE::WATER) {
+				newDisplayObject.m_model->meshes[0]->boundingBox.Center.y += newDisplayObject.m_model->meshes[0]->boundingBox.Extents.y;
+			}
 		}	
 		
 		// Add object to list
@@ -743,7 +745,11 @@ void Game::RebuildDisplayList(std::vector<SceneObject>* sceneGraph)
 			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y *= newDisplayObject.m_scale.y;
 			newDisplayObject.m_model->meshes[j]->boundingBox.Extents.z *= newDisplayObject.m_scale.z;
 			newDisplayObject.m_model->meshes[j]->boundingBox.Center = newDisplayObject.m_position;
-			///newDisplayObject.m_model->meshes[j]->boundingBox.Center.y += newDisplayObject.m_model->meshes[j]->boundingBox.Extents.y;
+			if (newDisplayObject.m_objectType != OBJECT_TYPE::CUBE && newDisplayObject.m_objectType != OBJECT_TYPE::CYLINDER &&
+				newDisplayObject.m_objectType != OBJECT_TYPE::CONE && newDisplayObject.m_objectType != OBJECT_TYPE::LIGHT &&
+				newDisplayObject.m_objectType != OBJECT_TYPE::WATER) {
+				newDisplayObject.m_model->meshes[0]->boundingBox.Center.y += newDisplayObject.m_model->meshes[0]->boundingBox.Extents.y;
+			}
 		}		
 
 		// Add object to list
@@ -844,6 +850,15 @@ void Game::SetTransform(int index, OBJECT_FUNCTION function, DirectX::SimpleMath
 
 	// Update object bounding box translation
 	m_displayList[index].m_model->meshes[0]->boundingBox.Center = m_displayList[index].m_position;
+	/*if (m_displayList[index].m_objectType == OBJECT_TYPE::HOUSE_ONE || m_displayList[index].m_objectType == OBJECT_TYPE::HOUSE_TWO || 
+		m_displayList[index].m_objectType == OBJECT_TYPE::TREE_ONE || m_displayList[index].m_objectType == OBJECT_TYPE::TREE_TWO) {
+		m_displayList[index].m_model->meshes[0]->boundingBox.Center.y += m_displayList[index].m_model->meshes[0]->boundingBox.Extents.y;
+	}*/
+	if (m_displayList[index].m_objectType != OBJECT_TYPE::CUBE && m_displayList[index].m_objectType != OBJECT_TYPE::CYLINDER &&
+		m_displayList[index].m_objectType != OBJECT_TYPE::CONE && m_displayList[index].m_objectType != OBJECT_TYPE::LIGHT &&
+		m_displayList[index].m_objectType != OBJECT_TYPE::WATER) {
+		m_displayList[index].m_model->meshes[0]->boundingBox.Center.y += m_displayList[index].m_model->meshes[0]->boundingBox.Extents.y;
+	}
 
 	SaveDisplayList();
 }

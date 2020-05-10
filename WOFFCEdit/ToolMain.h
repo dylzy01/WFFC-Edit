@@ -43,6 +43,7 @@ public: //methods
 	std::vector<SceneObject> GetSceneGraph() { return m_d3dRenderer.GetSceneGraph(); }
 	InputCommands* GetInput() { return &m_toolInputCommands; }
 	bool GetNewSelection();
+	bool GetUpdate();
 	std::vector<int> GetSelectedIDs() { return m_selectedIDs; }
 
 	// Setters
@@ -126,6 +127,6 @@ private:	//variables
 	bool m_lDown = false, m_rDown = false;
 	bool m_doOnce = false;
 	bool m_newSelection = false;
-	bool m_request = false, m_mouseIsDragging = false;
+	bool m_update = false, m_mouseIsDragging = false;
 	int m_counter = 0;
 };

@@ -826,7 +826,7 @@ void DisplayChunk::PaintOverBlended(TERRAIN_PAINT paint, std::pair<int, int> ind
 }
 
 void DisplayChunk::SculptTerrain(int row, int column, TERRAIN_SCULPT sculpt, CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position)
-{	
+{		
 	// Switch between sculpt parameter
 	switch (sculpt)
 	{
@@ -1024,295 +1024,102 @@ void DisplayChunk::SculptTerrain(int row, int column, TERRAIN_SCULPT sculpt, CON
 	break;
 	case TERRAIN_SCULPT::FLATTEN:
 	{		
+		// Get distances from target position and current position
+		std::vector<DirectX::XMFLOAT3> distances; for (int i = 0; i < 4; ++i) { distances.push_back(DirectX::XMFLOAT3()); }
+		distances[0] = position[0] - m_terrainGeometry[row][column].position;
+		distances[1] = position[0] - m_terrainGeometry[row][column + 1].position;
+		distances[2] = position[0] - m_terrainGeometry[row + 1][column + 1].position;
+		distances[3] = position[0] - m_terrainGeometry[row + 1][column].position;
+		
 		// Switch between constraint
 		switch (constraint)
 		{
 		case CONSTRAINT::XY:
 		{
-			// X
-			{
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column].position.x >= position[0].x + m_scaleFactor) { m_terrainGeometry[row][column].position.x -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column].position.x < position[0].x - m_scaleFactor) { m_terrainGeometry[row][column].position.x += m_scaleFactor; }
-				
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column + 1].position.x >= position[1].x + m_scaleFactor) { m_terrainGeometry[row][column + 1].position.x -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column + 1].position.x < position[1].x - m_scaleFactor) { m_terrainGeometry[row][column + 1].position.x += m_scaleFactor; }
-				
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column + 1].position.x >= position[2].x + m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.x -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column + 1].position.x < position[2].x - m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.x += m_scaleFactor; }
+			// Flatten position
+			m_terrainGeometry[row][column].position.x += distances[0].x;
+			m_terrainGeometry[row][column + 1].position.x += distances[1].x;
+			m_terrainGeometry[row + 1][column + 1].position.x += distances[2].x;
+			m_terrainGeometry[row + 1][column].position.x += distances[3].x;
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column].position.x >= position[3].x + m_scaleFactor) { m_terrainGeometry[row + 1][column].position.x -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column].position.x < position[3].x - m_scaleFactor) { m_terrainGeometry[row + 1][column].position.x += m_scaleFactor; }
-			}
-
-			// Y
-			{
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column].position.y > position[0].y + 1.f) { m_terrainGeometry[row][column].position.y -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column].position.y < position[0].y - 1.f) { m_terrainGeometry[row][column].position.y += 1.f; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column + 1].position.y > position[1].y + 1.f) { m_terrainGeometry[row][column + 1].position.y -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column + 1].position.y < position[1].y - 1.f) { m_terrainGeometry[row][column + 1].position.y += 1.f; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column + 1].position.y > position[2].y + 1.f) { m_terrainGeometry[row + 1][column + 1].position.y -= 1.f; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column + 1].position.y < position[2].y - 1.f) { m_terrainGeometry[row + 1][column + 1].position.y += 1.f; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column].position.y > position[3].y + 1.f) { m_terrainGeometry[row + 1][column].position.y -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column].position.y < position[3].y - 1.f) { m_terrainGeometry[row + 1][column].position.y += m_scaleFactor; }
-			}
+			m_terrainGeometry[row][column].position.y += distances[0].y;
+			m_terrainGeometry[row][column + 1].position.y += distances[1].y;
+			m_terrainGeometry[row + 1][column + 1].position.y += distances[2].y;
+			m_terrainGeometry[row + 1][column].position.y += distances[3].y;
 		}
 		break;
 		case CONSTRAINT::XZ:
 		{
-			// X
-			{
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column].position.x >= position[0].x + m_scaleFactor) { m_terrainGeometry[row][column].position.x -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column].position.x < position[0].x - m_scaleFactor) { m_terrainGeometry[row][column].position.x += m_scaleFactor; }
+			// Flatten position
+			m_terrainGeometry[row][column].position.x += distances[0].x;
+			m_terrainGeometry[row][column + 1].position.x += distances[1].x;
+			m_terrainGeometry[row + 1][column + 1].position.x += distances[2].x;
+			m_terrainGeometry[row + 1][column].position.x += distances[3].x;
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column + 1].position.x >= position[1].x + m_scaleFactor) { m_terrainGeometry[row][column + 1].position.x -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column + 1].position.x < position[1].x - m_scaleFactor) { m_terrainGeometry[row][column + 1].position.x += m_scaleFactor; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column + 1].position.x >= position[2].x + m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.x -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column + 1].position.x < position[2].x - m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.x += m_scaleFactor; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column].position.x >= position[3].x + m_scaleFactor) { m_terrainGeometry[row + 1][column].position.x -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column].position.x < position[3].x - m_scaleFactor) { m_terrainGeometry[row + 1][column].position.x += m_scaleFactor; }
-			}
-
-			// Z
-			{
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column].position.z >= position[0].z + m_scaleFactor) { m_terrainGeometry[row][column].position.z -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column].position.z < position[0].z - m_scaleFactor) { m_terrainGeometry[row][column].position.z += m_scaleFactor; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column + 1].position.z >= position[1].z + m_scaleFactor) { m_terrainGeometry[row][column + 1].position.z -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column + 1].position.z < position[1].z - m_scaleFactor) { m_terrainGeometry[row][column + 1].position.z += m_scaleFactor; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column + 1].position.z >= position[2].z + m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.z -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column + 1].position.z < position[2].z - m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.z += m_scaleFactor; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column].position.z >= position[3].z + m_scaleFactor) { m_terrainGeometry[row + 1][column].position.z -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column].position.z < position[3].z - m_scaleFactor) { m_terrainGeometry[row + 1][column].position.z += m_scaleFactor; }
-			}
+			m_terrainGeometry[row][column].position.z += distances[0].z;
+			m_terrainGeometry[row][column + 1].position.z += distances[1].z;
+			m_terrainGeometry[row + 1][column + 1].position.z += distances[2].z;
+			m_terrainGeometry[row + 1][column].position.z += distances[3].z;
 		}
 		break;
 		case CONSTRAINT::YZ:
 		{
-			// Y
-			{
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column].position.y >= position[0].y + m_scaleFactor) { m_terrainGeometry[row][column].position.y -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column].position.y < position[0].y - m_scaleFactor) { m_terrainGeometry[row][column].position.y += m_scaleFactor; }
+			// Flatten position
+			m_terrainGeometry[row][column].position.y += distances[0].y;
+			m_terrainGeometry[row][column + 1].position.y += distances[1].y;
+			m_terrainGeometry[row + 1][column + 1].position.y += distances[2].y;
+			m_terrainGeometry[row + 1][column].position.y += distances[3].y;
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column + 1].position.y >= position[1].y + m_scaleFactor) { m_terrainGeometry[row][column + 1].position.y -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column + 1].position.y < position[1].y - m_scaleFactor) { m_terrainGeometry[row][column + 1].position.y += m_scaleFactor; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column + 1].position.y >= position[2].y + m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.y -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column + 1].position.y < position[2].y - m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.y += m_scaleFactor; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column].position.y >= position[3].y + m_scaleFactor) { m_terrainGeometry[row + 1][column].position.y -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column].position.y < position[3].y - m_scaleFactor) { m_terrainGeometry[row + 1][column].position.y += m_scaleFactor; }
-			}
-
-			// Z
-			{
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column].position.z >= position[0].z + m_scaleFactor) { m_terrainGeometry[row][column].position.z -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column].position.z < position[0].z - m_scaleFactor) { m_terrainGeometry[row][column].position.z += m_scaleFactor; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column + 1].position.z >= position[1].z + m_scaleFactor) { m_terrainGeometry[row][column + 1].position.z -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column + 1].position.z < position[1].z - m_scaleFactor) { m_terrainGeometry[row][column + 1].position.z += m_scaleFactor; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column + 1].position.z >= position[2].z + m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.z -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column + 1].position.z < position[2].z - m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.z += m_scaleFactor; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column].position.z >= position[3].z + m_scaleFactor) { m_terrainGeometry[row + 1][column].position.z -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column].position.z < position[3].z - m_scaleFactor) { m_terrainGeometry[row + 1][column].position.z += m_scaleFactor; }
-			}
+			m_terrainGeometry[row][column].position.z += distances[0].z;
+			m_terrainGeometry[row][column + 1].position.z += distances[1].z;
+			m_terrainGeometry[row + 1][column + 1].position.z += distances[2].z;
+			m_terrainGeometry[row + 1][column].position.z += distances[3].z;
 		}
 		break;
 		case CONSTRAINT::X:
 		{
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row][column].position.x >= position[0].x + m_scaleFactor) { m_terrainGeometry[row][column].position.x -= m_scaleFactor; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row][column].position.x < position[0].x - m_scaleFactor) { m_terrainGeometry[row][column].position.x += m_scaleFactor; }
-
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row][column + 1].position.x >= position[1].x + m_scaleFactor) { m_terrainGeometry[row][column + 1].position.x -= m_scaleFactor; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row][column + 1].position.x < position[1].x - m_scaleFactor) { m_terrainGeometry[row][column + 1].position.x += m_scaleFactor; }
-
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row + 1][column + 1].position.x >= position[2].x + m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.x -= m_scaleFactor; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row + 1][column + 1].position.x < position[2].x - m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.x += m_scaleFactor; }
-
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row + 1][column].position.x >= position[3].x + m_scaleFactor) { m_terrainGeometry[row + 1][column].position.x -= m_scaleFactor; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row + 1][column].position.x < position[3].x - m_scaleFactor) { m_terrainGeometry[row + 1][column].position.x += m_scaleFactor; }
+			// Flatten position
+			m_terrainGeometry[row][column].position.x += distances[0].x;
+			m_terrainGeometry[row][column + 1].position.x += distances[1].x;
+			m_terrainGeometry[row + 1][column + 1].position.x += distances[2].x;
+			m_terrainGeometry[row + 1][column].position.x += distances[3].x;
 		}
 		break;
 		case CONSTRAINT::Y:
 		{
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row][column].position.y >= position[0].y + m_scaleFactor) { m_terrainGeometry[row][column].position.y -= m_scaleFactor; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row][column].position.y < position[0].y - m_scaleFactor) { m_terrainGeometry[row][column].position.y += m_scaleFactor; }
-
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row][column + 1].position.y >= position[1].y + m_scaleFactor) { m_terrainGeometry[row][column + 1].position.y -= m_scaleFactor; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row][column + 1].position.y < position[1].y - m_scaleFactor) { m_terrainGeometry[row][column + 1].position.y += m_scaleFactor; }
-
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row + 1][column + 1].position.y >= position[2].y + m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.y -= m_scaleFactor; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row + 1][column + 1].position.y < position[2].y - m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.y += m_scaleFactor; }
-
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row + 1][column].position.y >= position[3].y + m_scaleFactor) { m_terrainGeometry[row + 1][column].position.y -= m_scaleFactor; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row + 1][column].position.y < position[3].y - m_scaleFactor) { m_terrainGeometry[row + 1][column].position.y += m_scaleFactor; }
+			// Flatten position
+			m_terrainGeometry[row][column].position.y += distances[0].y;
+			m_terrainGeometry[row][column + 1].position.y += distances[1].y;
+			m_terrainGeometry[row + 1][column + 1].position.y += distances[2].y;
+			m_terrainGeometry[row + 1][column].position.y += distances[3].y;
 		}
 		break;
 		case CONSTRAINT::Z:
 		{
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row][column].position.z >= position[0].z + m_scaleFactor) { m_terrainGeometry[row][column].position.z -= m_scaleFactor; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row][column].position.z < position[0].z - m_scaleFactor) { m_terrainGeometry[row][column].position.z += m_scaleFactor; }
-
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row][column + 1].position.z >= position[1].z + m_scaleFactor) { m_terrainGeometry[row][column + 1].position.z -= m_scaleFactor; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row][column + 1].position.z < position[1].z - m_scaleFactor) { m_terrainGeometry[row][column + 1].position.z += m_scaleFactor; }
-
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row + 1][column + 1].position.z >= position[2].z + m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.z -= m_scaleFactor; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row + 1][column + 1].position.z < position[2].z - m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.z += m_scaleFactor; }
-
-			// If selected geometry is above ground level, decrease position
-			if (m_terrainGeometry[row + 1][column].position.z >= position[3].z + m_scaleFactor) { m_terrainGeometry[row + 1][column].position.z -= m_scaleFactor; }
-			// Else, if selected geometry is below ground level, increase position
-			else if (m_terrainGeometry[row + 1][column].position.z < position[3].z - m_scaleFactor) { m_terrainGeometry[row + 1][column].position.z += m_scaleFactor; }
+			// Flatten position
+			m_terrainGeometry[row][column].position.z += distances[0].z;
+			m_terrainGeometry[row][column + 1].position.z += distances[1].z;
+			m_terrainGeometry[row + 1][column + 1].position.z += distances[2].z;
+			m_terrainGeometry[row + 1][column].position.z += distances[3].z;
 		}
 		break;
 		case CONSTRAINT::NA:
 		{
-			// X
-			{
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column].position.x >= position[0].x + m_scaleFactor) { m_terrainGeometry[row][column].position.x -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column].position.x < position[0].x - m_scaleFactor) { m_terrainGeometry[row][column].position.x += m_scaleFactor; }
+			// Flatten position
+			m_terrainGeometry[row][column].position.x += distances[0].x;
+			m_terrainGeometry[row][column + 1].position.x += distances[1].x;
+			m_terrainGeometry[row + 1][column + 1].position.x += distances[2].x;
+			m_terrainGeometry[row + 1][column].position.x += distances[3].x;
 
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column + 1].position.x >= position[1].x + m_scaleFactor) { m_terrainGeometry[row][column + 1].position.x -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column + 1].position.x < position[1].x - m_scaleFactor) { m_terrainGeometry[row][column + 1].position.x += m_scaleFactor; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column + 1].position.x >= position[2].x + m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.x -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column + 1].position.x < position[2].x - m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.x += m_scaleFactor; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column].position.x >= position[3].x + m_scaleFactor) { m_terrainGeometry[row + 1][column].position.x -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column].position.x < position[3].x - m_scaleFactor) { m_terrainGeometry[row + 1][column].position.x += m_scaleFactor; }
-			}
+			m_terrainGeometry[row][column].position.y += distances[0].y;
+			m_terrainGeometry[row][column + 1].position.y += distances[1].y;
+			m_terrainGeometry[row + 1][column + 1].position.y += distances[2].y;
+			m_terrainGeometry[row + 1][column].position.y += distances[3].y;
 			
-			// Y
-			{
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column].position.y >= position[0].y + m_scaleFactor) { m_terrainGeometry[row][column].position.y -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column].position.y < position[0].y - m_scaleFactor) { m_terrainGeometry[row][column].position.y += m_scaleFactor; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column + 1].position.y >= position[1].y + m_scaleFactor) { m_terrainGeometry[row][column + 1].position.y -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column + 1].position.y < position[1].y - m_scaleFactor) { m_terrainGeometry[row][column + 1].position.y += m_scaleFactor; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column + 1].position.y >= position[2].y + m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.y -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column + 1].position.y < position[2].y - m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.y += m_scaleFactor; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column].position.y >= position[3].y + m_scaleFactor) { m_terrainGeometry[row + 1][column].position.y -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column].position.y < position[3].y - m_scaleFactor) { m_terrainGeometry[row + 1][column].position.y += m_scaleFactor; }
-			}
-			
-			// Z
-			{
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column].position.z >= position[0].z + m_scaleFactor) { m_terrainGeometry[row][column].position.z -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column].position.z < position[0].z - m_scaleFactor) { m_terrainGeometry[row][column].position.z += m_scaleFactor; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row][column + 1].position.z >= position[1].z + m_scaleFactor) { m_terrainGeometry[row][column + 1].position.z -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row][column + 1].position.z < position[1].z - m_scaleFactor) { m_terrainGeometry[row][column + 1].position.z += m_scaleFactor; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column + 1].position.z >= position[2].z + m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.z -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column + 1].position.z < position[2].z - m_scaleFactor) { m_terrainGeometry[row + 1][column + 1].position.z += m_scaleFactor; }
-
-				// If selected geometry is above ground level, decrease position
-				if (m_terrainGeometry[row + 1][column].position.z >= position[3].z + m_scaleFactor) { m_terrainGeometry[row + 1][column].position.z -= m_scaleFactor; }
-				// Else, if selected geometry is below ground level, increase position
-				else if (m_terrainGeometry[row + 1][column].position.z < position[3].z - m_scaleFactor) { m_terrainGeometry[row + 1][column].position.z += m_scaleFactor; }
-			}			
+			m_terrainGeometry[row][column].position.z += distances[0].z;
+			m_terrainGeometry[row][column + 1].position.z += distances[1].z;
+			m_terrainGeometry[row + 1][column + 1].position.z += distances[2].z;
+			m_terrainGeometry[row + 1][column].position.z += distances[3].z;
 		}
 		break;
 		}

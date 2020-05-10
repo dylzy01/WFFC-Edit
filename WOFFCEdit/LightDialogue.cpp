@@ -66,6 +66,11 @@ void LightDialogue::UpdateTool()
 		m_selectedIndex = MouseManager::GetIndex();
 		UpdateDialogue();
 	}
+
+	// If the dialogue needs reset (after deleting or copying/pasting objects via key presses)
+	if (m_toolSystem->GetUpdate()) {
+		SetupLights(&m_toolSystem->GetSceneGraph());
+	}
 	
 	// If should focus on an object
 	if (m_focus)
@@ -339,6 +344,7 @@ void LightDialogue::OnCbnSelchangeType()
 
 // Light has been enabled/disabled
 void LightDialogue::OnBnClickedEnable()
+
 {
 	// Store ID selection
 	int ID = m_boxID.GetCurSel();
@@ -346,6 +352,7 @@ void LightDialogue::OnBnClickedEnable()
 	// If function has been called by user
 	if (!m_internal)
 	{
+		
 		// If ID is valid
 		if (ID >= 0)
 		{
@@ -358,8 +365,13 @@ void LightDialogue::OnBnClickedEnable()
 					// If light ID matches selection
 					if (m_lights->at(j).ID == m_selectedIDs[i])
 					{
-						// Set light enabled/disabled
-						m_lights->at(j).enabled = IsDlgButtonChecked(IDC_CHECK1);
+						// If enabled is different from current enabled
+						if (m_lights->at(j).enabled != IsDlgButtonChecked(IDC_CHECK1))
+						{
+							// Set light enabled/disabled
+							m_lights->at(j).enabled = IsDlgButtonChecked(IDC_CHECK1);
+							UpdateLight(m_lights->at(j));
+						}
 						break;
 					}
 				}
@@ -1480,6 +1492,7 @@ void LightDialogue::SetupLights(std::vector<SceneObject>* sceneGraph)
 	
 	// Local storage of lights
 	m_lights = new std::vector<SceneObject>();
+	m_boxID.ResetContent();
 
 	// Loop through scene graph
 	for (int i = 0; i < sceneGraph->size(); ++i)
@@ -1489,17 +1502,11 @@ void LightDialogue::SetupLights(std::vector<SceneObject>* sceneGraph)
 		{
 			// Add to storage
 			m_lights->push_back(sceneGraph->at(i));
-		}
-	}
-	
-	m_boxID.ResetContent();
 
-	// Loop through lights in scene graph
-	for (int i = 0; i < m_lights->size(); ++i)
-	{
-		// Add entries to ID list box
-		std::wstring idBoxEntry = std::to_wstring(m_lights->at(i).ID);
-		m_boxID.AddString(idBoxEntry.c_str());
+			// Add entries to ID list box
+			std::wstring idBoxEntry = std::to_wstring(sceneGraph->at(i).ID);
+			m_boxID.AddString(idBoxEntry.c_str());
+		}
 	}
 
 	// Setup total lights in scene

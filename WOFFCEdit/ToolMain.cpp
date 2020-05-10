@@ -134,25 +134,28 @@ void ToolMain::Tick(MSG *msg)
 	m_sceneGraph = m_d3dRenderer.GetSceneGraph();
 	
 	// If DEL is pressed, deleted selected objects
-	if (m_toolInputCommands.DEL) { ObjectManager::Delete(m_selectedIDs); }
+	if (m_toolInputCommands.DEL) { 
+		ObjectManager::Delete(m_selectedIDs);
+		m_update = true;
+	}
 		
 	// If CTRL is pressed
 	if (m_toolInputCommands.CTRL)
 	{		
 		// If X is pressed, cut selected objects
-		if (m_toolInputCommands.X) { ObjectManager::Cut(m_selectedIDs); }
+		if (m_toolInputCommands.X) { ObjectManager::Cut(m_selectedIDs); m_update = true; }
 			
 		// If C is pressed, copy selected objects
 		else if (m_toolInputCommands.C) { ObjectManager::Copy(m_selectedIDs); }
 
 		// If V is pressed, paste selected objects
-		else if (m_toolInputCommands.V) { ObjectManager::Paste(); }
+		else if (m_toolInputCommands.V) { ObjectManager::Paste(); m_update = true; }
 
 		// If Z is pressed, undo last action
-		else if (m_toolInputCommands.Z) { SceneManager::Undo(); }
+		else if (m_toolInputCommands.Z) { SceneManager::Undo(); m_update = true; }
 		
 		// If Z and SHIFT is pressed, redo next action
-		else if (m_toolInputCommands.Z && m_toolInputCommands.SHIFT) { SceneManager::Redo(); }
+		else if (m_toolInputCommands.Z && m_toolInputCommands.SHIFT) { SceneManager::Redo(); m_update = true; }
 	}	
 		
 	// If right mouse button is pressed
@@ -337,10 +340,10 @@ void ToolMain::UpdateInput(MSG * msg)
 		break;
 
 	case WM_RBUTTONUP:
-		m_rDown = m_toolInputCommands.mouseRight = false;				
-		///m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+		m_rDown = m_toolInputCommands.mouseRight = false;
+		m_update = true;
 		TerrainManager::StorePosition(true);				
-		SceneManager::SetScene(&m_sceneGraph, m_d3dRenderer.GetDisplayChunk());
+		SceneManager::SetScene(&m_sceneGraph, m_d3dRenderer.GetDisplayChunk());		
 		break;
 
 	case WM_MBUTTONDOWN:
@@ -404,6 +407,15 @@ bool ToolMain::GetNewSelection()
 	if (m_newSelection)
 	{
 		m_newSelection = false;
+		return true;
+	}
+	else { return false; }
+}
+
+bool ToolMain::GetUpdate()
+{
+	if (m_update) {
+		m_update = false;
 		return true;
 	}
 	else { return false; }

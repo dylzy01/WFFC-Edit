@@ -81,6 +81,11 @@ void ObjectDialogue::UpdateTool()
 		UpdateDialogue();
 	}
 
+	// If the dialogue needs reset (after deleting or copying/pasting objects via key presses)
+	if (m_toolSystem->GetUpdate()) {
+		SetupObjects(&m_toolSystem->GetSceneGraph());
+	}
+
 	// If should focus on an object
 	if (m_focus)
 	{
@@ -945,7 +950,6 @@ void ObjectDialogue::UpdateDialogue(int ID)
 {
 	// If ID is valid
 	if (ID != -1) { m_boxID.SetCurSel(ID); }
-	///else if (m_selectedIDs.size() == 1) { m_boxID.SetCurSel(0); }
 	UpdateType();
 	UpdateTransform();
 }

@@ -1417,7 +1417,6 @@ SceneObject ObjectManager::GetReplacement(SceneObject object)
 		replacement.m_isWater = false;
 		replacement.model_path = "database/data/light.cmo";
 		replacement.tex_diffuse_path = "database/data/light.dds";
-		replacement.enabled = true;
 	}
 	break;
 	case OBJECT_TYPE::CUBE:
