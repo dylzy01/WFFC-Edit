@@ -541,9 +541,8 @@ void DisplayChunk::PaintTerrain(int i, int j, TERRAIN_PAINT paint)
 	
 	// Else, current paint must already be blended
 	else { 
-		if (m_blend) { 
-			BlendPaint(current, index); 
-		}		 
+		if (m_blend) { BlendPaint(current, index); }
+		else { OpaquePaint(paint, index); }
 	}
 }
 
@@ -578,7 +577,7 @@ void DisplayChunk::OverwritePaint(int i, int j, TERRAIN_PAINT paint)
 
 void DisplayChunk::BlendPaint(TERRAIN_PAINT paint, std::pair<int, int> index)
 {	
-	// Switch between current paint
+	// Switch between paint
 	switch (paint)
 	{
 		case TERRAIN_PAINT::GRASS_DIRT: m_grassDirt.push_back(index); break;
@@ -592,6 +591,19 @@ void DisplayChunk::BlendPaint(TERRAIN_PAINT paint, std::pair<int, int> index)
 		case TERRAIN_PAINT::SAND_SNOW: m_sandSnow.push_back(index); break;
 		case TERRAIN_PAINT::STONE_SNOW: m_stoneSnow.push_back(index); break;
 	}	
+}
+
+void DisplayChunk::OpaquePaint(TERRAIN_PAINT paint, std::pair<int, int> index)
+{
+	// Switch between paint
+	switch (paint)
+	{
+	case TERRAIN_PAINT::GRASS: m_grass.push_back(index); break;
+	case TERRAIN_PAINT::DIRT: m_dirt.push_back(index); break;
+	case TERRAIN_PAINT::SAND: m_sand.push_back(index); break;
+	case TERRAIN_PAINT::STONE: m_stone.push_back(index); break;
+	case TERRAIN_PAINT::SNOW: m_snow.push_back(index); break;
+	}
 }
 
 void DisplayChunk::SculptTerrain(int row, int column, TERRAIN_SCULPT sculpt, CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position)
