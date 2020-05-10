@@ -13,7 +13,7 @@ IMPLEMENT_DYNAMIC(SpawnDialogue, CDialogEx)
 SpawnDialogue::SpawnDialogue(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG13, pParent)
 {
-
+	m_spawner = OBJECT_TYPE::NA;
 }
 
 void SpawnDialogue::SetToolData(ToolMain * toolSystem)

@@ -362,8 +362,8 @@ void DisplayChunk::PaintTerrain(int i, int j, TERRAIN_PAINT paint)
 	// If current paint is grass
 	if (current == TERRAIN_PAINT::GRASS)
 	{
-		// If selected paint is grass, do nothing
-		if (paint == TERRAIN_PAINT::GRASS) {}
+		// If selected paint is grass, re-add to container
+		if (paint == TERRAIN_PAINT::GRASS) { m_grass.push_back(index); }
 
 		// Else, apply selected paint
 		else
@@ -398,8 +398,8 @@ void DisplayChunk::PaintTerrain(int i, int j, TERRAIN_PAINT paint)
 	// Else, if current paint is dirt
 	else if (current == TERRAIN_PAINT::DIRT)
 	{
-		// If selected paint is dirt, do nothing
-		if (paint == TERRAIN_PAINT::DIRT) {}
+		// If selected paint is dirt, re-add to container
+		if (paint == TERRAIN_PAINT::DIRT) { m_dirt.push_back(index); }
 
 		// Else, apply selected paint
 		else
@@ -434,8 +434,8 @@ void DisplayChunk::PaintTerrain(int i, int j, TERRAIN_PAINT paint)
 	// Else, if current paint is sand
 	else if (current == TERRAIN_PAINT::SAND)
 	{
-		// If selected paint is sand, do nothing
-		if (paint == TERRAIN_PAINT::SAND) {}
+		// If selected paint is sand, re-add to container
+		if (paint == TERRAIN_PAINT::SAND) { m_sand.push_back(index); }
 
 		// Else, apply selected paint
 		else
@@ -470,8 +470,8 @@ void DisplayChunk::PaintTerrain(int i, int j, TERRAIN_PAINT paint)
 	// Else, if current paint is stone
 	else if (current == TERRAIN_PAINT::STONE)
 	{
-		// If selected paint is stone, do nothing
-		if (paint == TERRAIN_PAINT::STONE) {}
+		// If selected paint is stone, re-add to container
+		if (paint == TERRAIN_PAINT::STONE) { m_stone.push_back(index); }
 
 		// Else, apply selected paint
 		else
@@ -506,8 +506,8 @@ void DisplayChunk::PaintTerrain(int i, int j, TERRAIN_PAINT paint)
 	// Else, if current paint is snow
 	else if (current == TERRAIN_PAINT::SNOW)
 	{
-		// If selected paint is snow, do nothing
-		if (paint == TERRAIN_PAINT::SNOW) {}
+		// If selected paint is snow, re-add to container
+		if (paint == TERRAIN_PAINT::SNOW) { m_snow.push_back(index); }
 
 		// Else, apply selected paint
 		else
@@ -539,248 +539,12 @@ void DisplayChunk::PaintTerrain(int i, int j, TERRAIN_PAINT paint)
 		}
 	}
 	
-	// Else, current paint must be blended
-	else { PaintOverBlended(paint, index); }
-}
-
-void DisplayChunk::PaintBlend(int i, int j, TERRAIN_PAINT paint)
-{
-	// Store row & column
-	std::pair<int, int> index(i, j);
-
-	// Check for duplicates and return current paint
-	TERRAIN_PAINT current = RemoveDuplicates(i, j, paint);
-
-	// If current paint is grass
-	if (current == TERRAIN_PAINT::GRASS)
-	{
-		// If selected paint is grass, do nothing
-		if (paint == TERRAIN_PAINT::GRASS) {}
-
-		// Else, apply selected paint
-		else
-		{			
-			// Switch between selected paint
-			switch (paint)
-			{
-			case TERRAIN_PAINT::DIRT:		m_grassDirt.push_back(index); break;
-			case TERRAIN_PAINT::SAND:		m_grassSand.push_back(index); break;
-			case TERRAIN_PAINT::STONE:		m_grassStone.push_back(index); break;
-			case TERRAIN_PAINT::SNOW:		m_grassSnow.push_back(index); break;
-			}			
-		}
+	// Else, current paint must already be blended
+	else { 
+		if (m_blend) { 
+			BlendPaint(current, index); 
+		}		 
 	}
-
-	// Else, if current paint is dirt
-	else if (current == TERRAIN_PAINT::DIRT)
-	{
-		// If selected paint is dirt, do nothing
-		if (paint == TERRAIN_PAINT::DIRT) {}
-
-		// Else, apply selected paint
-		else
-		{			
-			// Switch between selected paint
-			switch (paint)
-			{
-			case TERRAIN_PAINT::GRASS:		m_grassDirt.push_back(index); break;
-			case TERRAIN_PAINT::SAND:		m_dirtSand.push_back(index); break;
-			case TERRAIN_PAINT::STONE:		m_dirtStone.push_back(index); break;
-			case TERRAIN_PAINT::SNOW:		m_dirtSnow.push_back(index); break;
-			}			
-		}
-	}
-
-	// Else, if current paint is sand
-	else if (current == TERRAIN_PAINT::SAND)
-	{
-		// If selected paint is sand, do nothing
-		if (paint == TERRAIN_PAINT::SAND) {}
-
-		// Else, apply selected paint
-		else
-		{			
-			// Switch between selected paint
-			switch (paint)
-			{
-			case TERRAIN_PAINT::GRASS:		m_grassSand.push_back(index); break;
-			case TERRAIN_PAINT::DIRT:		m_dirtSand.push_back(index); break;
-			case TERRAIN_PAINT::STONE:		m_sandStone.push_back(index); break;
-			case TERRAIN_PAINT::SNOW:		m_sandSnow.push_back(index); break;
-			}			
-		}
-	}
-
-	// Else, if current paint is stone
-	else if (current == TERRAIN_PAINT::STONE)
-	{
-		// If selected paint is stone, do nothing
-		if (paint == TERRAIN_PAINT::STONE) {}
-
-		// Else, apply selected paint
-		else
-		{			
-			// Switch between selected paint
-			switch (paint)
-			{
-			case TERRAIN_PAINT::GRASS: m_grassStone.push_back(index); break;
-			case TERRAIN_PAINT::DIRT: m_dirtStone.push_back(index); break;
-			case TERRAIN_PAINT::SAND: m_sandStone.push_back(index); break;
-			case TERRAIN_PAINT::SNOW: m_stoneSnow.push_back(index); break;
-			}			
-		}
-	}
-
-	// Else, if current paint is snow
-	else if (current == TERRAIN_PAINT::SNOW)
-	{
-		// If selected paint is snow, do nothing
-		if (paint == TERRAIN_PAINT::SNOW) {}
-
-		// Else, apply selected paint
-		else
-		{			
-			// Switch between selected paint
-			switch (paint)
-			{
-			case TERRAIN_PAINT::GRASS: m_grassSnow.push_back(index); break;
-			case TERRAIN_PAINT::DIRT: m_dirtSnow.push_back(index); break;
-			case TERRAIN_PAINT::SAND: m_sandSnow.push_back(index); break;
-			case TERRAIN_PAINT::STONE: m_stoneSnow.push_back(index); break;
-			}			
-		}
-	}
-
-	// Else, current paint must be blended
-	///else { PaintOverBlended(paint, index); }
-}
-
-void DisplayChunk::PaintOpaque(int i, int j, TERRAIN_PAINT paint)
-{
-	// Store row & column
-	std::pair<int, int> index(i, j);
-
-	// Check for duplicates and return current paint
-	TERRAIN_PAINT current = RemoveDuplicates(i, j, paint);
-
-	// If current paint is grass
-	if (current == TERRAIN_PAINT::GRASS)
-	{
-		// If selected paint is grass, do nothing
-		if (paint == TERRAIN_PAINT::GRASS) {}
-
-		// Else, apply selected paint
-		else
-		{			
-			// Switch between selected paint
-			switch (paint)
-			{
-			case TERRAIN_PAINT::DIRT:		m_dirt.push_back(index); break;
-			case TERRAIN_PAINT::SAND:		m_sand.push_back(index); break;
-			case TERRAIN_PAINT::STONE:		m_stone.push_back(index); break;
-			case TERRAIN_PAINT::SNOW:		m_snow.push_back(index); break;
-			}			
-		}
-	}
-
-	// Else, if current paint is dirt
-	else if (current == TERRAIN_PAINT::DIRT)
-	{
-		// If selected paint is dirt, do nothing
-		if (paint == TERRAIN_PAINT::DIRT) {}
-
-		// Else, apply selected paint
-		else
-		{
-			// If should blend
-			if (m_blend)
-			{
-				// Switch between selected paint
-				switch (paint)
-				{
-				case TERRAIN_PAINT::GRASS:		m_grassDirt.push_back(index); break;
-				case TERRAIN_PAINT::SAND:		m_dirtSand.push_back(index); break;
-				case TERRAIN_PAINT::STONE:		m_dirtStone.push_back(index); break;
-				case TERRAIN_PAINT::SNOW:		m_dirtSnow.push_back(index); break;
-				}
-			}
-			// Else, if should overwrite
-			else
-			{
-				// Switch between selected paint
-				switch (paint)
-				{
-				case TERRAIN_PAINT::GRASS:		m_grass.push_back(index); break;
-				case TERRAIN_PAINT::SAND:		m_sand.push_back(index); break;
-				case TERRAIN_PAINT::STONE:		m_stone.push_back(index); break;
-				case TERRAIN_PAINT::SNOW:		m_snow.push_back(index); break;
-				}
-			}
-		}
-	}
-
-	// Else, if current paint is sand
-	else if (current == TERRAIN_PAINT::SAND)
-	{
-		// If selected paint is sand, do nothing
-		if (paint == TERRAIN_PAINT::SAND) {}
-
-		// Else, apply selected paint
-		else
-		{			
-			// Switch between selected paint
-			switch (paint)
-			{
-			case TERRAIN_PAINT::GRASS:		m_grassSand.push_back(index); break;
-			case TERRAIN_PAINT::DIRT:		m_dirtSand.push_back(index); break;
-			case TERRAIN_PAINT::STONE:		m_sandStone.push_back(index); break;
-			case TERRAIN_PAINT::SNOW:		m_sandSnow.push_back(index); break;
-			}			
-		}
-	}
-
-	// Else, if current paint is stone
-	else if (current == TERRAIN_PAINT::STONE)
-	{
-		// If selected paint is stone, do nothing
-		if (paint == TERRAIN_PAINT::STONE) {}
-
-		// Else, apply selected paint
-		else
-		{			
-			// Switch between selected paint
-			switch (paint)
-			{
-			case TERRAIN_PAINT::GRASS: m_grassStone.push_back(index); break;
-			case TERRAIN_PAINT::DIRT: m_dirtStone.push_back(index); break;
-			case TERRAIN_PAINT::SAND: m_sandStone.push_back(index); break;
-			case TERRAIN_PAINT::SNOW: m_stoneSnow.push_back(index); break;
-			}			
-		}
-	}
-
-	// Else, if current paint is snow
-	else if (current == TERRAIN_PAINT::SNOW)
-	{
-		// If selected paint is snow, do nothing
-		if (paint == TERRAIN_PAINT::SNOW) {}
-
-		// Else, apply selected paint
-		else
-		{			
-			// Switch between selected paint
-			switch (paint)
-			{
-			case TERRAIN_PAINT::GRASS: m_grassSnow.push_back(index); break;
-			case TERRAIN_PAINT::DIRT: m_dirtSnow.push_back(index); break;
-			case TERRAIN_PAINT::SAND: m_sandSnow.push_back(index); break;
-			case TERRAIN_PAINT::STONE: m_stoneSnow.push_back(index); break;
-			}			
-		}
-	}
-
-	// Else, current paint must be blended
-	else { PaintOverBlended(paint, index); }
 }
 
 void DisplayChunk::OverwritePaint(int i, int j, TERRAIN_PAINT paint)
@@ -812,17 +576,22 @@ void DisplayChunk::OverwritePaint(int i, int j, TERRAIN_PAINT paint)
 	}
 }
 
-void DisplayChunk::PaintOverBlended(TERRAIN_PAINT paint, std::pair<int, int> index)
-{
-	// Switch between selected paint
+void DisplayChunk::BlendPaint(TERRAIN_PAINT paint, std::pair<int, int> index)
+{	
+	// Switch between current paint
 	switch (paint)
 	{
-	case TERRAIN_PAINT::GRASS: m_grass.push_back(index); break;
-	case TERRAIN_PAINT::DIRT: m_dirt.push_back(index); break;
-	case TERRAIN_PAINT::SAND: m_sand.push_back(index); break;
-	case TERRAIN_PAINT::STONE: m_stone.push_back(index); break;
-	case TERRAIN_PAINT::SNOW: m_snow.push_back(index); break;
-	}
+		case TERRAIN_PAINT::GRASS_DIRT: m_grassDirt.push_back(index); break;
+		case TERRAIN_PAINT::GRASS_SAND: m_grassSand.push_back(index); break;
+		case TERRAIN_PAINT::GRASS_STONE: m_grassStone.push_back(index); break;
+		case TERRAIN_PAINT::GRASS_SNOW: m_grassSnow.push_back(index); break;
+		case TERRAIN_PAINT::DIRT_SAND: m_dirtSand.push_back(index); break;
+		case TERRAIN_PAINT::DIRT_STONE: m_dirtStone.push_back(index); break;
+		case TERRAIN_PAINT::DIRT_SNOW: m_dirtSnow.push_back(index); break;
+		case TERRAIN_PAINT::SAND_STONE: m_sandStone.push_back(index); break;
+		case TERRAIN_PAINT::SAND_SNOW: m_sandSnow.push_back(index); break;
+		case TERRAIN_PAINT::STONE_SNOW: m_stoneSnow.push_back(index); break;
+	}	
 }
 
 void DisplayChunk::SculptTerrain(int row, int column, TERRAIN_SCULPT sculpt, CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position)

@@ -176,13 +176,17 @@ void ToolMain::Tick(MSG *msg)
 			// Else, if not
 			else
 			{
-				// Define light or not
-				LIGHT_TYPE lightType;
-				if (m_objectType == OBJECT_TYPE::LIGHT) { lightType = LIGHT_TYPE::DIRECTIONAL; }
-				else { lightType = LIGHT_TYPE::NA; }
+				// If spawn type is valid
+				if (m_objectType != OBJECT_TYPE::NA)
+				{
+					// Define light or not
+					LIGHT_TYPE lightType;
+					if (m_objectType == OBJECT_TYPE::LIGHT) { lightType = LIGHT_TYPE::DIRECTIONAL; }
+					else { lightType = LIGHT_TYPE::NA; }
 
-				// Create object at picking point
-				ObjectManager::SpawnObject(m_selectedIDs, m_objectType, MouseManager::PickSpawn(), (int)lightType);
+					// Create object at picking point
+					ObjectManager::SpawnObject(m_selectedIDs, m_objectType, MouseManager::PickSpawn(), (int)lightType);
+				}
 			}						
 		}
 		break;

@@ -68,7 +68,6 @@ public:
 	CListBox m_boxID;
 	CComboBox m_boxType, m_boxConst;
 	CEdit m_ePosX, m_ePosY, m_ePosZ;
-	CEdit m_eDirX, m_eDirY, m_eDirZ;
 	CEdit m_eDifR, m_eDifG, m_eDifB;
 	CEdit m_eAmbR, m_eAmbG, m_eAmbB;
 	CEdit m_eConstA, m_eLinA, m_eQuadA;
@@ -82,9 +81,6 @@ public:
 	afx_msg void OnEnChangePosX();
 	afx_msg void OnEnChangePosY();
 	afx_msg void OnEnChangePosZ();
-	afx_msg void OnEnChangeDirX();
-	afx_msg void OnEnChangeDirY();
-	afx_msg void OnEnChangeDirZ();
 	afx_msg void OnEnChangeDifR();
 	afx_msg void OnEnChangeDifG();
 	afx_msg void OnEnChangeDifB();
@@ -111,7 +107,6 @@ private:
 	void UpdateType();
 	void UpdateEnabled();
 	void UpdatePosition();
-	void UpdateDirection();
 	void UpdateDiffuse();
 	void UpdateAmbient();
 	void UpdateConstA();

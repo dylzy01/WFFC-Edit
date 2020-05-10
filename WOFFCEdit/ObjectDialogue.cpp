@@ -334,41 +334,37 @@ void ObjectDialogue::OnEnChangeScaX()
 {
 	// If function has been called by user
 	if (!m_internal)
-	{
-		// If selection is valid
-		if (m_boxID.GetCurSel() >= 0)
+	{	
+		// Loop through selected IDs
+		for (int i = 0; i < m_selectedIDs.size(); ++i)
 		{
-			// Loop through selected IDs
-			for (int i = 0; i < m_selectedIDs.size(); ++i)
+			// Loop through objects
+			for (int j = 0; j < m_objects->size(); ++j)
 			{
-				// Loop through objects
-				for (int j = 0; j < m_objects->size(); ++j)
+				// If object ID matches selected ID
+				if (m_objects->at(j).ID == m_selectedIDs.at(i))
 				{
-					// If object ID matches selected ID
-					if (m_objects->at(j).ID == m_selectedIDs.at(i))
+					// Store new X scale
+					CString string = _T("");
+					m_eScaX.GetWindowTextW(string);
+
+					// Convert to float
+					float scaX;
+					if (!string.IsEmpty()) { scaX = _ttof(string); }
+					else { scaX = m_objects->at(j).scaX; }
+
+					// If scale is different from current scale
+					if (m_objects->at(j).scaX != scaX)
 					{
-						// Store new X scale
-						CString string = _T("");
-						m_eScaX.GetWindowTextW(string);
-
-						// Convert to float
-						float scaX;
-						if (!string.IsEmpty()) { scaX = _ttof(string); }
-						else { scaX = m_objects->at(j).scaX; }
-
-						// If scale is different from current scale
-						if (m_objects->at(j).scaX != scaX)
-						{
-							// Update X scale of object
-							m_objects->at(j).scaX = scaX;
-							UpdateObject(m_objects->at(j));
-						}
-
-						break;
+						// Update X scale of object
+						m_objects->at(j).scaX = scaX;
+						UpdateObject(m_objects->at(j));
 					}
+
+					break;
 				}
 			}
-		}
+		}		
 	}
 }
 
@@ -378,40 +374,36 @@ void ObjectDialogue::OnEnChangeScaY()
 	// If function has been called by user
 	if (!m_internal)
 	{
-		// If selection is valid
-		if (m_boxID.GetCurSel() >= 0)
+		// Loop through selected IDs
+		for (int i = 0; i < m_selectedIDs.size(); ++i)
 		{
-			// Loop through selected IDs
-			for (int i = 0; i < m_selectedIDs.size(); ++i)
+			// Loop through objects
+			for (int j = 0; j < m_objects->size(); ++j)
 			{
-				// Loop through objects
-				for (int j = 0; j < m_objects->size(); ++j)
+				// If object ID matches selected ID
+				if (m_objects->at(j).ID == m_selectedIDs.at(i))
 				{
-					// If object ID matches selected ID
-					if (m_objects->at(j).ID == m_selectedIDs.at(i))
+					// Store new Y scale
+					CString string = _T("");
+					m_eScaY.GetWindowTextW(string);
+
+					// Convert to float
+					float scaY;
+					if (!string.IsEmpty()) { scaY = _ttof(string); }
+					else { scaY = m_objects->at(j).scaY; }
+
+					// If scale is different from current scale
+					if (m_objects->at(j).scaY != scaY)
 					{
-						// Store new Y scale
-						CString string = _T("");
-						m_eScaY.GetWindowTextW(string);
-
-						// Convert to float
-						float scaY;
-						if (!string.IsEmpty()) { scaY = _ttof(string); }
-						else { scaY = m_objects->at(j).scaY; }
-
-						// If scale is different from current scale
-						if (m_objects->at(j).scaY != scaY)
-						{
-							// Update Y scale of object
-							m_objects->at(j).scaY = scaY;
-							UpdateObject(m_objects->at(j));
-						}
-
-						break;
+						// Update Y scale of object
+						m_objects->at(j).scaY = scaY;
+						UpdateObject(m_objects->at(j));
 					}
+
+					break;
 				}
 			}
-		}
+		}		
 	}
 }
 
@@ -421,40 +413,36 @@ void ObjectDialogue::OnEnChangeScaZ()
 	// If function has been called by user
 	if (!m_internal)
 	{
-		// If selection is valid
-		if (m_boxID.GetCurSel() >= 0)
+		// Loop through selected IDs
+		for (int i = 0; i < m_selectedIDs.size(); ++i)
 		{
-			// Loop through selected IDs
-			for (int i = 0; i < m_selectedIDs.size(); ++i)
+			// Loop through objects
+			for (int j = 0; j < m_objects->size(); ++j)
 			{
-				// Loop through objects
-				for (int j = 0; j < m_objects->size(); ++j)
+				// If object ID matches selected ID
+				if (m_objects->at(j).ID == m_selectedIDs.at(i))
 				{
-					// If object ID matches selected ID
-					if (m_objects->at(j).ID == m_selectedIDs.at(i))
+					// Store new Z scale
+					CString string = _T("");
+					m_eScaZ.GetWindowTextW(string);
+
+					// Convert to float
+					float scaZ;
+					if (!string.IsEmpty()) { scaZ = _ttof(string); }
+					else { scaZ = m_objects->at(j).scaZ; }
+
+					// If scale is different from current scale
+					if (m_objects->at(j).scaZ != scaZ)
 					{
-						// Store new Z scale
-						CString string = _T("");
-						m_eScaZ.GetWindowTextW(string);
-
-						// Convert to float
-						float scaZ;
-						if (!string.IsEmpty()) { scaZ = _ttof(string); }
-						else { scaZ = m_objects->at(j).scaZ; }
-
-						// If scale is different from current scale
-						if (m_objects->at(j).scaZ != scaZ)
-						{
-							// Update Z scale of object
-							m_objects->at(j).scaZ = scaZ;
-							UpdateObject(m_objects->at(j));
-						}
-
-						break;
+						// Update Z scale of object
+						m_objects->at(j).scaZ = scaZ;
+						UpdateObject(m_objects->at(j));
 					}
+
+					break;
 				}
 			}
-		}
+		}		
 	}
 }
 
@@ -464,40 +452,36 @@ void ObjectDialogue::OnEnChangeRotX()
 	// If function has been called by user
 	if (!m_internal)
 	{
-		// If selection is valid
-		if (m_boxID.GetCurSel() >= 0)
+		// Loop through selected IDs
+		for (int i = 0; i < m_selectedIDs.size(); ++i)
 		{
-			// Loop through selected IDs
-			for (int i = 0; i < m_selectedIDs.size(); ++i)
+			// Loop through objects
+			for (int j = 0; j < m_objects->size(); ++j)
 			{
-				// Loop through objects
-				for (int j = 0; j < m_objects->size(); ++j)
+				// If object ID matches selected ID
+				if (m_objects->at(j).ID == m_selectedIDs.at(i))
 				{
-					// If object ID matches selected ID
-					if (m_objects->at(j).ID == m_selectedIDs.at(i))
+					// Store new X rotation
+					CString string = _T("");
+					m_eRotX.GetWindowTextW(string);
+
+					// Convert to float
+					float rotX;
+					if (!string.IsEmpty()) { rotX = _ttof(string); }
+					else { rotX = m_objects->at(j).rotX; }
+
+					// If rotation is different from current rotation
+					if (m_objects->at(j).rotX != rotX)
 					{
-						// Store new X rotation
-						CString string = _T("");
-						m_eRotX.GetWindowTextW(string);
-
-						// Convert to float
-						float rotX;
-						if (!string.IsEmpty()) { rotX = _ttof(string); }
-						else { rotX = m_objects->at(j).rotX; }
-
-						// If rotation is different from current rotation
-						if (m_objects->at(j).rotX != rotX)
-						{
-							// Update X rotation of object
-							m_objects->at(j).rotX = rotX;
-							UpdateObject(m_objects->at(j));
-						}
-
-						break;
+						// Update X rotation of object
+						m_objects->at(j).rotX = rotX;
+						UpdateObject(m_objects->at(j));
 					}
+
+					break;
 				}
 			}
-		}
+		}		
 	}
 }
 
@@ -507,40 +491,36 @@ void ObjectDialogue::OnEnChangeRotY()
 	// If function has been called by user
 	if (!m_internal)
 	{
-		// If selection is valid
-		if (m_boxID.GetCurSel() >= 0)
+		// Loop through selected IDs
+		for (int i = 0; i < m_selectedIDs.size(); ++i)
 		{
-			// Loop through selected IDs
-			for (int i = 0; i < m_selectedIDs.size(); ++i)
+			// Loop through objects
+			for (int j = 0; j < m_objects->size(); ++j)
 			{
-				// Loop through objects
-				for (int j = 0; j < m_objects->size(); ++j)
+				// If object ID matches selected ID
+				if (m_objects->at(j).ID == m_selectedIDs.at(i))
 				{
-					// If object ID matches selected ID
-					if (m_objects->at(j).ID == m_selectedIDs.at(i))
+					// Store new Y rotation
+					CString string = _T("");
+					m_eRotY.GetWindowTextW(string);
+
+					// Convert to float
+					float rotY;
+					if (!string.IsEmpty()) { rotY = _ttof(string); }
+					else { rotY = m_objects->at(j).rotY; }
+
+					// If rotation is different from current rotation
+					if (m_objects->at(j).rotY != rotY)
 					{
-						// Store new Y rotation
-						CString string = _T("");
-						m_eRotY.GetWindowTextW(string);
-
-						// Convert to float
-						float rotY;
-						if (!string.IsEmpty()) { rotY = _ttof(string); }
-						else { rotY = m_objects->at(j).rotY; }
-
-						// If rotation is different from current rotation
-						if (m_objects->at(j).rotY != rotY)
-						{
-							// Update Y rotation of object
-							m_objects->at(j).rotY = rotY;
-							UpdateObject(m_objects->at(j));
-						}
-
-						break;
+						// Update Y rotation of object
+						m_objects->at(j).rotY = rotY;
+						UpdateObject(m_objects->at(j));
 					}
+
+					break;
 				}
 			}
-		}
+		}		
 	}
 }
 
@@ -550,40 +530,36 @@ void ObjectDialogue::OnEnChangeRotZ()
 	// If function has been called by user
 	if (!m_internal)
 	{
-		// If selection is valid
-		if (m_boxID.GetCurSel() >= 0)
+		// Loop through selected IDs
+		for (int i = 0; i < m_selectedIDs.size(); ++i)
 		{
-			// Loop through selected IDs
-			for (int i = 0; i < m_selectedIDs.size(); ++i)
+			// Loop through objects
+			for (int j = 0; j < m_objects->size(); ++j)
 			{
-				// Loop through objects
-				for (int j = 0; j < m_objects->size(); ++j)
+				// If object ID matches selected ID
+				if (m_objects->at(j).ID == m_selectedIDs.at(i))
 				{
-					// If object ID matches selected ID
-					if (m_objects->at(j).ID == m_selectedIDs.at(i))
+					// Store new Z rotation
+					CString string = _T("");
+					m_eRotZ.GetWindowTextW(string);
+
+					// Convert to float
+					float rotZ;
+					if (!string.IsEmpty()) { rotZ = _ttof(string); }
+					else { rotZ = m_objects->at(j).rotZ; }
+
+					// If rotation is different from current rotation
+					if (m_objects->at(j).rotZ != rotZ)
 					{
-						// Store new Z rotation
-						CString string = _T("");
-						m_eRotZ.GetWindowTextW(string);
-
-						// Convert to float
-						float rotZ;
-						if (!string.IsEmpty()) { rotZ = _ttof(string); }
-						else { rotZ = m_objects->at(j).rotZ; }
-
-						// If rotation is different from current rotation
-						if (m_objects->at(j).rotZ != rotZ)
-						{
-							// Update Z rotation of object
-							m_objects->at(j).rotZ = rotZ;
-							UpdateObject(m_objects->at(j));
-						}
-
-						break;
+						// Update Z rotation of object
+						m_objects->at(j).rotZ = rotZ;
+						UpdateObject(m_objects->at(j));
 					}
+
+					break;
 				}
 			}
-		}
+		}		
 	}
 }
 
@@ -593,40 +569,36 @@ void ObjectDialogue::OnEnChangePosX()
 	// If function has been called by user
 	if (!m_internal)
 	{
-		// If selection is valid
-		if (m_boxID.GetCurSel() >= 0)
+		// Loop through selected IDs
+		for (int i = 0; i < m_selectedIDs.size(); ++i)
 		{
-			// Loop through selected IDs
-			for (int i = 0; i < m_selectedIDs.size(); ++i)
+			// Loop through objects
+			for (int j = 0; j < m_objects->size(); ++j)
 			{
-				// Loop through objects
-				for (int j = 0; j < m_objects->size(); ++j)
+				// If object ID matches selected ID
+				if (m_objects->at(j).ID == m_selectedIDs.at(i))
 				{
-					// If object ID matches selected ID
-					if (m_objects->at(j).ID == m_selectedIDs.at(i))
+					// Store new X position
+					CString string = _T("");
+					m_ePosX.GetWindowTextW(string);
+
+					// Convert to float
+					float posX;
+					if (!string.IsEmpty()) { posX = _ttof(string); }
+					else { posX = m_objects->at(j).posX; }
+
+					// If position is different from current position
+					if (m_objects->at(j).posX != posX)
 					{
-						// Store new X position
-						CString string = _T("");
-						m_ePosX.GetWindowTextW(string);
-
-						// Convert to float
-						float posX;
-						if (!string.IsEmpty()) { posX = _ttof(string); }
-						else { posX = m_objects->at(j).posX; }
-
-						// If position is different from current position
-						if (m_objects->at(j).posX != posX)
-						{
-							// Update X position of object
-							m_objects->at(j).posX = posX;
-							UpdateObject(m_objects->at(j));
-						}
-
-						break;
+						// Update X position of object
+						m_objects->at(j).posX = posX;
+						UpdateObject(m_objects->at(j));
 					}
+
+					break;
 				}
 			}
-		}
+		}		
 	}
 }
 
@@ -635,41 +607,37 @@ void ObjectDialogue::OnEnChangePosY()
 {
 	// If function has been called by user
 	if (!m_internal)
-	{
-		// If selection is valid
-		if (m_selectedIDs.size() >= 0)
+	{		
+		// Loop through selected IDs
+		for (int i = 0; i < m_selectedIDs.size(); ++i)
 		{
-			// Loop through selected IDs
-			for (int i = 0; i < m_selectedIDs.size(); ++i)
+			// Loop through objects
+			for (int j = 0; j < m_objects->size(); ++j)
 			{
-				// Loop through objects
-				for (int j = 0; j < m_objects->size(); ++j)
+				// If object ID matches selected ID
+				if (m_objects->at(j).ID == m_selectedIDs.at(i))
 				{
-					// If object ID matches selected ID
-					if (m_objects->at(j).ID == m_selectedIDs.at(i))
+					// Store new Y position
+					CString string = _T("");
+					m_ePosY.GetWindowTextW(string);
+
+					// Convert to float
+					float posY;
+					if (!string.IsEmpty()) { posY = _ttof(string); }
+					else { posY = m_objects->at(j).posY; }
+
+					// If position is different from current position
+					if (m_objects->at(j).posY != posY)
 					{
-						// Store new Y position
-						CString string = _T("");
-						m_ePosY.GetWindowTextW(string);
-
-						// Convert to float
-						float posY;
-						if (!string.IsEmpty()) { posY = _ttof(string); }
-						else { posY = m_objects->at(j).posY; }
-
-						// If position is different from current position
-						if (m_objects->at(j).posY != posY)
-						{
-							// Update Y position of object
-							m_objects->at(j).posY = posY;
-							UpdateObject(m_objects->at(j));
-						}						
+						// Update Y position of object
+						m_objects->at(j).posY = posY;
+						UpdateObject(m_objects->at(j));
+					}						
 						
-						break;
-					}
+					break;
 				}
 			}
-		}
+		}		
 	}
 }
 
@@ -679,40 +647,36 @@ void ObjectDialogue::OnEnChangePosZ()
 	// If function has been called by user
 	if (!m_internal)
 	{
-		// If selection is valid
-		if (m_boxID.GetCurSel() >= 0)
+		// Loop through selected IDs
+		for (int i = 0; i < m_selectedIDs.size(); ++i)
 		{
-			// Loop through selected IDs
-			for (int i = 0; i < m_selectedIDs.size(); ++i)
+			// Loop through objects
+			for (int j = 0; j < m_objects->size(); ++j)
 			{
-				// Loop through objects
-				for (int j = 0; j < m_objects->size(); ++j)
+				// If object ID matches selected ID
+				if (m_objects->at(j).ID == m_selectedIDs.at(i))
 				{
-					// If object ID matches selected ID
-					if (m_objects->at(j).ID == m_selectedIDs.at(i))
+					// Store new Z position
+					CString string = _T("");
+					m_ePosX.GetWindowTextW(string);
+
+					// Convert to float
+					float posZ;
+					if (!string.IsEmpty()) { posZ = _ttof(string); }
+					else { posZ = m_objects->at(j).posZ; }
+
+					// If position is different from current position
+					if (m_objects->at(j).posZ != posZ)
 					{
-						// Store new Z position
-						CString string = _T("");
-						m_ePosX.GetWindowTextW(string);
-
-						// Convert to float
-						float posZ;
-						if (!string.IsEmpty()) { posZ = _ttof(string); }
-						else { posZ = m_objects->at(j).posZ; }
-
-						// If position is different from current position
-						if (m_objects->at(j).posZ != posZ)
-						{
-							// Update Z position of object
-							m_objects->at(j).posZ = posZ;
-							UpdateObject(m_objects->at(j));
-						}
-
-						break;
+						// Update Z position of object
+						m_objects->at(j).posZ = posZ;
+						UpdateObject(m_objects->at(j));
 					}
+
+					break;
 				}
 			}
-		}
+		}		
 	}
 }
 

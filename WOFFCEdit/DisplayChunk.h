@@ -35,10 +35,8 @@ public:
 
 	// Painting
 	void PaintTerrain(int row, int column, TERRAIN_PAINT paint);
-	void PaintBlend(int row, int column, TERRAIN_PAINT paint);
-	void PaintOpaque(int row, int column, TERRAIN_PAINT paint);
 	void OverwritePaint(int row, int column, TERRAIN_PAINT paint);
-	void PaintOverBlended(TERRAIN_PAINT paint, std::pair<int, int> index);
+	void BlendPaint(TERRAIN_PAINT paint, std::pair<int, int> index);
 
 	// Sculpting
 	void SculptTerrain(int row, int column, TERRAIN_SCULPT function, CONSTRAINT constraint, std::vector<DirectX::SimpleMath::Vector3> position = { { 0,0,0 } });
