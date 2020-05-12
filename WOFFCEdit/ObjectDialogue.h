@@ -46,7 +46,7 @@ protected:
 	ToolMain* m_toolSystem;
 	std::vector<SceneObject>* m_objects;
 	std::vector<int> m_selectedIDs;
-	int m_selectedIndex;
+	int m_selectedIndex, m_previousIndex;
 	
 	// Controllers
 	bool m_active;

@@ -118,8 +118,10 @@ void ObjectDialogue::UpdateTool()
 	if (m_toolSystem->GetConstraint() != m_constraint) { m_toolSystem->SetConstraint(m_constraint); }
 
 	// Update object details
-	m_internal = true;	
-	UpdateTransform();
+	m_internal = true;
+	if (m_function == OBJECT_FUNCTION::SCALE) { UpdateScale(); }	
+	else if (m_function == OBJECT_FUNCTION::ROTATE) { UpdateRotation(); }
+	else if (m_function == OBJECT_FUNCTION::TRANSLATE) { UpdatePosition(); }
 	m_internal = false;
 }
 
@@ -658,7 +660,7 @@ void ObjectDialogue::OnEnChangePosZ()
 				{
 					// Store new Z position
 					CString string = _T("");
-					m_ePosX.GetWindowTextW(string);
+					m_ePosZ.GetWindowTextW(string);
 
 					// Convert to float
 					float posZ;
@@ -799,6 +801,7 @@ void ObjectDialogue::OnBnClickedDelete()
 	{		
 		// Remove objects from database storage
 		SetupObjects(&ObjectManager::Delete(m_selectedIDs));
+		m_previousIndex = m_selectedIndex;
 	}
 }
 
@@ -949,8 +952,8 @@ void ObjectDialogue::UpdateType()
 
 void ObjectDialogue::UpdateScale()
 {
-	// If only one object is selected
-	if (m_selectedIDs.size() == 1)
+	// If only one object is selected and index is valid
+	if (m_selectedIDs.size() == 1 && m_previousIndex != m_selectedIndex)
 	{	
 		// Update X scale box
 		CString sX; sX.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].scaX);
@@ -980,8 +983,8 @@ void ObjectDialogue::UpdateScale()
 
 void ObjectDialogue::UpdateRotation()
 {
-	// If only one object is selected
-	if (m_selectedIDs.size() == 1)
+	// If only one object is selected and index is valid
+	if (m_selectedIDs.size() == 1 && m_previousIndex != m_selectedIndex)
 	{		
 		// Update X rotation box
 		CString sX; sX.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].rotX);
@@ -1011,8 +1014,8 @@ void ObjectDialogue::UpdateRotation()
 
 void ObjectDialogue::UpdatePosition()
 {
-	// If only one object is selected
-	if (m_selectedIDs.size() == 1)
+	// If only one object is selected and index is valid
+	if (m_selectedIDs.size() == 1 && m_previousIndex != m_selectedIndex)
 	{		
 		// Update X position box
 		CString sX; sX.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].posX);

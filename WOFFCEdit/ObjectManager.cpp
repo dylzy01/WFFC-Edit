@@ -35,7 +35,7 @@ bool ObjectManager::SpawnObject(std::vector<int> IDs, OBJECT_TYPE objectType, Di
 	// Setup temp object
 	SceneObject object;
 	
-	// Fetch available IDs
+	// Fetch available IDsaes
 	std::vector<int> availableIDs = GetAvailableIDs(IDs, sceneGraph);	
 
 	// Check available IDs container is valid
@@ -95,7 +95,6 @@ bool ObjectManager::SpawnObject(std::vector<int> IDs, OBJECT_TYPE objectType, Di
 		object.editor_wireframe = false;
 
 		object.light_type = lightType;
-		object.light_type = 1;
 		object.light_diffuse_r = 100.f;
 		object.light_diffuse_g = 100.f;
 		object.light_diffuse_b = 100.f;
@@ -202,7 +201,6 @@ bool ObjectManager::SpawnObject(std::vector<int> IDs, OBJECT_TYPE objectType, Di
 	{
 		// Set object to light
 		object.m_isWater = false;
-		object.light_type = 2; // point light
 		object.model_path = "database/data/light.cmo";
 		object.tex_diffuse_path = "database/data/light.dds";
 		object.enabled = true;
@@ -252,6 +250,7 @@ std::vector<SceneObject> ObjectManager::Delete(std::vector<int> & IDs, int ID)
 	
 	// Store game scene graph
 	std::vector<SceneObject> sceneGraph = m_game->GetSceneGraph();	
+	std::vector<int> enabled;
 	
 	// If ID has been specified
 	if (ID != -1)
@@ -285,8 +284,9 @@ std::vector<SceneObject> ObjectManager::Delete(std::vector<int> & IDs, int ID)
 				if (sceneGraph[j].ID == IDs[i])
 				{
 					// Remove objects from database
-					SQLManager::RemoveObject(sceneGraph[j]);
+					SQLManager::RemoveObject(sceneGraph[j]);					
 				}
+				else { enabled.push_back(sceneGraph[j].enabled); }
 			}					
 		}	
 
@@ -303,11 +303,18 @@ std::vector<SceneObject> ObjectManager::Delete(std::vector<int> & IDs, int ID)
 	// Loop through entire object table & create each object into new scene graph
 	while (SQLManager::GetObjectStep() == SQLITE_ROW) { sceneGraph.push_back(SQLManager::CreateObject()); }
 
+	// Reset enabled values
+	for (int i = 0; i < sceneGraph.size(); ++i)
+	{
+		sceneGraph[i].enabled = enabled[i];
+	}
+
 	// Rebuild display list from new table data
 	m_game->BuildDisplayList(&sceneGraph);
 
 	// Overwrite selected objects list
 	m_selectedObjectIDs = IDs;
+	m_game->SetSelectedObjectIDs(m_selectedObjectIDs);
 
 	// Save current state
 	SceneManager::SetScene(&sceneGraph, m_game->GetDisplayChunk());

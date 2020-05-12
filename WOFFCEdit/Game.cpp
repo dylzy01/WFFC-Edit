@@ -311,16 +311,16 @@ void Game::Render()
 	if (m_displayList.size() != 0)
 	{
 		// Loop through selected objects
-		for (int i = 0; i < m_selectedObjectIDs.size(); ++i)
+		for (int i = 0; i < m_selectedIDs.size(); ++i)
 		{
 			// If selected object ID is within range and valid
-			if (m_selectedObjectIDs[i] >= 0 && m_selectedObjectIDs[i] <= 100 && m_selectedObjectIDs[i] != -1);
+			if (m_selectedIDs[i] >= 0 && m_selectedIDs[i] <= 100 && m_selectedIDs[i] != -1);
 			{
 				// Loop through display list
 				for (int j = 0; j < m_displayList.size(); ++j)
 				{
 					// If IDs match
-					if (m_selectedObjectIDs[i] == m_displayList[j].m_ID)
+					if (m_selectedIDs[i] == m_displayList[j].m_ID)
 					{
 						// Draw bounding box & local axes
 						DrawDebug(j);
@@ -850,10 +850,6 @@ void Game::SetTransform(int index, OBJECT_FUNCTION function, DirectX::SimpleMath
 
 	// Update object bounding box translation
 	m_displayList[index].m_model->meshes[0]->boundingBox.Center = m_displayList[index].m_position;
-	/*if (m_displayList[index].m_objectType == OBJECT_TYPE::HOUSE_ONE || m_displayList[index].m_objectType == OBJECT_TYPE::HOUSE_TWO || 
-		m_displayList[index].m_objectType == OBJECT_TYPE::TREE_ONE || m_displayList[index].m_objectType == OBJECT_TYPE::TREE_TWO) {
-		m_displayList[index].m_model->meshes[0]->boundingBox.Center.y += m_displayList[index].m_model->meshes[0]->boundingBox.Extents.y;
-	}*/
 	if (m_displayList[index].m_objectType != OBJECT_TYPE::CUBE && m_displayList[index].m_objectType != OBJECT_TYPE::CYLINDER &&
 		m_displayList[index].m_objectType != OBJECT_TYPE::CONE && m_displayList[index].m_objectType != OBJECT_TYPE::LIGHT &&
 		m_displayList[index].m_objectType != OBJECT_TYPE::WATER) {

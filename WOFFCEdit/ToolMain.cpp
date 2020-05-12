@@ -181,7 +181,7 @@ void ToolMain::Tick(MSG *msg)
 				{
 					// Define light or not
 					LIGHT_TYPE lightType;
-					if (m_objectType == OBJECT_TYPE::LIGHT) { lightType = LIGHT_TYPE::DIRECTIONAL; }
+					if (m_objectType == OBJECT_TYPE::LIGHT) { lightType = LIGHT_TYPE::POINT; }
 					else { lightType = LIGHT_TYPE::NA; }
 
 					// Create object at picking point

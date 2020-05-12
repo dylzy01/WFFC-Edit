@@ -58,7 +58,10 @@ void LightDialogue::SetToolData(ToolMain * toolSystem)
 void LightDialogue::UpdateTool()
 {	
 	// If selected IDs should be updated
-	if (m_select) { m_toolSystem->SetSelectedIDs(m_selectedIDs); m_select = false; }
+	if (m_select) { 
+		m_toolSystem->SetSelectedIDs(m_selectedIDs); 
+		m_select = false; 
+	}
 	else { m_selectedIDs = m_toolSystem->GetSelectedIDs(); }
 	
 	// If there's been a new selection
@@ -104,9 +107,11 @@ void LightDialogue::UpdateTool()
 	if (m_toolSystem->GetConstraint() != m_constraint) { m_toolSystem->SetConstraint(m_constraint); }	
 	
 	// Update light details
-	m_internal = true;
-	UpdatePosition();
-	m_internal = false;
+	if (m_function == OBJECT_FUNCTION::TRANSLATE) {
+		m_internal = true;
+		UpdatePosition();
+		m_internal = false;
+	}
 }
 
 void LightDialogue::UpdateDialogue(int ID)
@@ -850,6 +855,7 @@ void LightDialogue::OnBnClickedDelete()
 	{
 		// Remove lights from database storage
 		SetupLights(&ObjectManager::Delete(m_selectedIDs));
+		m_previousIndex = m_selectedIndex;
 	}
 }
 
@@ -999,8 +1005,8 @@ void LightDialogue::UpdateEnabled()
 
 void LightDialogue::UpdatePosition()
 {
-	// If only one object is selected
-	if (m_selectedIDs.size() == 1)
+	// If only one object is selected and index is valid
+	if (m_selectedIDs.size() == 1 && m_previousIndex != m_selectedIndex)
 	{		
 		// Update X position box
 		CString sX; sX.Format(L"%g", m_toolSystem->GetSceneGraph()[m_selectedIndex].posX);

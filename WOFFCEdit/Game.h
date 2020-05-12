@@ -78,7 +78,7 @@ public:
 
 	// Setters
 	void SetWireframe(bool wireframe) { m_wireframe = wireframe; }
-	void SetSelectedObjectIDs(std::vector<int> selectedObjectIDs) { m_selectedObjectIDs = selectedObjectIDs; }
+	void SetSelectedObjectIDs(std::vector<int> selectedObjectIDs) { m_selectedIDs = selectedObjectIDs; }
 	void SetDisplayList(DisplayObject object, int i) { m_displayList[i] = object; }
 	void SetTransform(int i, OBJECT_FUNCTION function, DirectX::SimpleMath::Vector3 vector);
 	void SetSceneObject(SceneObject object, int index) { m_sceneGraph[index] = object; RebuildDisplayList(&m_sceneGraph); }
@@ -130,7 +130,7 @@ private:
 	int m_autosaveCount = 0;
 
 	//mouse picking
-	std::vector<int> m_selectedObjectIDs;
+	std::vector<int> m_selectedIDs;
 	std::vector<int> m_selectedLandscapeIDs;
 	TERRAIN m_selectedTerrain;
 	std::vector<TERRAIN> m_selectedTerrains;
